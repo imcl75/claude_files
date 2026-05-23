@@ -1,0 +1,70 @@
+{
+  "weeks": [
+    {
+      "label": "T4W6",
+      "y4_equations": [
+        "54 × 1000", "7800 ÷ 10", "60 × 1000",
+        "17 + 5 + 5", "4670 + 1000", "2200 - 400",
+        "860 - 30 - 30", "6600 + 300",
+        "[BOX] + 400 = 797", "500 - [BOX] = 450",
+        "4893 + 4649", "5087 - 4639",
+        "9 × 12", "14 × 1", "84 × 1", "12 × 12", "12 × 10", "8 × 5",
+        "2 × 3 × 4", "8 × 4 × 3",
+        "48 × 5", "151 × 5",
+        "42 ÷ 7", "81 ÷ 9", "90 ÷ 6", "192 ÷ 8",
+        "1/6 + 1/6", "[BOX] + 500 = 1300", "8000 - 3000", "6 × 11"
+      ],
+      "y4_reasoning_types": [
+        "sequence_two_missing", "place_value_less_100", "sequence_one_missing",
+        "three_numbers_sum", "roman_numerals", "division_remainder",
+        "money_multi_step", "decimals_tick_range", "decimals_ordering",
+        "perimeter_rectangle", "fractions_of_amount"
+      ],
+      "adapted_equations": [
+        "3 + 7", "10 - 4", "12 + 8", "15 + 3", "18 - 4",
+        "23 + 15", "47 - 23", "double 6", "half of 14", "4 + 3 + 5",
+        "6 + [BOX] = 10", "[BOX] + 7 = 20",
+        "2, 4, 6, [BOX]", "5, 10, 15, [BOX]", "10, 20, 30, [BOX]",
+        "4 × 2", "3 × 5", "7 × 10",
+        "8 ÷ 2", "15 ÷ 5", "40 ÷ 10",
+        "34 + 20", "56 - 30",
+        "10 more than 45", "10 less than 72",
+        "1/2 of 12", "1/4 of 20",
+        "36 + 27", "53 - 28", "20 - [BOX] = 13"
+      ]
+    },
+    {
+      "label": "T5W1",
+      "y4_equations": [
+        "54 × 1000", "7800 ÷ 10", "60 × 1000",
+        "17 + 5 + 5", "4670 + 1000", "2200 - 400",
+        "860 - 30 - 30", "6600 + 300",
+        "[BOX] + 400 = 797", "500 - [BOX] = 450",
+        "4893 + 4649", "5087 - 4639",
+        "9 × 12", "14 × 1", "84 × 1", "12 × 12", "12 × 10", "8 × 5",
+        "2 × 3 × 4", "8 × 4 × 3",
+        "48 × 5", "151 × 5",
+        "42 ÷ 7", "81 ÷ 9", "90 ÷ 6", "192 ÷ 8",
+        "1/6 + 1/6", "[BOX] + 500 = 1300", "8000 - 3000", "6 × 11"
+      ],
+      "y4_reasoning_types": [
+        "sequence_two_missing", "place_value_less_100", "sequence_one_missing",
+        "three_numbers_sum", "roman_numerals", "division_remainder",
+        "money_multi_step", "decimals_tick_range", "decimals_ordering",
+        "perimeter_rectangle", "fractions_of_amount"
+      ],
+      "adapted_equations": [
+        "3 + 7", "10 - 6", "14 + 6", "13 + 4", "17 - 3",
+        "31 + 24", "58 - 34", "double 7", "half of 16", "5 + 4 + 6",
+        "8 + [BOX] = 10", "[BOX] + 9 = 20",
+        "2, 4, 6, [BOX]", "5, 10, 15, [BOX]", "20, 30, 40, [BOX]",
+        "4 × 2", "3 × 5", "7 × 10",
+        "8 ÷ 2", "15 ÷ 5", "40 ÷ 10",
+        "45 + 20", "67 - 30",
+        "10 more than 38", "10 less than 64",
+        "1/2 of 18", "1/4 of 16",
+        "47 + 26", "62 - 35", "20 - [BOX] = 11"
+      ]
+    }
+  ]
+}

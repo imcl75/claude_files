@@ -1,0 +1,3220 @@
+{
+  "title": "Year 4 Maths: Coordinates, Symmetry and Time",
+  "term": "Term 5",
+  "weeks": 5,
+  "lessonsPerWeek": 4,
+  "totalLessons": 20,
+  "weekLabels": [
+    "T5W1",
+    "T5W2",
+    "T5W3",
+    "T5W4",
+    "T5W5"
+  ],
+  "topicAllocation": {
+    "Coordinates": "Lessons 1\u201310 (Weeks 1\u20132 + first half Week 3)",
+    "Symmetry": "Lessons 11\u201316 (Second half Week 3 + Week 4)",
+    "Time": "Lessons 17\u201320 (Week 5)"
+  },
+  "lessonOpener": "Every lesson begins with (1) a Working Memory starter activity [generated separately by the working-memory-starters skill] and (2) a Rapid Maths fluency activity [generated separately by the rapid-maths skill]. These are not content-specific to the lesson learning intention.",
+  "priorLearning": {
+    "Coordinates": "Y3: right angles, parallel and perpendicular lines, triangles and quadrilaterals classified. Y2: positional language and direction (left/right/up/down, clockwise/anticlockwise), polygons named and described by sides/vertices. CLF RTP 4G-1: first quadrant coordinates and translations.",
+    "Symmetry": "Y3: classifying triangles and quadrilaterals, right angles identified. Y2: lines of symmetry identified in 2D shapes, polygons sorted by properties. Y3 geometry builds the classification knowledge that underpins recognising symmetry in different shape types.",
+    "Time": "Y3: time to nearest minute, 24-hour clock introduced, Roman numerals, calculate durations using number lines. Y2: time to 5 minutes, quarter past and quarter to, 12-hour clock. Time is consistently identified as an area requiring significant revisiting of prior content before new learning can proceed."
+  },
+  "lessons": [
+    {
+      "lesson": 1,
+      "week": "T5W1",
+      "weekIndex": 1,
+      "day": "Monday",
+      "topic": "Coordinates",
+      "li": "Pupils give directions from one position to another on a grid.",
+      "vocabularyFocus": [
+        "grid",
+        "direction",
+        "left",
+        "right",
+        "up",
+        "down",
+        "steps",
+        "route",
+        "position"
+      ],
+      "cycleNote": "Completely new context for most learners \u2014 expect to spend longer on Cycle 1 before moving on.",
+      "cycle1": {
+        "focus": "Horizontal and vertical moves only",
+        "ido": [
+          "Display a simple labelled 5\u00d75 grid. Model giving directions from one square to another using left/right/up/down and a number of steps.",
+          "Narrate aloud: 'I move 3 right, then 2 up.' Show the route on the grid.",
+          "Key question: 'Does the order of moves matter? What if I go up first?' Explore with a second example."
+        ],
+        "wedo": [
+          "Teacher marks two squares; class write directions on mini-whiteboards. Share and compare.",
+          "Sentence stem: 'Move ___ right/left and ___ up/down.'"
+        ],
+        "trios": {
+          "roles": [
+            "A: marks start and end",
+            "B: writes directions",
+            "C: checks by tracing the route"
+          ],
+          "task": "Swap roles each round \u2014 aim for 3 complete journeys each.",
+          "challenge": "Can you find two different direction sequences that produce the same journey?"
+        },
+        "independent": {
+          "standard": "Printed grid with 4 start/end pairs. Write directions for each. Mark the route taken.",
+          "supported": "Grids with only horizontal or vertical moves \u2014 not both combined. Use arrow cards instead of written directions initially."
+        },
+        "slideTitles": {
+          "ido": [
+            "Giving directions on a grid",
+            "Does the order of moves matter?"
+          ],
+          "wedo": [
+            "Your turn \u2014 write the directions"
+          ],
+          "trios": [
+            "Trios \u2014 three-stop journeys"
+          ],
+          "independent": [
+            "Independent \u2014 direction writing"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Multi-step journeys through three positions",
+        "ido": [
+          "Model a journey that visits three positions in order. Show how to split it into two sets of directions.",
+          "Deliberate error: give a direction that lands off the grid. Class identifies what went wrong."
+        ],
+        "wedo": [],
+        "trios": {
+          "roles": [
+            "Shared roles from Cycle 1"
+          ],
+          "task": "Each trio creates a three-stop journey on a grid, writes the directions for each leg, and swaps with another trio to check.",
+          "challenge": "Can you find two different sets of directions for the same journey?"
+        },
+        "independent": {
+          "standard": "Write directions for 3 three-stop journeys on a printed grid. Extension: describe the return journey for one of them.",
+          "supported": "Two three-stop journeys with one leg already written."
+        },
+        "slideTitles": {
+          "ido": [
+            "Multi-step journeys \u2014 three positions",
+            "Spot the mistake"
+          ],
+          "wedo": [],
+          "trios": [
+            "Trios \u2014 create and swap"
+          ],
+          "independent": [
+            "Independent \u2014 three-stop journeys"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 0,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Grids with only horizontal or vertical moves. Arrow cards instead of written directions. Sentence frames provided."
+        ],
+        "stretch": [
+          "Write directions using positive/negative notation (+3, \u22122). What does a negative move mean?",
+          "Can you describe a route that returns to the starting point? What must be true about the directions?"
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "4 start/end pairs on a grid. Write directions for each and mark the route.",
+        "questions": 4
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "3 three-stop journeys. Write directions for each leg. Extension: describe the return journey for one.",
+        "questions": 3
+      },
+      "learningReviewStems": [
+        "To give directions on a grid, I...",
+        "I found it tricky when...",
+        "I could check my directions were right by..."
+      ],
+      "loText": {
+        "walt": "\u2026give directions from one place to another on a grid.",
+        "tiob": "\u2026being able to describe exactly where something is and how to get there is a skill we use in maps, plans and many other areas of maths.",
+        "iwstb": "\u2026writing clear directions using left, right, up and down with a number of steps, and checking them by tracing the route."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Move lands off the grid \u2014 direction count not checked against grid boundary",
+        "errorType": "off_grid",
+        "errorInstruction": "From A at (3,3): move 4 squares right",
+        "errorNote": "4 right from column 3 lands on column 7 \u2014 but the grid only goes to column 6. Always check the grid boundary before writing your directions.",
+        "gridSize": 6,
+        "startPoint": [
+          3,
+          3
+        ],
+        "extraPoints": []
+      }
+    },
+    {
+      "lesson": 2,
+      "week": "T5W1",
+      "weekIndex": 1,
+      "day": "Tuesday",
+      "topic": "Coordinates",
+      "li": "Pupils move objects including polygons on a grid according to directions, and mark the new position.",
+      "vocabularyFocus": [
+        "vertex",
+        "vertices",
+        "polygon",
+        "move",
+        "position",
+        "congruent",
+        "orientation"
+      ],
+      "cycleNote": "Builds directly on lesson 1 \u2014 most learners should move through Cycle 1 fairly quickly.",
+      "cycle1": {
+        "focus": "Moving a single point, then a simple shape",
+        "ido": [
+          "Place a single dot on a grid. Model moving it: 'Move 4 right, 2 up.' Mark the new position.",
+          "Extend to a square: track each corner using the same direction. Draw the square in its new position.",
+          "Key question: 'Has the shape changed size or orientation? How do we know?'"
+        ],
+        "wedo": [
+          "Project a triangle on a grid. Teacher gives a direction; class mark each vertex on mini-whiteboards. Reveal and check.",
+          "Common error to expose: moving only one vertex. Show the misshapen result and correct it together."
+        ],
+        "trios": {
+          "roles": [
+            "A: reads direction",
+            "B and C: independently move each vertex"
+          ],
+          "task": "Printed grids with a rectangle drawn. Direction card given. Compare and resolve any differences.",
+          "challenge": "Show two different moves that produce the same final position for one vertex but different positions for others. Why does this happen?"
+        },
+        "independent": {
+          "standard": "Three shapes on a grid. Move each according to the direction given. Draw the new shape in each case.",
+          "supported": "Shapes with only horizontal or vertical moves. Vertex tracking table: 'Vertex A was here \u2192 now here.'"
+        },
+        "slideTitles": {
+          "ido": [
+            "Moving a point, then a shape",
+            "What stays the same?"
+          ],
+          "wedo": [
+            "Your turn \u2014 track the vertices"
+          ],
+          "trios": [
+            "Trios \u2014 move the rectangle"
+          ],
+          "independent": [
+            "Independent \u2014 three shapes to move"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Moving polygons with more vertices; reasoning about what stays the same",
+        "ido": [
+          "Show a pentagon. Move it using a two-step direction. Class track all vertices together.",
+          "Key question: 'What stays the same about the shape after any move? What would have to happen for the shape to change?'"
+        ],
+        "wedo": [
+          "Show a pentagon. Move it using a two-step direction. Class track all vertices together on whiteboards.",
+          "Key question: 'What stays the same about the shape after any move? What would have to happen for the shape to change?'"
+        ],
+        "trios": {
+          "roles": [
+            "Each member tracks different vertices of a polygon"
+          ],
+          "task": "Each trio receives a different polygon (4\u20136 sides). Apply a direction and draw the new position. Write one sentence explaining what stayed the same and why.",
+          "challenge": "Design a direction that returns the shape exactly to its starting position."
+        },
+        "independent": {
+          "standard": "Two more complex polygons to move. Extension: write a direction that would move the shape so one specific vertex lands on a given target square.",
+          "supported": "One polygon with 4 vertices. Two moves given \u2014 complete the first, then the second."
+        },
+        "slideTitles": {
+          "ido": [
+            "Moving polygons with more vertices"
+          ],
+          "wedo": [
+            "What stays the same after any move?"
+          ],
+          "trios": [
+            "Trios \u2014 track and describe"
+          ],
+          "independent": [
+            "Independent \u2014 complex polygons"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Shapes with only horizontal or vertical moves. Vertex tracking table provided.",
+          "Show two different moves that produce the same final position for one vertex but different for others \u2014 why?"
+        ],
+        "stretch": [
+          "Move a shape so it overlaps its original position. Which squares are shared? Describe the overlap.",
+          "Design a direction that returns the shape exactly to its starting position."
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "Three shapes on a grid, each with a direction instruction. Draw the new position of each shape.",
+        "questions": 3
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "Two more complex polygons to move using two-step directions. Extension: write a direction that lands a specific vertex on a target square.",
+        "questions": 2
+      },
+      "learningReviewStems": [
+        "To move a polygon on a grid, I...",
+        "I know the shape hasn't changed because...",
+        "Something I noticed about moving shapes was..."
+      ],
+      "loText": {
+        "walt": "\u2026move shapes on a grid by following direction instructions.",
+        "tiob": "\u2026understanding how shapes can be moved without changing what they look like helps us describe and compare shapes in geometry.",
+        "iwstb": "\u2026drawing a shape in its new position after following a direction, and explaining what stayed the same about the shape."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Only one vertex moved when translating a shape \u2014 others left in place",
+        "errorType": "partial_translation",
+        "errorInstruction": "Translate triangle ABC 3 right and 2 up",
+        "errorNote": "Only vertex A has moved. All vertices must move the same distance in the same direction \u2014 the whole shape translates, not just one point.",
+        "gridSize": 7,
+        "startPoint": [
+          1,
+          1
+        ],
+        "extraPoints": [
+          [
+            3,
+            1,
+            "B"
+          ],
+          [
+            2,
+            3,
+            "C"
+          ]
+        ]
+      }
+    },
+    {
+      "lesson": 3,
+      "week": "T5W1",
+      "weekIndex": 1,
+      "day": "Wednesday",
+      "topic": "Coordinates",
+      "li": "Pupils describe translations of polygons drawn on a square grid.",
+      "vocabularyFocus": [
+        "translation",
+        "translate",
+        "image",
+        "original",
+        "horizontal",
+        "vertical",
+        "describe"
+      ],
+      "cycleNote": "Introduces the word 'translation' \u2014 spend time on Cycle 1 to establish the vocabulary and counting method.",
+      "cycle1": {
+        "focus": "Describing translations involving one direction only",
+        "ido": [
+          "Show a shape in two positions (side by side on the grid). Model how to describe the move: count squares right/left and up/down.",
+          "Introduce 'translation': the shape slides without rotating or flipping.",
+          "Deliberate error: describe the move as a reflection. Class corrects and explains the difference."
+        ],
+        "wedo": [
+          "Show before and after positions involving only horizontal or only vertical movement. Class write descriptions on whiteboards. Share.",
+          "Sentence stem: 'The shape has been translated ___ right/left and ___ up/down.'"
+        ],
+        "trios": {
+          "roles": [
+            "A: describes the translation",
+            "B and C: check by tracking a different vertex each"
+          ],
+          "task": "Cards with before/after grids (single-direction moves). Do all three agree?",
+          "challenge": "Write the inverse of a translation \u2014 where would it move the shape back to?"
+        },
+        "independent": {
+          "standard": "4 before/after grids (single-direction moves). Write a translation description for each.",
+          "supported": "Grids where only one direction of movement occurs. Sentence frames provided. Pupils trace the movement with a finger before writing."
+        },
+        "slideTitles": {
+          "ido": [
+            "What is a translation?",
+            "Describing single-direction translations"
+          ],
+          "wedo": [
+            "Your turn \u2014 describe the move"
+          ],
+          "trios": [
+            "Trios \u2014 before and after cards"
+          ],
+          "independent": [
+            "Independent \u2014 write the translation"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Describing translations involving both directions; reasoning about tracking vertices",
+        "ido": [
+          "Model describing a translation with both a horizontal and vertical component. Track one vertex from start to end.",
+          "Key question: 'Does it matter which vertex you track? Try tracking a different one.' Confirm the answer is the same."
+        ],
+        "wedo": [],
+        "trios": {
+          "roles": [
+            "Each member tracks a different vertex"
+          ],
+          "task": "More complex before/after grids. All three should arrive at the same description \u2014 discuss any discrepancies.",
+          "challenge": "Find two translations that together produce the same result as a third. Link this to addition."
+        },
+        "independent": {
+          "standard": "4 more complex grids. Write translation descriptions. Extension: which translations in the set are equivalent? (e.g. 2 right then 1 right = 3 right)",
+          "supported": "2 grids with both directions. One vertex already tracked as a starting point."
+        },
+        "slideTitles": {
+          "ido": [
+            "Translations in two directions"
+          ],
+          "wedo": [],
+          "trios": [
+            "Trios \u2014 complex grids"
+          ],
+          "independent": [
+            "Independent \u2014 two-direction translations"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 0,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Grids where only one direction of movement occurs. Sentence frames. Pupils trace with a finger before writing.",
+          "Describe translations using directed number language: right = positive, left = negative."
+        ],
+        "stretch": [
+          "Write the inverse of each translation and explain what it means geometrically.",
+          "Find two translations that together produce the same result as a third. Link to addition."
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "4 before/after grids (single-direction translations). Write a precise description for each.",
+        "questions": 4
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "4 more complex grids with two-directional translations. Write descriptions. Extension: find equivalent translation pairs.",
+        "questions": 4
+      },
+      "learningReviewStems": [
+        "A translation means...",
+        "To describe a translation I need to say...",
+        "I can check a translation description by..."
+      ],
+      "loText": {
+        "walt": "\u2026describe the movement of shapes on a grid using the word translation.",
+        "tiob": "\u2026translation is the mathematical word for a sliding movement, and being able to describe it accurately prepares us for working with coordinates.",
+        "iwstb": "\u2026writing a full description of a translation, saying how far the shape moved right or left and up or down."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Translation described in wrong order \u2014 vertical before horizontal",
+        "errorType": "wrong_order",
+        "errorInstruction": "The shape moved 3 up then 4 right",
+        "errorNote": "The order of moves doesn't change where the shape ends up, but convention is horizontal first then vertical: '4 right and 3 up'. Consistent ordering avoids confusion.",
+        "gridSize": 7,
+        "startPoint": [
+          1,
+          1
+        ],
+        "extraPoints": [
+          [
+            5,
+            4,
+            "image"
+          ]
+        ]
+      }
+    },
+    {
+      "lesson": 4,
+      "week": "T5W1",
+      "weekIndex": 1,
+      "day": "Thursday",
+      "topic": "Coordinates",
+      "li": "Pupils draw polygons specified by translations.",
+      "vocabularyFocus": [
+        "translation",
+        "vertex",
+        "vertices",
+        "congruent",
+        "image",
+        "original",
+        "label"
+      ],
+      "cycleNote": "Reverses the task from lesson 3 \u2014 learners now produce the translated shape rather than describe it.",
+      "cycle1": {
+        "focus": "Drawing translations from a simple instruction; one or two vertices",
+        "ido": [
+          "Given a shape and a translation instruction, model drawing the new shape vertex by vertex.",
+          "Error to expose: applying the translation to only some vertices. Show the misshapen result.",
+          "Key question: 'How do we check the new shape is congruent to the original?'"
+        ],
+        "wedo": [
+          "Class draws a translated shape together on a shared grid, labelling original vertices A, B, C and new vertices A', B', C'.",
+          "Peer-check: measure that each vertex has moved the same distance."
+        ],
+        "trios": {
+          "roles": [
+            "A: reads the instruction",
+            "B: moves each vertex",
+            "C: checks congruence by comparing side lengths"
+          ],
+          "task": "Three shapes with single-direction translation instructions. Rotate roles each shape.",
+          "challenge": "Predict the new position before drawing, then check."
+        },
+        "independent": {
+          "standard": "3 shapes with single-direction instructions. Draw the translated image and label vertices A/A', B/B', C/C'.",
+          "supported": "Partially completed diagrams with one vertex of the translated shape already marked. Pupils complete the remaining vertices."
+        },
+        "slideTitles": {
+          "ido": [
+            "Drawing a translation \u2014 vertex by vertex",
+            "Spot the error"
+          ],
+          "wedo": [
+            "Label original and image vertices"
+          ],
+          "trios": [
+            "Trios \u2014 translate and check congruence"
+          ],
+          "independent": [
+            "Independent \u2014 draw three translations"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Drawing translations with two-directional instructions; working backwards",
+        "ido": [
+          "Model a two-directional translation. Stress moving each vertex independently \u2014 never move the whole shape by eye.",
+          "Reverse task: given the translated image and the instruction, find the original. Model working backwards: 'If it moved 3 right, I reverse by moving 3 left.'"
+        ],
+        "wedo": [
+          "Class given translated image and instruction. Work backwards together to find and draw the original shape on whiteboards.",
+          "Discuss: what operation is the reverse of a translation?"
+        ],
+        "trios": {
+          "roles": [
+            "A: draws the translated shape",
+            "B: works backwards to find the original",
+            "C: verifies both are correct"
+          ],
+          "task": "Two-directional instructions. Two rounds \u2014 rotate roles.",
+          "challenge": "Given two shapes on a grid, determine whether one is a translation of the other. Justify."
+        },
+        "independent": {
+          "standard": "3 two-directional translation tasks. For one: draw the translation. For one: work backwards to find the original. For one: determine whether the pair is a valid translation and explain.",
+          "supported": "Two tasks only. Translation arrows pre-drawn for the first task."
+        },
+        "slideTitles": {
+          "ido": [
+            "Two-directional translations",
+            "Working backwards"
+          ],
+          "wedo": [
+            "Find the original shape"
+          ],
+          "trios": [
+            "Trios \u2014 forward and backward"
+          ],
+          "independent": [
+            "Independent \u2014 draw, reverse, identify"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Partially completed diagrams with one vertex already marked.",
+          "Translation arrows pre-drawn for guided tasks."
+        ],
+        "stretch": [
+          "Given two shapes on a grid, prove algebraically (using coordinates) whether one is a translation of the other.",
+          "Combine two translations and find the single equivalent instruction."
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "3 shapes with single-direction translation instructions. Draw the translated image and label vertices.",
+        "questions": 3
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "Mixed: draw a translation, work backwards to find an original, identify whether a pair is a valid translation.",
+        "questions": 3
+      },
+      "learningReviewStems": [
+        "To draw a translated shape I...",
+        "I know my translated shape is correct because...",
+        "Working backwards from a translation means..."
+      ],
+      "loText": {
+        "walt": "\u2026draw shapes in their new position after a translation.",
+        "tiob": "\u2026drawing translations carefully \u2014 one corner at a time \u2014 builds the accuracy we need when we start working with coordinates.",
+        "iwstb": "\u2026plotting each new corner correctly, joining them up, and labelling the original shape and the new shape."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Translating in the wrong direction \u2014 right/left or up/down confused",
+        "errorType": "wrong_direction",
+        "errorInstruction": "Move the shape 3 right and 2 up",
+        "errorNote": "The shape has moved 3 left and 2 up \u2014 the horizontal direction is wrong. Right means towards higher column numbers; left means towards lower ones.",
+        "gridSize": 7,
+        "startPoint": [
+          5,
+          2
+        ],
+        "extraPoints": [
+          [
+            2,
+            4,
+            "image"
+          ]
+        ]
+      }
+    },
+    {
+      "lesson": 5,
+      "week": "T5W2",
+      "weekIndex": 2,
+      "day": "Monday",
+      "topic": "Coordinates",
+      "li": "Pupils mark points specified as a translation from the origin.",
+      "vocabularyFocus": [
+        "origin",
+        "x-axis",
+        "y-axis",
+        "axes",
+        "point",
+        "plot",
+        "translation from the origin"
+      ],
+      "cycleNote": "First encounter with the origin \u2014 establish this carefully before introducing full coordinate notation in lesson 6.",
+      "cycle1": {
+        "focus": "Locating the origin; moving from it in one direction",
+        "ido": [
+          "Introduce the origin: the point where x-axis and y-axis meet, labelled (0,0). Draw labelled axes on the board.",
+          "Model a translation from the origin: 'Start at (0,0). Move 4 right. Mark the point.' Repeat for a point directly up.",
+          "Key question: 'What does it mean for a point to be ON the x-axis? ON the y-axis?'"
+        ],
+        "wedo": [
+          "Teacher calls out translations from the origin (one direction only). Pupils mark points on individual mini grids and label with a letter.",
+          "Reverse task: teacher marks a point on the axis; pupils describe the translation from (0,0) to reach it."
+        ],
+        "trios": {
+          "roles": [
+            "A: calls a one-directional translation",
+            "B: marks and labels the point",
+            "C: describes the translation back from (0,0) to verify"
+          ],
+          "task": "6 one-directional translations. Rotate after each pair.",
+          "challenge": "Mark four points, all on the axes, that form the corners of a rectangle. Is this possible? Explain."
+        },
+        "independent": {
+          "standard": "6 one-directional translations from the origin. Mark and label each point on a coordinate grid.",
+          "supported": "Grid with origin clearly labelled and arrows showing right/up. 4 translations, all single direction."
+        },
+        "slideTitles": {
+          "ido": [
+            "The origin \u2014 where axes meet",
+            "Moving from the origin"
+          ],
+          "wedo": [
+            "Mark points on the axes"
+          ],
+          "trios": [
+            "Trios \u2014 call, mark, verify"
+          ],
+          "independent": [
+            "Independent \u2014 six translations from origin"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Two-directional translations from the origin",
+        "ido": [
+          "Model a two-directional translation from the origin: 'Move 3 right, 4 up. Mark the point.'",
+          "Introduce a structured method: move along the x-axis first, then up. Mark with a cross.",
+          "Address misconception: a point can only be on one axis at a time unless it is the origin."
+        ],
+        "wedo": [
+          "Teacher calls out 6 two-directional translations. Pupils mark on mini grids and label.",
+          "Reverse: teacher marks 4 points; pupils write the translation from the origin for each."
+        ],
+        "trios": {
+          "roles": [
+            "A: calls a two-directional translation",
+            "B: plots the point",
+            "C: verifies by describing the translation back"
+          ],
+          "task": "8 two-directional translations. Rotate after each.",
+          "challenge": "Mark 4 points that form a square (not axis-aligned). Write the translation for each vertex from the origin."
+        },
+        "independent": {
+          "standard": "8 two-directional translations from the origin. Mark, label and connect in order \u2014 what shape do the points make? Calculate its perimeter.",
+          "supported": "5 two-directional translations. Grid with origin labelled. Step-by-step: 'Move ___ right along the bottom, then ___ up.'"
+        },
+        "slideTitles": {
+          "ido": [
+            "Two-directional translations from the origin"
+          ],
+          "wedo": [
+            "Plot and describe \u2014 your turn"
+          ],
+          "trios": [
+            "Trios \u2014 two-directional challenges"
+          ],
+          "independent": [
+            "Independent \u2014 plot, connect, identify the shape"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Grid with origin clearly labelled and directional arrows. Step-by-step method card.",
+          "Start with one-directional translations only before progressing to two-directional."
+        ],
+        "stretch": [
+          "Mark 4 points that form a square not aligned to the axes. Write each translation from the origin.",
+          "If you scale every translation by 2 (double the steps), what happens to the shape formed?"
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "6 one-directional translations from the origin. Mark and label each point.",
+        "questions": 6
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "8 two-directional translations. Mark, label and connect \u2014 identify the shape and calculate its perimeter.",
+        "questions": 8
+      },
+      "learningReviewStems": [
+        "The origin is the point where...",
+        "To plot a point from the origin I...",
+        "Today I connected translations and coordinates by..."
+      ],
+      "loText": {
+        "walt": "\u2026mark points on a coordinate grid by moving from the origin.",
+        "tiob": "\u2026the origin is the starting point for the whole coordinate system, and understanding how to move from it helps us make sense of coordinates.",
+        "iwstb": "\u2026plotting points accurately from the origin using movements in one or two directions, and labelling each point."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Counting steps from the wrong starting point \u2014 not from the origin",
+        "errorType": "wrong_start",
+        "errorInstruction": "Plot the point 3 right and 4 up from the origin",
+        "errorNote": "The point is plotted at (4,5) \u2014 the count started from (1,1) instead of the origin (0,0). Always start counting from where the axes cross.",
+        "gridSize": 7,
+        "startPoint": [
+          0,
+          0
+        ],
+        "extraPoints": [
+          [
+            4,
+            5,
+            "error"
+          ],
+          [
+            3,
+            4,
+            "correct"
+          ]
+        ]
+      }
+    },
+    {
+      "lesson": 6,
+      "week": "T5W2",
+      "weekIndex": 2,
+      "day": "Tuesday",
+      "topic": "Coordinates",
+      "li": "Pupils mark the position of points specified by coordinates in the first quadrant, and write coordinates for already-marked points.",
+      "vocabularyFocus": [
+        "coordinate",
+        "x-coordinate",
+        "y-coordinate",
+        "first quadrant",
+        "plot",
+        "axis",
+        "ordered pair"
+      ],
+      "cycleNote": "The key conceptual shift from 'translation from origin' to formal coordinate notation. Take time with the (x,y) convention.",
+      "cycle1": {
+        "focus": "Plotting coordinates and reading them from marked points",
+        "ido": [
+          "Introduce coordinate notation: (x, y). Memory aid: 'Along the corridor, then up the stairs.' Draw a first-quadrant grid (0\u20138 on each axis) with labelled axes.",
+          "Model plotting (3,5): count 3 along x-axis, then 5 up. Mark with a cross and label.",
+          "Common error: plotting (5,3) when given (3,5). Demonstrate both; pupils identify which is correct and explain why."
+        ],
+        "wedo": [
+          "Read out 6 coordinates. Pupils plot on mini-whiteboards and label with a letter. Share \u2014 resolve any disagreements by counting together.",
+          "Show a grid with 5 points already marked. Pupils write the coordinates. Peer-check."
+        ],
+        "trios": {
+          "roles": [
+            "A: reads a coordinate",
+            "B: plots and labels it",
+            "C: reads the coordinate back from the marked point to verify"
+          ],
+          "task": "12 coordinates \u2014 6 to plot, 6 to read. Rotate after each set of 3.",
+          "challenge": "Mark the vertices of a square. Give its coordinates. Verify it is a square by checking side lengths."
+        },
+        "independent": {
+          "standard": "Plot 8 given coordinates and label each. Then read 6 marked points and write their coordinates.",
+          "supported": "Grid with every grid line numbered and a worked example. 5 to plot, 3 to read."
+        },
+        "slideTitles": {
+          "ido": [
+            "Coordinate notation \u2014 (x, y)",
+            "Common error: wrong order"
+          ],
+          "wedo": [
+            "Plot and read \u2014 your turn"
+          ],
+          "trios": [
+            "Trios \u2014 read, plot, verify"
+          ],
+          "independent": [
+            "Independent \u2014 plot 8, read 6"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Spotting patterns in coordinates; coordinates on the axes",
+        "ido": [
+          "Mark several points that share an x-coordinate (e.g. (3,1), (3,4), (3,7)). Key question: 'What do you notice? What would a point at (3,0) look like?'",
+          "Repeat for shared y-coordinate. Link to the axes: points with y=0 all lie on the x-axis."
+        ],
+        "wedo": [
+          "Give a set of coordinates. Pupils sort them into groups sharing an x-coordinate, sharing a y-coordinate, or neither.",
+          "Pupils predict: 'If I plot all points where x=5, what will I see?'"
+        ],
+        "trios": {
+          "roles": [
+            "A: names a rule (e.g. x=4)",
+            "B: generates 4 coordinates that follow the rule",
+            "C: plots them and confirms they form a vertical/horizontal line"
+          ],
+          "task": "Three rounds with different rules. Rotate.",
+          "challenge": "Find all coordinates where x + y = 8. What pattern do they make? How many are in the first quadrant?"
+        },
+        "independent": {
+          "standard": "8 coordinates to plot; identify which ones share an x or y value and describe the pattern. Extension: find all first-quadrant coordinates where x + y = 6.",
+          "supported": "6 coordinates. Pre-sorted into two groups \u2014 pupils plot each group and describe what they see."
+        },
+        "slideTitles": {
+          "ido": [
+            "Patterns in coordinates"
+          ],
+          "wedo": [
+            "Sort by shared x or y value"
+          ],
+          "trios": [
+            "Trios \u2014 name a rule, generate, plot"
+          ],
+          "independent": [
+            "Independent \u2014 patterns and extension"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Grid with every grid line numbered. Worked example with 'corridor then stairs' annotated.",
+          "Reduce to 8 coordinates total \u2014 5 to plot, 3 to read."
+        ],
+        "stretch": [
+          "Find all coordinates where x + y = 7. What pattern do they make?",
+          "Investigate: what happens if x = y? Plot several examples and describe."
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "Plot 8 given coordinates and label. Read 6 marked points and write their coordinates.",
+        "questions": 14
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "Plot 8 coordinates; identify those sharing an x or y value and describe the pattern. Extension: find all first-quadrant coordinates where x + y = 6.",
+        "questions": 8
+      },
+      "learningReviewStems": [
+        "The x-coordinate tells me..., the y-coordinate tells me...",
+        "I remember the order of coordinates because...",
+        "I spotted a pattern today \u2014 when lots of points share an x-coordinate..."
+      ],
+      "loText": {
+        "walt": "\u2026mark the position of points using coordinates, and write the coordinates of points that are already marked.",
+        "tiob": "\u2026coordinates give us a precise way to describe any position on a grid, and we use them across maths and in the real world.",
+        "iwstb": "\u2026plotting given coordinates accurately and reading coordinates from marked points, always putting the x-coordinate first."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "x and y coordinates swapped \u2014 reading the y-axis value first",
+        "errorType": "axis_swap",
+        "errorInstruction": "The point is at coordinate (4, 2)",
+        "errorNote": "The point shown is at column 2, row 4 \u2014 so its coordinate is (2,4), not (4,2). Always read the x-axis (across) first, then the y-axis (up).",
+        "gridSize": 6,
+        "startPoint": [
+          2,
+          4
+        ],
+        "extraPoints": []
+      }
+    },
+    {
+      "lesson": 7,
+      "week": "T5W2",
+      "weekIndex": 2,
+      "day": "Wednesday",
+      "topic": "Coordinates",
+      "li": "Pupils draw polygons specified by coordinates in the first quadrant.",
+      "vocabularyFocus": [
+        "coordinate",
+        "vertex",
+        "vertices",
+        "polygon",
+        "quadrilateral",
+        "triangle",
+        "join",
+        "properties"
+      ],
+      "cycleNote": "Combines coordinate plotting with shape knowledge \u2014 pupils must identify the polygon type from the coordinates.",
+      "cycle1": {
+        "focus": "Plotting and joining coordinates to form triangles and quadrilaterals",
+        "ido": [
+          "Model drawing a triangle: vertices at (1,1), (5,1), (3,4). Plot each vertex, label it, join with straight lines using a ruler.",
+          "Ask: 'What type of triangle is this? How can the coordinates help us decide?' Count horizontal and vertical distances between vertices.",
+          "Common error: joining vertices in the wrong order, producing a self-intersecting shape. Show example and correct."
+        ],
+        "wedo": [
+          "Give 4 coordinates for a quadrilateral. Class plots and joins on mini-whiteboards. Identify the shape type and justify.",
+          "Give a partial shape (two vertices plotted, two coordinates given). Pupils complete and name the shape."
+        ],
+        "trios": {
+          "roles": [
+            "A: gives a secret shape name",
+            "B: chooses coordinates to match it",
+            "C: plots and confirms"
+          ],
+          "task": "Three rounds with different shape types. Rotate.",
+          "challenge": "Use coordinates to create a shape with exactly one line of symmetry. Describe how you know."
+        },
+        "independent": {
+          "standard": "Three sets of coordinates. Plot, join, name the polygon, and state one geometric property visible from the coordinates.",
+          "supported": "Two sets (triangle and rectangle). Pre-drawn grid with axes labelled. Hint: 'Plot each point, then join in order.'"
+        },
+        "slideTitles": {
+          "ido": [
+            "Plot and join \u2014 drawing polygons",
+            "Spot the error \u2014 wrong joining order"
+          ],
+          "wedo": [
+            "Complete and name the polygon"
+          ],
+          "trios": [
+            "Trios \u2014 secret shape challenge"
+          ],
+          "independent": [
+            "Independent \u2014 three sets of coordinates"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Using coordinates to reason about shape properties",
+        "ido": [
+          "Show a quadrilateral at (1,1), (5,1), (5,4), (1,4). Ask: 'How do I know this is a rectangle without measuring?' (Equal widths and heights from the coordinates.)",
+          "Show a parallelogram. Ask: 'Is this a rectangle? What would need to change about the coordinates to make it one?'"
+        ],
+        "wedo": [
+          "Give pupils three sets of coordinates and ask: 'Which of these, if any, forms a square?' Pupils must justify using coordinates, not just looking at the shape.",
+          "Can you find a fourth coordinate that could be added to a triangle to make a parallelogram? Is there more than one answer?"
+        ],
+        "trios": {
+          "roles": [
+            "A: proposes coordinates for a shape",
+            "B: plots and names it",
+            "C: uses coordinates to verify one stated property"
+          ],
+          "task": "Three rounds. Final round: trio must create coordinates for a specific shape type given to them on a card.",
+          "challenge": "Find three different sets of coordinates that all produce the same type of quadrilateral."
+        },
+        "independent": {
+          "standard": "Three tasks: identify a shape from coordinates and justify; find a missing fourth vertex to complete a named shape; create coordinates for a specific shape and prove the property using the coordinates.",
+          "supported": "Two tasks: identify a shape from its coordinates; find one missing vertex of a rectangle given three."
+        },
+        "slideTitles": {
+          "ido": [
+            "Using coordinates to reason about shape properties"
+          ],
+          "wedo": [
+            "Which of these forms a square?"
+          ],
+          "trios": [
+            "Trios \u2014 propose, plot, verify"
+          ],
+          "independent": [
+            "Independent \u2014 identify, find missing vertex, create"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Pre-drawn grid with axes labelled. Hint card: 'Plot each point first, then join in order.'",
+          "Two sets of coordinates (triangle and rectangle) only."
+        ],
+        "stretch": [
+          "Find three different sets of coordinates that all produce the same type of quadrilateral.",
+          "Calculate the area of each polygon by counting squares and part-squares."
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "Three sets of coordinates. Plot, join, name the polygon, state one geometric property.",
+        "questions": 3
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "Identify shapes from coordinates; find missing vertices; create coordinates for a specific shape and prove a property.",
+        "questions": 3
+      },
+      "learningReviewStems": [
+        "To draw a polygon from coordinates I...",
+        "I identified the shape type by...",
+        "I proved a shape property using coordinates by..."
+      ],
+      "loText": {
+        "walt": "\u2026draw polygons on a coordinate grid using a list of vertices.",
+        "tiob": "\u2026combining coordinate plotting with our knowledge of shapes lets us describe and create them with precision.",
+        "iwstb": "\u2026plotting the vertices, joining them in order, naming the shape, and identifying one of its properties using the coordinates."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Vertices joined in wrong order \u2014 shape crosses itself",
+        "errorType": "wrong_join_order",
+        "errorInstruction": "Join (1,1), (4,1), (1,4), (4,4) in order to make a square",
+        "errorNote": "Joining these points in that order creates a crossed shape, not a square. To make a square, join adjacent corners: (1,1)\u2192(4,1)\u2192(4,4)\u2192(1,4)\u2192(1,1).",
+        "gridSize": 6,
+        "startPoint": [
+          1,
+          1
+        ],
+        "extraPoints": [
+          [
+            4,
+            1,
+            "B"
+          ],
+          [
+            1,
+            4,
+            "C"
+          ],
+          [
+            4,
+            4,
+            "D"
+          ]
+        ]
+      }
+    },
+    {
+      "lesson": 8,
+      "week": "T5W2",
+      "weekIndex": 2,
+      "day": "Thursday",
+      "topic": "Coordinates",
+      "li": "Pupils translate polygons in the first quadrant.",
+      "vocabularyFocus": [
+        "translate",
+        "translation",
+        "coordinate",
+        "x-coordinate",
+        "y-coordinate",
+        "image",
+        "original",
+        "increase",
+        "decrease"
+      ],
+      "cycleNote": "Brings together coordinate plotting and translation \u2014 the key rule is: right increases x, up increases y, left decreases x, down decreases y.",
+      "cycle1": {
+        "focus": "Translating a shape by adding to or subtracting from coordinates",
+        "ido": [
+          "Show a triangle at (1,2), (3,2), (2,4). Translation: 3 right, 1 up. Model: add 3 to each x-coordinate, add 1 to each y-coordinate. New vertices: (4,3), (6,3), (5,5).",
+          "Key insight: right increases x; up increases y; left decreases x; down decreases y.",
+          "Error: a pupil adds the translation to only the x-coordinates. Show the distorted result. Correct together."
+        ],
+        "wedo": [
+          "Give a quadrilateral with 4 coordinates and a translation rule. Pupils calculate new coordinates on whiteboards, then plot both shapes. Label originals and images.",
+          "Reverse: given the original and translated shape, find the translation rule."
+        ],
+        "trios": {
+          "roles": [
+            "A: calculates new coordinates",
+            "B: plots both shapes",
+            "C: verifies by measuring that each vertex moved the same distance"
+          ],
+          "task": "Two polygons with translation rules. Rotate roles.",
+          "challenge": "Apply two translations in sequence. Find the single equivalent translation."
+        },
+        "independent": {
+          "standard": "Two polygons, each with a translation rule. Calculate new coordinates, draw original and translated shape, label A/A', B/B' etc.",
+          "supported": "One triangle. Table provided: 'Original vertex | Add to x | Add to y | New vertex.' One row completed as example."
+        },
+        "slideTitles": {
+          "ido": [
+            "Translating coordinates \u2014 the rule",
+            "Spot the error"
+          ],
+          "wedo": [
+            "Calculate, plot and label"
+          ],
+          "trios": [
+            "Trios \u2014 translate and verify"
+          ],
+          "independent": [
+            "Independent \u2014 two polygons, label original and image"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Working backwards from the image; finding translation rules",
+        "ido": [
+          "Show a shape and its translated image. Ask: 'What translation rule maps the original onto the image?' Model working out by comparing corresponding vertices.",
+          "Key question: 'Do you need to check all vertices or just one? Why?'"
+        ],
+        "wedo": [
+          "Show three shape pairs. Pupils find the translation rule for each on whiteboards. One is a deliberate non-translation (the shape has been rotated) \u2014 pupils must identify which and explain.",
+          "Class discussion: how can you prove two shapes are translations of each other?"
+        ],
+        "trios": {
+          "roles": [
+            "A: sets up an original shape and applies a secret translation rule",
+            "B: tries to find the rule from the two shapes",
+            "C: verifies"
+          ],
+          "task": "Two rounds. Rotate roles.",
+          "challenge": "Shape A is at (1,2), (3,2), (2,4). Shape B is at (4,5), (6,5), (5,7). Are these a translation? If so, what is the rule?"
+        },
+        "independent": {
+          "standard": "Three pairs of shapes. For each: find the translation rule, calculate a missing vertex in the image, draw the full translated shape.",
+          "supported": "Two pairs. Translation rule given for the first \u2014 pupils verify. Pupils find the rule for the second."
+        },
+        "slideTitles": {
+          "ido": [
+            "Working backwards \u2014 finding the rule"
+          ],
+          "wedo": [
+            "Find the translation rule"
+          ],
+          "trios": [
+            "Trios \u2014 secret rule challenge"
+          ],
+          "independent": [
+            "Independent \u2014 find rule, missing vertex, draw"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Table format: 'Original vertex | Add to x | Add to y | New vertex.' One row completed as example.",
+          "One shape only; single-direction translation."
+        ],
+        "stretch": [
+          "Investigate: does the order of two translations matter? Apply AB then BA to the same shape.",
+          "Find a translation that maps polygon A exactly onto polygon B when both are on the same grid."
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "Two polygons with translation rules. Calculate new coordinates, draw and label original and image.",
+        "questions": 2
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "Three pairs of shapes. Find the translation rule; calculate a missing vertex; draw the full translated shape.",
+        "questions": 3
+      },
+      "learningReviewStems": [
+        "To translate a polygon using coordinates I...",
+        "Right increases x because...",
+        "I can find a translation rule by..."
+      ],
+      "loText": {
+        "walt": "\u2026translate shapes in the first quadrant using coordinates.",
+        "tiob": "\u2026understanding how translations change coordinates is an important link between geometry and number.",
+        "iwstb": "\u2026calculating the new coordinates after a translation, drawing both the original and the new shape, and labelling each vertex."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Only x-coordinate updated when translating \u2014 y-coordinate unchanged",
+        "errorType": "partial_coord_update",
+        "errorInstruction": "Translate point (2,3) by 3 right and 2 up. New position: (5,3)",
+        "errorNote": "(5,3) is wrong \u2014 only the x-coordinate was updated. Both coordinates change: x increases by 3 and y increases by 2, giving (5,5).",
+        "gridSize": 7,
+        "startPoint": [
+          2,
+          3
+        ],
+        "extraPoints": [
+          [
+            5,
+            3,
+            "error"
+          ],
+          [
+            5,
+            5,
+            "correct"
+          ]
+        ]
+      }
+    },
+    {
+      "lesson": 9,
+      "week": "T5W3",
+      "weekIndex": 3,
+      "day": "Monday",
+      "topic": "Coordinates",
+      "li": "Pupils mark points specified as a translation from the origin AND draw polygons from coordinates \u2014 consolidating and connecting lessons 5\u20138.",
+      "vocabularyFocus": [
+        "coordinate",
+        "origin",
+        "translate",
+        "polygon",
+        "vertex",
+        "plot",
+        "congruent",
+        "image"
+      ],
+      "cycleNote": "Consolidation and connection lesson \u2014 bringing together the skills of the previous four lessons before moving to symmetry.",
+      "cycle1": {
+        "focus": "Fluent plotting and reading; identifying translations between shape pairs",
+        "ido": [
+          "Quick recap \u2014 teacher plots three points and reads three back, narrating the process aloud. Class confirms each. Stress accuracy with the (x,y) convention.",
+          "Show two shapes on the same grid. Ask: 'Is shape B a translation of shape A? How can we prove it?' Model checking corresponding vertices."
+        ],
+        "wedo": [
+          "Three tasks on whiteboards: plot a set of coordinates and name the polygon; find a missing vertex; identify the translation rule between two given shapes.",
+          "Pupils compare approaches \u2014 did everyone use the same method? Was one more efficient?"
+        ],
+        "trios": {
+          "roles": [
+            "A: plots a shape from a given set of coordinates",
+            "B: applies a translation rule and draws the image",
+            "C: verifies and writes the translation description"
+          ],
+          "task": "Two complete cycles. Rotate roles.",
+          "challenge": "Create a shape and translation such that the original and image together form a new, larger recognisable shape."
+        },
+        "independent": {
+          "standard": "Plot a polygon from coordinates, apply a given translation rule, label original and image, state the translation description.",
+          "supported": "Plot a triangle from coordinates. One vertex of the translated image already marked \u2014 complete the rest."
+        },
+        "slideTitles": {
+          "ido": [
+            "Connecting plotting and translations"
+          ],
+          "wedo": [
+            "Three tasks \u2014 plot, find a vertex, identify the rule"
+          ],
+          "trios": [
+            "Trios \u2014 plot, translate, describe"
+          ],
+          "independent": [
+            "Independent \u2014 full coordinate and translation task"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Problem-solving with coordinates and translations",
+        "ido": [
+          "Present a multi-step problem: 'Shape A has vertices at (2,1), (4,1), (3,3). It is translated so that vertex (2,1) moves to (5,4). What are the new coordinates of the other vertices?'",
+          "Model the process: find the translation rule first, then apply to all vertices."
+        ],
+        "wedo": [
+          "Three similar multi-step problems on whiteboards. Class works in pairs first, then shares.",
+          "Key question: 'What is the minimum information you need to fully describe a translation?'"
+        ],
+        "trios": {
+          "roles": [
+            "Problem setter (creates a coordinate and translation challenge)",
+            "Solver (works through it methodically)",
+            "Checker (verifies using the inverse)"
+          ],
+          "task": "Two rounds. Rotate roles.",
+          "challenge": "Design a coordinate challenge for another group that requires them to use both plotting and translation skills."
+        },
+        "independent": {
+          "standard": "Three multi-step problems: find a translation rule from partial information, apply it, and verify.",
+          "supported": "Two problems with structured working frames. Translation rule given for one."
+        },
+        "slideTitles": {
+          "ido": [
+            "Multi-step coordinate problems"
+          ],
+          "wedo": [
+            "Work through it together"
+          ],
+          "trios": [
+            "Trios \u2014 problem setter challenge"
+          ],
+          "independent": [
+            "Independent \u2014 three multi-step problems"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "All plotting tasks on grids with numbered grid lines. One vertex pre-plotted for translation tasks.",
+          "Structured working frames for multi-step problems."
+        ],
+        "stretch": [
+          "Design a coordinate challenge for another group requiring both plotting and translation.",
+          "Investigate: can a shape ever be its own translation (i.e. the original and image coincide)?"
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "Plot a polygon from coordinates, apply a translation, label original and image, state the description.",
+        "questions": 3
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "Three multi-step problems: find a translation rule from partial information, apply it, verify.",
+        "questions": 3
+      },
+      "learningReviewStems": [
+        "I can connect plotting coordinates and translations because...",
+        "The most efficient method I used today was...",
+        "I checked my translation was correct by..."
+      ],
+      "loText": {
+        "walt": "\u2026use coordinate plotting and translation together to solve problems.",
+        "tiob": "\u2026being able to move fluently between plotting, reading and translating prepares us for more challenging geometry problems.",
+        "iwstb": "\u2026completing a multi-step problem that uses both coordinate plotting and translation, showing clear working."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Translation rule stated in reverse \u2014 subtracting instead of adding",
+        "errorType": "inverse_rule",
+        "errorInstruction": "Shape moved from A(1,2) to B(4,5). Translation rule: subtract 3 from x and 3 from y",
+        "errorNote": "x went from 1 to 4 \u2014 that's adding 3, not subtracting. y went from 2 to 5 \u2014 also adding 3. The rule is: add 3 to x and add 3 to y.",
+        "gridSize": 7,
+        "startPoint": [
+          1,
+          2
+        ],
+        "extraPoints": [
+          [
+            4,
+            5,
+            "B"
+          ]
+        ]
+      }
+    },
+    {
+      "lesson": 10,
+      "week": "T5W3",
+      "weekIndex": 3,
+      "day": "Tuesday",
+      "topic": "Coordinates",
+      "li": "Pupils translate polygons in the first quadrant \u2014 problem-solving and reasoning with coordinates and translations.",
+      "vocabularyFocus": [
+        "translate",
+        "coordinate",
+        "rule",
+        "verify",
+        "proof",
+        "equivalent",
+        "inverse"
+      ],
+      "cycleNote": "Final coordinates lesson \u2014 focus on reasoning and justification rather than procedure. Prepares pupils for the shift to symmetry.",
+      "cycle1": {
+        "focus": "Translating with negative components (moving left or down); reasoning about constraints",
+        "ido": [
+          "Recap: a translation moving left or down decreases coordinates. Model: 'Translate 2 left, 3 down \u2014 subtract 2 from x, subtract 3 from y.'",
+          "Key constraint: a shape in the first quadrant cannot be translated so far left or down that any vertex leaves the quadrant (coordinates become negative). Show an example that goes out of bounds.",
+          "Key question: 'Given a shape at (4,3), (6,3), (5,5), what is the maximum translation left before a vertex leaves the first quadrant?'"
+        ],
+        "wedo": [
+          "Three translation tasks involving moving left or down. Pupils calculate new coordinates and check all remain non-negative.",
+          "Pupils find the 'boundary translation' \u2014 the furthest left/down they can go while keeping all vertices in the first quadrant."
+        ],
+        "trios": {
+          "roles": [
+            "A: proposes a translation (any direction)",
+            "B: applies it and checks it stays in the first quadrant",
+            "C: if it goes out of bounds, finds the maximum valid translation in that direction"
+          ],
+          "task": "Three rounds. Rotate.",
+          "challenge": "Find the translation that moves a shape as close to the origin as possible without any vertex leaving the first quadrant."
+        },
+        "independent": {
+          "standard": "Three shapes with translations (some involving left/down). Calculate new coordinates, draw the result, flag any that would leave the first quadrant and adjust.",
+          "supported": "Two shapes, translations right and up only. Sentence frame: 'This translation is valid because all coordinates are ___.''"
+        },
+        "slideTitles": {
+          "ido": [
+            "Translating left and down \u2014 constraints",
+            "Maximum valid translation"
+          ],
+          "wedo": [
+            "Calculate and check \u2014 stay in the quadrant"
+          ],
+          "trios": [
+            "Trios \u2014 propose, apply, check bounds"
+          ],
+          "independent": [
+            "Independent \u2014 left and down translations"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Reasoning: composite translations, inverse translations, equivalence",
+        "ido": [
+          "Model two successive translations on the same shape. Ask: 'What single translation is equivalent to these two combined?'",
+          "Show that translation A then translation B gives the same result as translation B then translation A. Ask: 'Does order matter for translations? Will this always be true?'"
+        ],
+        "wedo": [
+          "Pairs work out the combined effect of given translation pairs. Share results \u2014 do all pairs agree?",
+          "Key question: 'What is the inverse of a translation? How do you find it?'"
+        ],
+        "trios": {
+          "roles": [
+            "A: applies two successive translations to a shape",
+            "B: finds the single equivalent translation",
+            "C: applies the equivalent translation to the original and confirms the shapes match"
+          ],
+          "task": "Two rounds. Rotate.",
+          "challenge": "Apply three successive translations. Find the single equivalent. What would happen with four, five, n translations?"
+        },
+        "independent": {
+          "standard": "Three tasks: find the combined effect of two translations; find the inverse of a given translation; determine whether two composite translations are equivalent.",
+          "supported": "Two tasks. Combined translation: given \u2014 pupils verify by applying both steps separately."
+        },
+        "slideTitles": {
+          "ido": [
+            "Composite and inverse translations"
+          ],
+          "wedo": [
+            "Find the combined effect"
+          ],
+          "trios": [
+            "Trios \u2014 apply two, find the equivalent"
+          ],
+          "independent": [
+            "Independent \u2014 combined, inverse, equivalence"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Translations right and up only for Cycle 1. Sentence frames for justification.",
+          "Structured working frames for composite translations in Cycle 2."
+        ],
+        "stretch": [
+          "Apply three successive translations and find the single equivalent. Generalise for n translations.",
+          "Investigate: is it possible to return a shape to its original position using only two translations? What must be true about them?"
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "Three shapes with translations involving left/down. Calculate new coordinates; flag any going out of bounds.",
+        "questions": 3
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Position and Direction",
+        "task": "Composite and inverse translations. Find combined effects; find inverses; determine equivalence.",
+        "questions": 3
+      },
+      "learningReviewStems": [
+        "A translation moving left or down...",
+        "I checked a shape stayed in the first quadrant by...",
+        "Two translations combined are equivalent to..."
+      ],
+      "loText": {
+        "walt": "\u2026reason about translations, including movements left and down, and find combined and reverse translations.",
+        "tiob": "\u2026thinking carefully about what translations do to coordinates, and how they combine, develops our mathematical reasoning.",
+        "iwstb": "\u2026finding the combined effect of two translations, finding a reverse translation, and explaining why a shape can or cannot reach a given position."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Composite translation calculated additively but applied as separate moves",
+        "errorType": "composite_error",
+        "errorInstruction": "Move 3 right then 2 left. Combined move: 5 right",
+        "errorNote": "Moving 3 right then 2 left cancels some movement. The net effect is 3 \u2212 2 = 1 right, not 5 right. Combine translations by adding signed values: +3 and \u22122 gives +1.",
+        "gridSize": 7,
+        "startPoint": [
+          2,
+          3
+        ],
+        "extraPoints": [
+          [
+            7,
+            3,
+            "error"
+          ],
+          [
+            3,
+            3,
+            "correct"
+          ]
+        ]
+      }
+    },
+    {
+      "lesson": 11,
+      "week": "T5W3",
+      "weekIndex": 3,
+      "day": "Wednesday",
+      "topic": "Symmetry",
+      "li": "Pupils complete a symmetrical pattern and compose symmetrical shapes from two congruent shapes.",
+      "vocabularyFocus": [
+        "line of symmetry",
+        "mirror line",
+        "reflect",
+        "corresponding",
+        "equidistant",
+        "congruent",
+        "compose"
+      ],
+      "cycleNote": "Opening symmetry lesson \u2014 Cycle 1 establishes the core concept of a line of symmetry through pattern completion. Cycle 2 extends this to composing shapes.",
+      "cycle1": {
+        "focus": "Completing symmetrical patterns on a grid",
+        "ido": [
+          "Draw a vertical line of symmetry on a grid. Colour a pattern of 5 squares on the left side. Model completing the right side: count the distance from each coloured square to the mirror line, mark the same distance on the other side.",
+          "Key language: line of symmetry, mirror line, reflect, corresponding, equidistant.",
+          "Error example: a 'completed' pattern where one square is one step too far from the line. Pupils spot and correct it."
+        ],
+        "wedo": [
+          "Display a half-pattern with a vertical line of symmetry. Pupils complete the other half on mini-whiteboards. Place a mirror along the line to check.",
+          "Repeat with a horizontal line of symmetry \u2014 same process, different orientation."
+        ],
+        "trios": {
+          "roles": [
+            "A: creates a half-pattern (up to 8 squares)",
+            "B: completes the symmetrical half",
+            "C: checks with a mirror"
+          ],
+          "task": "Three rounds \u2014 mix of vertical and horizontal lines of symmetry. Rotate.",
+          "challenge": "Create a half-pattern that produces a recognisable letter when reflected."
+        },
+        "independent": {
+          "standard": "Four grids, each showing a half-pattern and a line of symmetry (mix of vertical and horizontal). Complete each pattern.",
+          "supported": "Three grids. Line of symmetry drawn in red. Patterns of no more than 4 squares on one side. Mirror provided."
+        },
+        "slideTitles": {
+          "ido": [
+            "Completing symmetrical patterns",
+            "Spot the error \u2014 wrong distance"
+          ],
+          "wedo": [
+            "Complete the half-pattern"
+          ],
+          "trios": [
+            "Trios \u2014 create, complete, check with mirror"
+          ],
+          "independent": [
+            "Independent \u2014 four half-patterns"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Composing symmetrical shapes from two congruent shapes",
+        "ido": [
+          "Show two congruent right-angled triangles (card cut-outs). Place them together along the hypotenuse \u2014 make a rectangle. Draw it and mark the line of symmetry.",
+          "Now join along a shorter edge. What shape? Is it symmetrical? Model checking by folding.",
+          "Vocabulary: congruent (same shape and size). Ask: 'Is the join line always a line of symmetry?'"
+        ],
+        "wedo": [
+          "Pairs receive two congruent triangles. In how many ways can you join them? Draw each result and mark lines of symmetry (if any). Share findings.",
+          "Repeat with two congruent rectangles. How many distinct symmetrical compositions are possible?"
+        ],
+        "trios": {
+          "roles": [
+            "A: arranges the two shapes",
+            "B: draws the composite shape",
+            "C: identifies and marks lines of symmetry"
+          ],
+          "task": "Three different congruent shape pairs. Rotate.",
+          "challenge": "Using two congruent L-shaped hexominoes, find a symmetrical composition."
+        },
+        "independent": {
+          "standard": "Four pairs of congruent shapes. Draw one symmetrical composition for each and mark the line(s) of symmetry. Explain in one sentence why it is symmetrical.",
+          "supported": "Two pairs. Physical cut-outs available. Sentence starter: 'The shape is symmetrical because...'"
+        },
+        "slideTitles": {
+          "ido": [
+            "Composing symmetrical shapes from congruent pieces"
+          ],
+          "wedo": [
+            "How many ways can you join them?"
+          ],
+          "trios": [
+            "Trios \u2014 arrange, draw, identify lines of symmetry"
+          ],
+          "independent": [
+            "Independent \u2014 four congruent shape pairs"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Mirror and red line of symmetry for pattern completion. Cut-outs for composing task.",
+          "Reduce to patterns of 4 squares; two pairs of shapes only."
+        ],
+        "stretch": [
+          "Create a pattern with both vertical AND horizontal lines of symmetry.",
+          "Can two congruent shapes always be joined to make a symmetrical shape? Investigate and explain."
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Properties of Shapes",
+        "task": "Four half-patterns to complete (mix of vertical and horizontal lines of symmetry).",
+        "questions": 4
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Properties of Shapes",
+        "task": "Four pairs of congruent shapes. Draw one symmetrical composition for each and explain why it is symmetrical.",
+        "questions": 4
+      },
+      "learningReviewStems": [
+        "A line of symmetry is...",
+        "To complete a symmetrical pattern I...",
+        "When I joined two congruent shapes I found..."
+      ],
+      "loText": {
+        "walt": "\u2026complete symmetrical patterns and make symmetrical shapes by joining two matching pieces.",
+        "tiob": "\u2026understanding symmetry helps us describe and create shapes precisely, and we can see it all around us in the real world.",
+        "iwstb": "\u2026completing a half-pattern accurately across a mirror line, and drawing a symmetrical shape from two identical pieces."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Reflected point placed at wrong distance from mirror line",
+        "errorType": "wrong_reflection_distance",
+        "errorInstruction": "Reflect point A across the vertical mirror line",
+        "errorNote": "A is 2 squares from the mirror line, so its reflection must also be 2 squares on the other side \u2014 not 3. Count carefully from the line, not from the edge.",
+        "gridSize": 8,
+        "startPoint": [
+          2,
+          4
+        ],
+        "extraPoints": [
+          [
+            6,
+            4,
+            "error"
+          ],
+          [
+            8,
+            4,
+            "correct"
+          ],
+          [
+            4,
+            0,
+            "mirror_v"
+          ]
+        ]
+      }
+    },
+    {
+      "lesson": 12,
+      "week": "T5W3",
+      "weekIndex": 3,
+      "day": "Thursday",
+      "topic": "Symmetry",
+      "li": "Pupils investigate lines of symmetry in 2D shapes by folding paper shape cut-outs, and find lines of symmetry using a mirror.",
+      "vocabularyFocus": [
+        "line of symmetry",
+        "fold",
+        "match",
+        "diagonal",
+        "regular polygon",
+        "irregular",
+        "vertical",
+        "horizontal"
+      ],
+      "cycleNote": "Investigation lesson \u2014 pupils generate their own findings systematically. Cycle 2 extends to diagonal lines of symmetry, which pupils often miss.",
+      "cycle1": {
+        "focus": "Finding lines of symmetry by folding \u2014 systematic investigation",
+        "ido": [
+          "Hold up a square cut-out. Fold it in half four different ways \u2014 record which folds produce exact matches. The square has 4 lines of symmetry.",
+          "Repeat with an equilateral triangle (3 lines), regular pentagon (5 lines), scalene triangle (0 lines). Build a table: shape \u2192 number of lines.",
+          "Ask: 'What pattern do you notice about regular polygons?' (Number of lines = number of sides.)"
+        ],
+        "wedo": [
+          "Pairs receive cut-outs: rectangle, isosceles triangle, regular hexagon, kite, parallelogram. Fold and record on a shared table. Class compiles results.",
+          "Key question: 'Why does a rectangle have only 2 lines, not 4? Why does a parallelogram have 0?'"
+        ],
+        "trios": {
+          "roles": [
+            "A: folds the cut-out",
+            "B: marks the fold line on a drawing",
+            "C: records the total and reports to the class"
+          ],
+          "task": "Five shapes, one per round. Rotate shapes between groups.",
+          "challenge": "Find a shape with exactly 1 line of symmetry and explain why it has exactly one."
+        },
+        "independent": {
+          "standard": "A table of 8 shapes. Draw all lines of symmetry on each and record the total. Shapes: square, rectangle, equilateral triangle, isosceles triangle, scalene triangle, regular hexagon, kite, parallelogram.",
+          "supported": "Five shapes. Dotted fold-line guides on half of them. Partially completed table."
+        },
+        "slideTitles": {
+          "ido": [
+            "Finding lines of symmetry by folding",
+            "Regular polygons \u2014 the pattern"
+          ],
+          "wedo": [
+            "Fold, mark, record \u2014 five shapes"
+          ],
+          "trios": [
+            "Trios \u2014 systematic investigation"
+          ],
+          "independent": [
+            "Independent \u2014 table of eight shapes"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Finding diagonal lines of symmetry using a mirror",
+        "ido": [
+          "Explain that lines of symmetry can be diagonal, not just horizontal or vertical. Draw a square. Use a mirror to demonstrate all four lines \u2014 including the two diagonals.",
+          "Show a rhombus \u2014 it has 2 lines of symmetry, both diagonal. Show a rectangle \u2014 it has 2 lines of symmetry, neither diagonal.",
+          "Error: a pupil claims a parallelogram has diagonal lines of symmetry. Demonstrate with a mirror that it does not \u2014 the halves do not match."
+        ],
+        "wedo": [
+          "Give pairs a set of shape cards and mirrors. They test each shape \u2014 horizontal, vertical, both diagonals \u2014 and record.",
+          "Class discussion: which types of shapes tend to have diagonal lines of symmetry? (Squares, rhombuses, regular polygons.)"
+        ],
+        "trios": {
+          "roles": [
+            "A: places the mirror on the shape",
+            "B: marks the line if confirmed as a line of symmetry",
+            "C: verifies by examining the reflected image"
+          ],
+          "task": "Six shapes. Rotate after each.",
+          "challenge": "Design a shape that has exactly one diagonal line of symmetry and no horizontal or vertical ones."
+        },
+        "independent": {
+          "standard": "Six shapes. Use a ruler to draw all lines of symmetry on each (including diagonals). Record the total. Include shapes where diagonals are/are not lines of symmetry.",
+          "supported": "Three shapes. Large printed shapes. Horizontal and vertical already marked \u2014 focus on testing diagonals only."
+        },
+        "slideTitles": {
+          "ido": [
+            "Diagonal lines of symmetry \u2014 using a mirror",
+            "Common error \u2014 the parallelogram"
+          ],
+          "wedo": [
+            "Test horizontal, vertical and diagonal"
+          ],
+          "trios": [
+            "Trios \u2014 six shapes with mirrors"
+          ],
+          "independent": [
+            "Independent \u2014 six shapes including diagonals"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Cut-outs and mirrors for both cycles. Partially completed tables for Cycle 1.",
+          "Large printed shapes with horizontal and vertical pre-marked for Cycle 2."
+        ],
+        "stretch": [
+          "Investigate: can a shape have more diagonal lines of symmetry than horizontal/vertical ones?",
+          "Is it possible for a shape to have an infinite number of lines of symmetry? What shape?"
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Properties of Shapes",
+        "task": "Table of 8 shapes. Draw all lines of symmetry and record the total for each.",
+        "questions": 8
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Properties of Shapes",
+        "task": "Six shapes. Draw all lines of symmetry including diagonals. Record totals and justify any you are unsure about.",
+        "questions": 6
+      },
+      "learningReviewStems": [
+        "A regular polygon with n sides has... lines of symmetry because...",
+        "I was surprised that... because I expected...",
+        "A diagonal line of symmetry means..."
+      ],
+      "loText": {
+        "walt": "\u2026find all the lines of symmetry in 2D shapes, including diagonal ones.",
+        "tiob": "\u2026finding lines of symmetry carefully and systematically, including diagonal ones, deepens our understanding of how shapes are made.",
+        "iwstb": "\u2026drawing all the lines of symmetry on a set of shapes, including any diagonal lines, and recording the correct total for each shape."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Parallelogram claimed to have a line of symmetry along its diagonal",
+        "errorType": "false_symmetry",
+        "errorInstruction": "This parallelogram has a line of symmetry along the diagonal",
+        "errorNote": "A parallelogram has no lines of symmetry. Folding along the diagonal does not produce two matching halves \u2014 the angles and side lengths don't align. Only rectangles and rhombuses (special cases) have diagonals as lines of symmetry.",
+        "gridSize": 7,
+        "startPoint": [
+          1,
+          2
+        ],
+        "extraPoints": [
+          [
+            3,
+            2,
+            "B"
+          ],
+          [
+            4,
+            5,
+            "C"
+          ],
+          [
+            2,
+            5,
+            "D"
+          ]
+        ]
+      }
+    },
+    {
+      "lesson": 13,
+      "week": "T5W4",
+      "weekIndex": 4,
+      "day": "Monday",
+      "topic": "Symmetry",
+      "li": "Pupils reflect polygons in a line of symmetry.",
+      "vocabularyFocus": [
+        "reflect",
+        "reflection",
+        "mirror line",
+        "line of symmetry",
+        "congruent",
+        "equidistant",
+        "perpendicular"
+      ],
+      "cycleNote": "The shift from identifying to constructing reflections. Cycle 1 uses lines along grid lines (vertical and horizontal). Cycle 2 introduces the diagonal.",
+      "cycle1": {
+        "focus": "Reflecting polygons in vertical and horizontal mirror lines",
+        "ido": [
+          "Draw a triangle on a grid with a vertical mirror line to its right. Model reflecting each vertex: count the perpendicular distance from each vertex to the mirror line, mark the same distance on the other side. Join the new vertices.",
+          "Emphasise: the reflected shape is congruent \u2014 same size, same shape, flipped. The distance from each point to the mirror line is preserved.",
+          "Error: a pupil flips the shape but also moves it away from the mirror line. Show and correct."
+        ],
+        "wedo": [
+          "Display a quadrilateral with a horizontal mirror line. Pupils reflect it on mini-whiteboards. Check: does each vertex sit the same number of squares from the line on both sides?",
+          "Second example \u2014 vertical mirror line, more complex polygon. Pupils check peers' work."
+        ],
+        "trios": {
+          "roles": [
+            "A: draws the reflected shape",
+            "B: measures that each vertex is equidistant from the line",
+            "C: labels original vertices A, B, C and reflected vertices A', B', C'"
+          ],
+          "task": "Three polygons with different mirror line positions (all vertical or horizontal). Rotate.",
+          "challenge": "Predict where the reflected shape will be before drawing \u2014 check after."
+        },
+        "independent": {
+          "standard": "Three polygons, each with a mirror line (two vertical, one horizontal). Reflect accurately and label the reflected vertices.",
+          "supported": "Two triangles. Mirror line marked in red. Counting frame: 'Vertex A is ___ squares from the line, so A' is ___ squares on the other side.'"
+        },
+        "slideTitles": {
+          "ido": [
+            "Reflecting in vertical and horizontal mirror lines",
+            "Spot the error \u2014 shape moved away from line"
+          ],
+          "wedo": [
+            "Reflect the quadrilateral"
+          ],
+          "trios": [
+            "Trios \u2014 three polygons, three mirror lines"
+          ],
+          "independent": [
+            "Independent \u2014 three reflections, label vertices"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Reflecting polygons in a diagonal mirror line (45\u00b0)",
+        "ido": [
+          "Draw a right-angled triangle with vertices at grid intersections. Mirror line is the 45\u00b0 diagonal (y = x line). Model reflecting: swap x and y coordinates of each vertex.",
+          "Key insight for a 45\u00b0 line: if vertex is at (a,b), the reflection is at (b,a). Demonstrate with an example.",
+          "Compare with horizontal/vertical reflections \u2014 the method differs. Ask pupils to articulate why."
+        ],
+        "wedo": [
+          "Class reflects two shapes in a 45\u00b0 mirror line on whiteboards. Swap coordinates to find reflected vertices, then plot.",
+          "Key question: 'How is this different from reflecting in a vertical line? What stays the same?'"
+        ],
+        "trios": {
+          "roles": [
+            "A: identifies the coordinates of each vertex",
+            "B: applies the reflection rule",
+            "C: plots the reflected shape and checks"
+          ],
+          "task": "Two shapes reflected in a diagonal mirror line. Rotate.",
+          "challenge": "Reflect a shape in the diagonal and then reflect the image in a vertical line. Describe the combined transformation."
+        },
+        "independent": {
+          "standard": "Two shapes reflected in a 45\u00b0 diagonal mirror line. Calculate reflected coordinates, draw the image, label vertices.",
+          "supported": "One triangle. Diagonal mirror line pre-drawn. One vertex already reflected as an example."
+        },
+        "slideTitles": {
+          "ido": [
+            "Reflecting in a diagonal mirror line",
+            "The coordinate swap rule"
+          ],
+          "wedo": [
+            "Swap coordinates \u2014 reflect on the diagonal"
+          ],
+          "trios": [
+            "Trios \u2014 identify, apply, plot"
+          ],
+          "independent": [
+            "Independent \u2014 two diagonal reflections"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Mirror line marked in red for all tasks. Counting frame for Cycle 1. One vertex pre-reflected for Cycle 2.",
+          "Vertical and horizontal mirror lines only in Cycle 1 (omit Cycle 2 if not ready)."
+        ],
+        "stretch": [
+          "Explore what happens when you reflect a shape in two perpendicular mirror lines.",
+          "Reflect a shape in the diagonal then in a vertical \u2014 describe the combined effect."
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Properties of Shapes",
+        "task": "Three polygons reflected in vertical and horizontal mirror lines. Draw and label the reflected vertices.",
+        "questions": 3
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Properties of Shapes",
+        "task": "Two shapes reflected in a 45\u00b0 diagonal mirror line. Calculate reflected coordinates, draw and label.",
+        "questions": 2
+      },
+      "learningReviewStems": [
+        "To reflect a polygon accurately I...",
+        "I know a reflected vertex is in the right place because...",
+        "Reflecting in a diagonal line is different because..."
+      ],
+      "loText": {
+        "walt": "\u2026reflect shapes across a mirror line.",
+        "tiob": "\u2026reflection is a precise transformation \u2014 every point must end up the same distance from the mirror line on the other side.",
+        "iwstb": "\u2026drawing the reflected shape accurately, labelling matching vertices, and checking that each point is the same distance from the mirror line on both sides."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Reflection moves the shape parallel to the mirror line instead of perpendicular",
+        "errorType": "wrong_reflection_direction",
+        "errorInstruction": "Reflect triangle across the vertical mirror line at x=4",
+        "errorNote": "The triangle has been moved sideways (parallel to the mirror line) rather than flipped through it. Reflection is always perpendicular to the mirror line \u2014 each point moves straight across, not along.",
+        "gridSize": 8,
+        "startPoint": [
+          2,
+          2
+        ],
+        "extraPoints": [
+          [
+            2,
+            5,
+            "B"
+          ],
+          [
+            3,
+            2,
+            "C"
+          ],
+          [
+            6,
+            2,
+            "error_A"
+          ]
+        ]
+      }
+    },
+    {
+      "lesson": 14,
+      "week": "T5W4",
+      "weekIndex": 4,
+      "day": "Tuesday",
+      "topic": "Symmetry",
+      "li": "Pupils reflect polygons that are dissected by a line of symmetry.",
+      "vocabularyFocus": [
+        "dissect",
+        "straddle",
+        "mirror line",
+        "fixed point",
+        "composite",
+        "on the line",
+        "off the line"
+      ],
+      "cycleNote": "The most conceptually demanding symmetry lesson \u2014 the mirror line passes through the shape itself. Take time with the key distinction: vertices on the line stay fixed.",
+      "cycle1": {
+        "focus": "Shapes where the mirror line passes through one vertex",
+        "ido": [
+          "Draw a triangle with one vertex on a vertical mirror line and two vertices on the left side. Ask: 'Which vertex stays fixed? Why?'",
+          "Model: the vertex on the line stays fixed. Reflect the two off-line vertices. Join to produce the reflected image.",
+          "Show the result: the original and image share the on-line vertex. Together they form a larger symmetrical shape."
+        ],
+        "wedo": [
+          "Class given two triangles where the mirror line passes through one vertex. Identify the fixed vertex, reflect the others, draw the composite shape on whiteboards.",
+          "Key question: 'Is the composite shape always symmetrical? Check with a mirror.'"
+        ],
+        "trios": {
+          "roles": [
+            "A: identifies which vertices are on/off the line",
+            "B: applies the reflection",
+            "C: checks the composite shape has the mirror line as a line of symmetry"
+          ],
+          "task": "Three shapes, each with the mirror line passing through one vertex. Rotate.",
+          "challenge": "Design a straddling shape where the composite result is a regular polygon."
+        },
+        "independent": {
+          "standard": "Three triangles with the mirror line through one vertex. Reflect to produce the complete composite shape. Label all vertices.",
+          "supported": "Two shapes. Mirror line marked in red. Vertex on the line pre-marked with a dot."
+        },
+        "slideTitles": {
+          "ido": [
+            "Shapes where the mirror line passes through a vertex"
+          ],
+          "wedo": [
+            "Identify fixed vertex \u2014 reflect the others"
+          ],
+          "trios": [
+            "Trios \u2014 three straddling shapes"
+          ],
+          "independent": [
+            "Independent \u2014 three triangles, one vertex on the line"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Shapes where the mirror line passes through an edge or multiple vertices",
+        "ido": [
+          "Draw a quadrilateral that straddles a vertical mirror line \u2014 two vertices on each side, none on the line itself.",
+          "Model: reflect all four vertices. The result is an 8-sided composite shape.",
+          "Show a case where one entire edge lies on the mirror line. Ask: 'What happens to that edge in the reflection?' (It stays in place \u2014 it is shared by both halves.)"
+        ],
+        "wedo": [
+          "Two shapes straddling a horizontal mirror line \u2014 one with no vertices on the line, one with an edge on the line. Pupils draw the full composite on whiteboards.",
+          "Discussion: how does the area of the composite relate to the area of the original?"
+        ],
+        "trios": {
+          "roles": [
+            "A: identifies vertices on/off the line and any edges on the line",
+            "B: applies the reflection",
+            "C: verifies the composite is symmetrical"
+          ],
+          "task": "Two complex straddling shapes. Rotate.",
+          "challenge": "If the original shape has area 12 square units and straddles the mirror line, is the composite always 24 square units? Investigate."
+        },
+        "independent": {
+          "standard": "Three straddling polygons (mix of vertices on the line, edges on the line, neither). Reflect to produce the complete composite shape. Label all vertices.",
+          "supported": "Two shapes: one with a vertex on the line, one with no vertices on the line. Worked example at the top of the LP for the second type."
+        },
+        "slideTitles": {
+          "ido": [
+            "Mirror line through an edge or multiple vertices"
+          ],
+          "wedo": [
+            "Draw the full composite shape"
+          ],
+          "trios": [
+            "Trios \u2014 complex straddling shapes"
+          ],
+          "independent": [
+            "Independent \u2014 three straddling polygons, mixed types"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Vertical mirror lines only. Mirror line marked in red. Vertex on the line pre-identified with a dot.",
+          "Worked example at top of LP for the more complex type."
+        ],
+        "stretch": [
+          "Reflect a shape that straddles a diagonal mirror line.",
+          "What types of polygon produce a composite shape that is itself a regular polygon?"
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Properties of Shapes",
+        "task": "Three triangles with mirror line through one vertex. Reflect and draw the composite shape.",
+        "questions": 3
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Properties of Shapes",
+        "task": "Three straddling polygons (mixed types). Reflect to produce the composite symmetrical shape.",
+        "questions": 3
+      },
+      "learningReviewStems": [
+        "When the mirror line passes through a vertex...",
+        "I found the fixed point by...",
+        "The composite shape was symmetrical because..."
+      ],
+      "loText": {
+        "walt": "\u2026reflect shapes where the mirror line passes through the shape itself.",
+        "tiob": "\u2026when the mirror line goes through a shape, we need to think carefully about which points move and which stay in place.",
+        "iwstb": "\u2026identifying which vertices are on the mirror line and which are not, completing the reflection, and drawing the full symmetrical shape."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Vertex on the mirror line incorrectly moved during reflection",
+        "errorType": "moved_fixed_point",
+        "errorInstruction": "Reflect the triangle \u2014 vertex C sits on the mirror line",
+        "errorNote": "Vertex C is on the mirror line, so it stays exactly where it is \u2014 it doesn't move. Only points away from the line get reflected. A fixed point is its own reflection.",
+        "gridSize": 8,
+        "startPoint": [
+          2,
+          2
+        ],
+        "extraPoints": [
+          [
+            2,
+            5,
+            "B"
+          ],
+          [
+            4,
+            3,
+            "C_on_line"
+          ],
+          [
+            6,
+            4,
+            "error_C"
+          ]
+        ]
+      }
+    },
+    {
+      "lesson": 15,
+      "week": "T5W4",
+      "weekIndex": 4,
+      "day": "Wednesday",
+      "topic": "Symmetry",
+      "li": "Pupils find lines of symmetry in 2D shapes and reflect polygons \u2014 consolidation and problem-solving.",
+      "vocabularyFocus": [
+        "line of symmetry",
+        "reflect",
+        "reflection",
+        "congruent",
+        "composite",
+        "justify",
+        "prove"
+      ],
+      "cycleNote": "Consolidation lesson \u2014 mix of identification and construction. Focus on justification and reasoning rather than procedure.",
+      "cycle1": {
+        "focus": "Identifying lines of symmetry and justifying",
+        "ido": [
+          "Display five shapes and ask pupils to predict the number of lines of symmetry before checking. Reveal answers \u2014 focus on any surprises.",
+          "Key question: 'How can we prove a line IS a line of symmetry without folding or using a mirror?'"
+        ],
+        "wedo": [
+          "Pairs given four shapes. For each: write the number of lines of symmetry, draw them, and write one sentence justifying why each is a genuine line of symmetry.",
+          "Share \u2014 class compares justifications. Which are precise? Which are vague?"
+        ],
+        "trios": {
+          "roles": [
+            "A: draws a shape (regular or irregular)",
+            "B: finds and marks all lines of symmetry",
+            "C: challenges or confirms each line with a justification"
+          ],
+          "task": "Three rounds. A must draw at least one regular and one irregular shape across the rounds.",
+          "challenge": "Draw a shape with exactly 3 lines of symmetry that is NOT a regular triangle."
+        },
+        "independent": {
+          "standard": "Six shapes. Draw all lines of symmetry and write one sentence justifying each. Include at least one shape with no lines of symmetry \u2014 explain why.",
+          "supported": "Four shapes. Lines of symmetry to identify and draw. Sentence starter provided."
+        },
+        "slideTitles": {
+          "ido": [
+            "Identifying and justifying lines of symmetry"
+          ],
+          "wedo": [
+            "Draw, count, justify"
+          ],
+          "trios": [
+            "Trios \u2014 draw, find, challenge"
+          ],
+          "independent": [
+            "Independent \u2014 six shapes with justifications"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Mixed reflection problems \u2014 standard and straddling",
+        "ido": [
+          "Rapid model: reflect a standard polygon (no straddling), then a straddling polygon. Narrate the decision at each step \u2014 'Is this vertex on the line? Off the line?'",
+          "Present a reflection with a deliberate error (wrong distance from mirror line). Pupils identify and correct."
+        ],
+        "wedo": [
+          "Four mixed reflection tasks on whiteboards (standard and straddling). Pupils complete and label. Peer-check.",
+          "Discussion: 'What is your method for checking a reflection is correct? How do you know you haven't made an error?'"
+        ],
+        "trios": {
+          "roles": [
+            "A: sets a reflection task (standard or straddling)",
+            "B: completes the reflection",
+            "C: checks and either approves or corrects with explanation"
+          ],
+          "task": "Three rounds. A must include at least one straddling task.",
+          "challenge": "Complete a reflection where the mirror line is diagonal and the shape straddles it."
+        },
+        "independent": {
+          "standard": "Four mixed reflection tasks (two standard, two straddling). For one task: identify and correct a given erroneous reflection.",
+          "supported": "Three tasks \u2014 two standard reflections, one straddling with one vertex on the line. Mirror line marked in red."
+        },
+        "slideTitles": {
+          "ido": [
+            "Mixed reflections \u2014 standard and straddling",
+            "Spot and correct the error"
+          ],
+          "wedo": [
+            "Four mixed reflection tasks"
+          ],
+          "trios": [
+            "Trios \u2014 set, complete, check"
+          ],
+          "independent": [
+            "Independent \u2014 four mixed tasks, one error to correct"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Sentence starters for justification. Mirror available. Red mirror lines.",
+          "Straddling reflections: vertical lines only, one vertex on the line."
+        ],
+        "stretch": [
+          "Draw a shape with exactly 3 lines of symmetry that is not a regular triangle.",
+          "Complete a reflection where the mirror line is diagonal and the shape straddles it."
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Properties of Shapes",
+        "task": "Six shapes. Draw all lines of symmetry and write one justifying sentence for each.",
+        "questions": 6
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Properties of Shapes",
+        "task": "Four mixed reflection tasks (standard and straddling). Identify and correct one erroneous reflection.",
+        "questions": 4
+      },
+      "learningReviewStems": [
+        "I proved a line was a line of symmetry by...",
+        "The difference between a standard reflection and a straddling reflection is...",
+        "My checking method for reflections is..."
+      ],
+      "loText": {
+        "walt": "\u2026identify lines of symmetry and explain how we know, and complete a range of reflections.",
+        "tiob": "\u2026being able to explain why a line is a line of symmetry, not just spot it, shows that we really understand what symmetry means.",
+        "iwstb": "\u2026drawing all lines of symmetry with a written explanation for each, and completing both straightforward and more challenging reflections accurately."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Claiming a shape has more lines of symmetry than it actually has",
+        "errorType": "over_counted_symmetry",
+        "errorInstruction": "A rectangle has 4 lines of symmetry \u2014 through corners and midpoints",
+        "errorNote": "A rectangle only has 2 lines of symmetry \u2014 through the midpoints of opposite sides. The diagonal lines do NOT produce matching halves because the two sides have different lengths.",
+        "gridSize": 7,
+        "startPoint": [
+          1,
+          2
+        ],
+        "extraPoints": [
+          [
+            5,
+            2,
+            "B"
+          ],
+          [
+            5,
+            5,
+            "C"
+          ],
+          [
+            1,
+            5,
+            "D"
+          ]
+        ]
+      }
+    },
+    {
+      "lesson": 16,
+      "week": "T5W4",
+      "weekIndex": 4,
+      "day": "Thursday",
+      "topic": "Symmetry",
+      "li": "Pupils apply all symmetry knowledge \u2014 reasoning about symmetry, reflections and composition.",
+      "vocabularyFocus": [
+        "symmetry",
+        "line of symmetry",
+        "reflection",
+        "congruent",
+        "composite",
+        "generalise",
+        "reason"
+      ],
+      "cycleNote": "Final symmetry lesson \u2014 reasoning and generalisation. Pupils should be explaining their thinking, not just completing tasks.",
+      "cycle1": {
+        "focus": "Generalising about lines of symmetry in polygon families",
+        "ido": [
+          "Display a table showing regular polygons from triangle to octagon with their number of lines of symmetry. Ask: 'What is the pattern? Can you predict for a regular 12-sided polygon?'",
+          "Ask: 'What about irregular versions of the same polygons \u2014 why do most have fewer lines of symmetry?'"
+        ],
+        "wedo": [
+          "Class generalises: 'A regular n-sided polygon has ___ lines of symmetry.' Test the generalisation for a circle.",
+          "Discussion: Is a circle a regular polygon? What does regular mean?"
+        ],
+        "trios": {
+          "roles": [
+            "A: proposes a generalisation about symmetry",
+            "B: tests it with two examples",
+            "C: tries to find a counter-example"
+          ],
+          "task": "Three generalisations. Rotate.",
+          "challenge": "Write a generalisation about irregular quadrilaterals and lines of symmetry. Test it."
+        },
+        "independent": {
+          "standard": "Five reasoning questions about lines of symmetry in different shape families. Write a generalisation, test it, identify exceptions.",
+          "supported": "Three reasoning questions with sentence starters and partially completed examples."
+        },
+        "slideTitles": {
+          "ido": [
+            "Generalising lines of symmetry in polygon families"
+          ],
+          "wedo": [
+            "Test the generalisation \u2014 does it hold?"
+          ],
+          "trios": [
+            "Trios \u2014 propose, test, find a counter-example"
+          ],
+          "independent": [
+            "Independent \u2014 five reasoning questions"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Applying reflections to solve problems and create designs",
+        "ido": [
+          "Show a design challenge: 'Using only two reflections of this shape, create a composite design with 4 lines of symmetry.' Model the first reflection, then ask pupils to predict the second.",
+          "Key question: 'What must be true about the two mirror lines for the composite to have 4 lines of symmetry?'"
+        ],
+        "wedo": [
+          "Pairs attempt the design challenge. Share \u2014 compare different solutions. Did everyone reach the same design?",
+          "Discussion: 'If two mirror lines are perpendicular, how many lines of symmetry does the composite have?'"
+        ],
+        "trios": {
+          "roles": [
+            "A: chooses a starting shape and a number of target lines of symmetry",
+            "B: applies the reflections to achieve the target",
+            "C: verifies the target has been met"
+          ],
+          "task": "Two design challenges. Rotate.",
+          "challenge": "Create a design with exactly 6 lines of symmetry using reflections of a starting shape."
+        },
+        "independent": {
+          "standard": "Two design challenges and two proof tasks: given a composite design, prove it has the claimed number of lines of symmetry.",
+          "supported": "One design challenge with the first reflection already completed. One proof task with sentence starters."
+        },
+        "slideTitles": {
+          "ido": [
+            "Using reflections to create symmetrical designs"
+          ],
+          "wedo": [
+            "Design challenge \u2014 four lines of symmetry"
+          ],
+          "trios": [
+            "Trios \u2014 target lines of symmetry"
+          ],
+          "independent": [
+            "Independent \u2014 design and proof tasks"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Sentence starters for generalisations and proofs. First reflection pre-completed for design tasks.",
+          "Reduce to three reasoning questions with partially completed tables."
+        ],
+        "stretch": [
+          "Create a design with exactly 6 lines of symmetry using reflections of a starting shape.",
+          "Investigate: what is the minimum number of reflections needed to produce a shape with n lines of symmetry?"
+        ]
+      },
+      "lp1": {
+        "topic": "Geometry \u2013 Properties of Shapes",
+        "task": "Five reasoning questions about lines of symmetry \u2014 generalise, test, identify exceptions.",
+        "questions": 5
+      },
+      "lp2": {
+        "topic": "Geometry \u2013 Properties of Shapes",
+        "task": "Two design challenges using reflections; two proof tasks about lines of symmetry in composite designs.",
+        "questions": 4
+      },
+      "learningReviewStems": [
+        "A regular n-sided polygon has... lines of symmetry because...",
+        "I used reflections to create a design by...",
+        "I proved the composite design had the right number of lines of symmetry by..."
+      ],
+      "loText": {
+        "walt": "\u2026spot patterns in the lines of symmetry of different shape families, and use reflections to create symmetrical designs.",
+        "tiob": "\u2026finding patterns across different shapes and testing whether they always work is an important part of mathematical thinking.",
+        "iwstb": "\u2026writing and testing a pattern about lines of symmetry, and creating a design that has a specific number of lines of symmetry."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Reflected shape is the correct shape but placed on the wrong side of the mirror line",
+        "errorType": "wrong_side_of_mirror",
+        "errorInstruction": "The shape has been reflected in the mirror line at y=4",
+        "errorNote": "The image has been placed on the same side as the original \u2014 not across the mirror line. After reflecting, the image must always appear on the opposite side of the line from the original.",
+        "gridSize": 8,
+        "startPoint": [
+          1,
+          1
+        ],
+        "extraPoints": [
+          [
+            3,
+            1,
+            "B"
+          ],
+          [
+            2,
+            3,
+            "C"
+          ],
+          [
+            1,
+            6,
+            "error_A"
+          ]
+        ]
+      }
+    },
+    {
+      "lesson": 17,
+      "week": "T5W5",
+      "weekIndex": 5,
+      "day": "Monday",
+      "topic": "Time",
+      "li": "Read, write and convert time between analogue and digital 12-hour and 24-hour clocks.",
+      "vocabularyFocus": [
+        "analogue",
+        "digital",
+        "12-hour",
+        "24-hour",
+        "am",
+        "pm",
+        "midday",
+        "midnight",
+        "convert",
+        "o'clock"
+      ],
+      "cycleNote": "Time requires significant revisiting of prior knowledge. Cycle 1 re-establishes 12-hour reading before introducing 24-hour. Do not rush through prior content \u2014 this is where errors embed themselves.",
+      "cycle1": {
+        "focus": "Reading analogue clocks and converting to 12-hour digital \u2014 revisiting prior learning",
+        "ido": [
+          "Draw analogue clocks showing o'clock, half past, quarter past, quarter to, and to-the-minute times. Read each aloud and model writing as 12-hour digital.",
+          "Focus on common errors: confusing the hour and minute hands; forgetting 'quarter to' is 45 minutes past, not 15 minutes to.",
+          "Key question: 'What is the difference between 7:45am and 7:45pm? Show both on an analogue clock.'"
+        ],
+        "wedo": [
+          "Show 8 analogue clock images (mix of am and pm times). Pupils write the 12-hour digital time on whiteboards. Resolve any disagreements by counting minute marks.",
+          "Reverse: read 8 digital times aloud \u2014 pupils draw the analogue clock on mini clock faces."
+        ],
+        "trios": {
+          "roles": [
+            "A: shows a time card (analogue)",
+            "B: writes the 12-hour digital equivalent",
+            "C: confirms whether am or pm is possible and why"
+          ],
+          "task": "10 analogue time cards. Rotate after every 4.",
+          "challenge": "Sort 12 times into chronological order across a 24-hour day \u2014 using a mix of analogue images and 12-hour digital times."
+        },
+        "independent": {
+          "standard": "8 analogue clocks \u2014 write each as a 12-hour digital time (am or pm given). 4 digital times \u2014 draw the analogue clock.",
+          "supported": "6 analogue clocks (o'clock, half past, quarter past, quarter to only). Write as 12-hour digital. Blank clock faces and minute-mark grid provided."
+        },
+        "slideTitles": {
+          "ido": [
+            "Reading analogue clocks",
+            "am and pm \u2014 what's the difference?"
+          ],
+          "wedo": [
+            "Write the 12-hour digital time"
+          ],
+          "trios": [
+            "Trios \u2014 time cards, am or pm?"
+          ],
+          "independent": [
+            "Independent \u2014 analogue to digital and back"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Converting between 12-hour and 24-hour digital times",
+        "ido": [
+          "Explain 24-hour time. Draw a number line from 00:00 to 23:59 with 12:00 midday marked. Show that am times are the same in 24-hour (e.g. 09:15 = 9:15am). Show that pm times add 12 (e.g. 3:45pm = 15:45).",
+          "Special cases: 12:00 midday is 12:00 in 24-hour. 12:00 midnight is 00:00. Model both carefully.",
+          "Common error: writing 1:00pm as 13:00am. Stress: 24-hour times above 12:00 are always pm \u2014 the term 'am/pm' is not used in 24-hour format at all."
+        ],
+        "wedo": [
+          "12 conversion tasks on whiteboards \u2014 a mix of: 12-hour am/pm \u2192 24-hour; 24-hour \u2192 12-hour am/pm. Include the tricky cases around noon and midnight.",
+          "Pairs create their own tricky example for another pair. Share two with the class."
+        ],
+        "trios": {
+          "roles": [
+            "A: shows a 24-hour time card",
+            "B: writes the 12-hour equivalent",
+            "C: confirms \u2014 is it am or pm? How do you know?"
+          ],
+          "task": "12 time cards (mix of formats). Rotate after every 4.",
+          "challenge": "Find all times where the 12-hour and 24-hour times look identical. How many are there and why?"
+        },
+        "independent": {
+          "standard": "Conversion table \u2014 12 times in one format, convert to both other formats. Include times around noon and midnight.",
+          "supported": "8 conversions. Number line 00:00\u201323:59 with am/pm zones marked. Conversion rule card provided. Excludes midnight and noon edge cases."
+        },
+        "slideTitles": {
+          "ido": [
+            "Converting to 24-hour time",
+            "Special cases \u2014 noon and midnight"
+          ],
+          "wedo": [
+            "12 conversion tasks on whiteboards"
+          ],
+          "trios": [
+            "Trios \u2014 24-hour time cards"
+          ],
+          "independent": [
+            "Independent \u2014 conversion table"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Minute-mark grid and blank clock faces for Cycle 1. Number line and conversion rule card for Cycle 2.",
+          "Cycle 1: o'clock, half past, quarter past, quarter to only. Cycle 2: exclude midnight and noon edge cases."
+        ],
+        "stretch": [
+          "Find all times where the 12-hour and 24-hour times look identical. Why does this happen?",
+          "Write a 24-hour timetable for your ideal school day. Calculate total time in each lesson."
+        ]
+      },
+      "lp1": {
+        "topic": "Measurement \u2013 Time",
+        "task": "8 analogue \u2192 12-hour digital conversions; 4 digital \u2192 analogue clock drawings.",
+        "questions": 12
+      },
+      "lp2": {
+        "topic": "Measurement \u2013 Time",
+        "task": "Conversion table: 12 times in one format, convert to both others. Include noon and midnight edge cases.",
+        "questions": 12
+      },
+      "learningReviewStems": [
+        "The difference between 12-hour and 24-hour time is...",
+        "To convert a pm time to 24-hour I...",
+        "I found... tricky today, so next time I will..."
+      ],
+      "loText": {
+        "walt": "\u2026read, write and convert time between analogue clocks, 12-hour and 24-hour digital formats.",
+        "tiob": "\u2026being precise about time and moving between different ways of showing it is a skill we use every day.",
+        "iwstb": "\u2026converting accurately between analogue and digital times, including the more challenging cases around noon and midnight."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Confusing hours and minutes when reading an analogue clock",
+        "errorType": "clock_hand_confusion",
+        "errorInstruction": "The clock shows 9:35",
+        "errorNote": "The short hand (hours) points to 7 and the long hand (minutes) points to 9 \u2014 so the time is 7:45, not 9:35. The short hand tells you the hour; the long hand tells you the minutes.",
+        "gridSize": 0,
+        "startPoint": [],
+        "clockHands": {
+          "hour": 7,
+          "minute": 45
+        }
+      }
+    },
+    {
+      "lesson": 18,
+      "week": "T5W5",
+      "weekIndex": 5,
+      "day": "Tuesday",
+      "topic": "Time",
+      "li": "Solve problems involving converting from hours to minutes, minutes to seconds, years to months, and weeks to days.",
+      "vocabularyFocus": [
+        "convert",
+        "seconds",
+        "minutes",
+        "hours",
+        "days",
+        "weeks",
+        "months",
+        "years",
+        "remainder",
+        "inverse"
+      ],
+      "cycleNote": "Pupils often confuse multiplication and division direction here. Cycle 1 establishes the conversion facts and applies them to simple problems. Cycle 2 moves to multi-step and reasoning.",
+      "cycle1": {
+        "focus": "Establishing conversion facts and applying them in one step",
+        "ido": [
+          "Build the conversion facts table together: 60 seconds = 1 minute; 60 minutes = 1 hour; 24 hours = 1 day; 7 days = 1 week; 52 weeks \u2248 1 year; 12 months = 1 year; 365 days = 1 year.",
+          "Model: 'A film lasts 2 hours 35 minutes. How many minutes?' 2\u00d760=120, 120+35=155 minutes. Then reverse: '175 minutes \u2014 how many hours and minutes?' 175\u00f760=2r55.",
+          "Common error: multiplying by 100 instead of 60. Address explicitly with a counterexample."
+        ],
+        "wedo": [
+          "8 one-step conversion problems on whiteboards \u2014 mix of units, mix of directions (to smaller units and to larger units). Pupils show working.",
+          "Pairs create their own problem for another pair to solve. Share two with the class."
+        ],
+        "trios": {
+          "roles": [
+            "A: writes a one-step conversion problem",
+            "B: solves it showing working",
+            "C: verifies using the inverse operation"
+          ],
+          "task": "Three rounds. Rotate.",
+          "challenge": "Write a problem where the answer is exactly 2 hours. How many different problems can you find?"
+        },
+        "independent": {
+          "standard": "10 one-step conversion problems covering all four unit relationships. Mix of directions.",
+          "supported": "6 problems. Conversion facts reference card provided. Worked example for each direction."
+        },
+        "slideTitles": {
+          "ido": [
+            "Time conversion facts",
+            "Converting in both directions"
+          ],
+          "wedo": [
+            "8 conversion problems \u2014 show working"
+          ],
+          "trios": [
+            "Trios \u2014 write, solve, verify with inverse"
+          ],
+          "independent": [
+            "Independent \u2014 10 one-step conversions"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Multi-step conversion problems; reasoning about precision",
+        "ido": [
+          "Model a multi-step problem: 'How many seconds in 2 hours 15 minutes?' First convert hours to minutes (2\u00d760=120, add 15 = 135 minutes), then to seconds (135\u00d760=8100).",
+          "Discuss precision: '18 months \u2014 how many weeks?' 18 months = 1 year 6 months. 1 year \u2248 52 weeks, 6 months \u2248 26 weeks, total \u2248 78 weeks. Ask: 'Is this exact? Why not?'"
+        ],
+        "wedo": [
+          "Six multi-step problems. Pupils work in pairs, showing all steps. Share \u2014 compare methods. Is there a more efficient approach?",
+          "Estimation challenge: roughly how many seconds old are you? What assumptions are you making?"
+        ],
+        "trios": {
+          "roles": [
+            "A: writes a multi-step time problem using at least two unit conversions",
+            "B: solves it methodically",
+            "C: verifies using the inverse"
+          ],
+          "task": "Two rounds. Rotate.",
+          "challenge": "Write a problem that has two possible answers depending on whether you count leap years. Explain both."
+        },
+        "independent": {
+          "standard": "Eight multi-step problems. Include: 'How many seconds in 3 minutes 20 seconds?' and 'How many months in 2\u00bd years?' and one reasoning question about exact vs approximate conversions.",
+          "supported": "Five problems. Conversion facts card. Structured working frame: 'Step 1: convert ___ to ___. Step 2: convert ___ to ___.' Excludes year-to-month problems initially."
+        },
+        "slideTitles": {
+          "ido": [
+            "Multi-step conversions",
+            "Exact vs approximate \u2014 when does it matter?"
+          ],
+          "wedo": [
+            "Six multi-step problems \u2014 compare methods"
+          ],
+          "trios": [
+            "Trios \u2014 multi-step problem challenge"
+          ],
+          "independent": [
+            "Independent \u2014 eight multi-step problems"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Conversion facts reference card for both cycles. Structured working frames for Cycle 2.",
+          "Cycle 1: one-step problems only. Cycle 2: two-step problems only; exclude years initially."
+        ],
+        "stretch": [
+          "Write a problem requiring three different unit conversions to solve.",
+          "How many seconds have you been alive? Account for leap years. Show full working."
+        ]
+      },
+      "lp1": {
+        "topic": "Measurement \u2013 Time",
+        "task": "10 one-step conversion problems covering all four unit relationships, mix of directions.",
+        "questions": 10
+      },
+      "lp2": {
+        "topic": "Measurement \u2013 Time",
+        "task": "Eight multi-step conversion problems. Include reasoning about exact vs approximate conversions.",
+        "questions": 8
+      },
+      "learningReviewStems": [
+        "To convert from a larger unit to a smaller unit I...",
+        "I know to multiply and not divide here because...",
+        "A multi-step conversion problem needs..."
+      ],
+      "loText": {
+        "walt": "\u2026solve problems by converting between units of time.",
+        "tiob": "\u2026time conversions use multiplication and division, and choosing the right operation is an important reasoning skill.",
+        "iwstb": "\u2026solving one-step and multi-step conversion problems, showing clear working and checking using the reverse operation."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Multiplying instead of dividing when converting to a smaller unit",
+        "errorType": "wrong_conversion_direction",
+        "errorInstruction": "Convert 3 hours to minutes: 3 \u00f7 60 = 0.05 minutes",
+        "errorNote": "To go from a bigger unit (hours) to a smaller unit (minutes), you multiply: 3 \u00d7 60 = 180 minutes. Division is used when converting the other way \u2014 from minutes to hours.",
+        "gridSize": 0,
+        "startPoint": [],
+        "extraPoints": []
+      }
+    },
+    {
+      "lesson": 19,
+      "week": "T5W5",
+      "weekIndex": 5,
+      "day": "Wednesday",
+      "topic": "Time",
+      "li": "Solve problems involving finding durations and end times, and read and interpret timetables.",
+      "vocabularyFocus": [
+        "duration",
+        "start time",
+        "end time",
+        "interval",
+        "timetable",
+        "departure",
+        "arrival",
+        "delay",
+        "bridge"
+      ],
+      "cycleNote": "Bridging through the hour is the critical skill in Cycle 1 \u2014 many pupils either add instead of subtract or forget to bridge. Cycle 2 applies this to real timetable contexts.",
+      "cycle1": {
+        "focus": "Finding durations and end/start times by bridging through the hour",
+        "ido": [
+          "'A baking show starts at 14:30 and lasts 1 hour 25 minutes. What time does it end?' Add hours first (14:30+1h=15:30), then minutes (15:30+25m=15:55). Write in both 12-hour and 24-hour.",
+          "Working backwards: 'A programme ends at 16:10 and lasted 50 minutes. When did it start?' 16:10\u221210m=16:00, 16:00\u221240m=15:20. Show the bridging step explicitly.",
+          "Key question: 'When do we need to bridge through the hour? When can we add/subtract directly?'"
+        ],
+        "wedo": [
+          "Six real-world problems (TV schedules, journey times, school day). Pupils solve on whiteboards showing: start time, method, end time.",
+          "Class compares methods: number line, column format, bridging through hours. Which is most reliable? Which is fastest?"
+        ],
+        "trios": {
+          "roles": [
+            "A: invents a real-world time problem",
+            "B: solves it on a number line",
+            "C: solves it using the column method \u2014 do they agree?"
+          ],
+          "task": "Three rounds. Rotate.",
+          "challenge": "Design a day's TV schedule with at least five programmes where no two overlap and total broadcast time is exactly 4 hours 30 minutes."
+        },
+        "independent": {
+          "standard": "Eight contextualised duration and end/start time problems. Mix of finding end time, start time and duration. Include one requiring conversion to minutes to compare two durations.",
+          "supported": "Five problems \u2014 find the end time only. Number lines from 0\u201360 and a clock face provided."
+        },
+        "slideTitles": {
+          "ido": [
+            "Finding durations and end times",
+            "Working backwards \u2014 when did it start?"
+          ],
+          "wedo": [
+            "Six real-world time problems"
+          ],
+          "trios": [
+            "Trios \u2014 invent, number line, column method"
+          ],
+          "independent": [
+            "Independent \u2014 eight contextualised problems"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Reading and interpreting timetables; multi-step timetable problems",
+        "ido": [
+          "Display a simplified bus timetable (four stops, five departure times). Model reading it: 'Which bus should I catch to arrive at Stop C by 10:00?' Scan the row, identify the latest valid departure.",
+          "'The 08:42 bus is 17 minutes late. What time does it arrive at Stop D?' Show the calculation. Discuss: why do public transport timetables use 24-hour time?"
+        ],
+        "wedo": [
+          "Pairs receive a train timetable. Three questions per pair \u2014 one reading, one duration, one multi-step problem. Share answers with another pair and resolve any disagreements.",
+          "Class problem: two friends leave from different stations on the same line. At what time and station do they first meet?"
+        ],
+        "trios": {
+          "roles": [
+            "A: finds the relevant row and column in the timetable",
+            "B: solves the problem",
+            "C: explains the solution in a full sentence including units"
+          ],
+          "task": "Four questions from the timetable. Rotate.",
+          "challenge": "Plan a day trip using the timetable: leave after 09:00, return before 17:00, maximise time at the destination."
+        },
+        "independent": {
+          "standard": "A timetable with five stops and six departure times. Eight questions ranging from simple reading to multi-step reasoning, including one where a connection is missed.",
+          "supported": "Simplified timetable (three stops, three times). Five questions. Relevant rows pre-highlighted."
+        },
+        "slideTitles": {
+          "ido": [
+            "Reading a timetable",
+            "Multi-step timetable problem"
+          ],
+          "wedo": [
+            "Train timetable \u2014 three questions"
+          ],
+          "trios": [
+            "Trios \u2014 four timetable questions"
+          ],
+          "independent": [
+            "Independent \u2014 five-stop timetable, eight questions"
+          ]
+        },
+        "slideCount": {
+          "ido": 2,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Number lines and clock faces for Cycle 1. Pre-highlighted timetable rows for Cycle 2.",
+          "Cycle 1: find end time only. Cycle 2: simple reading questions only before multi-step."
+        ],
+        "stretch": [
+          "Design a day trip plan using a real timetable. Calculate total travelling time and time at destination.",
+          "Write five timetable questions of your own, including one requiring multi-step reasoning."
+        ]
+      },
+      "lp1": {
+        "topic": "Measurement \u2013 Time",
+        "task": "Eight problems: find end time, start time and duration. Include one requiring conversion to minutes to compare durations.",
+        "questions": 8
+      },
+      "lp2": {
+        "topic": "Measurement \u2013 Time",
+        "task": "A five-stop timetable. Eight questions from simple reading to multi-step reasoning, including a missed connection.",
+        "questions": 8
+      },
+      "learningReviewStems": [
+        "To find a duration I...",
+        "Bridging through the hour means...",
+        "When reading a timetable I always..."
+      ],
+      "loText": {
+        "walt": "\u2026calculate how long something takes and find start and end times, and read and use timetables.",
+        "tiob": "\u2026working out durations and using timetables are skills we use in everyday life, from bus journeys to planning our day.",
+        "iwstb": "\u2026finding start times, end times and durations accurately, and answering questions from a timetable including ones that need more than one step."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Adding hours and minutes separately without bridging through the hour",
+        "errorType": "duration_no_bridging",
+        "errorInstruction": "A film starts at 2:45. It lasts 1 hour 30 minutes. It ends at 3:75.",
+        "errorNote": "3:75 is not a valid time \u2014 minutes only go up to 59. You need to bridge: 2:45 + 15 minutes = 3:00, then add the remaining 1 hour 15 minutes = 4:15.",
+        "gridSize": 0,
+        "startPoint": [],
+        "extraPoints": []
+      }
+    },
+    {
+      "lesson": 20,
+      "week": "T5W5",
+      "weekIndex": 5,
+      "day": "Thursday",
+      "topic": "Time",
+      "li": "Apply all time knowledge \u2014 mixed problem-solving across clock reading, unit conversion, durations and timetables.",
+      "vocabularyFocus": [
+        "consolidate",
+        "apply",
+        "strategy",
+        "justify",
+        "convert",
+        "duration",
+        "timetable",
+        "analogue",
+        "24-hour"
+      ],
+      "cycleNote": "Final lesson of the term. Assessment-style consolidation \u2014 pupils identify the problem type before selecting a method. Focus on metacognition and checking.",
+      "cycle1": {
+        "focus": "Identifying problem type and selecting the right method",
+        "ido": [
+          "Display a 'Time Problem Board' with four problem types labelled: Clock Reading, Unit Conversion, Duration, Timetable. Model one from each type, narrating the identification step: 'I see a 24-hour time \u2192 Clock Reading. I see how long \u2192 Duration.'",
+          "Stress: read the problem fully before calculating. Identify what you are being asked to find. Choose the method. Show working. Check."
+        ],
+        "wedo": [
+          "Four problems on the board, one from each type. Pairs identify the type and method before calculating. Share strategies.",
+          "Pupils mark their own work using the answer slide and identify which type they found hardest."
+        ],
+        "trios": {
+          "roles": [
+            "A: reads the problem and identifies the type",
+            "B: solves it",
+            "C: checks using the inverse or an alternative method"
+          ],
+          "task": "Four problems \u2014 one per type. Each pupil leads on one.",
+          "challenge": "Create a 'Time Escape Room' with four linked problems (one per type) where the answer to each is needed to unlock the next."
+        },
+        "independent": {
+          "standard": "Eight problems across all four types. No worked examples. Pupils write the problem type, their chosen method, and the answer.",
+          "supported": "Six problems. Method selection card provided: 'If clocks \u2192 conversion. If how long \u2192 duration. If timetable \u2192 read carefully first.''"
+        },
+        "slideTitles": {
+          "ido": [
+            "Identify the problem type \u2014 then choose a method"
+          ],
+          "wedo": [
+            "Four problems \u2014 one per type"
+          ],
+          "trios": [
+            "Trios \u2014 one problem each, rotate"
+          ],
+          "independent": [
+            "Independent \u2014 eight mixed problems"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "cycle2": {
+        "focus": "Multi-step and multi-type problems requiring combined skills",
+        "ido": [
+          "Model a multi-type problem: 'A journey shown on an analogue clock starts at 10:50. The timetable says it takes 1 hour 35 minutes. What is the 24-hour arrival time?' Identify: need clock reading + duration + 24-hour conversion.",
+          "Stress: complex problems often require more than one skill. Break them into steps."
+        ],
+        "wedo": [
+          "Three multi-type problems on whiteboards. Pupils identify all the skills needed before starting. Share their step plans before calculating.",
+          "Class discusses: 'What is a good checking strategy for these more complex problems?'"
+        ],
+        "trios": {
+          "roles": [
+            "A: writes a multi-type time problem requiring at least two different skills",
+            "B: solves it step by step",
+            "C: identifies each skill used and verifies"
+          ],
+          "task": "Two rounds. Rotate.",
+          "challenge": "Design a 10-question time quiz for Year 4 covering all four types. Include an answer key and a mark scheme."
+        },
+        "independent": {
+          "standard": "Four multi-type problems requiring combined skills. Pupils write which skills they used for each. Plus: design 4 questions for a time quiz \u2014 one per problem type.",
+          "supported": "Three multi-type problems with step-by-step working frames. Conversion reference card allowed."
+        },
+        "slideTitles": {
+          "ido": [
+            "Multi-type problems \u2014 combining skills"
+          ],
+          "wedo": [
+            "Plan your steps before you calculate"
+          ],
+          "trios": [
+            "Trios \u2014 multi-type problem challenge"
+          ],
+          "independent": [
+            "Independent \u2014 four multi-type problems and quiz design"
+          ]
+        },
+        "slideCount": {
+          "ido": 1,
+          "wedo": 1,
+          "trios": 1,
+          "independent": 1
+        }
+      },
+      "differentiation": {
+        "support": [
+          "Method selection card for Cycle 1. Step-by-step working frames for Cycle 2. Conversion reference card throughout.",
+          "Cycle 1: six problems only, single-type. Cycle 2: two multi-type problems with structured frames."
+        ],
+        "stretch": [
+          "Design a 10-question time quiz for Year 4 with answer key and mark scheme.",
+          "Write a report: 'Everything a Year 4 pupil needs to know about time.' Include examples, common mistakes and strategies."
+        ]
+      },
+      "lp1": {
+        "topic": "Measurement \u2013 Time",
+        "task": "Eight mixed problems across all four time types. Write the problem type, method chosen and answer.",
+        "questions": 8
+      },
+      "lp2": {
+        "topic": "Measurement \u2013 Time",
+        "task": "Four multi-type problems requiring combined skills. Write which skills were used. Design 4 quiz questions (one per type).",
+        "questions": 5
+      },
+      "learningReviewStems": [
+        "Before I start a time problem I...",
+        "The problem type I found most challenging today was... because...",
+        "A good checking strategy for complex time problems is..."
+      ],
+      "loText": {
+        "walt": "\u2026use all our time knowledge to solve a range of problems.",
+        "tiob": "\u2026being able to spot what kind of problem it is and choose the right method shows real mathematical understanding.",
+        "iwstb": "\u2026naming the problem type, choosing the correct method, showing my working and checking the answer for each problem."
+      },
+      "spotTheMistake": {
+        "slideTitle": "Spot the mistake",
+        "concept": "Using the wrong operation \u2014 subtracting arrival from departure for duration",
+        "errorType": "timetable_subtraction_error",
+        "errorInstruction": "Train departs 09:20, arrives 11:05. Duration: 11:05 \u2212 09:20 = 2:85",
+        "errorNote": "2:85 is not valid \u2014 you can't have 85 minutes. Find duration by bridging: 09:20 \u2192 10:00 (40 min) \u2192 11:05 (1h 5min) = 1 hour 45 minutes total.",
+        "gridSize": 0,
+        "startPoint": [],
+        "extraPoints": []
+      }
+    }
+  ],
+  "keyQuestions": {
+    "Coordinates": "How can we describe exactly where something is?",
+    "Symmetry": "What makes a shape perfectly balanced?",
+    "Time": "How do we measure and compare time precisely?"
+  }
+}
