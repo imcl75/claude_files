@@ -63,6 +63,14 @@ curl -s -H "Authorization: token $TOKEN" \
 - Milestone data entry — columns exist in grid, backend exists, no real data yet
 - Export for Bromcom (CSV) — not yet started
 
+
+## Render deploy hook
+
+If auto-deploy stops working, trigger manually:
+```bash
+curl -X POST "https://api.render.com/deploy/srv-d8armk0jo6nc739eja90?key=j6LWEYezStU"
+```
+
 ## Immediate next step
 
 Confirm flag centring fix renders correctly (dots centred in cells, headers centred). Then take stock of what Innes wants to tackle next — likely either column visibility defaults per year group, or testing the full Setup → test targets → grid colour-coding flow with real data.
