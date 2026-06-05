@@ -1,0 +1,127 @@
+[
+  {"type": "cover", "day": "Monday AM"},
+  {"type": "kc"},
+  {
+    "type": "lo",
+    "wal": "use similes and alliteration to make my descriptions more powerful",
+    "tib": "Figurative language helps readers picture a place and feel its mood, making descriptions come alive on the page.",
+    "isb": "writing at least three similes and three alliterative phrases that describe the city at night."
+  },
+  {
+    "type": "warmup",
+    "title": "Grammar Warm-Up",
+    "subtitle": "Which technique? Identify the figurative language in each sentence.",
+    "cards": [
+      {"label": "Sentence A", "lines": ["The alleyway was as cold as a grave.", "", "Simile or alliteration?"]},
+      {"label": "Sentence B", "lines": ["Dark shadows shifted and slid silently past.", "", "Simile or alliteration?"]},
+      {"label": "Sentence C", "lines": ["The streetlamp glowed like a tiny captured sun.", "", "Simile or alliteration?"]}
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Reading like a writer",
+    "lines": [
+      "S. F. Said writes the city through Varjak\u2019s eyes.",
+      "Everything is new, strange and a little frightening.",
+      "",
+      "As you listen to this passage, think:",
+      "",
+      "  \u2022 Can you spot any figurative language?",
+      "  \u2022 What is the effect on the reader?",
+      "  \u2022 How does the writer make the city feel alive?"
+    ]
+  },
+  {
+    "type": "book_page",
+    "label": "Display a short passage from Varjak Paw that contains similes or alliteration"
+  },
+  {
+    "type": "i_do",
+    "title": "Simile",
+    "left_label": "What is it?",
+    "left_lines": [
+      "A simile compares one thing to another",
+      "using the words like or as.",
+      "",
+      "cars roared past like angry beasts",
+      "",
+      "the street was as wide as a river",
+      "",
+      "The comparison must make sense and",
+      "add something to the picture."
+    ],
+    "right_label": "Why use it?",
+    "right_lines": [
+      "Similes help readers picture",
+      "something unfamiliar by linking it",
+      "to something they already know.",
+      "",
+      "For Varjak, everything in the city",
+      "is new. A simile lets us see it",
+      "through his eyes for the first time."
+    ]
+  },
+  {
+    "type": "i_do",
+    "title": "Alliteration",
+    "left_label": "What is it?",
+    "left_lines": [
+      "Alliteration repeats the same consonant",
+      "sound at the start of nearby words.",
+      "",
+      "cracked concrete",
+      "",
+      "shadows that shifted and slid",
+      "",
+      "The repeated sound must be at the",
+      "start of the word, not in the middle."
+    ],
+    "right_label": "Why use it?",
+    "right_lines": [
+      "Alliteration creates a rhythm and",
+      "draws attention to a moment or image.",
+      "",
+      "It can make a sound feel louder",
+      "or a movement feel smoother.",
+      "",
+      "Use it sparingly so it has impact."
+    ]
+  },
+  {
+    "type": "you_do",
+    "title": "Build your own figurative language.",
+    "lines": [
+      "Write three similes describing the city at night.",
+      "Write three alliterative phrases describing the city at night.",
+      "",
+      "Think about:",
+      "  \u2022 What does Varjak see, hear or smell?",
+      "  \u2022 What would he compare it to?",
+      "  \u2022 Which consonant sounds suit the mood?",
+      "",
+      "The best examples will go straight onto the working wall."
+    ],
+    "challenge": "Write one sentence that contains both a simile AND alliteration."
+  },
+  {
+    "type": "we_do",
+    "title": "Share and add to the working wall.",
+    "lines": [
+      "Listen to a few examples.",
+      "",
+      "For each one, ask:",
+      "  \u2022 Does the simile make you picture something more clearly?",
+      "  \u2022 Does the alliteration create a sound or rhythm?",
+      "  \u2022 Could we use this in our narrative?",
+      "",
+      "Add the best examples to the working wall under",
+      "the right category: sights, sounds, smells or feelings."
+    ]
+  },
+  {
+    "type": "learning_review",
+    "q1": "Which of your similes are you most pleased with, and why?",
+    "q2": "How does alliteration change the way a sentence sounds when you read it aloud?",
+    "q3": "Which technique do you think you will use most in your narrative?"
+  }
+]

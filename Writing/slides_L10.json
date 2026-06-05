@@ -1,0 +1,127 @@
+[
+  {"type": "cover", "day": "Thursday AM"},
+  {"type": "kc"},
+  {
+    "type": "lo",
+    "wal": "use subordinating conjunctions to write complex sentences",
+    "tib": "Complex sentences let me join two ideas together in a way that shows how they connect, making my writing more controlled.",
+    "isb": "writing three paired complex sentences about scenes from Varjak\u2019s first night, each using a different conjunction."
+  },
+  {
+    "type": "warmup",
+    "title": "Grammar Warm-Up",
+    "subtitle": "True or false? Decide whether each is a complex sentence and explain why.",
+    "cards": [
+      {"label": "Sentence A", "lines": ["Varjak crept forward and stopped at the corner.", "", "Complex sentence? True or false?"]},
+      {"label": "Sentence B", "lines": ["Although it was dangerous,", "Varjak crept out of the doorway.", "", "Complex sentence? True or false?"]},
+      {"label": "Sentence C", "lines": ["He was afraid.", "", "Complex sentence? True or false?"]}
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Recap: types of sentence",
+    "lines": [
+      "A simple sentence has one main clause.",
+      "Varjak crept forward.",
+      "",
+      "A compound sentence joins two main clauses with and, but, or, so.",
+      "Varjak crept forward but he could not see anything.",
+      "",
+      "A complex sentence has a main clause and a subordinate clause,",
+      "joined by a subordinating conjunction.",
+      "Although it was dark, Varjak crept forward.",
+      "",
+      "What makes a subordinate clause different from a main clause?"
+    ]
+  },
+  {
+    "type": "i_do",
+    "title": "Subordinating conjunctions",
+    "left_label": "Words to use",
+    "left_lines": [
+      "as         while",
+      "before     after",
+      "until      although",
+      "since      even though",
+      "though     because",
+      "whenever   unless",
+      "",
+      "These introduce the subordinate clause.",
+      "The subordinate clause cannot",
+      "stand alone as a sentence."
+    ],
+    "right_label": "The comma rule",
+    "right_lines": [
+      "If the subordinate clause comes first,",
+      "use a comma after it:",
+      "",
+      "Although it was dangerous,",
+      "Varjak crept out of the doorway.",
+      "",
+      "If the main clause comes first,",
+      "no comma is needed:",
+      "",
+      "Varjak crept out of the doorway",
+      "although it was dangerous."
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Paired sentences",
+    "lines": [
+      "Here is one idea written two ways:",
+      "",
+      "Although it was dangerous, Varjak crept out of the doorway.",
+      "",
+      "Varjak crept out of the doorway, although it was dangerous.",
+      "",
+      "Which changes the emphasis?",
+      "Which builds more tension?",
+      "",
+      "Now try together:",
+      "Varjak heard a sound. He did not run away.",
+      "",
+      "Can we rewrite this as one complex sentence,",
+      "two different ways?"
+    ]
+  },
+  {
+    "type": "you_do_trio",
+    "lines": [
+      "Write three pairs of complex sentences.",
+      "Each pair should be about a different scene",
+      "from Varjak\u2019s first night outside.",
+      "",
+      "For each pair:",
+      "  \u2022 Write the sentence with the subordinate clause first",
+      "  \u2022 Write the same sentence with the main clause first",
+      "  \u2022 Use a different conjunction for each pair",
+      "",
+      "Then decide: which version of each pair",
+      "works better in the narrative, and why?",
+      "",
+      "Be ready to share your best pair."
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Share and discuss.",
+    "lines": [
+      "Listen to a few pairs.",
+      "",
+      "For each one, decide:",
+      "  \u2022 Which version builds more tension?",
+      "  \u2022 Is the comma in the right place?",
+      "  \u2022 Which conjunction works best for that moment?",
+      "",
+      "Which conjunction do you think",
+      "you will use most in your narrative?"
+    ]
+  },
+  {
+    "type": "learning_review",
+    "q1": "What is the difference between a coordinating conjunction and a subordinating conjunction?",
+    "q2": "When does placing the subordinate clause first create more tension in a narrative?",
+    "q3": "Which of your paired sentences do you want to use in your final write, and why?"
+  }
+]

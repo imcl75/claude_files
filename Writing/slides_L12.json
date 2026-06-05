@@ -1,0 +1,146 @@
+[
+  {
+    "type": "cover",
+    "day": "Friday AM"
+  },
+  {
+    "type": "kc"
+  },
+  {
+    "type": "lo",
+    "wal": "analyse what makes a piece of writing effective and build our success criteria for the final write",
+    "tib": "Understanding exactly what a writer is doing and why helps me make deliberate, purposeful choices in my own writing.",
+    "isb": "annotating the model text for four features and recording the success criteria I will use for my final narrative."
+  },
+  {
+    "type": "warmup",
+    "title": "Grammar Warm-Up",
+    "subtitle": "Which feature? Match each sentence to the writing technique it shows.",
+    "cards": [
+      {
+        "label": "Sentence A",
+        "lines": [
+          "The smell hit him like a wall:",
+          "oil, rot and something sharp.",
+          "",
+          "Simile? Power of three? Fronted adverbial?"
+        ]
+      },
+      {
+        "label": "Sentence B",
+        "lines": [
+          "Trembling with cold, he crept",
+          "to the edge of the step.",
+          "",
+          "Simile? Fronted adverbial? Hyperbole?"
+        ]
+      },
+      {
+        "label": "Sentence C",
+        "lines": [
+          "Although he did not know her name,",
+          "Varjak felt something settle inside him.",
+          "",
+          "Alliteration? Power of three? Complex sentence?"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Introducing the model text",
+    "lines": [
+      "This week you have practised all the skills",
+      "you will need for your final narrative:",
+      "",
+      "  • Simile and alliteration",
+      "  • Hyperbole and the power of three",
+      "  • Fronted adverbials",
+      "  • Subordinating conjunctions",
+      "  • Speech punctuation",
+      "",
+      "The model text brings all of these together.",
+      "Listen carefully. What do you notice?"
+    ]
+  },
+  {
+    "type": "book_page",
+    "label": "Read aloud the model text. Pupils follow on their printed copy."
+  },
+  {
+    "type": "i_do",
+    "title": "Annotation key",
+    "left_label": "What to look for (use four colours)",
+    "left_lines": [
+      "Colour 1: setting and character description",
+      "(expanded noun phrases, sensory detail,",
+      "thoughts and reactions)",
+      "",
+      "Colour 2: figurative language",
+      "(simile, alliteration, hyperbole,",
+      "power of three)",
+      "",
+      "Colour 3: sentence structure",
+      "(fronted adverbials, subordinating",
+      "conjunctions, short sentences for tension)",
+      "",
+      "Colour 4: speech punctuation"
+    ],
+    "right_label": "Why annotate?",
+    "right_lines": [
+      "Annotating forces you to slow down",
+      "and notice what the writer is doing.",
+      "",
+      "Every choice in the model text is",
+      "there for a reason.",
+      "",
+      "When you annotate, you are building",
+      "a toolkit you can borrow from",
+      "in your own writing.",
+      "",
+      "A good reader is always also",
+      "a reader who is learning to write."
+    ]
+  },
+  {
+    "type": "you_do_trio",
+    "lines": [
+      "Annotate the model text with your partner.",
+      "",
+      "Use the four colours from the annotation key.",
+      "Work through the text paragraph by paragraph.",
+      "",
+      "When you have finished, discuss:",
+      "",
+      "  • Which feature appears most often?",
+      "  • Which moment in the text did you find",
+      "    most effective, and why?",
+      "  • What will you borrow for your own writing?",
+      "",
+      "Be ready to share one observation with the class."
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Building our success criteria",
+    "lines": [
+      "Based on the model text, what must your",
+      "final narrative include?",
+      "",
+      "Let’s build the success criteria together.",
+      "For each criterion, we need to know:",
+      "  • What it is",
+      "  • What it looks like in writing",
+      "",
+      "Record the success criteria in your books.",
+      "You will use these as a checklist",
+      "throughout the Challenge phase."
+    ]
+  },
+  {
+    "type": "learning_review",
+    "q1": "Which feature in the model text surprised you most, and why?",
+    "q2": "What is one specific thing from the model text that you want to use in your narrative?",
+    "q3": "Which success criterion do you think will be the hardest to achieve in your own writing?"
+  }
+]

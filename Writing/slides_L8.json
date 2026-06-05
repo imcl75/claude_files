@@ -1,0 +1,117 @@
+[
+  {"type": "cover", "day": "Monday PM"},
+  {"type": "kc"},
+  {
+    "type": "lo",
+    "wal": "use hyperbole and the power of three to make my writing more powerful",
+    "tib": "Deliberate exaggeration and grouped descriptions help readers feel the full force of a moment in a narrative.",
+    "isb": "writing a hyperbolic sentence about Varjak\u2019s panic and a power-of-three sentence about what he experiences."
+  },
+  {
+    "type": "warmup",
+    "title": "Grammar Warm-Up",
+    "subtitle": "Fix it. Each power of three below has a problem. Rewrite to fix it.",
+    "cards": [
+      {"label": "A", "lines": ["He could see the cars, the lights, the tall.", "", "Fix the third item."]},
+      {"label": "B", "lines": ["The city was loud, cold and it smelled bad.", "", "Fix so all three items match the pattern."]},
+      {"label": "C", "lines": ["Varjak felt afraid, confused, the darkness.", "", "Fix the third item so it fits."]}
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Recap from this morning",
+    "lines": [
+      "Look at the working wall.",
+      "",
+      "Find three similes and three alliterative phrases",
+      "we added this morning.",
+      "",
+      "Which ones would work best",
+      "in the middle section of a narrative?",
+      "",
+      "Today, we are adding two more techniques",
+      "to our toolkit: hyperbole and the power of three."
+    ]
+  },
+  {
+    "type": "i_do",
+    "title": "Hyperbole",
+    "left_label": "What is it?",
+    "left_lines": [
+      "Hyperbole is deliberate exaggeration",
+      "to express very strong feeling.",
+      "",
+      "his heart was beating a thousand times a second",
+      "",
+      "the sound was loud enough to wake the dead",
+      "",
+      "We know these are not literally true.",
+      "That is the point."
+    ],
+    "right_label": "When does it work?",
+    "right_lines": [
+      "Hyperbole works when a feeling",
+      "is so big that ordinary words",
+      "are not enough.",
+      "",
+      "Use it for moments of panic,",
+      "wonder or relief.",
+      "",
+      "Use it too often and the effect",
+      "disappears. Once or twice,",
+      "precisely placed, is enough."
+    ]
+  },
+  {
+    "type": "i_do",
+    "title": "The power of three",
+    "left_label": "What is it?",
+    "left_lines": [
+      "Listing three things in a row",
+      "creates a cumulative effect.",
+      "",
+      "He could see the cars,",
+      "the lights, the towering buildings.",
+      "",
+      "the cold, dark, endless street",
+      "",
+      "Three feels complete.",
+      "Two feels unfinished.",
+      "Four feels like too many."
+    ],
+    "right_label": "Why does it work?",
+    "right_lines": [
+      "Three items build a rhythm.",
+      "The reader feels the weight",
+      "of each one.",
+      "",
+      "You can list three nouns,",
+      "three adjectives or three actions.",
+      "",
+      "The items should match in form",
+      "so the rhythm feels right."
+    ]
+  },
+  {
+    "type": "you_do",
+    "title": "Apply both techniques.",
+    "lines": [
+      "1. Write a hyperbolic sentence about",
+      "   Varjak\u2019s panic when something scares him.",
+      "",
+      "2. Write a power-of-three sentence",
+      "   describing what Varjak sees, hears",
+      "   or smells in the city.",
+      "",
+      "Think about where in your narrative",
+      "these sentences might fit."
+    ],
+    "challenge": "Write a single sentence that uses the power of three inside a hyperbolic idea."
+  },
+  {
+    "type": "learning_review",
+    "q1": "What is the difference between hyperbole and an ordinary description of fear?",
+    "q2": "Why does the power of three feel more satisfying than a list of two or four?",
+    "q3": "Which of your sentences today do you want to use in your final narrative?"
+  }
+]

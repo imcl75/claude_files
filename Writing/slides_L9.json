@@ -1,0 +1,123 @@
+[
+  {"type": "cover", "day": "Wednesday AM"},
+  {"type": "kc"},
+  {
+    "type": "lo",
+    "wal": "write fronted adverbials to vary the way I start my sentences",
+    "tib": "Starting sentences in different ways keeps the reader engaged and gives my writing a more varied and controlled rhythm.",
+    "isb": "rewriting three sentences from my earlier writing using three different types of fronted adverbial."
+  },
+  {
+    "type": "warmup",
+    "title": "Grammar Warm-Up",
+    "subtitle": "Where does the comma go? Write the sentence with the comma in the right place.",
+    "cards": [
+      {"label": "Sentence A", "lines": ["After what felt like hours Varjak crept", "to the bottom of the steps.", "", "Where does the comma go?"]},
+      {"label": "Sentence B", "lines": ["Trembling with cold he pressed himself", "against the wall.", "", "Where does the comma go?"]},
+      {"label": "Sentence C", "lines": ["Beneath the rusting fire escape a shadow moved.", "", "Where does the comma go?"]}
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "A problem with our sentences",
+    "lines": [
+      "Read these three sentences from earlier in the week:",
+      "",
+      "He crept forward.",
+      "He heard a sound above.",
+      "He stopped and looked up.",
+      "",
+      "What do you notice about how",
+      "each one starts?",
+      "",
+      "How could we make them more varied?"
+    ]
+  },
+  {
+    "type": "i_do",
+    "title": "Three types of fronted adverbial",
+    "left_label": "The three types",
+    "left_lines": [
+      "Time  \u2014  When did it happen?",
+      "After what felt like hours, ...",
+      "Before he could move, ...",
+      "",
+      "Place  \u2014  Where did it happen?",
+      "Beneath the rusting fire escape, ...",
+      "At the end of the alleyway, ...",
+      "",
+      "Manner  \u2014  How did it happen?",
+      "Trembling with cold, ...",
+      "Moving as quietly as he could, ..."
+    ],
+    "right_label": "The rule",
+    "right_lines": [
+      "A fronted adverbial comes",
+      "at the start of the sentence.",
+      "",
+      "It is always followed by a comma.",
+      "",
+      "The subject comes after the comma.",
+      "",
+      "Trembling with cold,",
+      "Varjak pressed himself against the wall.",
+      "",
+      "The comma separates the adverbial",
+      "from the main clause."
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Let\u2019s rewrite together.",
+    "lines": [
+      "Take this sentence:",
+      "",
+      "Varjak crept forward.",
+      "",
+      "Rewrite it three times using:",
+      "  \u2022 a time fronted adverbial",
+      "  \u2022 a place fronted adverbial",
+      "  \u2022 a manner fronted adverbial",
+      "",
+      "Which version changes the mood of the sentence most?"
+    ]
+  },
+  {
+    "type": "you_do",
+    "title": "Rewrite your own sentences.",
+    "lines": [
+      "Choose three sentences from your",
+      "Lesson 5 cold task writing.",
+      "",
+      "Rewrite each one using a different",
+      "type of fronted adverbial:",
+      "  1. one with a time adverbial",
+      "  2. one with a place adverbial",
+      "  3. one with a manner adverbial",
+      "",
+      "Remember the comma after the fronted adverbial."
+    ],
+    "challenge": "Write a sentence that uses a fronted adverbial and also contains a simile or alliteration from Monday."
+  },
+  {
+    "type": "we_do",
+    "title": "Share and discuss.",
+    "lines": [
+      "Listen to a few examples.",
+      "",
+      "For each one, decide:",
+      "  \u2022 What type of fronted adverbial is it?",
+      "  \u2022 Is the comma in the right place?",
+      "  \u2022 Does it change the mood or pace of the sentence?",
+      "",
+      "Which type of fronted adverbial works best",
+      "for moments of fear or tension in the narrative?"
+    ]
+  },
+  {
+    "type": "learning_review",
+    "q1": "Which type of fronted adverbial did you find most useful for your narrative today?",
+    "q2": "Why is the comma after a fronted adverbial important for the reader?",
+    "q3": "Which sentence you rewrote today do you think is the strongest, and why?"
+  }
+]

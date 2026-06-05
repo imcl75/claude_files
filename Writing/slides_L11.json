@@ -1,0 +1,135 @@
+[
+  {
+    "type": "cover",
+    "day": "Thursday AM"
+  },
+  {
+    "type": "kc"
+  },
+  {
+    "type": "lo",
+    "wal": "punctuate direct speech accurately in my writing",
+    "tib": "Speech punctuation helps the reader follow who is talking and makes dialogue feel purposeful and controlled.",
+    "isb": "punctuating a prepared exchange and writing my own short dialogue between Varjak and a cat he meets."
+  },
+  {
+    "type": "warmup",
+    "title": "Grammar Warm-Up",
+    "subtitle": "Spot the correct version. Only one sentence in each pair is right.",
+    "cards": [
+      {
+        "label": "Pair A",
+        "lines": [
+          "\"You lost?\" She said.",
+          "\"You lost?\" she said.",
+          "",
+          "Which is correct?"
+        ]
+      },
+      {
+        "label": "Pair B",
+        "lines": [
+          "\"I am looking for a dog,\" said Varjak.",
+          "\"I am looking for a dog.\" said Varjak.",
+          "",
+          "Which is correct?"
+        ]
+      },
+      {
+        "label": "Pair C",
+        "lines": [
+          "Said the cat \"You have more courage than sense.\"",
+          "\"You have more courage than sense,\" said the cat.",
+          "",
+          "Which is correct?"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Why does punctuation matter in dialogue?",
+    "lines": [
+      "Here is a passage without any speech punctuation.",
+      "",
+      "Try reading it aloud.",
+      "",
+      "You lost said the cat.",
+      "No said Varjak. I am looking for a dog.",
+      "A dog said the cat. You have more courage than sense.",
+      "",
+      "What is difficult?",
+      "Where does the spoken part end?",
+      "Who says which line?"
+    ]
+  },
+  {
+    "type": "i_do",
+    "title": "Five rules for direct speech",
+    "left_label": "The rules",
+    "left_lines": [
+      "1. Inverted commas around the spoken words.",
+      "",
+      "2. Capital letter at the start of speech.",
+      "",
+      "3. Punctuation before the closing inverted comma.",
+      "",
+      "4. If a reporting clause follows, use a comma",
+      "   (not a full stop) inside the inverted comma.",
+      "",
+      "5. New speaker, new line."
+    ],
+    "right_label": "Example",
+    "right_lines": [
+      "\"You lost?\" she said.",
+      "",
+      "\"No,\" said Varjak.",
+      "\"I am looking for a dog.\"",
+      "",
+      "The cat stared at him.",
+      "Then she laughed.",
+      "\"A dog?\" she said.",
+      "\"You have more courage than sense.\""
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Punctuate together.",
+    "lines": [
+      "Here is an unpunctuated exchange.",
+      "Let’s add the punctuation together.",
+      "",
+      "What are you doing out here said the cat.",
+      "Looking for someone said Varjak.",
+      "Who asked the cat.",
+      "I don’t know yet said Varjak.",
+      "But I’ll know when I find them.",
+      "",
+      "Use the five rules.",
+      "Remember: new speaker, new line."
+    ]
+  },
+  {
+    "type": "you_do",
+    "title": "Punctuate, then write your own.",
+    "lines": [
+      "First: use your learning paper.",
+      "Punctuate the exchange between Varjak and Holly.",
+      "Use the five rules.",
+      "",
+      "Then: write your own short exchange.",
+      "Varjak meets a cat for the first time.",
+      "Write three or four lines of dialogue.",
+      "",
+      "At least one line must have",
+      "a reporting clause after the speech."
+    ],
+    "challenge": "Add a sentence of description between two speech lines to show how a character feels without interrupting the dialogue."
+  },
+  {
+    "type": "learning_review",
+    "q1": "Which of the five rules do you find hardest to remember when you are writing quickly?",
+    "q2": "How does starting a new line for each new speaker help the reader?",
+    "q3": "What does the dialogue you wrote tell the reader about Varjak’s character?"
+  }
+]
