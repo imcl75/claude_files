@@ -176,3 +176,100 @@ XCCW Join Rule (quick reference)
   Dotted fonts:  XCCW_Joined_Dotted_4a  /  XCCW_Joined_Dotted_4b
   Solid fonts:   XCCW_Joined_4a         /  XCCW_Joined_4b
 """
+
+
+# ── PPTX XML helpers ───────────────────────────────────────────────────────────
+
+def xccw_pptx_runs(text, rpr_template, solid=False):
+    """
+    Generate correctly-joined XCCW runs as PPTX XML for a text string.
+
+    A PPTX text run uses a single typeface for the whole run.  To get correct
+    XCCW joins, any character that follows a top-exit letter (o r v w x) must
+    be in a separate run using the 4b font variant.  This function splits the
+    text into the minimum number of runs needed and returns them as XML.
+
+    Parameters
+    ----------
+    text : str
+        The word or phrase to render.
+    rpr_template : str
+        A complete `<a:rPr ...>...</a:rPr>` XML string from the slide's
+        existing run, with the typeface attribute included.  The function
+        replaces the typeface name with 4a or 4b as required and wraps each
+        segment in `<a:r>...</a:r>`.
+    solid : bool
+        False → dotted variant names (XCCW Joined Dotted 4a/4b).
+        True  → solid variant names (XCCW Joined 4a/4b).
+
+    Returns
+    -------
+    str
+        One or more `<a:r>` elements as a single XML string, ready to replace
+        the original single run in the slide XML.
+
+    Example
+    -------
+        rpr = '<a:rPr lang="en-GB" sz="3200" b="0"><a:solidFill>' \\
+              '<a:schemeClr val="tx1"/></a:solidFill>' \\
+              '<a:latin typeface="XCCW Joined 4a" .../></a:rPr>'
+        runs_xml = xccw_pptx_runs('cautious', rpr)
+        # Returns three <a:r> elements:
+        #   cautio → 4a,  u → 4b,  s → 4a
+    """
+    import re as _re
+
+    if solid:
+        name_4a, name_4b = 'XCCW Joined 4a', 'XCCW Joined 4b'
+    else:
+        name_4a, name_4b = 'XCCW Joined Dotted 4a', 'XCCW Joined Dotted 4b'
+
+    # Split text into chunks, each sharing the same variant
+    chunks = []   # list of (text_chunk, variant_name)
+    current = ''
+    current_var = name_4a  # first character always 4a
+
+    for i, ch in enumerate(text):
+        prev = text[i - 1] if i > 0 else None
+        # Space resets join context
+        if prev == ' ':
+            prev = None
+        var = name_4b if (prev and prev.lower() in TOP_EXIT) else name_4a
+
+        if i == 0 or var == current_var:
+            current += ch
+            current_var = var
+        else:
+            chunks.append((current, current_var))
+            current = ch
+            current_var = var
+
+    if current:
+        chunks.append((current, current_var))
+
+    # Build XML runs
+    parts = []
+    for chunk_text, variant in chunks:
+        # Swap the typeface name in the rPr template
+        rpr = _re.sub(
+            r'typeface="[^"]*XCCW[^"]*"',
+            f'typeface="{variant}"',
+            rpr_template
+        )
+        parts.append(f'<a:r>{rpr}<a:t>{chunk_text}</a:t></a:r>')
+
+    return '\n'.join(parts)
+
+
+def needs_xccw_split(text):
+    """
+    Return True if text contains a character that follows a top-exit letter,
+    meaning a single PPTX run with one XCCW typeface will produce a wrong join.
+
+    Use this as a quick check before calling xccw_pptx_runs.
+    """
+    for i in range(1, len(text)):
+        prev = text[i - 1]
+        if prev != ' ' and prev.lower() in TOP_EXIT:
+            return True
+    return False
