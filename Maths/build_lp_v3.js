@@ -76,7 +76,7 @@ const LP2_DATA       = ld.lp2;
 const ADAPTED_SUPPORT = ld.adaptedSupport;
 
 // Output filename
-const outFile = `/home/claude/${LESSON.week}_L${LESSON_NUM}_LP.pptx`;
+const outFile = `/home/claude/${LESSON.week}_L${LESSON_NUM}_${LESSON.day.slice(0,3)}_LP.pptx`;
 
 
 // ─── Maths label PNG ─────────────────────────────────────────────────────────

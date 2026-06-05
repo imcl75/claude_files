@@ -2369,7 +2369,7 @@ build_learning_review()
 # ---------------------------------------------------------------------------
 # SAVE
 # ---------------------------------------------------------------------------
-out = f'/home/claude/{week_label}_L{lesson_num}_Teaching.pptx'
+out = f'/home/claude/{week_label}_L{lesson_num}_{day[:3]}_Teaching.pptx'
 prs.save(out)
 print(f"\n=== Saved: {out} ({len(prs.slides)} slides) ===")
 
