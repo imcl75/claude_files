@@ -1846,111 +1846,135 @@ function addCutLine(slide) {
 })();
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ARITHMETIC LP FUNCTIONS — for multiplication, division and word problems
+// ARITHMETIC LP FUNCTIONS — squared paper working areas
 // ─────────────────────────────────────────────────────────────────────────────
+
+function drawSquaredPaper(slide, x, y, w, h) {
+  const cs   = 0.185;
+  const cols = Math.floor(w / cs);
+  const rows = Math.floor(h / cs);
+  const gw   = cols * cs;
+  const gh   = rows * cs;
+
+  slide.addShape("rect", {
+    x, y, w: gw, h: gh,
+    fill: { color: "EEF5FC" },
+    line: { color: "A8C8E8", width: 0.6 }
+  });
+  for (let c = 1; c < cols; c++) {
+    slide.addShape("line", {
+      x: x + c * cs, y, w: 0, h: gh,
+      line: { color: "BDD5EE", width: 0.3 }
+    });
+  }
+  for (let r = 1; r < rows; r++) {
+    slide.addShape("line", {
+      x, y: y + r * cs, w: gw, h: 0,
+      line: { color: "BDD5EE", width: 0.3 }
+    });
+  }
+}
 
 function buildLP1Arithmetic(slide, labelPath, isMarkingStation) {
   const HALF_TOP = MARGIN;
   const HALF_BOT = MID_Y - CUT_GAP;
-  const HALF_H   = HALF_BOT - HALF_TOP;
 
-  const lblX = SLIDE_W - LL_W - MARGIN;
+  const lblX     = SLIDE_W - LL_W - MARGIN;
   const contentW = lblX - GUTTER - MARGIN;
-  let curY = HALF_TOP;
+  let curY       = HALF_TOP;
 
-  // Title
-  if (isMarkingStation) {
-    slide.addText("Marking Station 1", {
-      x: MARGIN, y: curY, w: contentW, h: 0.28,
-      fontSize: 13, fontFace: FONT_M, bold: true, color: GREEN, margin: 0
-    });
-  } else {
-    slide.addText(LP1_DATA.title || "Calculations", {
-      x: MARGIN, y: curY, w: contentW, h: 0.28,
-      fontSize: 13, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-    });
-  }
-  curY += 0.30;
+  slide.addText(isMarkingStation ? "Marking Station 1" : (LP1_DATA.title || "Calculations"), {
+    x: MARGIN, y: curY, w: contentW, h: 0.26,
+    fontSize: 12, fontFace: FONT_M, bold: true,
+    color: isMarkingStation ? GREEN : BLACK, margin: 0
+  });
+  curY += 0.27;
 
   if (!isMarkingStation && LP1_DATA.instruction) {
     slide.addText(LP1_DATA.instruction, {
-      x: MARGIN, y: curY, w: contentW, h: 0.20,
-      fontSize: 8.5, fontFace: FONT_C, color: BLACK, margin: 0
+      x: MARGIN, y: curY, w: contentW, h: 0.18,
+      fontSize: 8, fontFace: FONT_C, color: BLACK, margin: 0
     });
-    curY += 0.22;
+    curY += 0.20;
   }
 
-  // Questions — 2 columns
-  const questions = isMarkingStation ? LP1_DATA.questions : LP1_DATA.questions;
-  const nQ = questions.length;
-  const nCols = nQ <= 2 ? 1 : 2;
-  const qBoxW = nCols === 1 ? contentW : (contentW - 0.15) / 2;
-  const remainH = HALF_BOT - curY;
-  const nRows = Math.ceil(nQ / nCols);
-  const qBoxH = (remainH - nRows * 0.06) / nRows;
+  const questions = LP1_DATA.questions;
+  const nQ        = questions.length;
+  const nCols     = nQ <= 2 ? 1 : 2;
+  const qGap      = 0.06;
+  const qBoxW     = nCols === 1 ? contentW : (contentW - qGap) / 2;
+  const remainH   = HALF_BOT - curY;
+  const nRows     = Math.ceil(nQ / nCols);
+  const qBoxH     = (remainH - (nRows - 1) * qGap) / nRows;
+
+  const HEADER_H = 0.24;
+  const ANS_H    = 0.24;
+  const PAD      = 0.05;
+  const CIRC_SZ  = 0.16;
+  const GRID_PAD = 0.03;
 
   questions.forEach((q, i) => {
     const col = i % nCols;
     const row = Math.floor(i / nCols);
-    const bx = MARGIN + col * (qBoxW + 0.15);
-    const by = curY + row * (qBoxH + 0.06);
+    const bx  = MARGIN + col * (qBoxW + qGap);
+    const by  = curY + row * (qBoxH + qGap);
 
-    // Outer box
     slide.addShape("rect", {
       x: bx, y: by, w: qBoxW, h: qBoxH,
-      fill: { color: "F9FBFD" },
-      line: { color: "BBBBBB", width: 0.5 }
+      fill: { color: "FFFFFF" },
+      line: { color: "B0B0B0", width: 0.5 }
     });
 
-    // Q label and question text
-    slide.addText(`Q${i + 1}  ${q.q}`, {
-      x: bx + 0.06, y: by + 0.04, w: qBoxW - 0.12, h: 0.28,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: "1F4E79", margin: 0
+    // Check circle top-left
+    slide.addShape("ellipse", {
+      x: bx + PAD, y: by + PAD, w: CIRC_SZ, h: CIRC_SZ,
+      fill: { color: "FFFFFF" },
+      line: { color: "999999", width: 0.5 }
     });
 
-    // Working area — faint dotted lines in the box
-    const workTop = by + 0.34;
-    const workBot = by + qBoxH - 0.32;
-    const lineCount = Math.floor((workBot - workTop) / 0.22);
-    for (let li = 0; li <= lineCount; li++) {
-      slide.addShape("line", {
-        x: bx + 0.06, y: workTop + li * 0.22,
-        w: qBoxW - 0.12, h: 0,
-        line: { color: "DDDDDD", width: 0.3, dashType: "dot" }
-      });
+    // Question — strip "Work out" prefix, add "="
+    let rawQ = q.q.replace(/^Work out\s+/i, '').replace(/^Calculate\s+/i, '');
+    let qText = `Q${i + 1})  ${rawQ}`;
+    if (!qText.includes("?") && !qText.includes(" ") || qText.match(/[\d,×÷+\-]/)) {
+      if (!qText.endsWith("=")) qText += " =";
     }
-
-    // Answer line
-    const ansY = by + qBoxH - 0.28;
-    slide.addText("Answer: ", {
-      x: bx + 0.06, y: ansY, w: 0.60, h: 0.22,
-      fontSize: 8, fontFace: FONT_C, bold: true, color: "333333", margin: 0
-    });
-    slide.addShape("line", {
-      x: bx + 0.66, y: ansY + 0.18,
-      w: qBoxW - 0.72, h: 0,
-      line: { color: "333333", width: 0.6 }
+    slide.addText(qText, {
+      x: bx + PAD + CIRC_SZ + 0.05, y: by + PAD,
+      w: qBoxW - PAD - CIRC_SZ - 0.08, h: HEADER_H,
+      fontSize: 9.5, fontFace: FONT_M, bold: true,
+      color: "1F4E79", valign: "middle", margin: 0
     });
 
-    // Mark scheme answer if marking station
+    // Squared paper
+    const gridTop = by + PAD + HEADER_H + GRID_PAD;
+    const gridBot = by + qBoxH - ANS_H - GRID_PAD;
+    const gridH   = gridBot - gridTop;
+    if (gridH > 0.2) drawSquaredPaper(slide, bx + PAD, gridTop, qBoxW - PAD * 2, gridH);
+
+    // Answer row
+    const ansY = by + qBoxH - ANS_H + 0.02;
+    slide.addText("A", {
+      x: bx + PAD, y: ansY, w: 0.18, h: ANS_H - 0.04,
+      fontSize: 9, fontFace: FONT_M, bold: true,
+      color: "333333", valign: "middle", margin: 0
+    });
     if (isMarkingStation && q.answer) {
       slide.addText(q.answer, {
-        x: bx + 0.66, y: ansY, w: qBoxW - 0.72, h: 0.20,
-        fontSize: 9.5, fontFace: FONT_C, bold: true, color: GREEN,
-        valign: "bottom", margin: 0
+        x: bx + PAD + 0.20, y: ansY, w: qBoxW - PAD * 2 - 0.20, h: ANS_H - 0.04,
+        fontSize: 9.5, fontFace: FONT_C, bold: true,
+        color: GREEN, valign: "middle", margin: 0
+      });
+    } else {
+      slide.addShape("line", {
+        x: bx + PAD + 0.20, y: ansY + (ANS_H - 0.04) / 2,
+        w: qBoxW - PAD * 2 - 0.20, h: 0,
+        line: { color: "555555", width: 0.6 }
       });
     }
   });
 
-  // Going further
-  if (!isMarkingStation && LP1_DATA.goingFurther) {
-    // Draw as a note in the right column below the label
-  }
-
-  // Right column
   if (!isMarkingStation) {
     slide.addImage({ path: labelPath, x: lblX, y: HALF_TOP, w: LL_W, h: LL_H });
-
     let rY = HALF_TOP + LL_H + 0.10;
     if (LP1_DATA.goingFurther) {
       slide.addText("Going further:", {
@@ -1961,110 +1985,98 @@ function buildLP1Arithmetic(slide, labelPath, isMarkingStation) {
       slide.addText(LP1_DATA.goingFurther, {
         x: lblX, y: rY, w: LL_W, h: HALF_BOT - rY - 0.10,
         fontSize: 8.5, fontFace: FONT_C, color: BLACK,
-        fill: { color: "F2E6F9" },
-        line: { color: "7030A0", width: 0.75 },
+        fill: { color: "F2E6F9" }, line: { color: "7030A0", width: 0.75 },
         margin: 5, valign: "top"
       });
     }
   }
-
-  addGlueHere(slide, HALF_TOP, HALF_H);
+  addGlueHere(slide, HALF_TOP, HALF_BOT - HALF_TOP);
 }
 
 function buildLP2Arithmetic(slide, isMarkingStation) {
   const HALF_TOP = MID_Y + CUT_GAP;
   const HALF_BOT = SLIDE_H - MARGIN;
-  const HALF_H   = HALF_BOT - HALF_TOP;
 
-  const lblX = SLIDE_W - LL_W - MARGIN;
+  const lblX     = SLIDE_W - LL_W - MARGIN;
   const contentW = lblX - GUTTER - MARGIN;
-  let curY = HALF_TOP;
+  let curY       = HALF_TOP;
 
-  // Title
-  if (isMarkingStation) {
-    slide.addText("Marking Station 2", {
-      x: MARGIN, y: curY, w: contentW, h: 0.28,
-      fontSize: 13, fontFace: FONT_M, bold: true, color: GREEN, margin: 0
-    });
-  } else {
-    slide.addText(LP2_DATA.title || "Problem Solving", {
-      x: MARGIN, y: curY, w: contentW, h: 0.28,
-      fontSize: 13, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-    });
-  }
-  curY += 0.30;
+  slide.addText(isMarkingStation ? "Marking Station 2" : (LP2_DATA.title || "Problem Solving"), {
+    x: MARGIN, y: curY, w: contentW, h: 0.26,
+    fontSize: 12, fontFace: FONT_M, bold: true,
+    color: isMarkingStation ? GREEN : BLACK, margin: 0
+  });
+  curY += 0.27;
 
   if (!isMarkingStation && LP2_DATA.instruction) {
     slide.addText(LP2_DATA.instruction, {
-      x: MARGIN, y: curY, w: contentW, h: 0.20,
-      fontSize: 8.5, fontFace: FONT_C, color: BLACK, margin: 0
+      x: MARGIN, y: curY, w: contentW, h: 0.18,
+      fontSize: 8, fontFace: FONT_C, color: BLACK, margin: 0
     });
-    curY += 0.22;
+    curY += 0.20;
   }
 
-  // Questions — stacked
   const questions = LP2_DATA.questions;
-  const nQ = questions.length;
-  const remainH = HALF_BOT - curY;
-  const qBoxH = (remainH - nQ * 0.06) / nQ;
+  const nQ        = questions.length;
+  const qGap      = 0.06;
+  const remainH   = HALF_BOT - curY;
+  const qBoxH     = (remainH - (nQ - 1) * qGap) / nQ;
+
+  const PAD     = 0.05;
+  const CIRC_SZ = 0.16;
+  const ANS_H   = 0.24;
 
   questions.forEach((q, i) => {
-    const bx = MARGIN;
-    const by = curY + i * (qBoxH + 0.06);
-    const bw = contentW;
+    const by = curY + i * (qBoxH + qGap);
 
     slide.addShape("rect", {
-      x: bx, y: by, w: bw, h: qBoxH,
-      fill: { color: "F9FBFD" },
-      line: { color: "BBBBBB", width: 0.5 }
+      x: MARGIN, y: by, w: contentW, h: qBoxH,
+      fill: { color: "FFFFFF" },
+      line: { color: "B0B0B0", width: 0.5 }
     });
 
-    // Question number and text
-    slide.addText(`Q${i + 1}`, {
-      x: bx + 0.06, y: by + 0.04, w: 0.22, h: 0.24,
-      fontSize: 10, fontFace: FONT_C, bold: true, color: "1F4E79", margin: 0
+    slide.addShape("ellipse", {
+      x: MARGIN + PAD, y: by + PAD, w: CIRC_SZ, h: CIRC_SZ,
+      fill: { color: "FFFFFF" }, line: { color: "999999", width: 0.5 }
     });
-    const qTextH = Math.min(qBoxH * 0.35, 0.70);
+
+    slide.addText(`Q${i + 1})`, {
+      x: MARGIN + PAD + CIRC_SZ + 0.04, y: by + PAD,
+      w: 0.28, h: CIRC_SZ,
+      fontSize: 9, fontFace: FONT_M, bold: true,
+      color: "1F4E79", valign: "middle", margin: 0
+    });
+
+    const qtH = Math.min(qBoxH * 0.32, 0.68);
     slide.addText(q.q, {
-      x: bx + 0.28, y: by + 0.04, w: bw - 0.34, h: qTextH,
-      fontSize: 9, fontFace: FONT_C, color: BLACK, margin: 0, valign: "top"
+      x: MARGIN + PAD + CIRC_SZ + 0.36, y: by + PAD,
+      w: contentW - PAD - CIRC_SZ - 0.40, h: qtH,
+      fontSize: 8.5, fontFace: FONT_C, color: BLACK,
+      valign: "top", margin: 0, wrap: true
     });
 
-    // Show all working header
-    slide.addText("Show all your working:", {
-      x: bx + 0.06, y: by + qTextH + 0.08, w: bw - 0.12, h: 0.18,
-      fontSize: 7.5, fontFace: FONT_C, color: "777777", margin: 0
-    });
+    const gridTop = by + PAD + Math.max(qtH, CIRC_SZ + PAD) + 0.04;
+    const gridBot = by + qBoxH - ANS_H - 0.03;
+    const gridH   = gridBot - gridTop;
+    if (gridH > 0.2) drawSquaredPaper(slide, MARGIN + PAD, gridTop, contentW - PAD * 2, gridH);
 
-    // Working area lines
-    const workTop = by + qTextH + 0.28;
-    const workBot = by + qBoxH - 0.30;
-    const lineCount = Math.floor((workBot - workTop) / 0.22);
-    for (let li = 0; li <= lineCount; li++) {
-      slide.addShape("line", {
-        x: bx + 0.06, y: workTop + li * 0.22,
-        w: bw - 0.12, h: 0,
-        line: { color: "DDDDDD", width: 0.3, dashType: "dot" }
-      });
-    }
-
-    // Answer line
-    const ansY = by + qBoxH - 0.28;
-    slide.addText("Answer: ", {
-      x: bx + 0.06, y: ansY, w: 0.60, h: 0.22,
-      fontSize: 8, fontFace: FONT_C, bold: true, color: "333333", margin: 0
+    const ansY = by + qBoxH - ANS_H + 0.02;
+    slide.addText("A", {
+      x: MARGIN + PAD, y: ansY, w: 0.18, h: ANS_H - 0.04,
+      fontSize: 9, fontFace: FONT_M, bold: true,
+      color: "333333", valign: "middle", margin: 0
     });
-    slide.addShape("line", {
-      x: bx + 0.66, y: ansY + 0.18,
-      w: bw - 0.72, h: 0,
-      line: { color: "333333", width: 0.6 }
-    });
-
     if (isMarkingStation && q.answer) {
       slide.addText(q.answer, {
-        x: bx + 0.66, y: ansY, w: bw - 0.72, h: 0.20,
-        fontSize: 9.5, fontFace: FONT_C, bold: true, color: GREEN,
-        valign: "bottom", margin: 0
+        x: MARGIN + PAD + 0.20, y: ansY, w: contentW - PAD * 2 - 0.20, h: ANS_H - 0.04,
+        fontSize: 8.5, fontFace: FONT_C, bold: true,
+        color: GREEN, valign: "middle", margin: 0, wrap: true
+      });
+    } else {
+      slide.addShape("line", {
+        x: MARGIN + PAD + 0.20, y: ansY + (ANS_H - 0.04) / 2,
+        w: contentW - PAD * 2 - 0.20, h: 0,
+        line: { color: "555555", width: 0.6 }
       });
     }
   });
@@ -2073,76 +2085,78 @@ function buildLP2Arithmetic(slide, isMarkingStation) {
 function buildLP1ArithmeticAdapted(slide, labelPath) {
   const HALF_TOP = MARGIN;
   const HALF_BOT = MID_Y - CUT_GAP;
-  const HALF_H   = HALF_BOT - HALF_TOP;
 
-  const lblX = SLIDE_W - LL_W - MARGIN;
+  const lblX     = SLIDE_W - LL_W - MARGIN;
   const contentW = lblX - GUTTER - MARGIN;
-  let curY = HALF_TOP;
+  let curY       = HALF_TOP;
 
   slide.addText(LP1_DATA.title || "Calculations", {
-    x: MARGIN, y: curY, w: contentW, h: 0.28,
-    fontSize: 13, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
+    x: MARGIN, y: curY, w: contentW, h: 0.26,
+    fontSize: 12, fontFace: FONT_M, bold: true, color: BLACK, margin: 0
   });
-  curY += 0.30;
+  curY += 0.27;
 
   if (LP1_DATA.instruction) {
     slide.addText(LP1_DATA.instruction, {
-      x: MARGIN, y: curY, w: contentW, h: 0.20,
-      fontSize: 8.5, fontFace: FONT_C, color: BLACK, margin: 0
+      x: MARGIN, y: curY, w: contentW, h: 0.18,
+      fontSize: 8, fontFace: FONT_C, color: BLACK, margin: 0
     });
-    curY += 0.22;
+    curY += 0.20;
   }
 
-  // Adapted questions (fewer, simpler)
   const questions = ADAPTED_SUPPORT.lp1Questions || LP1_DATA.questions.slice(0, 2);
-  const nQ = questions.length;
-  const remainH = HALF_BOT - curY;
-  const qBoxH = (remainH - nQ * 0.06) / nQ;
+  const nQ        = questions.length;
+  const qGap      = 0.06;
+  const remainH   = HALF_BOT - curY;
+  const qBoxH     = (remainH - (nQ - 1) * qGap) / nQ;
+
+  const HEADER_H = 0.24;
+  const ANS_H    = 0.24;
+  const PAD      = 0.05;
+  const CIRC_SZ  = 0.16;
 
   questions.forEach((q, i) => {
-    const bx = MARGIN;
-    const by = curY + i * (qBoxH + 0.06);
+    const by = curY + i * (qBoxH + qGap);
 
     slide.addShape("rect", {
-      x: bx, y: by, w: contentW, h: qBoxH,
-      fill: { color: "F9FBFD" },
-      line: { color: "BBBBBB", width: 0.5 }
+      x: MARGIN, y: by, w: contentW, h: qBoxH,
+      fill: { color: "FFFFFF" }, line: { color: "B0B0B0", width: 0.5 }
+    });
+    slide.addShape("ellipse", {
+      x: MARGIN + PAD, y: by + PAD, w: CIRC_SZ, h: CIRC_SZ,
+      fill: { color: "FFFFFF" }, line: { color: "999999", width: 0.5 }
     });
 
-    slide.addText(`Q${i + 1}  ${q.q}`, {
-      x: bx + 0.06, y: by + 0.04, w: contentW - 0.12, h: 0.28,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: "1F4E79", margin: 0
+    let rawQ = q.q.replace(/^Work out\s+/i, '').replace(/^Calculate\s+/i, '');
+    let qText = `Q${i + 1})  ${rawQ}`;
+    if (!qText.endsWith("=") && !qText.includes("?")) qText += " =";
+    slide.addText(qText, {
+      x: MARGIN + PAD + CIRC_SZ + 0.05, y: by + PAD,
+      w: contentW - PAD - CIRC_SZ - 0.08, h: HEADER_H,
+      fontSize: 9.5, fontFace: FONT_M, bold: true,
+      color: "1F4E79", valign: "middle", margin: 0
     });
 
-    // Dotted working area
-    const workTop = by + 0.34;
-    const workBot = by + qBoxH - 0.32;
-    const lineCount = Math.floor((workBot - workTop) / 0.22);
-    for (let li = 0; li <= lineCount; li++) {
-      slide.addShape("line", {
-        x: bx + 0.06, y: workTop + li * 0.22,
-        w: contentW - 0.12, h: 0,
-        line: { color: "DDDDDD", width: 0.3, dashType: "dot" }
-      });
-    }
+    const gridTop = by + PAD + HEADER_H + 0.03;
+    const gridBot = by + qBoxH - ANS_H - 0.03;
+    const gridH   = gridBot - gridTop;
+    if (gridH > 0.2) drawSquaredPaper(slide, MARGIN + PAD, gridTop, contentW - PAD * 2, gridH);
 
-    const ansY = by + qBoxH - 0.28;
-    slide.addText("Answer: ", {
-      x: bx + 0.06, y: ansY, w: 0.60, h: 0.22,
-      fontSize: 8, fontFace: FONT_C, bold: true, color: "333333", margin: 0
+    const ansY = by + qBoxH - ANS_H + 0.02;
+    slide.addText("A", {
+      x: MARGIN + PAD, y: ansY, w: 0.18, h: ANS_H - 0.04,
+      fontSize: 9, fontFace: FONT_M, bold: true, color: "333333",
+      valign: "middle", margin: 0
     });
     slide.addShape("line", {
-      x: bx + 0.66, y: ansY + 0.18,
-      w: contentW - 0.72, h: 0,
-      line: { color: "333333", width: 0.6 }
+      x: MARGIN + PAD + 0.20, y: ansY + (ANS_H - 0.04) / 2,
+      w: contentW - PAD * 2 - 0.20, h: 0,
+      line: { color: "555555", width: 0.6 }
     });
   });
 
-  // Right column: label + worked example + hint
   slide.addImage({ path: labelPath, x: lblX, y: HALF_TOP, w: LL_W, h: LL_H });
   let rY = HALF_TOP + LL_H + 0.10;
-
-  const hintMaxH = HALF_BOT - rY - 0.05;
 
   if (ADAPTED_SUPPORT.hint1) {
     slide.addText("Step-by-step:", {
@@ -2150,100 +2164,95 @@ function buildLP1ArithmeticAdapted(slide, labelPath) {
       fontSize: 9, fontFace: FONT_C, bold: true, color: "156082", margin: 0
     });
     rY += 0.22;
-    const h1 = Math.min(hintMaxH * 0.45, 1.10);
+    const h1 = Math.min((HALF_BOT - rY - 0.10) * 0.45, 1.10);
     slide.addText(ADAPTED_SUPPORT.hint1, {
       x: lblX, y: rY, w: LL_W, h: h1,
       fontSize: 8.5, fontFace: FONT_C, color: BLACK,
-      fill: { color: "EBF3FB" },
-      line: { color: "156082", width: 0.75 },
+      fill: { color: "EBF3FB" }, line: { color: "156082", width: 0.75 },
       margin: 5, valign: "top"
     });
     rY += h1 + 0.08;
   }
-
-  if (ADAPTED_SUPPORT.hint2) {
+  if (ADAPTED_SUPPORT.hint2 && rY < HALF_BOT - 0.30) {
     slide.addText("Remember:", {
       x: lblX, y: rY, w: LL_W, h: 0.20,
       fontSize: 9, fontFace: FONT_C, bold: true, color: "156082", margin: 0
     });
     rY += 0.22;
-    const h2 = HALF_BOT - rY - 0.05;
     slide.addText(ADAPTED_SUPPORT.hint2, {
-      x: lblX, y: rY, w: LL_W, h: h2,
+      x: lblX, y: rY, w: LL_W, h: HALF_BOT - rY - 0.05,
       fontSize: 8.5, fontFace: FONT_C, color: BLACK,
-      fill: { color: "FFFFFF" },
-      line: { color: "156082", width: 0.75 },
+      fill: { color: "FFFFFF" }, line: { color: "156082", width: 0.75 },
       margin: 5, valign: "top"
     });
   }
-
-  addGlueHere(slide, HALF_TOP, HALF_H);
+  addGlueHere(slide, HALF_TOP, HALF_BOT - HALF_TOP);
 }
 
 function buildLP2ArithmeticAdapted(slide) {
   const HALF_TOP = MID_Y + CUT_GAP;
   const HALF_BOT = SLIDE_H - MARGIN;
 
-  const lblX = SLIDE_W - LL_W - MARGIN;
+  const lblX     = SLIDE_W - LL_W - MARGIN;
   const contentW = lblX - GUTTER - MARGIN;
-  let curY = HALF_TOP;
+  let curY       = HALF_TOP;
 
   slide.addText(LP2_DATA.title || "Problem Solving", {
-    x: MARGIN, y: curY, w: contentW, h: 0.28,
-    fontSize: 13, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
+    x: MARGIN, y: curY, w: contentW, h: 0.26,
+    fontSize: 12, fontFace: FONT_M, bold: true, color: BLACK, margin: 0
   });
-  curY += 0.30;
+  curY += 0.27;
 
   const questions = ADAPTED_SUPPORT.lp2Questions || LP2_DATA.questions.slice(0, 1);
-  const nQ = questions.length;
-  const remainH = HALF_BOT - curY;
-  const qBoxH = (remainH - nQ * 0.06) / nQ;
+  const nQ        = questions.length;
+  const qGap      = 0.06;
+  const remainH   = HALF_BOT - curY;
+  const qBoxH     = (remainH - (nQ - 1) * qGap) / nQ;
+
+  const PAD     = 0.05;
+  const CIRC_SZ = 0.16;
+  const ANS_H   = 0.24;
 
   questions.forEach((q, i) => {
-    const by = curY + i * (qBoxH + 0.06);
+    const by = curY + i * (qBoxH + qGap);
 
     slide.addShape("rect", {
       x: MARGIN, y: by, w: contentW, h: qBoxH,
-      fill: { color: "F9FBFD" },
-      line: { color: "BBBBBB", width: 0.5 }
+      fill: { color: "FFFFFF" }, line: { color: "B0B0B0", width: 0.5 }
+    });
+    slide.addShape("ellipse", {
+      x: MARGIN + PAD, y: by + PAD, w: CIRC_SZ, h: CIRC_SZ,
+      fill: { color: "FFFFFF" }, line: { color: "999999", width: 0.5 }
+    });
+    slide.addText(`Q${i + 1})`, {
+      x: MARGIN + PAD + CIRC_SZ + 0.04, y: by + PAD, w: 0.28, h: CIRC_SZ,
+      fontSize: 9, fontFace: FONT_M, bold: true, color: "1F4E79",
+      valign: "middle", margin: 0
     });
 
-    slide.addText(`Q${i + 1}`, {
-      x: MARGIN + 0.06, y: by + 0.04, w: 0.22, h: 0.24,
-      fontSize: 10, fontFace: FONT_C, bold: true, color: "1F4E79", margin: 0
-    });
-
-    const qTextH = Math.min(qBoxH * 0.35, 0.70);
+    const qtH = Math.min(qBoxH * 0.32, 0.68);
     slide.addText(q.q, {
-      x: MARGIN + 0.28, y: by + 0.04, w: contentW - 0.34, h: qTextH,
-      fontSize: 9, fontFace: FONT_C, color: BLACK, margin: 0, valign: "top"
+      x: MARGIN + PAD + CIRC_SZ + 0.36, y: by + PAD,
+      w: contentW - PAD - CIRC_SZ - 0.40, h: qtH,
+      fontSize: 8.5, fontFace: FONT_C, color: BLACK,
+      valign: "top", margin: 0, wrap: true
     });
 
-    slide.addText("Show all your working:", {
-      x: MARGIN + 0.06, y: by + qTextH + 0.08, w: contentW - 0.12, h: 0.18,
-      fontSize: 7.5, fontFace: FONT_C, color: "777777", margin: 0
-    });
+    const gridTop = by + PAD + Math.max(qtH, CIRC_SZ + PAD) + 0.04;
+    const gridBot = by + qBoxH - ANS_H - 0.03;
+    const gridH   = gridBot - gridTop;
+    if (gridH > 0.2) drawSquaredPaper(slide, MARGIN + PAD, gridTop, contentW - PAD * 2, gridH);
 
-    const workTop = by + qTextH + 0.28;
-    const workBot = by + qBoxH - 0.30;
-    const lineCount = Math.floor((workBot - workTop) / 0.22);
-    for (let li = 0; li <= lineCount; li++) {
-      slide.addShape("line", {
-        x: MARGIN + 0.06, y: workTop + li * 0.22,
-        w: contentW - 0.12, h: 0,
-        line: { color: "DDDDDD", width: 0.3, dashType: "dot" }
-      });
-    }
-
-    const ansY = by + qBoxH - 0.28;
-    slide.addText("Answer: ", {
-      x: MARGIN + 0.06, y: ansY, w: 0.60, h: 0.22,
-      fontSize: 8, fontFace: FONT_C, bold: true, color: "333333", margin: 0
+    const ansY = by + qBoxH - ANS_H + 0.02;
+    slide.addText("A", {
+      x: MARGIN + PAD, y: ansY, w: 0.18, h: ANS_H - 0.04,
+      fontSize: 9, fontFace: FONT_M, bold: true, color: "333333",
+      valign: "middle", margin: 0
     });
     slide.addShape("line", {
-      x: MARGIN + 0.66, y: ansY + 0.18,
-      w: contentW - 0.72, h: 0,
-      line: { color: "333333", width: 0.6 }
+      x: MARGIN + PAD + 0.20, y: ansY + (ANS_H - 0.04) / 2,
+      w: contentW - PAD * 2 - 0.20, h: 0,
+      line: { color: "555555", width: 0.6 }
     });
   });
 }
