@@ -9495,25 +9495,18 @@ AMBER = (1.0, 0.98, 0.92)
 # ── Internal helpers ──────────────────────────────────────────────────────────
 
 def _xccw_font_for(ch, prev):
-    """Return correct XCCW font name for character given previous character."""
-    if prev and prev in TOP_EXIT:
-        return 'XCCW_Joined_Dotted_4b'
-    return 'XCCW_Joined_Dotted_4a'
+    """Thin wrapper — delegates to xccw_render.xccw_font_for (dotted)."""
+    from xccw_render import xccw_font_for
+    return xccw_font_for(ch, prev, solid=False)
 
 def _xccw_font_for_solid(ch, prev):
-    if prev and prev in TOP_EXIT:
-        return 'XCCW_Joined_4b'
-    return 'XCCW_Joined_4a'
+    """Thin wrapper — delegates to xccw_render.xccw_font_for (solid)."""
+    from xccw_render import xccw_font_for
+    return xccw_font_for(ch, prev, solid=True)
 
 def _draw_xccw(c, x, y, text, size, solid=False):
-    fn = _xccw_font_for_solid if solid else _xccw_font_for
-    for i, ch in enumerate(text):
-        prev = text[i-1] if i > 0 else None
-        font = fn(ch, prev)
-        c.setFont(font, size)
-        c.setFillColorRGB(*NAVY)
-        c.drawString(x, y, ch)
-        x += c.stringWidth(ch, font, size)
+    from xccw_render import draw_xccw
+    draw_xccw(c, x, y, text, size=size, solid=solid, colour_rgb=NAVY)
 
 def _draw_sassoon(c, x, y, text, size):
     c.setFont('SassoInfDotB', size)
@@ -9558,19 +9551,12 @@ def _draw_header(c, title, subtitle=None):
     return header_h
 
 def _xccw_text_width(text, solid=False, size=None):
-    """Measure XCCW text width using a temporary canvas."""
+    """Measure XCCW text width — delegates to xccw_render.xccw_text_width."""
+    from xccw_render import xccw_text_width
     if size is None:
         size = XCCW_FS
     _ensure_fonts()
-    tmp = canvas.Canvas('/dev/null', pagesize=A4)
-    fn = _xccw_font_for_solid if solid else _xccw_font_for
-    x = 0
-    for i, ch in enumerate(text):
-        prev = text[i-1] if i > 0 else None
-        font = fn(ch, prev)
-        tmp.setFont(font, size)
-        x += tmp.stringWidth(ch, font, size)
-    return x
+    return xccw_text_width(text, solid=solid, size=size)
 
 def _sass_text_width(text, size=None):
     if size is None:
