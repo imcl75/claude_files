@@ -64,6 +64,8 @@ NOTES FOR CLAUDE
 
 import os, json, re, copy, base64, subprocess, tempfile
 from lxml import etree
+from wfa_fonts import WFA
+from xccw_render import xccw_lxml_runs
 from pptx import Presentation
 from pptx.util import Inches, Pt, Emu
 
@@ -71,62 +73,62 @@ from pptx.util import Inches, Pt, Emu
 # ░░  EDIT HERE  ░░
 # =============================================================================
 
-TEMPLATE_FILE   = "working_memory_template.pptx"   # must be in same folder as this script
-OUTPUT_FILENAME = "Working_Memory_Starters_T5W1.pptx"
-WEEK_LABEL      = "T5W1"
+TEMPLATE_FILE   = "Working_Memory_Template.pptx"   # must be in same folder as this script
+OUTPUT_FILENAME = "Working_Memory_Starters_T6W1.pptx"
+WEEK_LABEL      = "T6W1"
 
 GAMES = [
     {
         "type": "number_sequence",
         "label": "Game 1 of 4:  Number Sequence",
-        "data": [6, 19, 2, 14, 8, 27, 11],
+        "data": [5, 21, 8, 33, 14, 3, 16],
         "qa": [
-            {"q": "What was the 1st number?",           "a": "6"},
-            {"q": "What was the 4th number?",           "a": "14"},
-            {"q": "Sum of the first two numbers?",      "a": "25  (6 + 19)"},
-            {"q": "How many odd numbers were there?",   "a": "3  (19, 27, 11)"},
-            {"q": "What was the largest number?",       "a": "27"},
+            {"q": "What was the 1st number?",           "a": "5"},
+            {"q": "What was the 5th number?",           "a": "14"},
+            {"q": "Sum of the last two numbers?",       "a": "19  (3 + 16)"},
+            {"q": "How many even numbers were there?",  "a": "3  (8, 14, 16)"},
+            {"q": "What was the smallest number?",      "a": "3"},
         ]
     },
     {
         "type": "word_list",
         "label": "Game 2 of 4:  Word List",
-        "data": ["migrate", "surplus", "invaded", "harvest", "sacrifice", "ancient"],
+        "data": ["temple", "settler", "voyage", "trade", "emperor", "ritual"],
         "qa": [
-            {"q": "What was the 1st word?",                    "a": "migrate"},
-            {"q": "What was the 4th word?",                    "a": "harvest"},
-            {"q": "Which word means more than you need?",      "a": "surplus"},
-            {"q": "Which word means very old?",                "a": "ancient"},
-            {"q": "What was the last word?",                   "a": "ancient"},
+            {"q": "What was the 2nd word?",                   "a": "settler"},
+            {"q": "What was the 5th word?",                   "a": "emperor"},
+            {"q": "Which word means a journey by sea?",       "a": "voyage"},
+            {"q": "Which word means buying and selling?",     "a": "trade"},
+            {"q": "What was the last word?",                  "a": "ritual"},
         ]
     },
     {
         "type": "emoji_sequence",
         "label": "Game 3 of 4:  Emoji Sequence",
-        "data": ["🦊", "🎠", "🍇", "🛺", "🌋", "🎯"],
+        "data": ["🦁", "🍄", "🚂", "⚡", "🏺", "🌿"],
         "qa": [
-            {"q": "What was the 2nd emoji?",             "a": "Carousel"},
-            {"q": "What was the 5th emoji?",             "a": "Volcano"},
-            {"q": "Which emoji came after the grapes?",  "a": "Rickshaw"},
-            {"q": "What was the last emoji?",            "a": "Target / bullseye"},
-            {"q": "Which emoji was a living creature?",  "a": "Fox"},
+            {"q": "What was the 1st emoji?",               "a": "Lion"},
+            {"q": "What was the 4th emoji?",               "a": "Lightning bolt"},
+            {"q": "Which emoji came after the mushroom?",  "a": "Train"},
+            {"q": "What was the last emoji?",              "a": "Plant / herb"},
+            {"q": "Which emoji was an animal?",            "a": "Lion"},
         ]
     },
     {
         "type": "picture_scene",
         "label": "Game 4 of 4:  Picture Scene",
-        "scene_title": "The Library",
+        "scene_title": "The Castle",
         "data": [
-            {"icon": "📚", "text": "There were fourteen books on the top shelf."},
-            {"icon": "🕯️", "text": "A green candle sat on the wooden desk."},
-            {"icon": "🐈", "text": "A stripy cat slept on the window seat."},
-            {"icon": "🗺️", "text": "An old map of England hung on the wall."},
+            {"icon": "🏹", "text": "Seven arrows rested against the stone wall."},
+            {"icon": "🕯️", "text": "A red candle burned on the round table."},
+            {"icon": "🐴", "text": "A brown horse stood in the courtyard."},
+            {"icon": "🛡️", "text": "A silver shield hung above the wooden door."},
         ],
         "qa": [
-            {"q": "How many books were on the top shelf?", "a": "Fourteen"},
-            {"q": "What colour was the candle?",           "a": "Green"},
-            {"q": "Where was the cat sleeping?",           "a": "On the window seat"},
-            {"q": "What was on the wall?",                 "a": "An old map of England"},
+            {"q": "How many arrows were by the wall?",  "a": "Seven"},
+            {"q": "What colour was the candle?",        "a": "Red"},
+            {"q": "Where was the horse?",               "a": "In the courtyard"},
+            {"q": "What was above the door?",           "a": "A silver shield"},
         ]
     },
 ]
@@ -192,72 +194,56 @@ def atag(t): return f'{{{A_NS}}}{t}'
 def make_rect(x, y, w, h, fill_hex, border_hex=None, border_pt=0,
               text='', font='Aptos', fontsize_pt=14, bold=True,
               color_hex=NAVY, align='left', valign='middle',
-              margin_l=12, roundrect=False, shape_name='', transparent=False,
-              autofit=False):
-    """Build a complete <p:sp> lxml element — single shape with embedded text.
-    Uses fromstring with explicit namespace map so no xmlns re-declarations appear.
-    autofit=True adds spAutoFit so text shrinks to fit the box rather than wrapping."""
-
-    prst      = 'roundRect' if roundrect else 'rect'
-    align_map = {'left': 'l', 'center': 'ctr', 'right': 'r'}
-    anchor_map = {'middle': 'ctr', 'top': 't', 'bottom': 'b'}
-    algn      = align_map.get(align, 'l')
-    anchor    = anchor_map.get(valign, 'ctr')
-    sz        = str(int(fontsize_pt * 100))
-    bold_val  = '1' if bold else '0'
-    lins      = str(int(margin_l * 12700)) if margin_l else '91440'
-    fit_xml   = '<a:normAutofit/>'
-
-    fill_xml   = '<a:noFill/>' if transparent else f'<a:solidFill><a:srgbClr val="{fill_hex}"/></a:solidFill>'
-    border_xml = ''
+              margin_l=12, roundrect=False, shape_name=''):
+    """Build a complete <p:sp> lxml element — single shape with embedded text."""
+    sp = etree.Element(ptag('sp'))
+    # nvSpPr
+    nvSpPr = etree.SubElement(sp, ptag('nvSpPr'))
+    cNvPr  = etree.SubElement(nvSpPr, ptag('cNvPr'), id='99', name=shape_name or 'shape')
+    etree.SubElement(nvSpPr, ptag('cNvSpPr'))
+    etree.SubElement(nvSpPr, ptag('nvPr'))
+    # spPr
+    spPr = etree.SubElement(sp, ptag('spPr'))
+    xfrm = etree.SubElement(spPr, atag('xfrm'))
+    etree.SubElement(xfrm, atag('off'), x=str(i2e(x)), y=str(i2e(y)))
+    etree.SubElement(xfrm, atag('ext'), cx=str(i2e(w)), cy=str(i2e(h)))
+    prst = 'roundRect' if roundrect else 'rect'
+    etree.SubElement(etree.SubElement(spPr, atag('prstGeom'), prst=prst), atag('avLst'))
+    # fill
+    sf = etree.SubElement(spPr, atag('solidFill'))
+    etree.SubElement(sf, atag('srgbClr'), val=fill_hex)
+    # border
     if border_hex and border_pt > 0:
-        bw = str(int(border_pt * 12700))
-        border_xml = f'<a:ln w="{bw}"><a:solidFill><a:srgbClr val="{border_hex}"/></a:solidFill></a:ln>'
-
-    text_xml = ''
+        ln = etree.SubElement(spPr, atag('ln'), w=str(int(border_pt * 12700)))
+        etree.SubElement(etree.SubElement(ln, atag('solidFill')), atag('srgbClr'), val=border_hex)
+    else:
+        etree.SubElement(spPr, atag('ln'), w='0').append(etree.SubElement(etree.Element('x'), atag('noFill')))
+        spPr.remove(spPr[-1])
+        ln = etree.SubElement(spPr, atag('ln'), w='0')
+        etree.SubElement(ln, atag('noFill'))
+    # txBody
     if text is not None:
-        lines = str(text).split('\n')
-        para_xmls = []
-        for line in lines:
-            safe = line.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;').replace('"','&quot;')
-            para_xmls.append(f'''<a:p>
-    <a:pPr algn="{algn}"/>
-    <a:r>
-      <a:rPr lang="en-GB" sz="{sz}" b="{bold_val}" dirty="0">
-        <a:solidFill><a:srgbClr val="{color_hex}"/></a:solidFill>
-        <a:latin typeface="{font}"/>
-      </a:rPr>
-      <a:t>{safe}</a:t>
-    </a:r>
-  </a:p>''')
-        text_xml = f'''<p:txBody>
-  <a:bodyPr rtlCol="0" anchor="{anchor}" lIns="{lins}">{fit_xml}</a:bodyPr>
-  <a:lstStyle/>
-  {''.join(para_xmls)}
-</p:txBody>'''
-
-    xml_str = f'''<p:sp
-  xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
-  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
-  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
-  <p:nvSpPr>
-    <p:cNvPr id="99" name="{shape_name or 'shape'}"/>
-    <p:cNvSpPr/>
-    <p:nvPr/>
-  </p:nvSpPr>
-  <p:spPr>
-    <a:xfrm>
-      <a:off x="{i2e(x)}" y="{i2e(y)}"/>
-      <a:ext cx="{i2e(w)}" cy="{i2e(h)}"/>
-    </a:xfrm>
-    <a:prstGeom prst="{prst}"><a:avLst/></a:prstGeom>
-    {fill_xml}
-    {border_xml}
-  </p:spPr>
-  {text_xml}
-</p:sp>'''
-
-    return etree.fromstring(xml_str)
+        txBody = etree.SubElement(sp, ptag('txBody'))
+        bodyPr = etree.SubElement(txBody, atag('bodyPr'),
+                                  rtlCol='0', anchor={'middle':'ctr','top':'t','bottom':'b'}.get(valign,'ctr'))
+        if margin_l:
+            bodyPr.set('lIns', str(int(margin_l * 12700)))
+        etree.SubElement(bodyPr, atag('normAutofit'))
+        etree.SubElement(txBody, atag('lstStyle'))
+        para = etree.SubElement(txBody, atag('p'))
+        pPr  = etree.SubElement(para, atag('pPr'), algn={'left':'l','center':'ctr','right':'r'}.get(align,'l'))
+        if WFA.is_xccw(font):
+            xccw_lxml_runs(para, text, fontsize_pt, bold, color_hex)
+        else:
+            run  = etree.SubElement(para, atag('r'))
+            rPr  = etree.SubElement(run, atag('rPr'), lang='en-GB',
+                                     sz=str(int(fontsize_pt * 100)),
+                                     b='1' if bold else '0', dirty='0')
+            clr  = etree.SubElement(etree.SubElement(rPr, atag('solidFill')), atag('srgbClr'), val=color_hex)
+            lat  = etree.SubElement(rPr, atag('latin'), typeface=font)
+            t    = etree.SubElement(run, atag('t'))
+            t.text = text
+    return sp
 
 
 def set_sp_id(sp, new_id):
@@ -271,162 +257,42 @@ def set_sp_id(sp, new_id):
 # ░░  TIMING / ANIMATION  ░░
 # =============================================================================
 
-def make_timing(q_spids, a_spids):
+def make_cover_timing(cover_spid):
     """
-    Build p:timing for Q&A slide — interleaved Q1→A1→Q2→A2...
-    Exactly matches Working_Memory_Example.pptx structure.
+    Memory slide animation: click hides cover (reveals content),
+    then 15 seconds later cover reappears automatically.
+    Matches exact XML structure from Working_Memory_Starters_T5W1.pptx slide 1.
     """
-    nid = [1]
-    def n(): v = nid[0]; nid[0] += 1; return v
-
-    # Interleave: Q1, A1, Q2, A2, ...
-    all_spids = []
-    for q, a in zip(q_spids, a_spids):
-        all_spids.append(q)
-        all_spids.append(a)
-
-    click_pars = []
-    for spid in all_spids:
-        c1 = n(); c2 = n(); c3 = n(); c4 = n()
-        click_pars.append(f'''<p:par>
-                  <p:cTn id="{c1}" fill="hold">
-                    <p:stCondLst>
-                      <p:cond delay="indefinite"/>
-                    </p:stCondLst>
-                    <p:childTnLst>
-                      <p:par>
-                        <p:cTn id="{c2}" fill="hold">
-                          <p:stCondLst>
-                            <p:cond delay="0"/>
-                          </p:stCondLst>
-                          <p:childTnLst>
-                            <p:par>
-                              <p:cTn id="{c3}" presetID="1" presetClass="entr" presetSubtype="0" fill="hold" grpId="1" nodeType="clickEffect">
-                                <p:stCondLst>
-                                  <p:cond delay="0"/>
-                                </p:stCondLst>
-                                <p:childTnLst>
-                                  <p:set>
-                                    <p:cBhvr>
-                                      <p:cTn id="{c4}" dur="1" fill="hold">
-                                        <p:stCondLst>
-                                          <p:cond delay="0"/>
-                                        </p:stCondLst>
-                                      </p:cTn>
-                                      <p:tgtEl>
-                                        <p:spTgt spid="{spid}"/>
-                                      </p:tgtEl>
-                                      <p:attrNameLst>
-                                        <p:attrName>style.visibility</p:attrName>
-                                      </p:attrNameLst>
-                                    </p:cBhvr>
-                                    <p:to>
-                                      <p:strVal val="visible"/>
-                                    </p:to>
-                                  </p:set>
-                                </p:childTnLst>
-                              </p:cTn>
-                            </p:par>
-                          </p:childTnLst>
-                        </p:cTn>
-                      </p:par>
-                    </p:childTnLst>
-                  </p:cTn>
-                </p:par>''')
-
-    root_id = n()
-    seq_id  = n()
-
-    bld_entries = ''
-    for spid in all_spids:
-        bld_entries += f'<p:bldP spid="{spid}" grpId="0" uiExpand="1" build="p"/>\n      '
-        bld_entries += f'<p:bldP spid="{spid}" grpId="1" animBg="1"/>\n      '
-
-    xml = f'''<p:timing
-    xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
-    xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+    ns = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+    xml = f"""<p:timing xmlns:p="{ns}">
     <p:tnLst>
       <p:par>
-        <p:cTn id="{root_id}" dur="indefinite" restart="whenNotActive" nodeType="tmRoot">
+        <p:cTn id="10" dur="indefinite" restart="never" nodeType="tmRoot">
           <p:childTnLst>
             <p:seq concurrent="1" nextAc="seek">
-              <p:cTn id="{seq_id}" dur="indefinite" nodeType="mainSeq">
-                <p:childTnLst>
-                  {''.join(click_pars)}
-                </p:childTnLst>
-              </p:cTn>
-              <p:prevCondLst>
-                <p:cond evt="onPrev" delay="0">
-                  <p:tgtEl>
-                    <p:sldTgt/>
-                  </p:tgtEl>
-                </p:cond>
-              </p:prevCondLst>
-              <p:nextCondLst>
-                <p:cond evt="onNext" delay="0">
-                  <p:tgtEl>
-                    <p:sldTgt/>
-                  </p:tgtEl>
-                </p:cond>
-              </p:nextCondLst>
-            </p:seq>
-          </p:childTnLst>
-        </p:cTn>
-      </p:par>
-    </p:tnLst>
-    <p:bldLst>
-      {bld_entries}
-    </p:bldLst>
-  </p:timing>'''
-
-    return etree.fromstring(xml)
-
-
-def make_memory_timing(cover_spid):
-    """
-    Build p:timing for memory (study) slide.
-    Cover rectangle starts visible (hiding items).
-    Click → EXIT (visibility=hidden) — items revealed.
-    After 15000ms → ENTRANCE (visibility=visible) — items hidden again.
-    Matches Working_Memory_Example.pptx slide1 timing exactly.
-    """
-    nid = [1]
-    def n(): v = nid[0]; nid[0] += 1; return v
-
-    c1=n(); c2=n(); c3=n(); c4=n(); c5=n(); c6=n(); c7=n(); c8=n(); c9=n()
-    root_id=n(); seq_id=n()
-
-    xml = f'''<p:timing
-    xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
-    xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
-    <p:tnLst>
-      <p:par>
-        <p:cTn id="{root_id}" dur="indefinite" restart="never" nodeType="tmRoot">
-          <p:childTnLst>
-            <p:seq concurrent="1" nextAc="seek">
-              <p:cTn id="{seq_id}" dur="indefinite" nodeType="mainSeq">
+              <p:cTn id="11" dur="indefinite" nodeType="mainSeq">
                 <p:childTnLst>
                   <p:par>
-                    <p:cTn id="{c1}" fill="hold">
+                    <p:cTn id="1" fill="hold">
                       <p:stCondLst>
                         <p:cond delay="indefinite"/>
                       </p:stCondLst>
                       <p:childTnLst>
                         <p:par>
-                          <p:cTn id="{c2}" fill="hold">
+                          <p:cTn id="2" fill="hold">
                             <p:stCondLst>
                               <p:cond delay="0"/>
                             </p:stCondLst>
                             <p:childTnLst>
                               <p:par>
-                                <p:cTn id="{c3}" presetID="1" presetClass="exit" presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">
+                                <p:cTn id="3" presetID="1" presetClass="exit" presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">
                                   <p:stCondLst>
                                     <p:cond delay="0"/>
                                   </p:stCondLst>
                                   <p:childTnLst>
                                     <p:set>
                                       <p:cBhvr>
-                                        <p:cTn id="{c4}" dur="1" fill="hold">
+                                        <p:cTn id="4" dur="1" fill="hold">
                                           <p:stCondLst>
                                             <p:cond delay="0"/>
                                           </p:stCondLst>
@@ -449,20 +315,20 @@ def make_memory_timing(cover_spid):
                           </p:cTn>
                         </p:par>
                         <p:par>
-                          <p:cTn id="{c5}" fill="hold">
+                          <p:cTn id="5" fill="hold">
                             <p:stCondLst>
                               <p:cond delay="0"/>
                             </p:stCondLst>
                             <p:childTnLst>
                               <p:par>
-                                <p:cTn id="{c6}" presetID="1" presetClass="entr" presetSubtype="0" fill="hold" grpId="1" nodeType="afterEffect">
+                                <p:cTn id="6" presetID="1" presetClass="entr" presetSubtype="0" fill="hold" grpId="1" nodeType="afterEffect">
                                   <p:stCondLst>
                                     <p:cond delay="15000"/>
                                   </p:stCondLst>
                                   <p:childTnLst>
                                     <p:set>
                                       <p:cBhvr>
-                                        <p:cTn id="{c7}" dur="1" fill="hold">
+                                        <p:cTn id="7" dur="1" fill="hold">
                                           <p:stCondLst>
                                             <p:cond delay="0"/>
                                           </p:stCondLst>
@@ -491,12 +357,16 @@ def make_memory_timing(cover_spid):
               </p:cTn>
               <p:prevCondLst>
                 <p:cond evt="onPrev" delay="0">
-                  <p:tgtEl><p:sldTgt/></p:tgtEl>
+                  <p:tgtEl>
+                    <p:sldTgt/>
+                  </p:tgtEl>
                 </p:cond>
               </p:prevCondLst>
               <p:nextCondLst>
                 <p:cond evt="onNext" delay="0">
-                  <p:tgtEl><p:sldTgt/></p:tgtEl>
+                  <p:tgtEl>
+                    <p:sldTgt/>
+                  </p:tgtEl>
                 </p:cond>
               </p:nextCondLst>
             </p:seq>
@@ -508,8 +378,115 @@ def make_memory_timing(cover_spid):
       <p:bldP spid="{cover_spid}" grpId="0" animBg="1"/>
       <p:bldP spid="{cover_spid}" grpId="1" animBg="1"/>
     </p:bldLst>
-  </p:timing>'''
+  </p:timing>"""
+    return etree.fromstring(xml)
 
+
+def make_timing(q_spids, a_spids):
+    """
+    Q&A slide animation: all cards hidden at start, each revealed one per click.
+    All Qs first, then all As.
+    Sequential IDs starting from 1, 4 IDs per shape block.
+    Matches corrected Working_Memory_Starters_T6W1.pptx slide 2.
+    """
+    ns = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+    all_spids = [spid for pair in zip(q_spids, a_spids) for spid in pair]
+
+    click_blocks = ''
+    for i, spid in enumerate(all_spids):
+        id1 = 1 + i * 4      # outer par cTn
+        id2 = id1 + 1        # inner par cTn
+        id3 = id1 + 2        # effect cTn
+        id4 = id1 + 3        # set cTn
+        click_blocks += f"""
+                  <p:par>
+                    <p:cTn id="{id1}" fill="hold">
+                      <p:stCondLst>
+                        <p:cond delay="indefinite"/>
+                      </p:stCondLst>
+                      <p:childTnLst>
+                        <p:par>
+                          <p:cTn id="{id2}" fill="hold">
+                            <p:stCondLst>
+                              <p:cond delay="0"/>
+                            </p:stCondLst>
+                            <p:childTnLst>
+                              <p:par>
+                                <p:cTn id="{id3}" presetID="1" presetClass="entr" presetSubtype="0" fill="hold" grpId="1" nodeType="clickEffect">
+                                  <p:stCondLst>
+                                    <p:cond delay="0"/>
+                                  </p:stCondLst>
+                                  <p:childTnLst>
+                                    <p:set>
+                                      <p:cBhvr>
+                                        <p:cTn id="{id4}" dur="1" fill="hold">
+                                          <p:stCondLst>
+                                            <p:cond delay="0"/>
+                                          </p:stCondLst>
+                                        </p:cTn>
+                                        <p:tgtEl>
+                                          <p:spTgt spid="{spid}"/>
+                                        </p:tgtEl>
+                                        <p:attrNameLst>
+                                          <p:attrName>style.visibility</p:attrName>
+                                        </p:attrNameLst>
+                                      </p:cBhvr>
+                                      <p:to>
+                                        <p:strVal val="visible"/>
+                                      </p:to>
+                                    </p:set>
+                                  </p:childTnLst>
+                                </p:cTn>
+                              </p:par>
+                            </p:childTnLst>
+                          </p:cTn>
+                        </p:par>
+                      </p:childTnLst>
+                    </p:cTn>
+                  </p:par>"""
+
+    bld_entries = ''
+    for spid in all_spids:
+        bld_entries += f"""
+      <p:bldP spid="{spid}" grpId="0" uiExpand="1" build="p"/>
+      <p:bldP spid="{spid}" grpId="1" animBg="1"/>"""
+
+    n = len(all_spids)
+    root_id = n * 4 + 1
+    seq_id  = root_id + 1
+
+    xml = f"""<p:timing xmlns:p="{ns}">
+    <p:tnLst>
+      <p:par>
+        <p:cTn id="1" dur="indefinite" restart="whenNotActive" nodeType="tmRoot">
+          <p:childTnLst>
+            <p:seq concurrent="1" nextAc="seek">
+              <p:cTn id="2" dur="indefinite" nodeType="mainSeq">
+                <p:childTnLst>{click_blocks}
+                </p:childTnLst>
+              </p:cTn>
+              <p:prevCondLst>
+                <p:cond evt="onPrev" delay="0">
+                  <p:tgtEl>
+                    <p:sldTgt/>
+                  </p:tgtEl>
+                </p:cond>
+              </p:prevCondLst>
+              <p:nextCondLst>
+                <p:cond evt="onNext" delay="0">
+                  <p:tgtEl>
+                    <p:sldTgt/>
+                  </p:tgtEl>
+                </p:cond>
+              </p:nextCondLst>
+            </p:seq>
+          </p:childTnLst>
+        </p:cTn>
+      </p:par>
+    </p:tnLst>
+    <p:bldLst>{bld_entries}
+    </p:bldLst>
+  </p:timing>"""
     return etree.fromstring(xml)
 
 
@@ -544,35 +521,48 @@ def build_memory_slide(prs, template_slide, game):
         return max_id[0]
 
     # ── Title ────────────────────────────────────────────────────────────
+    title_texts = {
+        'emoji_sequence':  'Remember the details and the order',
+        'number_sequence': 'Remember the details and the order',
+        'word_list':       'Remember the details and the order',
+        'colour_sequence': 'Remember the details and the order',
+        'picture_scene':   'Remember the details and the order',
+    }
     title_sp = make_rect(
         TITLE_X, TITLE_Y, TITLE_W, TITLE_H,
-        fill_hex=BG, transparent=True,
-        text='Remember the details and the order',
-        font='Twinkl Cursive Looped Light', fontsize_pt=40, bold=True,
+        fill_hex='DEECF8',   # transparent — same as bg
+        text=title_texts.get(gtype, 'Remember the details and the order'),
+        font=WFA.CURSIVE, fontsize_pt=40, bold=True,
         color_hex=NAVY, align='left', margin_l=0, shape_name='Title'
     )
+    # Remove fill so it's transparent
+    spPr = title_sp.find(ptag('spPr'))
+    for sf in spPr.findall(atag('solidFill')):
+        spPr.remove(sf)
+    etree.SubElement(spPr, atag('noFill'))
     set_sp_id(title_sp, next_id()); spTree.append(title_sp)
 
-    # ── "Click to Show" button ────────────────────────────────────────────
+    # ── "Click to Show" button ──────────────────────────────────────────
     show_sp = make_rect(
         SHOW_X, SHOW_Y, SHOW_W, SHOW_H,
-        fill_hex=GREEN, text='Click to Show',
+        fill_hex=GREEN,
+        text='Click to Show',
         font='Aptos', fontsize_pt=20, bold=True,
         color_hex=NAVY, align='center', margin_l=0,
         roundrect=True, shape_name='Show game'
     )
     set_sp_id(show_sp, next_id()); spTree.append(show_sp)
 
-    # ── Stimulus items ────────────────────────────────────────────────────
+    # ── Stimulus items ───────────────────────────────────────────────────
     if gtype in ('emoji_sequence', 'number_sequence', 'word_list'):
         items = game['data']
         n_items = len(items)
-        font_size   = {'emoji_sequence': 66, 'number_sequence': 36, 'word_list': 20}.get(gtype, 36)
-        item_valign = 'bottom' if gtype == 'emoji_sequence' else 'middle'
-        item_autofit = gtype == 'word_list'  # shrink to fit for words
+        font_size = {'emoji_sequence': 40, 'number_sequence': 36, 'word_list': 20}.get(gtype, 36)
 
-        margin      = 0.5
+        # Auto-fit boxes within slide width with sensible margins
+        margin = 0.5
         available_w = W_IN - 2 * margin
+        # total width = n*box_w + (n-1)*gap  →  solve for gap
         box_w = min(ITEM_W, (available_w - n_items * 0.15) / n_items)
         gap   = (available_w - n_items * box_w) / (n_items - 1) if n_items > 1 else 0
         start_x = margin
@@ -584,8 +574,7 @@ def build_memory_slide(prs, template_slide, game):
                 fill_hex=ITEMBOX, border_hex=TEAL, border_pt=1.5,
                 text=str(item),
                 font='Aptos', fontsize_pt=font_size, bold=True,
-                color_hex=GOLD, align='center', valign=item_valign, margin_l=0,
-                autofit=item_autofit,
+                color_hex=WHITE, align='center', margin_l=0,
                 shape_name=f'Item {i+1}'
             )
             set_sp_id(item_sp, next_id()); spTree.append(item_sp)
@@ -594,7 +583,7 @@ def build_memory_slide(prs, template_slide, game):
         cols = game['data']
         sz, gap = 1.4, 0.35
         n = len(cols)
-        total_w = n * sz + (n - 1) * gap
+        total_w = n * sz + (n-1) * gap
         start_x = (W_IN - total_w) / 2
         for i, c in enumerate(cols):
             x = start_x + i * (sz + gap)
@@ -606,29 +595,38 @@ def build_memory_slide(prs, template_slide, game):
             set_sp_id(col_sp, next_id()); spTree.append(col_sp)
             name_sp = make_rect(
                 x, ITEM_Y + sz + 0.1, sz, 0.35,
-                fill_hex=BG, transparent=True,
+                fill_hex=BG,
                 text=c['name'],
                 font='Aptos', fontsize_pt=12, bold=True,
                 color_hex=NAVY, align='center', margin_l=0,
             )
+            spPr = name_sp.find(ptag('spPr'))
+            for sf in spPr.findall(atag('solidFill')): spPr.remove(sf)
+            etree.SubElement(spPr, atag('noFill'))
             set_sp_id(name_sp, next_id()); spTree.append(name_sp)
 
     elif gtype == 'picture_scene':
         facts = game['data']
         positions = [
-            (0.5, 2.25), (6.9, 2.25),
-            (0.5, 3.85), (6.9, 3.85),
+            (0.5,  2.1), (6.9, 2.1),
+            (0.5,  4.0), (6.9, 4.0),
         ]
-        bW, bH = 6.2, 1.45
+        bW, bH = 6.2, 1.55
         for i, (f, (fx, fy)) in enumerate(zip(facts, positions)):
+            # Gold left accent strip
             strip = make_rect(fx, fy, 0.08, bH, fill_hex=GOLD, text=None, shape_name=f'Strip {i+1}')
             set_sp_id(strip, next_id()); spTree.append(strip)
+            # Emoji
             em_sp = make_rect(
-                fx+0.12, fy, 1.0, bH, fill_hex=BG, transparent=True,
-                text=f['icon'], font='Aptos', fontsize_pt=54, bold=False,
+                fx+0.12, fy, 1.0, bH, fill_hex=BG,
+                text=f['icon'], font='Aptos', fontsize_pt=32, bold=False,
                 color_hex=NAVY, align='center', margin_l=0, shape_name=f'Icon {i+1}'
             )
+            spPr = em_sp.find(ptag('spPr'))
+            for sf in spPr.findall(atag('solidFill')): spPr.remove(sf)
+            etree.SubElement(spPr, atag('noFill'))
             set_sp_id(em_sp, next_id()); spTree.append(em_sp)
+            # Fact card
             fact_sp = make_rect(
                 fx+1.08, fy, bW-1.08, bH,
                 fill_hex=LTBLUE, border_hex=TEAL, border_pt=1.5,
@@ -637,31 +635,45 @@ def build_memory_slide(prs, template_slide, game):
             )
             set_sp_id(fact_sp, next_id()); spTree.append(fact_sp)
 
-    # ── "Go to questions" button (added before cover) ─────────────────────
+    # ── "Go to the questions" button ────────────────────────────────────
     goto_sp = make_rect(
         GOTO_X, GOTO_Y, GOTO_W, GOTO_H,
-        fill_hex='0F9ED5', text='Go to the\nquestions',
+        fill_hex='0F9ED5',   # accent4 blue
+        text='Go to the\nquestions',
         font='Aptos', fontsize_pt=20, bold=True,
         color_hex=WHITE, align='center', margin_l=0,
         roundrect=True, shape_name='go to questions'
     )
+    # Multi-line text needs two runs
+    txBody = goto_sp.find(ptag('txBody'))
+    # Replace with proper multi-line
+    for p in txBody.findall(atag('p')):
+        txBody.remove(p)
+    for line in ['Go to the', 'questions']:
+        para = etree.SubElement(txBody, atag('p'))
+        etree.SubElement(para, atag('pPr'), algn='ctr')
+        run = etree.SubElement(para, atag('r'))
+        rPr = etree.SubElement(run, atag('rPr'), lang='en-GB',
+                                sz='2000', b='1', dirty='0')
+        etree.SubElement(rPr, atag('latin'), typeface='Aptos')
+        etree.SubElement(etree.SubElement(rPr, atag('solidFill')), atag('srgbClr'), val=WHITE)
+        etree.SubElement(run, atag('t')).text = line
     set_sp_id(goto_sp, next_id()); spTree.append(goto_sp)
 
-    # ── Cover rectangle (LAST = topmost z-order, covers everything) ───────
-    # y=2.1" catches picture scene top row (y=2.25") with room to spare.
-    # Bottom at y=5.4", safely above goto button at y=5.887".
+    # Cover rectangle — LAST shape (highest z-order)
+    # Same colour as background; click hides it revealing content; reappears after 15s
     cover_sp = make_rect(
-        0.0, 2.1, W_IN, 3.35,
-        fill_hex=BG, text=None, shape_name='Cover'
+        0.0, 2.1, 13.333, 3.626,
+        fill_hex=BG, border_hex=None, border_pt=0,
+        text='', shape_name='Cover'
     )
     cover_id = next_id()
     set_sp_id(cover_sp, cover_id); spTree.append(cover_sp)
 
-    # Inject memory slide timing onto this slide
-    sld_el = slide._element
+    # Inject cover animation timing
     for existing in sld_el.findall(ptag('timing')):
         sld_el.remove(existing)
-    sld_el.append(make_memory_timing(cover_id))
+    sld_el.append(make_cover_timing(cover_id))
 
     return slide
 
@@ -686,11 +698,14 @@ def build_qa_slide(prs, template_slide, game):
     # Title
     title_sp = make_rect(
         QA_TITLE_X, QA_TITLE_Y, QA_TITLE_W, QA_TITLE_H,
-        fill_hex=BG, transparent=True,
+        fill_hex=BG,
         text='Now answer from memory!',
-        font='Twinkl Cursive Looped Light', fontsize_pt=44, bold=True,
+        font=WFA.CURSIVE, fontsize_pt=44, bold=True,
         color_hex=NAVY, align='left', margin_l=0, shape_name='Title'
     )
+    spPr = title_sp.find(ptag('spPr'))
+    for sf in spPr.findall(atag('solidFill')): spPr.remove(sf)
+    etree.SubElement(spPr, atag('noFill'))
     set_sp_id(title_sp, next_id()); spTree.append(title_sp)
 
     # Card layout
@@ -751,7 +766,7 @@ def main():
     if not os.path.exists(template_path):
         raise FileNotFoundError(
             f"Template file not found: {template_path}\n"
-            "Please make sure working_memory_template.pptx is in the same folder as this script."
+            "Please make sure working_memory_IM.pptx is in the same folder as this script."
         )
 
     print(f"Opening template: {TEMPLATE_FILE}")
@@ -759,7 +774,11 @@ def main():
 
     # Use the first slide's layout as our template layout
     template_slide = prs.slides[0]
-    target_layout  = template_slide.slide_layout
+
+    # Remove all existing slides (we'll add fresh ones)
+    # python-pptx doesn't let us delete slides easily, so we work around this:
+    # Add new slides first, then remove the original template slides
+    original_slide_count = len(prs.slides)
 
     print(f"Building {len(GAMES)} games...")
     for i, game in enumerate(GAMES):
@@ -768,29 +787,13 @@ def main():
         build_memory_slide(prs, template_slide, game)
         build_qa_slide(prs, template_slide, game)
 
-    # Remove ALL original template slides cleanly:
-    # python-pptx's sldIdLst removal leaves orphaned XML files in the package.
-    # We must also remove the relationship entries and mark slides for deletion.
-    from pptx.oxml.ns import qn
-    from lxml import etree as _etree
-
-    slide_ids   = prs.slides._sldIdLst
-    prs_part    = prs.part
-    all_sld_ids = list(slide_ids)
-    # The first 2 entries are the original template slides; our slides come after
-    original_count = 2
-    for sldId in all_sld_ids[:original_count]:
-        rId  = sldId.get('r:id') or sldId.get(
-            '{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id')
-        # Drop relationship from presentation part
-        if rId and rId in prs_part.rels:
-            slide_part = prs_part.rels[rId].target_part
-            prs_part.drop_rel(rId)
-            # Drop the slide part from the package
-            try:
-                prs_part.package.iter_parts()  # force part graph refresh
-            except Exception:
-                pass
+    # Remove original template slides
+    slide_ids = prs.slides._sldIdLst
+    rids_to_remove = []
+    all_ids = list(slide_ids)
+    for sldId in all_ids[:original_slide_count]:
+        rids_to_remove.append(sldId)
+    for sldId in rids_to_remove:
         slide_ids.remove(sldId)
 
     print(f"\nSaving to {OUTPUT_FILENAME}...")
