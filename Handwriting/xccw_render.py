@@ -273,3 +273,155 @@ def needs_xccw_split(text):
         if prev != ' ' and prev.lower() in TOP_EXIT:
             return True
     return False
+
+
+# ── Internal helpers ───────────────────────────────────────────────────────────
+
+def _xml_esc(s):
+    """XML-escape a string for safe embedding in attribute values or text nodes."""
+    return (str(s).replace('&', '&amp;').replace('<', '&lt;')
+            .replace('>', '&gt;').replace('"', '&quot;').replace("'", '&apos;'))
+
+
+def _split_chunks(text, solid=True):
+    """
+    Split text into [(chunk, variant_name), ...] applying the 4a/4b join rule.
+
+    Parameters
+    ----------
+    text : str
+    solid : bool
+        True  → 'XCCW Joined 4a' / 'XCCW Joined 4b'
+        False → 'XCCW Joined Dotted 4a' / 'XCCW Joined Dotted 4b'
+
+    Returns
+    -------
+    list of (str, str) — (text_chunk, font_variant_name)
+    """
+    name_4a = 'XCCW Joined 4a'       if solid else 'XCCW Joined Dotted 4a'
+    name_4b = 'XCCW Joined 4b'       if solid else 'XCCW Joined Dotted 4b'
+
+    chunks   = []
+    current  = ''
+    cur_var  = name_4a  # first character always 4a
+
+    for i, ch in enumerate(text):
+        # A space resets join context — character after a space is always 4a
+        prev = text[i - 1] if i > 0 else None
+        if prev == ' ':
+            prev = None
+        var = name_4b if (prev and prev.lower() in TOP_EXIT) else name_4a
+
+        if not current:
+            current = ch
+            cur_var = var
+        elif var == cur_var:
+            current += ch
+        else:
+            chunks.append((current, cur_var))
+            current = ch
+            cur_var = var
+
+    if current:
+        chunks.append((current, cur_var))
+
+    return chunks
+
+
+# ── Python string-building helper (for build_lesson_v3.py, writing build_lesson.py) ──
+
+def xccw_p_xml(text, sz_hundredths, bold=False, color_hex='000000',
+               align='l', underline=False, solid=True):
+    """
+    Return a complete <a:p>...</a:p> XML string with correctly split XCCW runs,
+    for use in PPTX scripts that build slide XML via string concatenation.
+
+    Parameters
+    ----------
+    text : str
+        The text to render. Empty string produces an empty paragraph.
+    sz_hundredths : int
+        Font size in hundredths of a point (e.g. 1800 = 18pt, 4000 = 40pt).
+    bold : bool
+    color_hex : str
+        6-character hex colour without '#' (e.g. '000000', '0E2841').
+    align : str
+        'l', 'ctr', 'r' — maps to PowerPoint paragraph alignment.
+    underline : bool
+    solid : bool
+        True → solid XCCW font (default). False → dotted tracing variant.
+
+    Returns
+    -------
+    str  — complete <a:p>...</a:p> XML
+    """
+    b_attr = ' b="1"' if bold else ''
+    u_attr = ' u="sng"' if underline else ''
+    color_xml = f'<a:solidFill><a:srgbClr val="{color_hex}"/></a:solidFill>'
+
+    if not text:
+        # Empty paragraph — needed for spacing between content
+        return (f'<a:p><a:pPr algn="{align}"/>'
+                f'<a:endParaRPr lang="en-GB" sz="{sz_hundredths}"{b_attr} dirty="0">'
+                f'{color_xml}<a:latin typeface="XCCW Joined 4a"/>'
+                f'</a:endParaRPr></a:p>')
+
+    runs = ''
+    for chunk, variant in _split_chunks(text, solid=solid):
+        runs += (
+            f'<a:r>'
+            f'<a:rPr lang="en-GB" sz="{sz_hundredths}"{b_attr}{u_attr} dirty="0">'
+            f'{color_xml}<a:latin typeface="{variant}"/>'
+            f'</a:rPr>'
+            f'<a:t>{_xml_esc(chunk)}</a:t>'
+            f'</a:r>'
+        )
+
+    return f'<a:p><a:pPr algn="{align}"/>{runs}</a:p>'
+
+
+# ── lxml helper (for working_memory_starters.py and any lxml-based script) ────
+
+def xccw_lxml_runs(parent_para, text, sz_pt, bold=False,
+                   color_hex='000000', solid=True):
+    """
+    Append correctly-joined XCCW <a:r> lxml elements to an existing <a:p> element.
+
+    Call this instead of creating a single <a:r> with one typeface when the font
+    should be XCCW. Handles the full 4a/4b split automatically.
+
+    Parameters
+    ----------
+    parent_para : lxml.etree._Element
+        The <a:p> element to append runs to. Must already exist.
+    text : str
+        Text to render.
+    sz_pt : float
+        Font size in points (e.g. 40.0). Converted to hundredths internally.
+    bold : bool
+    color_hex : str
+        6-character hex without '#'.
+    solid : bool
+        True → solid font. False → dotted tracing font.
+    """
+    from lxml import etree
+
+    A_NS = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+
+    def _a(tag):
+        return f'{{{A_NS}}}{tag}'
+
+    sz_str = str(int(sz_pt * 100))
+
+    for chunk, variant in _split_chunks(text, solid=solid):
+        run = etree.SubElement(parent_para, _a('r'))
+        rPr = etree.SubElement(run, _a('rPr'),
+                               lang='en-GB',
+                               sz=sz_str,
+                               b='1' if bold else '0',
+                               dirty='0')
+        sf = etree.SubElement(rPr, _a('solidFill'))
+        etree.SubElement(sf, _a('srgbClr'), val=color_hex)
+        etree.SubElement(rPr, _a('latin'), typeface=variant)
+        t_el = etree.SubElement(run, _a('t'))
+        t_el.text = chunk
