@@ -43,7 +43,37 @@ const GREY   = "AAAAAA";
 const BLUE   = "1F4E79";
 const RED    = "C00000";
 const PURPLE = "7030A0";
-const FONT_C = "Twinkl Cursive Looped";
+// XCCW join rule helper — replaces Twinkl Cursive Looped throughout
+// Each word is split into 4a/4b runs matching the XCCW pen-exit rule.
+const XCCW_TOP_EXIT = new Set(['o','r','v','w','x']);
+
+function xccwSplit(text) {
+  // Returns [{text, variant}] where variant is '4a' or '4b'
+  const chunks = [];
+  let current = '', curVar = '4a';
+  for (let i = 0; i < text.length; i++) {
+    const ch   = text[i];
+    const prev = (i > 0 && text[i-1] !== ' ') ? text[i-1].toLowerCase() : null;
+    const v    = (prev && XCCW_TOP_EXIT.has(prev)) ? '4b' : '4a';
+    if (!current)       { current = ch; curVar = v; }
+    else if (v === curVar) { current += ch; }
+    else { chunks.push({text: current, variant: curVar}); current = ch; curVar = v; }
+  }
+  if (current) chunks.push({text: current, variant: curVar});
+  return chunks;
+}
+
+function xccwText(text, charOpts) {
+  // Returns array of pptxgenjs run objects with correct XCCW 4a/4b typefaces.
+  // Usage: slide.addText(xccwText("word", {fontSize:13, bold:true, color:BLACK}), layoutOpts)
+  return xccwSplit(String(text)).map(({text: t, variant: v}) => ({
+    text: t,
+    options: { ...charOpts, fontFace: `XCCW Joined ${v}` }
+  }));
+}
+
+// FONT_C kept as fallback reference — do not use directly; use xccwText() instead
+const FONT_C = "XCCW Joined 4a";
 const FONT_M = "Aptos";
 
 const LABEL_SCALE = 0.72 * 0.85;
@@ -293,21 +323,14 @@ function addAnswerSection(slide, x, y, w, labelText, answer) {
   const labelH = 0.16;
   const lineGap = 0.06;
   if (labelText) {
-    slide.addText(labelText, {
-      x, y, w, h: labelH,
-      fontSize: 8, fontFace: FONT_C, color: "333333", margin: 0
-    });
+    slide.addText(xccwText(labelText, {fontSize: 8, color: "333333"}), {h: labelH, margin: 0});
   }
   const lineY = y + (labelText ? labelH + lineGap : 0.10);
   slide.addShape("line", { x, y: lineY, w, h: 0, line: { color: BLACK, width: 0.6 } });
   if (answer) {
     // Text sits ON the line — position so baseline aligns with the line
     const ansH = 0.18;
-    slide.addText(answer, {
-      x, y: lineY - ansH + 0.02, w, h: ansH,
-      fontSize: 8.5, fontFace: FONT_C, bold: true, color: "156082",
-      valign: "bottom", margin: 0
-    });
+    slide.addText(xccwText(answer, {fontSize: 8.5, bold: true, color: "156082"}), {y: lineY - ansH + 0.02, h: ansH, valign: "bottom", margin: 0});
   }
   return (labelText ? labelH + lineGap : 0.10) + 0.02;
 }
@@ -370,15 +393,11 @@ function buildLP1Directions(slide, labelPath, isMarkingStation) {
     curY += 0.30;
   } else {
     const titleW = lblX - GUTTER;
-    slide.addText(LP1_DATA.title || "Directions on a Grid", {
-      x: MARGIN, y: curY, w: titleW, h: 0.26,
-      fontSize: 13, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-    });
+    slide.addText(xccwText(LP1_DATA.title || "Directions on a Grid", {fontSize: 13, bold: true, color: BLACK}), {x: MARGIN, y: curY, w: titleW, h: 0.26, margin: 0});
     curY += 0.28;
     slide.addText(
-      "Write the directions from A to B on the line under each grid.  Use: left / right / up / down + steps.",
-      { x: MARGIN, y: curY, w: titleW, h: 0.20,
-        fontSize: 8.5, fontFace: FONT_C, color: BLACK, margin: 0 }
+      xccwText("Write the directions from A to B on the line under each grid.  Use: left / right / up / down + steps.", {fontSize: 8.5, color: BLACK}),
+      { x: MARGIN, y: curY, w: titleW, h: 0.20, margin: 0 }
     );
     curY += 0.22;
   }
@@ -396,10 +415,7 @@ function buildLP1Directions(slide, labelPath, isMarkingStation) {
     const gridX = col === 0 ? MARGIN + yLabelGutter : col2X + yLabelGutter;
     let gy = ROW_Y[row];
 
-    slide.addText(`Q${i + 1}`, {
-      x: gridX, y: gy, w: 0.22, h: qLabelH,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-    });
+    slide.addText(xccwText(`Q${i + 1}`, {fontSize: 9, bold: true, color: BLACK}), {x: gridX, y: gy, w: 0.22, h: qLabelH, margin: 0});
     gy += qLabelH;
 
     const { totalH } = drawGrid(slide, gridX, gy, gridPanelW, cols, rows, [
@@ -424,10 +440,7 @@ function buildLP1Directions(slide, labelPath, isMarkingStation) {
     let rY = lblY + LL_H + 0.10;
 
     // "Worked Example:" heading
-    slide.addText("Worked Example:", {
-      x: lblX, y: rY, w: LL_W, h: 0.20,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: "156082", margin: 0
-    });
+    slide.addText(xccwText("Worked Example:", {fontSize: 9, bold: true, color: "156082"}), {x: lblX, y: rY, w: LL_W, h: 0.20, margin: 0});
     rY += 0.22;
 
     // Worked grid — same 5×5 size, Q1 data
@@ -453,17 +466,14 @@ function buildLP1Directions(slide, labelPath, isMarkingStation) {
     // Going further box
     const challengeMaxH = HALF_BOT - rY - 0.08;
     if (challengeMaxH > 0.55) {
-      slide.addText("Going further…", {
-        x: lblX, y: rY, w: LL_W, h: 0.20,
-        fontSize: 9, fontFace: FONT_C, bold: true, color: BLUE, margin: 0
-      });
+      slide.addText(xccwText("Going further…", {fontSize: 9, bold: true, color: BLUE}), {x: lblX, y: rY, w: LL_W, h: 0.20, margin: 0});
       rY += 0.22;
       const boxH = Math.min(challengeMaxH - 0.22, 0.88);
       slide.addText(LP1_DATA.goingFurther ||
         "Can you find two different direction routes that both get from A to B?\n\nDraw both routes on Q1 and write each set of directions.",
         {
           x: lblX, y: rY, w: LL_W, h: boxH,
-          fontSize: 8.5, fontFace: FONT_C, color: BLACK,
+          fontSize: 8.5, fontFace: "XCCW Joined 4a", /* TODO: wrap in xccwText() if text spans lines */ color: BLACK,
           fill: { color: "FFFFFF" },
           line: { color: "156082", width: 0.75 },
           margin: 6, valign: "top"
@@ -519,15 +529,12 @@ function buildLP2Journeys(slide, isMarkingStation) {
     });
     curY += 0.26;
   } else {
-    slide.addText(LP2_DATA.title || "Three-Stop Journeys", {
-      x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.24,
-      fontSize: 13, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-    });
+    slide.addText(xccwText(LP2_DATA.title || "Three-Stop Journeys", {fontSize: 13, bold: true, color: BLACK}), {x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.24, margin: 0});
     curY += 0.26;
     slide.addText(
       LP2_DATA.instruction || "Each journey visits A → B → C.  Write the directions for each leg.",
       { x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.18,
-        fontSize: 8.5, fontFace: FONT_C, color: BLACK, margin: 0 }
+        fontSize: 8.5, fontFace: "XCCW Joined 4a", /* TODO: wrap in xccwText() if text spans lines */ color: BLACK, margin: 0 }
     );
     curY += 0.20;
   }
@@ -542,18 +549,10 @@ function buildLP2Journeys(slide, isMarkingStation) {
 
   function addLegRow(x, y, totalW, labelText, answer, answerColor) {
     // Label
-    slide.addText(labelText, {
-      x, y, w: LEG_LABEL_W, h: LEG_ROW_H,
-      fontSize: 8, fontFace: FONT_C, bold: true, color: BLACK,
-      valign: "bottom", margin: 0
-    });
+    slide.addText(xccwText(labelText, {fontSize: 8, bold: true, color: BLACK}), {w: LEG_LABEL_W, h: LEG_ROW_H, valign: "bottom", margin: 0});
     // Answer inline (starts after label)
     if (answer) {
-      slide.addText(answer, {
-        x: x + LEG_LABEL_W, y, w: totalW - LEG_LABEL_W, h: LEG_ROW_H,
-        fontSize: 8.5, fontFace: FONT_C, bold: true, color: answerColor || GREEN,
-        valign: "bottom", margin: 0
-      });
+      slide.addText(xccwText(answer, {fontSize: 8.5, bold: true, color: answerColor || GREEN}), {x: x + LEG_LABEL_W, w: totalW - LEG_LABEL_W, h: LEG_ROW_H, valign: "bottom", margin: 0});
     }
     // Underline below the whole row
     const lineY = y + LEG_ROW_H + LEG_LINE_GAP;
@@ -563,10 +562,7 @@ function buildLP2Journeys(slide, isMarkingStation) {
   }
 
   LP2_DATA.questions.forEach(({ pts, a1, a2 }, i) => {
-    slide.addText(`Q${i + 1}`, {
-      x: MARGIN, y: curY, w: 0.22, h: qLabelH,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-    });
+    slide.addText(xccwText(`Q${i + 1}`, {fontSize: 9, bold: true, color: BLACK}), {x: MARGIN, y: curY, w: 0.22, h: qLabelH, margin: 0});
 
     drawGrid(slide, gridX, curY + qLabelH, gridPanelW, cols, rows, pts);
 
@@ -593,10 +589,7 @@ function buildLP2Journeys(slide, isMarkingStation) {
   if (!isMarkingStation) {
     let rY = HALF_TOP;
 
-    slide.addText("Worked Example:", {
-      x: lblX, y: rY, w: rColW, h: 0.20,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: "156082", margin: 0
-    });
+    slide.addText(xccwText("Worked Example:", {fontSize: 9, bold: true, color: "156082"}), {x: lblX, y: rY, w: rColW, h: 0.20, margin: 0});
     rY += 0.22;
 
     // Q1 worked grid
@@ -635,17 +628,14 @@ function buildLP2Journeys(slide, isMarkingStation) {
     // Going further box — matches LP1 style
     const challengeMaxH = HALF_BOT - rY - 0.08;
     if (challengeMaxH > 0.55) {
-      slide.addText("Going further…", {
-        x: lblX, y: rY, w: rColW, h: 0.20,
-        fontSize: 9, fontFace: FONT_C, bold: true, color: BLUE, margin: 0
-      });
+      slide.addText(xccwText("Going further…", {fontSize: 9, bold: true, color: BLUE}), {x: lblX, y: rY, w: rColW, h: 0.20, margin: 0});
       rY += 0.22;
       const boxH = Math.min(challengeMaxH - 0.22, 0.88);
       slide.addText(LP2_DATA.goingFurther ||
         "For one journey, describe the return route from C back to A.",
         {
           x: lblX, y: rY, w: rColW, h: boxH,
-          fontSize: 8.5, fontFace: FONT_C, color: BLACK,
+          fontSize: 8.5, fontFace: "XCCW Joined 4a", /* TODO: wrap in xccwText() if text spans lines */ color: BLACK,
           fill: { color: "FFFFFF" },
           line: { color: "156082", width: 0.75 },
           margin: 6, valign: "top"
@@ -716,11 +706,7 @@ function drawCompass(slide, boxX, boxY, boxW, boxH) {
     { text: "down",  x: cx - lblW/2,          y: cy + lblOff },
   ];
   labels.forEach(({ text, x, y }) => {
-    slide.addText(text, {
-      x, y, w: lblW, h: lblH,
-      fontSize: lblSz, fontFace: FONT_C, bold: true,
-      color: ARROW_COLOR, align: "center", margin: 0
-    });
+    slide.addText(xccwText(text, {fontSize: lblSz, bold: true, color: ARROW_COLOR}), {w: lblW, h: lblH, align: "center", margin: 0});
   });
 }
 
@@ -768,15 +754,11 @@ function buildLP1DirectionsAdapted(slide, labelPath) {
 
   // Title + instruction
   const titleW = lblX - GUTTER;
-  slide.addText(LP1_DATA.title || "Directions on a Grid", {
-    x: MARGIN, y: curY, w: titleW, h: 0.26,
-    fontSize: 13, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-  });
+  slide.addText(xccwText(LP1_DATA.title || "Directions on a Grid", {fontSize: 13, bold: true, color: BLACK}), {x: MARGIN, y: curY, w: titleW, h: 0.26, margin: 0});
   curY += 0.28;
   slide.addText(
-    "Write the directions from A to B on the line under each grid.  Use: left / right / up / down + steps.",
-    { x: MARGIN, y: curY, w: titleW, h: 0.20,
-      fontSize: 8.5, fontFace: FONT_C, color: BLACK, margin: 0 }
+    xccwText("Write the directions from A to B on the line under each grid.  Use: left / right / up / down + steps.", {fontSize: 8.5, color: BLACK}),
+    { x: MARGIN, y: curY, w: titleW, h: 0.20, margin: 0 }
   );
   curY += 0.22;
 
@@ -790,10 +772,7 @@ function buildLP1DirectionsAdapted(slide, labelPath) {
     const gridX = i === 0 ? MARGIN + yLabelGutter : col2X + yLabelGutter;
     let gy = curY;
 
-    slide.addText(`Q${i + 1}`, {
-      x: gridX, y: gy, w: 0.22, h: qLabelH,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-    });
+    slide.addText(xccwText(`Q${i + 1}`, {fontSize: 9, bold: true, color: BLACK}), {x: gridX, y: gy, w: 0.22, h: qLabelH, margin: 0});
     gy += qLabelH;
 
     const { totalH } = drawGrid(slide, gridX, gy, gridPanelW, cols, rows, [
@@ -810,10 +789,7 @@ function buildLP1DirectionsAdapted(slide, labelPath) {
 
   let rY = lblY + LL_H + 0.10;
 
-  slide.addText("Worked Example:", {
-    x: lblX, y: rY, w: LL_W, h: 0.20,
-    fontSize: 9, fontFace: FONT_C, bold: true, color: "156082", margin: 0
-  });
+  slide.addText(xccwText("Worked Example:", {fontSize: 9, bold: true, color: "156082"}), {x: lblX, y: rY, w: LL_W, h: 0.20, margin: 0});
   rY += 0.22;
 
   const { start, end, answer } = LP1_ADAPTED[0];
@@ -833,15 +809,12 @@ function buildLP1DirectionsAdapted(slide, labelPath) {
   // Helpful hint box
   const hintMaxH = HALF_BOT - rY - 0.08;
   if (hintMaxH > 0.55) {
-    slide.addText("Helpful hint…", {
-      x: lblX, y: rY, w: LL_W, h: 0.20,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: BLUE, margin: 0
-    });
+    slide.addText(xccwText("Helpful hint…", {fontSize: 9, bold: true, color: BLUE}), {x: lblX, y: rY, w: LL_W, h: 0.20, margin: 0});
     rY += 0.22;
     const boxH = Math.min(hintMaxH - 0.22, 0.88);
     slide.addText(ADAPTED_SUPPORT.hint1, {
       x: lblX, y: rY, w: LL_W, h: boxH,
-      fontSize: 8.5, fontFace: FONT_C, color: BLACK,
+      fontSize: 8.5, fontFace: "XCCW Joined 4a", /* TODO: wrap in xccwText() if text spans lines */ color: BLACK,
       fill: { color: "FFFFFF" },
       line: { color: "156082", width: 0.75 },
       margin: 6, valign: "top"
@@ -881,17 +854,9 @@ function buildLP2JourneysAdapted(slide) {
   const LEG_LABEL_W  = 0.62;
 
   function addLegRow(x, y, totalW, labelText, answer, answerColor) {
-    slide.addText(labelText, {
-      x, y, w: LEG_LABEL_W, h: LEG_ROW_H,
-      fontSize: 8, fontFace: FONT_C, bold: true, color: BLACK,
-      valign: "bottom", margin: 0
-    });
+    slide.addText(xccwText(labelText, {fontSize: 8, bold: true, color: BLACK}), {w: LEG_LABEL_W, h: LEG_ROW_H, valign: "bottom", margin: 0});
     if (answer) {
-      slide.addText(answer, {
-        x: x + LEG_LABEL_W, y, w: totalW - LEG_LABEL_W, h: LEG_ROW_H,
-        fontSize: 8.5, fontFace: FONT_C, bold: true, color: answerColor || GREEN,
-        valign: "bottom", margin: 0
-      });
+      slide.addText(xccwText(answer, {fontSize: 8.5, bold: true, color: answerColor || GREEN}), {x: x + LEG_LABEL_W, w: totalW - LEG_LABEL_W, h: LEG_ROW_H, valign: "bottom", margin: 0});
     }
     const lineY = y + LEG_ROW_H + LEG_LINE_GAP;
     slide.addShape("line", { x, y: lineY, w: totalW, h: 0,
@@ -907,15 +872,12 @@ function buildLP2JourneysAdapted(slide) {
   let curY = HALF_TOP;
 
   // Title + instruction
-  slide.addText(LP2_DATA.title || "Three-Stop Journeys", {
-    x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.24,
-    fontSize: 13, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-  });
+  slide.addText(xccwText(LP2_DATA.title || "Three-Stop Journeys", {fontSize: 13, bold: true, color: BLACK}), {x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.24, margin: 0});
   curY += 0.26;
   slide.addText(
     LP2_DATA.instruction || "Each journey visits A → B → C.  Write the directions for each leg.",
     { x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.18,
-      fontSize: 8.5, fontFace: FONT_C, color: BLACK, margin: 0 }
+      fontSize: 8.5, fontFace: "XCCW Joined 4a", /* TODO: wrap in xccwText() if text spans lines */ color: BLACK, margin: 0 }
   );
   curY += 0.20;
 
@@ -926,10 +888,7 @@ function buildLP2JourneysAdapted(slide) {
 
   // Two questions
   LP2_ADAPTED.forEach(({ pts, a1, a2 }, i) => {
-    slide.addText(`Q${i + 1}`, {
-      x: MARGIN, y: curY, w: 0.22, h: qLabelH,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-    });
+    slide.addText(xccwText(`Q${i + 1}`, {fontSize: 9, bold: true, color: BLACK}), {x: MARGIN, y: curY, w: 0.22, h: qLabelH, margin: 0});
 
     drawGrid(slide, gridX, curY + qLabelH, gridPanelW, cols, rows, pts);
 
@@ -951,10 +910,7 @@ function buildLP2JourneysAdapted(slide) {
   // ── Right column ───────────────────────────────────────────────────────────
   let rY = HALF_TOP;
 
-  slide.addText("Worked Example:", {
-    x: lblX, y: rY, w: rColW, h: 0.20,
-    fontSize: 9, fontFace: FONT_C, bold: true, color: "156082", margin: 0
-  });
+  slide.addText(xccwText("Worked Example:", {fontSize: 9, bold: true, color: "156082"}), {x: lblX, y: rY, w: rColW, h: 0.20, margin: 0});
   rY += 0.22;
 
   const { pts, a1, a2 } = LP2_ADAPTED[0];
@@ -986,15 +942,12 @@ function buildLP2JourneysAdapted(slide) {
   // Helpful hint box
   const hintMaxH = HALF_BOT - rY - 0.08;
   if (hintMaxH > 0.55) {
-    slide.addText("Helpful hint…", {
-      x: lblX, y: rY, w: rColW, h: 0.20,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: BLUE, margin: 0
-    });
+    slide.addText(xccwText("Helpful hint…", {fontSize: 9, bold: true, color: BLUE}), {x: lblX, y: rY, w: rColW, h: 0.20, margin: 0});
     rY += 0.22;
     const boxH = Math.min(hintMaxH - 0.22, 0.88);
     slide.addText(ADAPTED_SUPPORT.hint2, {
       x: lblX, y: rY, w: rColW, h: boxH,
-      fontSize: 8.5, fontFace: FONT_C, color: BLACK,
+      fontSize: 8.5, fontFace: "XCCW Joined 4a", /* TODO: wrap in xccwText() if text spans lines */ color: BLACK,
       fill: { color: "FFFFFF" },
       line: { color: "156082", width: 0.75 },
       margin: 6, valign: "top"
@@ -1095,16 +1048,11 @@ function buildLP1Polygon(slide, labelPath, isMarkingStation) {
       fontSize: 13, fontFace: FONT_M, bold: true, color: GREEN, margin: 0
     });
   } else {
-    slide.addText(LP1_DATA.title || "Moving Shapes on a Grid", {
-      x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.26,
-      fontSize: 13, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-    });
+    slide.addText(xccwText(LP1_DATA.title || "Moving Shapes on a Grid", {fontSize: 13, bold: true, color: BLACK}), {x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.26, margin: 0});
   }
   curY += 0.28;
   if (!isMarkingStation) {
-    slide.addText(LP1_DATA.instruction || "Translate each shape using the direction given.  Draw the new position.",
-      { x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.18,
-        fontSize: 8.5, fontFace: FONT_C, color: BLACK, margin: 0 });
+    slide.addText(xccwText(LP1_DATA.instruction || "Translate each shape using the direction given.  Draw the new position.", {fontSize: 8.5, color: BLACK}), {x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.18, margin: 0});
     curY += 0.20;
   }
 
@@ -1123,18 +1071,12 @@ function buildLP1Polygon(slide, labelPath, isMarkingStation) {
     const gy   = qy + qLabelH + instrH;
 
     // Q label
-    slide.addText(`Q${qi + 1}`, {
-      x: qx, y: qy, w: 0.22, h: qLabelH,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-    });
+    slide.addText(xccwText(`Q${qi + 1}`, {fontSize: 9, bold: true, color: BLACK}), {x: qx, y: qy, w: 0.22, h: qLabelH, margin: 0});
 
     // Translation instruction below Q label
     const dc = q.translation[0], dr = q.translation[1];
     const instrText = `Translate: ${dc > 0 ? dc + ' right' : Math.abs(dc) + ' left'}, ${dr > 0 ? dr + ' up' : Math.abs(dr) + ' down'}`;
-    slide.addText(instrText, {
-      x: qx + 0.24, y: qy, w: qW - 0.24, h: qLabelH,
-      fontSize: 8, fontFace: FONT_C, bold: false, color: "333333", margin: 0
-    });
+    slide.addText(xccwText(instrText, {fontSize: 8, bold: false, color: "333333"}), {x: qx + 0.24, y: qy, w: qW - 0.24, h: qLabelH, margin: 0});
 
     // Grid A: original shape
     drawGrid(slide, gx_a, gy, gridW, gridSize, gridSize, []);
@@ -1165,15 +1107,9 @@ function buildLP1Polygon(slide, labelPath, isMarkingStation) {
     }
 
     // Labels above each grid: "Shape A" (left) and "Draw Shape B here" (right, light)
-    slide.addText("Shape A", {
-      x: gx_a, y: gy - 0.16, w: gridW, h: 0.15,
-      fontSize: 7, fontFace: FONT_C, bold: true, color: "1F4E79", margin: 0
-    });
+    slide.addText(xccwText("Shape A", {fontSize: 7, bold: true, color: "1F4E79"}), {x: gx_a, y: gy - 0.16, w: gridW, h: 0.15, margin: 0});
     if (!isMarkingStation) {
-      slide.addText("Draw Shape B here", {
-        x: gx_b, y: gy - 0.16, w: gridW, h: 0.15,
-        fontSize: 7, fontFace: FONT_C, color: "AAAAAA", margin: 0
-      });
+      slide.addText(xccwText("Draw Shape B here", {fontSize: 7, color: "AAAAAA"}), {x: gx_b, y: gy - 0.16, w: gridW, h: 0.15, margin: 0});
     }
 
     // Answer line below both grids
@@ -1188,10 +1124,7 @@ function buildLP1Polygon(slide, labelPath, isMarkingStation) {
     let rY = lblY + LL_H + 0.10;
 
     // Worked example: Q1 with both shapes shown
-    slide.addText("Worked Example:", {
-      x: lblX, y: rY, w: LL_W, h: 0.20,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: "156082", margin: 0
-    });
+    slide.addText(xccwText("Worked Example:", {fontSize: 9, bold: true, color: "156082"}), {x: lblX, y: rY, w: LL_W, h: 0.20, margin: 0});
     rY += 0.22;
 
     const wq   = questions[0];
@@ -1240,15 +1173,12 @@ function buildLP1Polygon(slide, labelPath, isMarkingStation) {
     // Going further box
     const gfMaxH = HALF_BOT - rY - 0.08;
     if (gfMaxH > 0.50) {
-      slide.addText("Going further…", {
-        x: lblX, y: rY, w: LL_W, h: 0.20,
-        fontSize: 9, fontFace: FONT_C, bold: true, color: BLUE, margin: 0
-      });
+      slide.addText(xccwText("Going further…", {fontSize: 9, bold: true, color: BLUE}), {x: lblX, y: rY, w: LL_W, h: 0.20, margin: 0});
       rY += 0.22;
       const boxH = Math.min(gfMaxH - 0.22, 0.88);
       slide.addText(LP1_DATA.goingFurther || "Can you write the reverse direction?", {
         x: lblX, y: rY, w: LL_W, h: boxH,
-        fontSize: 8.5, fontFace: FONT_C, color: BLACK,
+        fontSize: 8.5, fontFace: "XCCW Joined 4a", /* TODO: wrap in xccwText() if text spans lines */ color: BLACK,
         fill: { color: "FFFFFF" }, line: { color: "156082", width: 0.75 },
         margin: 6, valign: "top"
       });
@@ -1293,16 +1223,11 @@ function buildLP2Polygon(slide, isMarkingStation) {
       fontSize: 13, fontFace: FONT_M, bold: true, color: GREEN, margin: 0
     });
   } else {
-    slide.addText(LP2_DATA.title || "Translating More Polygons", {
-      x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.24,
-      fontSize: 13, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-    });
+    slide.addText(xccwText(LP2_DATA.title || "Translating More Polygons", {fontSize: 13, bold: true, color: BLACK}), {x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.24, margin: 0});
   }
   curY += 0.28;
   if (!isMarkingStation) {
-    slide.addText(LP2_DATA.instruction || "Translate each shape using the direction given.  Draw the new position.",
-      { x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.18,
-        fontSize: 8.5, fontFace: FONT_C, color: BLACK, margin: 0 });
+    slide.addText(xccwText(LP2_DATA.instruction || "Translate each shape using the direction given.  Draw the new position.", {fontSize: 8.5, color: BLACK}), {x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.18, margin: 0});
     curY += 0.20;
   }
 
@@ -1317,15 +1242,9 @@ function buildLP2Polygon(slide, isMarkingStation) {
 
     const dc = q.translation[0], dr = q.translation[1];
 
-    slide.addText(`Q${qi + 1}`, {
-      x: qx, y: qy, w: 0.22, h: qLabelH,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-    });
+    slide.addText(xccwText(`Q${qi + 1}`, {fontSize: 9, bold: true, color: BLACK}), {x: qx, y: qy, w: 0.22, h: qLabelH, margin: 0});
     const instrText = `Translate: ${dc > 0 ? dc + ' right' : Math.abs(dc) + ' left'}, ${dr > 0 ? dr + ' up' : Math.abs(dr) + ' down'}`;
-    slide.addText(instrText, {
-      x: qx + 0.24, y: qy, w: qW - 0.24, h: qLabelH,
-      fontSize: 8, fontFace: FONT_C, color: "333333", margin: 0
-    });
+    slide.addText(xccwText(instrText, {fontSize: 8, color: "333333"}), {x: qx + 0.24, y: qy, w: qW - 0.24, h: qLabelH, margin: 0});
 
     drawGrid(slide, gx_a, gy, gridW, gridSize, gridSize, []);
     drawPolygon(slide, gx_a, gy, cell, gridSize, q.shape, q.labels, SHAPE_COLOR);
@@ -1351,15 +1270,9 @@ function buildLP2Polygon(slide, isMarkingStation) {
       });
     }
 
-    slide.addText("Shape A", {
-      x: gx_a, y: gy - 0.16, w: gridW, h: 0.15,
-      fontSize: 7, fontFace: FONT_C, bold: true, color: "1F4E79", margin: 0
-    });
+    slide.addText(xccwText("Shape A", {fontSize: 7, bold: true, color: "1F4E79"}), {x: gx_a, y: gy - 0.16, w: gridW, h: 0.15, margin: 0});
     if (!isMarkingStation) {
-      slide.addText("Draw Shape B here", {
-        x: gx_b, y: gy - 0.16, w: gridW, h: 0.15,
-        fontSize: 7, fontFace: FONT_C, color: "AAAAAA", margin: 0
-      });
+      slide.addText(xccwText("Draw Shape B here", {fontSize: 7, color: "AAAAAA"}), {x: gx_b, y: gy - 0.16, w: gridW, h: 0.15, margin: 0});
     }
 
     const ansY = gy + gridH + numH + 0.04;
@@ -1370,10 +1283,7 @@ function buildLP2Polygon(slide, isMarkingStation) {
   // Right column — worked example
   if (!isMarkingStation) {
     let rY = HALF_TOP;
-    slide.addText("Worked Example:", {
-      x: lblX, y: rY, w: rColW, h: 0.20,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: "156082", margin: 0
-    });
+    slide.addText(xccwText("Worked Example:", {fontSize: 9, bold: true, color: "156082"}), {x: lblX, y: rY, w: rColW, h: 0.20, margin: 0});
     rY += 0.22;
 
     const wq  = LP2_DATA.questions[0];
@@ -1412,14 +1322,11 @@ function buildLP2Polygon(slide, isMarkingStation) {
 
     const gfMaxH = HALF_BOT - rY - 0.08;
     if (gfMaxH > 0.50) {
-      slide.addText("Going further…", {
-        x: lblX, y: rY, w: rColW, h: 0.20,
-        fontSize: 9, fontFace: FONT_C, bold: true, color: BLUE, margin: 0
-      });
+      slide.addText(xccwText("Going further…", {fontSize: 9, bold: true, color: BLUE}), {x: lblX, y: rY, w: rColW, h: 0.20, margin: 0});
       rY += 0.22;
       slide.addText(LP2_DATA.goingFurther || "Write the reverse direction for one shape.", {
         x: lblX, y: rY, w: rColW, h: Math.min(gfMaxH - 0.22, 0.88),
-        fontSize: 8.5, fontFace: FONT_C, color: BLACK,
+        fontSize: 8.5, fontFace: "XCCW Joined 4a", /* TODO: wrap in xccwText() if text spans lines */ color: BLACK,
         fill: { color: "FFFFFF" }, line: { color: "156082", width: 0.75 },
         margin: 6, valign: "top"
       });
@@ -1445,10 +1352,7 @@ function drawTranslationScaffold(slide, boxX, boxY, boxW, boxH) {
   const stepSz = 8.5;
   const stepH = 0.20;
   let sy = boxY + pad;
-  slide.addText("Steps to translate a shape:", {
-    x: boxX + pad, y: sy, w: boxW - pad*2, h: stepH,
-    fontSize: 9, fontFace: FONT_C, bold: true, color: "156082", margin: 0
-  });
+  slide.addText(xccwText("Steps to translate a shape:", {fontSize: 9, bold: true, color: "156082"}), {x: boxX + pad, y: sy, w: boxW - pad*2, h: stepH, margin: 0});
   sy += stepH + 0.04;
   const steps = [
     "1.  Look at vertex A on Shape A.",
@@ -1458,10 +1362,7 @@ function drawTranslationScaffold(slide, boxX, boxY, boxW, boxH) {
     "5.  Connect all the new vertices to draw Shape B."
   ];
   steps.forEach(s => {
-    slide.addText(s, {
-      x: boxX + pad, y: sy, w: boxW - pad*2, h: stepH,
-      fontSize: stepSz, fontFace: FONT_C, color: BLACK, margin: 0
-    });
+    slide.addText(xccwText(s, {fontSize: stepSz, color: BLACK}), {x: boxX + pad, y: sy, w: boxW - pad*2, h: stepH, margin: 0});
     sy += stepH;
   });
 }
@@ -1492,14 +1393,9 @@ function buildLP1PolygonAdapted(slide, labelPath) {
   let curY = HALF_TOP;
 
   // Title + instruction
-  slide.addText(LP1_DATA.title || "Moving Shapes on a Grid", {
-    x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.26,
-    fontSize: 13, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-  });
+  slide.addText(xccwText(LP1_DATA.title || "Moving Shapes on a Grid", {fontSize: 13, bold: true, color: BLACK}), {x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.26, margin: 0});
   curY += 0.28;
-  slide.addText(LP1_DATA.instruction || "Translate each shape using the direction given.  Draw the new position.",
-    { x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.18,
-      fontSize: 8.5, fontFace: FONT_C, color: BLACK, margin: 0 });
+  slide.addText(xccwText(LP1_DATA.instruction || "Translate each shape using the direction given.  Draw the new position.", {fontSize: 8.5, color: BLACK}), {x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.18, margin: 0});
   curY += 0.20;
 
   // ── Scaffold box — takes one full qBlockH of space ──
@@ -1519,15 +1415,9 @@ function buildLP1PolygonAdapted(slide, labelPath) {
 
     const dc = q.translation[0], dr = q.translation[1];
 
-    slide.addText(`Q${qi + 1}`, {
-      x: qx, y: qy, w: 0.22, h: qLabelH,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-    });
+    slide.addText(xccwText(`Q${qi + 1}`, {fontSize: 9, bold: true, color: BLACK}), {x: qx, y: qy, w: 0.22, h: qLabelH, margin: 0});
     const instrText = `Translate: ${dc > 0 ? dc + ' right' : Math.abs(dc) + ' left'}, ${dr > 0 ? dr + ' up' : Math.abs(dr) + ' down'}`;
-    slide.addText(instrText, {
-      x: qx + 0.24, y: qy, w: qW - 0.24, h: qLabelH,
-      fontSize: 8, fontFace: FONT_C, color: "333333", margin: 0
-    });
+    slide.addText(xccwText(instrText, {fontSize: 8, color: "333333"}), {x: qx + 0.24, y: qy, w: qW - 0.24, h: qLabelH, margin: 0});
 
     // Grid A: original shape
     drawGrid(slide, gx_a, gy, gridW, gridSize, gridSize, []);
@@ -1550,14 +1440,8 @@ function buildLP1PolygonAdapted(slide, labelPath) {
       });
     }
 
-    slide.addText("Shape A", {
-      x: gx_a, y: gy - 0.16, w: gridW, h: 0.15,
-      fontSize: 7, fontFace: FONT_C, bold: true, color: "1F4E79", margin: 0
-    });
-    slide.addText("Draw Shape B here", {
-      x: gx_b, y: gy - 0.16, w: gridW, h: 0.15,
-      fontSize: 7, fontFace: FONT_C, color: "AAAAAA", margin: 0
-    });
+    slide.addText(xccwText("Shape A", {fontSize: 7, bold: true, color: "1F4E79"}), {x: gx_a, y: gy - 0.16, w: gridW, h: 0.15, margin: 0});
+    slide.addText(xccwText("Draw Shape B here", {fontSize: 7, color: "AAAAAA"}), {x: gx_b, y: gy - 0.16, w: gridW, h: 0.15, margin: 0});
 
     const ansY = gy + gridH + numH + 0.04;
     addAnswerSection(slide, gx_a, ansY, gridW * 2 + 0.06, "", null);
@@ -1567,10 +1451,7 @@ function buildLP1PolygonAdapted(slide, labelPath) {
   slide.addImage({ path: labelPath, x: lblX, y: lblY, w: LL_W, h: LL_H });
   let rY = lblY + LL_H + 0.10;
 
-  slide.addText("Worked Example:", {
-    x: lblX, y: rY, w: LL_W, h: 0.20,
-    fontSize: 9, fontFace: FONT_C, bold: true, color: "156082", margin: 0
-  });
+  slide.addText(xccwText("Worked Example:", {fontSize: 9, bold: true, color: "156082"}), {x: lblX, y: rY, w: LL_W, h: 0.20, margin: 0});
   rY += 0.22;
 
   const wq  = ADAPTED_SUPPORT.workedExample1 || LP1_ADAPTED[0];
@@ -1611,15 +1492,12 @@ function buildLP1PolygonAdapted(slide, labelPath) {
   // Helpful hint box (replaces going further)
   const hintMaxH = HALF_BOT - rY - 0.08;
   if (hintMaxH > 0.55) {
-    slide.addText("Helpful hint\u2026", {
-      x: lblX, y: rY, w: LL_W, h: 0.20,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: BLUE, margin: 0
-    });
+    slide.addText(xccwText("Helpful hint\u2026", {fontSize: 9, bold: true, color: BLUE}), {x: lblX, y: rY, w: LL_W, h: 0.20, margin: 0});
     rY += 0.22;
     const boxH = Math.min(hintMaxH - 0.22, 0.88);
     slide.addText(ADAPTED_SUPPORT.hint1, {
       x: lblX, y: rY, w: LL_W, h: boxH,
-      fontSize: 8.5, fontFace: FONT_C, color: BLACK,
+      fontSize: 8.5, fontFace: "XCCW Joined 4a", /* TODO: wrap in xccwText() if text spans lines */ color: BLACK,
       fill: { color: "FFFFFF" }, line: { color: "156082", width: 0.75 },
       margin: 6, valign: "top"
     });
@@ -1652,14 +1530,9 @@ function buildLP2PolygonAdapted(slide) {
   let curY = HALF_TOP;
 
   // Title + instruction
-  slide.addText(LP2_DATA.title || "Translating More Polygons", {
-    x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.24,
-    fontSize: 13, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-  });
+  slide.addText(xccwText(LP2_DATA.title || "Translating More Polygons", {fontSize: 13, bold: true, color: BLACK}), {x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.24, margin: 0});
   curY += 0.28;
-  slide.addText(LP2_DATA.instruction || "Translate each shape using the direction given.  Draw the new position.",
-    { x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.18,
-      fontSize: 8.5, fontFace: FONT_C, color: BLACK, margin: 0 });
+  slide.addText(xccwText(LP2_DATA.instruction || "Translate each shape using the direction given.  Draw the new position.", {fontSize: 8.5, color: BLACK}), {x: MARGIN, y: curY, w: lblX - GUTTER, h: 0.18, margin: 0});
   curY += 0.20;
 
   // ── Questions (from adaptedSupport — typically 1) ──
@@ -1681,15 +1554,9 @@ function buildLP2PolygonAdapted(slide) {
 
     const dc = q.translation[0], dr = q.translation[1];
 
-    slide.addText(`Q${qi + 1}`, {
-      x: qx, y: qy, w: 0.22, h: qLabelH,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: BLACK, margin: 0
-    });
+    slide.addText(xccwText(`Q${qi + 1}`, {fontSize: 9, bold: true, color: BLACK}), {x: qx, y: qy, w: 0.22, h: qLabelH, margin: 0});
     const instrText = `Translate: ${dc > 0 ? dc + ' right' : Math.abs(dc) + ' left'}, ${dr > 0 ? dr + ' up' : Math.abs(dr) + ' down'}`;
-    slide.addText(instrText, {
-      x: qx + 0.24, y: qy, w: qColW - 0.24, h: qLabelH,
-      fontSize: 8, fontFace: FONT_C, color: "333333", margin: 0
-    });
+    slide.addText(xccwText(instrText, {fontSize: 8, color: "333333"}), {x: qx + 0.24, y: qy, w: qColW - 0.24, h: qLabelH, margin: 0});
 
     drawGrid(slide, gx_a, gy, qGridW, gridSize, gridSize, []);
     drawPolygon(slide, gx_a, gy, qCell, gridSize, q.shape, q.labels, SHAPE_COLOR);
@@ -1710,14 +1577,8 @@ function buildLP2PolygonAdapted(slide) {
       });
     }
 
-    slide.addText("Shape A", {
-      x: gx_a, y: gy - 0.16, w: qGridW, h: 0.15,
-      fontSize: 7, fontFace: FONT_C, bold: true, color: "1F4E79", margin: 0
-    });
-    slide.addText("Draw Shape B here", {
-      x: gx_b, y: gy - 0.16, w: qGridW, h: 0.15,
-      fontSize: 7, fontFace: FONT_C, color: "AAAAAA", margin: 0
-    });
+    slide.addText(xccwText("Shape A", {fontSize: 7, bold: true, color: "1F4E79"}), {x: gx_a, y: gy - 0.16, w: qGridW, h: 0.15, margin: 0});
+    slide.addText(xccwText("Draw Shape B here", {fontSize: 7, color: "AAAAAA"}), {x: gx_b, y: gy - 0.16, w: qGridW, h: 0.15, margin: 0});
 
     const ansY = gy + qGridH + qNumH + 0.04;
     addAnswerSection(slide, gx_a, ansY, qGridW * 2 + 0.06, "", null);
@@ -1725,10 +1586,7 @@ function buildLP2PolygonAdapted(slide) {
 
   // ── Right column: worked example + helpful hint ──
   let rY = HALF_TOP;
-  slide.addText("Worked Example:", {
-    x: lblX, y: rY, w: rColW, h: 0.20,
-    fontSize: 9, fontFace: FONT_C, bold: true, color: "156082", margin: 0
-  });
+  slide.addText(xccwText("Worked Example:", {fontSize: 9, bold: true, color: "156082"}), {x: lblX, y: rY, w: rColW, h: 0.20, margin: 0});
   rY += 0.22;
 
   const wq  = ADAPTED_SUPPORT.workedExample2 || LP2_ADAPTED[0];
@@ -1768,15 +1626,12 @@ function buildLP2PolygonAdapted(slide) {
   // Helpful hint box
   const hintMaxH = HALF_BOT - rY - 0.08;
   if (hintMaxH > 0.55) {
-    slide.addText("Helpful hint\u2026", {
-      x: lblX, y: rY, w: rColW, h: 0.20,
-      fontSize: 9, fontFace: FONT_C, bold: true, color: BLUE, margin: 0
-    });
+    slide.addText(xccwText("Helpful hint\u2026", {fontSize: 9, bold: true, color: BLUE}), {x: lblX, y: rY, w: rColW, h: 0.20, margin: 0});
     rY += 0.22;
     const boxH = Math.min(hintMaxH - 0.22, 0.88);
     slide.addText(ADAPTED_SUPPORT.hint2, {
       x: lblX, y: rY, w: rColW, h: boxH,
-      fontSize: 8.5, fontFace: FONT_C, color: BLACK,
+      fontSize: 8.5, fontFace: "XCCW Joined 4a", /* TODO: wrap in xccwText() if text spans lines */ color: BLACK,
       fill: { color: "FFFFFF" }, line: { color: "156082", width: 0.75 },
       margin: 6, valign: "top"
     });
