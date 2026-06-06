@@ -10,6 +10,8 @@ import sys, copy, re, json, io as _io
 from lxml import etree
 from pptx import Presentation
 from pptx.util import Emu, Pt
+from wfa_fonts import WFA
+from xccw_render import xccw_p_xml
 
 EMU = 914400
 def emu(inches): return int(inches * EMU)
@@ -127,7 +129,7 @@ def _esc(s):
 def add_sp(slide, xml_str):
     slide.shapes._spTree.append(etree.fromstring(xml_str))
 
-def sp(spid, name, x, y, w, h, text, font='Twinkl Cursive Looped Light',
+def sp(spid, name, x, y, w, h, text, font=WFA.CURSIVE,
        sz=18, bold=False, color='000000', align='l',
        fill=None, border=None, geom='rect', anchor='ctr',
        no_line=False, underline=False):
@@ -143,12 +145,20 @@ def sp(spid, name, x, y, w, h, text, font='Twinkl Cursive Looped Light',
     u_attr = ' u="sng"' if underline else ''
     color_xml = f'<a:solidFill><a:srgbClr val="{color}"/></a:solidFill>'
     if isinstance(text, list):
-        paras = ''.join(f'''<a:p><a:pPr algn="{align}"/><a:r>
+        if WFA.is_xccw(font):
+            paras = ''.join(
+                xccw_p_xml(line, int(sz * 100), bold, color, align, underline)
+                for line in text)
+        else:
+            paras = ''.join(f'''<a:p><a:pPr algn="{align}"/><a:r>
           <a:rPr lang="en-GB" sz="{int(sz*100)}"{b_attr}{u_attr} dirty="0">
             {color_xml}<a:latin typeface="{font}"/>
           </a:rPr><a:t>{_esc(line)}</a:t></a:r></a:p>''' for line in text)
     else:
-        paras = f'''<a:p><a:pPr algn="{align}"/><a:r>
+        if WFA.is_xccw(font):
+            paras = xccw_p_xml(text, int(sz * 100), bold, color, align, underline)
+        else:
+            paras = f'''<a:p><a:pPr algn="{align}"/><a:r>
           <a:rPr lang="en-GB" sz="{int(sz*100)}"{b_attr}{u_attr} dirty="0">
             {color_xml}<a:latin typeface="{font}"/>
           </a:rPr><a:t>{_esc(text)}</a:t></a:r></a:p>'''
@@ -184,7 +194,7 @@ def build_slide1():
     # Question text box — floats over right portion of cloud
     # x=4.934, y=1.110, w=5.902, h=1.500 (slightly taller than ref for wrapping)
     add_sp(sld, sp(nid(),'KQText', 4.934, 1.110, 5.902, 1.500,
-                   kq_text, font='Twinkl Cursive Looped',
+                   kq_text, font=WFA.CURSIVE,
                    sz=26, bold=False, color='000000', align='l',
                    fill=None, no_line=True, anchor='t'))
 
@@ -194,7 +204,7 @@ def build_slide1():
 
     # "Being a Mathematician" label
     add_sp(sld, sp(nid(),'BAM', 4.934, 6.836, 3.077, 0.429,
-                   'Being a Mathematician', font='Twinkl Cursive Looped Light',
+                   'Being a Mathematician', font=WFA.CURSIVE,
                    sz=14, bold=True, color='000000', align='ctr',
                    fill=None, no_line=True))
 
@@ -213,11 +223,11 @@ def build_slide2():
     day_map = {'Monday':1,'Tuesday':2,'Wednesday':3,'Thursday':4}
     day_num = day_map.get(L1['day'],1)
     add_sp(sld, sp(nid(),'BAM', 3.232,2.131, 7.221,0.505,
-                   'Being a Mathematician', font='Twinkl Cursive Looped Light',
+                   'Being a Mathematician', font=WFA.CURSIVE,
                    sz=18, bold=True, color='000000', align='ctr',
                    fill=None, no_line=True))
     add_sp(sld, sp(nid(),'DayText', 4.484,2.448, 4.504,2.036,
-                   f'Day {day_num}', font='Twinkl Cursive Looped Light',
+                   f'Day {day_num}', font=WFA.CURSIVE,
                    sz=100, bold=False, color='000000', align='ctr',
                    fill=None, no_line=True))
     add_pic(sld,'image1.png', 5.634,0.168, 2.066,1.796)
@@ -320,7 +330,7 @@ def build_slide4():
 
     add_sp(sld, sp(2,'Title', 2.454,0.143, 9.039,1.450,
                    'Remember the details and the order',
-                   font='Twinkl Cursive Looped Light', sz=40, bold=True,
+                   font=WFA.CURSIVE, sz=40, bold=True,
                    color='000000', align='l', fill=None, no_line=True))
 
     add_sp(sld, sp(3,'ShowBtn', 5.219,1.347, 2.895,0.679,
@@ -399,7 +409,7 @@ def build_slide5():
 
     add_sp(sld, sp(20,'Title', 0.917,0.110, 11.500,1.450,
                    'Now answer from memory!',
-                   font='Twinkl Cursive Looped Light', sz=44, bold=True,
+                   font=WFA.CURSIVE, sz=44, bold=True,
                    color='000000', align='l', fill=None, no_line=True))
 
     qa = WM_DATA['qa']
@@ -485,7 +495,7 @@ def build_slide6():
     day = RM_DATA['day']
     add_sp(sld, sp(2,'Title', 0.917,0.069, 11.500,0.814,
                    f'Rapid Maths \u2013 Day {day}',
-                   font='Twinkl Cursive Looped Light', sz=28,
+                   font=WFA.CURSIVE, sz=28,
                    color='000000', align='l', fill=None, no_line=True))
 
     left_cards  = [(0.240,0.933,6.200,2.056),(0.240,3.122,6.200,2.056),(0.240,5.311,6.200,2.056)]
@@ -552,7 +562,7 @@ def build_slide7():
     day = RM_DATA['day']
     add_sp(sld, sp(2,'Title', 0.917,-0.009, 11.500,1.009,
                    f'Rapid Maths \u2013 Answers \u2013 Day {day}',
-                   font='Twinkl Cursive Looped Light', sz=28,
+                   font=WFA.CURSIVE, sz=28,
                    color='000000', align='l', fill=None, no_line=True))
 
     left_cards  = [(0.240,0.933,6.200,2.056),(0.240,3.122,6.200,2.056),(0.240,5.311,6.200,2.056)]
@@ -971,14 +981,14 @@ def draw_grid_slide(sld, visual_key, layout_num_was):
         add_sp(sld, sp(sha_spid, 'ShapeBLabel',
                        right_x, panel_y + 1.50, right_w, 0.50,
                        shape_b_label,
-                       font='Twinkl Cursive Looped Light', sz=20, bold=True,
+                       font=WFA.CURSIVE, sz=20, bold=True,
                        color=COLOR_B, align='l', fill=None, no_line=True))
 
         # Shape A label box — always visible (not animated)
         add_sp(sld, sp(base_spid+52, 'ShapeALabel',
                        right_x, panel_y + 0.15, right_w, 0.50,
                        shape_a_label,
-                       font='Twinkl Cursive Looped Light', sz=20, bold=True,
+                       font=WFA.CURSIVE, sz=20, bold=True,
                        color=v['points'][0][3], align='l', fill=None, no_line=True))
 
         # Animate all Shape B elements: hidden on load, all appear on single click
@@ -1038,14 +1048,14 @@ def draw_grid_slide(sld, visual_key, layout_num_was):
     if 'caption' in v:
         add_sp(sld, sp(130, 'Caption', right_x, right_y, right_w, 1.20,
                        v['caption'],
-                       font='Twinkl Cursive Looped Light', sz=20, bold=False,
+                       font=WFA.CURSIVE, sz=20, bold=False,
                        color='1F4E79', align='l', fill='DEECF8',
                        border=('156082', 1.5), anchor='ctr'))
 
     if 'sentence_stem' in v:
         add_sp(sld, sp(131, 'StemBox', right_x, right_y, right_w, 1.40,
                        v['sentence_stem'],
-                       font='Twinkl Cursive Looped Light', sz=18, bold=False,
+                       font=WFA.CURSIVE, sz=18, bold=False,
                        color='1F4E79', align='l', fill='FFF2CC',
                        border=('E8B825', 1.5), anchor='ctr'))
 
@@ -1218,7 +1228,7 @@ def draw_symmetry_grid_slide(sld, visual_key):
         # Mirror line label
         add_sp(sld, sp(spid+1, 'MirrorLbl',
                        mx + 0.05, grid_y - 0.26, 1.20, 0.24,
-                       'mirror line', font='Twinkl Cursive Looped Light', sz=14,
+                       'mirror line', font=WFA.CURSIVE, sz=14,
                        color=MIRROR_COLOR, align='l', fill=None, no_line=True))
         spid += 2
     if mirror_row is not None:
@@ -1236,7 +1246,7 @@ def draw_symmetry_grid_slide(sld, visual_key):
   </p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>''')
         add_sp(sld, sp(spid+1, 'MirrorLblH',
                        grid_x + grid_w + 0.05, my - 0.15, 1.20, 0.24,
-                       'mirror line', font='Twinkl Cursive Looped Light', sz=14,
+                       'mirror line', font=WFA.CURSIVE, sz=14,
                        color=MIRROR_COLOR, align='l', fill=None, no_line=True))
         spid += 2
 
@@ -1290,12 +1300,12 @@ def draw_symmetry_grid_slide(sld, visual_key):
     right_y  = panel_y + 0.15
     if 'caption' in v:
         add_sp(sld, sp(200, 'Caption', right_x, right_y, right_w, 1.20,
-                       v['caption'], font='Twinkl Cursive Looped Light', sz=20,
+                       v['caption'], font=WFA.CURSIVE, sz=20,
                        color='1F4E79', align='l', fill='DEECF8',
                        border=('156082', 1.5), anchor='ctr'))
     if 'sentence_stem' in v:
         add_sp(sld, sp(201, 'Stem', right_x, right_y, right_w, 1.40,
-                       v['sentence_stem'], font='Twinkl Cursive Looped Light', sz=18,
+                       v['sentence_stem'], font=WFA.CURSIVE, sz=18,
                        color='1F4E79', align='l', fill='FFF2CC',
                        border=('E8B825', 1.5), anchor='ctr'))
     sld.notes_slide.notes_text_frame.text = v['notes']
@@ -1457,7 +1467,7 @@ def draw_clock_slide(sld, visual_key):
             lbl_sz = max(12, int(clock_r * 16))
             add_sp(sld, sp(spid, f'ClockLbl{ci}',
                            cx - clock_r, cy + clock_r + 0.05, clock_r*2, 0.35,
-                           label, font='Twinkl Cursive Looped Light', sz=lbl_sz,
+                           label, font=WFA.CURSIVE, sz=lbl_sz,
                            color='1F4E79', align='ctr', fill=None, no_line=True))
             spid += 1
 
@@ -1475,13 +1485,13 @@ def draw_clock_slide(sld, visual_key):
     right_y = panel_y + 0.15
     if 'caption' in v:
         add_sp(sld, sp(spid, 'Caption', right_x, right_y, right_w, 1.20,
-                       v['caption'], font='Twinkl Cursive Looped Light', sz=20,
+                       v['caption'], font=WFA.CURSIVE, sz=20,
                        color='1F4E79', align='l', fill='DEECF8',
                        border=('156082', 1.5), anchor='ctr'))
         spid += 1
     if 'sentence_stem' in v:
         add_sp(sld, sp(spid, 'Stem', right_x, right_y, right_w, 1.40,
-                       v['sentence_stem'], font='Twinkl Cursive Looped Light', sz=18,
+                       v['sentence_stem'], font=WFA.CURSIVE, sz=18,
                        color='1F4E79', align='l', fill='FFF2CC',
                        border=('E8B825', 1.5), anchor='ctr'))
         spid += 1
@@ -1584,7 +1594,7 @@ def draw_number_line_slide(sld, visual_key):
         # Marker label: two lines above the line, centred on marker x
         add_sp(sld, sp(spid, f'MkLbl{val}',
                        mx - 0.65, nl_y - 0.88, 1.30, 0.45,
-                       lbl, font='Twinkl Cursive Looped Light', sz=12, bold=True,
+                       lbl, font=WFA.CURSIVE, sz=12, bold=True,
                        color=color, align='ctr', fill=None, no_line=True))
         spid += 1
 
@@ -1595,7 +1605,7 @@ def draw_number_line_slide(sld, visual_key):
         ex_y = nl_y - 1.55 - (0.40 if ei % 2 == 0 else 0.0)
         add_sp(sld, sp(spid, f'Ex{ex["val"]}',
                        ex_x - 0.52, ex_y, 1.04, 0.55,
-                       ex['text'], font='Twinkl Cursive Looped Light', sz=12,
+                       ex['text'], font=WFA.CURSIVE, sz=12,
                        color='C00000', align='ctr', fill='FFE6E6',
                        border=('C00000', 1.0), anchor='ctr'))
         spid += 1
@@ -1604,7 +1614,7 @@ def draw_number_line_slide(sld, visual_key):
     right_y = panel_y + 0.15
     if 'caption' in v:
         add_sp(sld, sp(spid, 'Caption', right_x, right_y, right_w, 1.20,
-                       v['caption'], font='Twinkl Cursive Looped Light', sz=20,
+                       v['caption'], font=WFA.CURSIVE, sz=20,
                        color='1F4E79', align='l', fill='DEECF8',
                        border=('156082', 1.5), anchor='ctr'))
     sld.notes_slide.notes_text_frame.text = v['notes']
@@ -1707,7 +1717,7 @@ def build_spot_the_mistake_slide(layout_num, visual_key, title_text):
     add_sp(sld, sp(133, 'ErrorInstruction',
                    right_x, 1.60, right_w, 0.80,
                    f'Instruction given: "{v["error_instruction"]}"',
-                   font='Twinkl Cursive Looped Light', sz=16,
+                   font=WFA.CURSIVE, sz=16,
                    color='333333', align='l', fill=None, no_line=True))
 
     # Beat 2 element — error marker (hidden at start, appears on click 1)
@@ -1720,7 +1730,7 @@ def build_spot_the_mistake_slide(layout_num, visual_key, title_text):
     NOTE_SPID = 132
     add_sp(sld, sp(NOTE_SPID, 'ErrorNote', right_x, 2.60, right_w, 1.50,
                    v['error_note'],
-                   font='Twinkl Cursive Looped Light', sz=18, bold=True,
+                   font=WFA.CURSIVE, sz=18, bold=True,
                    color='C00000', align='l', fill='FFE6E6',
                    border=('C00000', 1.5), anchor='ctr'))
 
@@ -1801,13 +1811,13 @@ def build_trios_slide(layout_num, title, trios_data, notes):
     for i, (role_text, (text_col, fill_col)) in enumerate(zip(roles, roles_colors)):
         y_pos = 1.6 + i * 1.15
         add_sp(sld, sp(20+i, f'Role{i+1}', role_x, y_pos, role_w, role_h,
-                       role_text, font='Twinkl Cursive Looped Light', sz=18,
+                       role_text, font=WFA.CURSIVE, sz=18,
                        bold=True, color=text_col, align='l',
                        fill=fill_col, border=(text_col, 1.5), anchor='ctr'))
 
     add_sp(sld, sp(30, 'Task', 4.6, 1.6, 8.5, 1.4,
                    trios_data.get('task',''),
-                   font='Twinkl Cursive Looped Light', sz=18,
+                   font=WFA.CURSIVE, sz=18,
                    color='1F4E79', align='l', fill='DEECF8',
                    border=('156082', 1.5), anchor='ctr'))
 
@@ -1815,7 +1825,7 @@ def build_trios_slide(layout_num, title, trios_data, notes):
     if challenge:
         add_sp(sld, sp(31, 'Challenge', 4.6, 3.2, 8.5, 1.1,
                        f'Challenge: {challenge}',
-                       font='Twinkl Cursive Looped Light', sz=16,
+                       font=WFA.CURSIVE, sz=16,
                        color='7030A0', align='l', fill='F2E6F9',
                        border=('7030A0', 1.5), anchor='ctr'))
 
@@ -1835,13 +1845,13 @@ def build_independent_slide(layout_num, title, independent_data, notes):
 
     add_sp(sld, sp(20, 'Standard', 0.5, 1.6, 12.5, 1.3,
                    independent_data.get('standard',''),
-                   font='Twinkl Cursive Looped Light', sz=20,
+                   font=WFA.CURSIVE, sz=20,
                    color='1F4E79', align='l', fill='DEECF8',
                    border=('156082', 1.5), anchor='ctr'))
 
     add_sp(sld, sp(21, 'Supported', 0.5, 3.1, 12.5, 1.3,
                    f"Supported: {independent_data.get('supported','')}",
-                   font='Twinkl Cursive Looped Light', sz=18,
+                   font=WFA.CURSIVE, sz=18,
                    color='333333', align='l', fill='F2F2F2',
                    border=('BBBBBB', 1.5), anchor='ctr'))
 
@@ -1855,7 +1865,7 @@ def build_independent_slide(layout_num, title, independent_data, notes):
 def build_lp_slide(label):
     sld = new_slide(5)
     add_sp(sld, sp(20, 'LPTitle', 0.5, 0.1, 12.0, 0.9,
-                   label, font='Twinkl Cursive Looped Light',
+                   label, font=WFA.CURSIVE,
                    sz=32, bold=True, color='000000', align='ctr',
                    fill=None, no_line=True))
     sld.notes_slide.notes_text_frame.text = (
@@ -1873,7 +1883,7 @@ def build_learning_review():
     def nid(): sid[0]+=1; return sid[0]
 
     add_sp(sld, sp(nid(),'Title', 5.172,0.197, 3.352,0.640,
-                   'Learning Review', font='Twinkl Cursive Looped Light',
+                   'Learning Review', font=WFA.CURSIVE,
                    sz=24, bold=True, color='000000', align='ctr',
                    fill=None, no_line=True))
 
