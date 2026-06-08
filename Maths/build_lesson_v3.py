@@ -10,8 +10,6 @@ import sys, copy, re, json, io as _io
 from lxml import etree
 from pptx import Presentation
 from pptx.util import Emu, Pt
-from wfa_fonts import WFA
-from xccw_render import xccw_p_xml
 
 EMU = 914400
 def emu(inches): return int(inches * EMU)
@@ -64,6 +62,7 @@ stm_visual = {
     'error_instruction': STM['errorInstruction'],
     'error_note':        STM['errorNote'],
     'error_type':        STM['errorType'],
+    'calcDisplay':       STM.get('calcDisplay', {}),
     'notes':             "\n".join([
                              "I DO C2 — Spot the Mistake",
                              f"Concept: {STM['concept']}",
@@ -129,7 +128,7 @@ def _esc(s):
 def add_sp(slide, xml_str):
     slide.shapes._spTree.append(etree.fromstring(xml_str))
 
-def sp(spid, name, x, y, w, h, text, font=WFA.CURSIVE,
+def sp(spid, name, x, y, w, h, text, font='Twinkl Cursive Looped Light',
        sz=18, bold=False, color='000000', align='l',
        fill=None, border=None, geom='rect', anchor='ctr',
        no_line=False, underline=False):
@@ -145,20 +144,12 @@ def sp(spid, name, x, y, w, h, text, font=WFA.CURSIVE,
     u_attr = ' u="sng"' if underline else ''
     color_xml = f'<a:solidFill><a:srgbClr val="{color}"/></a:solidFill>'
     if isinstance(text, list):
-        if WFA.is_xccw(font):
-            paras = ''.join(
-                xccw_p_xml(line, int(sz * 100), bold, color, align, underline)
-                for line in text)
-        else:
-            paras = ''.join(f'''<a:p><a:pPr algn="{align}"/><a:r>
+        paras = ''.join(f'''<a:p><a:pPr algn="{align}"/><a:r>
           <a:rPr lang="en-GB" sz="{int(sz*100)}"{b_attr}{u_attr} dirty="0">
             {color_xml}<a:latin typeface="{font}"/>
           </a:rPr><a:t>{_esc(line)}</a:t></a:r></a:p>''' for line in text)
     else:
-        if WFA.is_xccw(font):
-            paras = xccw_p_xml(text, int(sz * 100), bold, color, align, underline)
-        else:
-            paras = f'''<a:p><a:pPr algn="{align}"/><a:r>
+        paras = f'''<a:p><a:pPr algn="{align}"/><a:r>
           <a:rPr lang="en-GB" sz="{int(sz*100)}"{b_attr}{u_attr} dirty="0">
             {color_xml}<a:latin typeface="{font}"/>
           </a:rPr><a:t>{_esc(text)}</a:t></a:r></a:p>'''
@@ -194,7 +185,7 @@ def build_slide1():
     # Question text box — floats over right portion of cloud
     # x=4.934, y=1.110, w=5.902, h=1.500 (slightly taller than ref for wrapping)
     add_sp(sld, sp(nid(),'KQText', 4.934, 1.110, 5.902, 1.500,
-                   kq_text, font=WFA.CURSIVE,
+                   kq_text, font='Twinkl Cursive Looped',
                    sz=26, bold=False, color='000000', align='l',
                    fill=None, no_line=True, anchor='t'))
 
@@ -204,7 +195,7 @@ def build_slide1():
 
     # "Being a Mathematician" label
     add_sp(sld, sp(nid(),'BAM', 4.934, 6.836, 3.077, 0.429,
-                   'Being a Mathematician', font=WFA.CURSIVE,
+                   'Being a Mathematician', font='Twinkl Cursive Looped Light',
                    sz=14, bold=True, color='000000', align='ctr',
                    fill=None, no_line=True))
 
@@ -223,11 +214,11 @@ def build_slide2():
     day_map = {'Monday':1,'Tuesday':2,'Wednesday':3,'Thursday':4}
     day_num = day_map.get(L1['day'],1)
     add_sp(sld, sp(nid(),'BAM', 3.232,2.131, 7.221,0.505,
-                   'Being a Mathematician', font=WFA.CURSIVE,
+                   'Being a Mathematician', font='Twinkl Cursive Looped Light',
                    sz=18, bold=True, color='000000', align='ctr',
                    fill=None, no_line=True))
     add_sp(sld, sp(nid(),'DayText', 4.484,2.448, 4.504,2.036,
-                   f'Day {day_num}', font=WFA.CURSIVE,
+                   f'Day {day_num}', font='Twinkl Cursive Looped Light',
                    sz=100, bold=False, color='000000', align='ctr',
                    fill=None, no_line=True))
     add_pic(sld,'image1.png', 5.634,0.168, 2.066,1.796)
@@ -330,7 +321,7 @@ def build_slide4():
 
     add_sp(sld, sp(2,'Title', 2.454,0.143, 9.039,1.450,
                    'Remember the details and the order',
-                   font=WFA.CURSIVE, sz=40, bold=True,
+                   font='Twinkl Cursive Looped Light', sz=40, bold=True,
                    color='000000', align='l', fill=None, no_line=True))
 
     add_sp(sld, sp(3,'ShowBtn', 5.219,1.347, 2.895,0.679,
@@ -409,7 +400,7 @@ def build_slide5():
 
     add_sp(sld, sp(20,'Title', 0.917,0.110, 11.500,1.450,
                    'Now answer from memory!',
-                   font=WFA.CURSIVE, sz=44, bold=True,
+                   font='Twinkl Cursive Looped Light', sz=44, bold=True,
                    color='000000', align='l', fill=None, no_line=True))
 
     qa = WM_DATA['qa']
@@ -495,7 +486,7 @@ def build_slide6():
     day = RM_DATA['day']
     add_sp(sld, sp(2,'Title', 0.917,0.069, 11.500,0.814,
                    f'Rapid Maths \u2013 Day {day}',
-                   font=WFA.CURSIVE, sz=28,
+                   font='Twinkl Cursive Looped Light', sz=28,
                    color='000000', align='l', fill=None, no_line=True))
 
     left_cards  = [(0.240,0.933,6.200,2.056),(0.240,3.122,6.200,2.056),(0.240,5.311,6.200,2.056)]
@@ -562,7 +553,7 @@ def build_slide7():
     day = RM_DATA['day']
     add_sp(sld, sp(2,'Title', 0.917,-0.009, 11.500,1.009,
                    f'Rapid Maths \u2013 Answers \u2013 Day {day}',
-                   font=WFA.CURSIVE, sz=28,
+                   font='Twinkl Cursive Looped Light', sz=28,
                    color='000000', align='l', fill=None, no_line=True))
 
     left_cards  = [(0.240,0.933,6.200,2.056),(0.240,3.122,6.200,2.056),(0.240,5.311,6.200,2.056)]
@@ -745,6 +736,356 @@ def build_slide8():
         f"WE DO — Vocabulary\nWords: {[w for w,_ in VOCAB]}\n"
         "Word 1 visible at start; each definition and subsequent word revealed per click.")
     print("Slide 8 (Vocabulary) ✓")
+
+# ===========================================================================
+# COLUMN CALCULATION SLIDE — question text + squared paper for live demo
+# The teacher demonstrates the column method directly on the slide.
+# Data keys used: calc_type, top, bottom, caption, notes
+# ===========================================================================
+def draw_column_calc_slide(sld, visual_key):
+    """
+    Draws a simple teaching slide: the question in large text at the top of
+    the panel, then a squared-paper grid filling the rest so the teacher can
+    demonstrate the column method live. No auto-drawn calculation.
+    """
+    v         = VISUALS[visual_key]
+    calc_type = v.get('calc_type', 'multiplication')
+    top_num   = str(v.get('top', ''))
+    bot_num   = str(v.get('bottom', ''))
+    caption   = v.get('caption', '')
+
+    panel_x, panel_y = 0.40, 1.45
+    panel_w, panel_h = 7.00, 5.80
+
+    # White panel background
+    add_sp(sld, f'''<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
+                         xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  <p:nvSpPr><p:cNvPr id="50" name="CalcPanel"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
+  <p:spPr><a:xfrm><a:off x="{emu(panel_x)}" y="{emu(panel_y)}"/>
+    <a:ext cx="{emu(panel_w)}" cy="{emu(panel_h)}"/></a:xfrm>
+    <a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
+    <a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>
+    <a:ln w="{int(1.5*12700)}"><a:solidFill><a:srgbClr val="BBBBBB"/></a:solidFill></a:ln>
+  </p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>''')
+
+    # Format the question
+    op = '\u00d7' if calc_type == 'multiplication' else '\u00f7'
+    question = f"{top_num} {op} {bot_num} ="
+
+    q_x = panel_x + 0.20
+    q_w = panel_w - 0.40
+    q_h = 0.75
+    q_y = panel_y + 0.20
+
+    add_sp(sld, sp(51, 'Question',
+                   q_x, q_y, q_w, q_h,
+                   question, font='Aptos', sz=42, bold=True,
+                   color='1F4E79', align='l', fill=None, no_line=True, anchor='ctr'))
+
+    # Squared paper grid filling the rest of the panel
+    cell     = 0.55      # ~14 mm — matches school squared paper for class display
+    grid_x   = panel_x + 0.08
+    grid_y   = q_y + q_h + 0.12
+    grid_max_w = panel_w - 0.16
+    grid_max_h = panel_y + panel_h - grid_y - 0.10
+    cols     = int(grid_max_w // cell)
+    rows     = int(grid_max_h // cell)
+    gw       = cols * cell
+    gh       = rows * cell
+
+    # Grid background
+    add_sp(sld, f'''<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
+                         xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  <p:nvSpPr><p:cNvPr id="52" name="GridBg"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
+  <p:spPr><a:xfrm><a:off x="{emu(grid_x)}" y="{emu(grid_y)}"/>
+    <a:ext cx="{emu(gw)}" cy="{emu(gh)}"/></a:xfrm>
+    <a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
+    <a:solidFill><a:srgbClr val="EEF5FC"/></a:solidFill>
+    <a:ln w="{int(1.0*12700)}"><a:solidFill><a:srgbClr val="90B8D8"/></a:solidFill></a:ln>
+  </p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>''')
+
+    spid = 60
+    # Vertical grid lines
+    for c in range(1, cols):
+        xp = grid_x + c * cell
+        add_sp(sld, f'''<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
+                             xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  <p:nvSpPr><p:cNvPr id="{spid}" name="VL{c}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
+  <p:spPr><a:xfrm><a:off x="{emu(xp)}" y="{emu(grid_y)}"/><a:ext cx="0" cy="{emu(gh)}"/></a:xfrm>
+    <a:prstGeom prst="line"><a:avLst/></a:prstGeom>
+    <a:ln w="{int(0.5*12700)}"><a:solidFill><a:srgbClr val="A8CAE8"/></a:solidFill></a:ln>
+  </p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>''')
+        spid += 1
+
+    # Horizontal grid lines
+    for r in range(1, rows):
+        yp = grid_y + r * cell
+        add_sp(sld, f'''<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
+                             xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  <p:nvSpPr><p:cNvPr id="{spid}" name="HL{r}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
+  <p:spPr><a:xfrm><a:off x="{emu(grid_x)}" y="{emu(yp)}"/><a:ext cx="{emu(gw)}" cy="0"/></a:xfrm>
+    <a:prstGeom prst="line"><a:avLst/></a:prstGeom>
+    <a:ln w="{int(0.5*12700)}"><a:solidFill><a:srgbClr val="A8CAE8"/></a:solidFill></a:ln>
+  </p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>''')
+        spid += 1
+
+    # Right column caption
+    right_x = panel_x + panel_w + 0.25
+    right_w  = 13.333 - right_x - 0.20
+    if caption:
+        add_sp(sld, sp(200, 'Caption', right_x, panel_y + 0.15, right_w, 1.60,
+                       caption, font='Twinkl Cursive Looped Light', sz=18,
+                       color='1F4E79', align='l', fill='DEECF8',
+                       border=('156082', 1.5), anchor='ctr'))
+
+    sld.notes_slide.notes_text_frame.text = v.get('notes', '')
+
+
+# ===========================================================================
+# ARITHMETIC SPOT-THE-MISTAKE PANEL — draws a calculation in the panel
+# ===========================================================================
+def draw_arithmetic_stm_panel(sld, visual_key):
+    """
+    Draws a column calculation with an embedded error in the teaching panel,
+    for use as the background of an arithmetic Spot the Mistake slide.
+    Uses calcDisplay data from the STM JSON via the visual dict.
+    """
+    v = VISUALS[visual_key]
+    cd = v.get('calcDisplay', {})
+    calc_type = cd.get('type', 'multiplication')
+
+    panel_x, panel_y = 0.40, 1.45
+    panel_w, panel_h = 7.00, 5.80
+
+    # White panel
+    add_sp(sld, f'''<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
+                         xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  <p:nvSpPr><p:cNvPr id="50" name="StmPanel"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
+  <p:spPr><a:xfrm><a:off x="{emu(panel_x)}" y="{emu(panel_y)}"/>
+    <a:ext cx="{emu(panel_w)}" cy="{emu(panel_h)}"/></a:xfrm>
+    <a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
+    <a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>
+    <a:ln w="{int(1.5*12700)}"><a:solidFill><a:srgbClr val="BBBBBB"/></a:solidFill></a:ln>
+  </p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>''')
+
+    spid = 60
+
+    if calc_type in ('multiplication', 'addition', 'subtraction'):
+        top_num   = cd.get('top', '????')
+        bot_num   = cd.get('bottom', '?')
+        err_ans   = cd.get('errorAnswer', '????')
+        cor_ans   = cd.get('correctAnswer', '????')
+        err_col   = cd.get('errorColumn', '')
+        carries   = cd.get('carries', '')
+        op_symbol = '×' if calc_type == 'multiplication' else ('+' if calc_type == 'addition' else '−')
+
+        top_str = top_num.replace(',', '')
+        ans_str = err_ans.replace(',', '')
+        n_cols  = max(len(top_str), len(ans_str), len(bot_num.replace(',', ''))) + 1
+        n_cols  = min(n_cols, 6)
+        col_w   = 0.68
+        total_w = col_w * n_cols
+        calc_x  = panel_x + (panel_w - total_w) / 2
+        calc_y  = panel_y + 0.55
+        row_h   = 0.60
+        digit_sz = 32
+        carry_sz = 18
+
+        # Column header labels
+        col_labels = ['HTh', 'TTh', 'Th', 'H', 'T', 'O'][-n_cols:]
+        # Determine which column index is the error column
+        col_order = ['ten-thousands','thousands','hundreds','tens','ones','HTh','TTh','Th','H','T','O']
+        col_name_to_idx = {
+            'ones': n_cols - 1, 'tens': n_cols - 2, 'hundreds': n_cols - 3,
+            'thousands': n_cols - 4, 'ten-thousands': n_cols - 5,
+            'O': n_cols-1, 'T': n_cols-2, 'H': n_cols-3, 'Th': n_cols-4,
+        }
+        err_ci = col_name_to_idx.get(err_col, -1)
+
+        for ci, lbl in enumerate(col_labels):
+            fill = 'FFE6E6' if ci == err_ci else 'EBF3FB'
+            border_col = ('C00000', 1.0) if ci == err_ci else ('156082', 0.75)
+            add_sp(sld, sp(spid, f'Hdr{ci}',
+                           calc_x + ci * col_w, calc_y,
+                           col_w, 0.36,
+                           lbl, font='Aptos', sz=11, bold=True,
+                           color='156082', align='ctr',
+                           fill=fill, border=border_col, anchor='ctr'))
+            spid += 1
+
+        cur_y = calc_y + 0.36 + 0.06
+
+        # Top number
+        top_padded = top_str.rjust(n_cols)
+        for ci, ch in enumerate(top_padded):
+            if ch.strip():
+                add_sp(sld, sp(spid, f'TopD{ci}',
+                               calc_x + ci * col_w, cur_y,
+                               col_w, row_h,
+                               ch, font='Aptos', sz=digit_sz, bold=True,
+                               color='1F4E79', align='ctr',
+                               fill=None, no_line=True, anchor='ctr'))
+            spid += 1
+
+        op_y = cur_y + row_h
+        # Operator
+        add_sp(sld, sp(spid, 'Op',
+                       calc_x, op_y, col_w * 0.9, row_h,
+                       op_symbol, font='Aptos', sz=digit_sz, bold=True,
+                       color='C00000', align='ctr',
+                       fill=None, no_line=True, anchor='ctr'))
+        spid += 1
+        # Bottom number
+        bot_str = bot_num.replace(',','')
+        bot_padded = bot_str.rjust(n_cols)
+        for ci, ch in enumerate(bot_padded):
+            if ch.strip():
+                add_sp(sld, sp(spid, f'BotD{ci}',
+                               calc_x + ci * col_w, op_y,
+                               col_w, row_h,
+                               ch, font='Aptos', sz=digit_sz, bold=True,
+                               color='333333', align='ctr',
+                               fill=None, no_line=True, anchor='ctr'))
+            spid += 1
+
+        # Dividing line
+        line_y = op_y + row_h + 0.05
+        add_sp(sld, f'''<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
+                             xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  <p:nvSpPr><p:cNvPr id="{spid}" name="DivLine"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
+  <p:spPr><a:xfrm><a:off x="{emu(calc_x)}" y="{emu(line_y)}"/>
+    <a:ext cx="{emu(total_w)}" cy="0"/></a:xfrm>
+    <a:prstGeom prst="line"><a:avLst/></a:prstGeom>
+    <a:ln w="{int(1.5*12700)}"><a:solidFill><a:srgbClr val="333333"/></a:solidFill></a:ln>
+  </p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>''')
+        spid += 1
+
+        ans_y = line_y + 0.06
+
+        # Carry row
+        if carries:
+            carry_padded = carries.rjust(n_cols)
+            for ci, ch in enumerate(carry_padded):
+                if ch.strip():
+                    add_sp(sld, sp(spid, f'Carry{ci}',
+                                   calc_x + ci * col_w, ans_y - 0.22,
+                                   col_w, 0.32,
+                                   ch, font='Aptos', sz=carry_sz, bold=True,
+                                   color='E07000', align='ctr',
+                                   fill=None, no_line=True, anchor='ctr'))
+                spid += 1
+
+        # Error answer row (red digits in error column, normal elsewhere)
+        ans_padded = ans_str.rjust(n_cols)
+        for ci, ch in enumerate(ans_padded):
+            if ch.strip():
+                is_err = (ci == err_ci)
+                col_color = 'C00000' if is_err else '375623'
+                add_sp(sld, sp(spid, f'AnsD{ci}',
+                               calc_x + ci * col_w, ans_y,
+                               col_w, row_h,
+                               ch, font='Aptos', sz=digit_sz, bold=True,
+                               color=col_color, align='ctr',
+                               fill=None, no_line=True, anchor='ctr'))
+            spid += 1
+
+    elif calc_type == 'division':
+        divisor_str  = str(cd.get('divisor', '?'))
+        dividend_str = str(cd.get('dividend', '????')).replace(',','')
+        err_ans_str  = str(cd.get('errorAnswer', '????')).replace(',','').split('r')[0].strip()
+        cor_ans_str  = str(cd.get('correctAnswer', '????'))
+        n_dig        = len(dividend_str)
+
+        col_w    = 0.70
+        div_w    = 0.65
+        total_w  = div_w + col_w * n_dig
+        calc_x   = panel_x + (panel_w - total_w) / 2
+        calc_y   = panel_y + 0.90
+        digit_sz = 32
+        row_h    = 0.58
+        brk_y    = calc_y + row_h
+        dend_y   = brk_y + 0.06
+
+        # Divisor
+        add_sp(sld, sp(spid, 'Divisor',
+                       calc_x, calc_y + 0.02, div_w, row_h,
+                       divisor_str, font='Aptos', sz=digit_sz, bold=True,
+                       color='1F4E79', align='ctr',
+                       fill=None, no_line=True, anchor='ctr'))
+        spid += 1
+
+        # Bracket top
+        brk_x = calc_x + div_w
+        add_sp(sld, f'''<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
+                             xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  <p:nvSpPr><p:cNvPr id="{spid}" name="BrkTop"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
+  <p:spPr><a:xfrm><a:off x="{emu(brk_x)}" y="{emu(brk_y)}"/>
+    <a:ext cx="{emu(col_w * n_dig)}" cy="0"/></a:xfrm>
+    <a:prstGeom prst="line"><a:avLst/></a:prstGeom>
+    <a:ln w="{int(2.0*12700)}"><a:solidFill><a:srgbClr val="333333"/></a:solidFill></a:ln>
+  </p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>''')
+        spid += 1
+
+        # Bracket left bar
+        add_sp(sld, f'''<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
+                             xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  <p:nvSpPr><p:cNvPr id="{spid}" name="BrkLeft"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
+  <p:spPr><a:xfrm><a:off x="{emu(brk_x)}" y="{emu(brk_y)}"/>
+    <a:ext cx="0" cy="{emu(row_h + 0.10)}"/></a:xfrm>
+    <a:prstGeom prst="line"><a:avLst/></a:prstGeom>
+    <a:ln w="{int(2.0*12700)}"><a:solidFill><a:srgbClr val="333333"/></a:solidFill></a:ln>
+  </p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>''')
+        spid += 1
+
+        # Dividend
+        for di, ch in enumerate(dividend_str):
+            add_sp(sld, sp(spid, f'Dend{di}',
+                           brk_x + di * col_w, dend_y,
+                           col_w, row_h,
+                           ch, font='Aptos', sz=digit_sz, bold=True,
+                           color='333333', align='ctr',
+                           fill=None, no_line=True, anchor='ctr'))
+            spid += 1
+
+        # Error quotient above bracket
+        q_padded = err_ans_str.rjust(n_dig)
+        for di, ch in enumerate(q_padded):
+            if ch.strip():
+                add_sp(sld, sp(spid, f'Quot{di}',
+                               brk_x + di * col_w, brk_y - row_h - 0.04,
+                               col_w, row_h,
+                               ch, font='Aptos', sz=digit_sz, bold=True,
+                               color='C00000', align='ctr',
+                               fill=None, no_line=True, anchor='ctr'))
+            spid += 1
+
+        # Correct answer label below
+        add_sp(sld, sp(spid, 'CorAns',
+                       panel_x + 0.30, dend_y + row_h + 0.20, panel_w - 0.60, 0.40,
+                       f'Correct answer: {cor_ans_str}',
+                       font='Twinkl Cursive Looped Light', sz=18, bold=True,
+                       color='375623', align='ctr',
+                       fill=None, no_line=True, anchor='ctr'))
+
+    elif calc_type == 'word_problem':
+        # Simple text display for word-problem STM slides
+        note_text = cd.get('note', '')
+        add_sp(sld, sp(spid, 'WPNote',
+                       panel_x + 0.30, panel_y + 1.20, panel_w - 0.60, 1.50,
+                       note_text if note_text else 'Read the problem carefully.',
+                       font='Twinkl Cursive Looped Light', sz=22,
+                       color='333333', align='ctr',
+                       fill='FFFBE6', border=('FFC000', 1.5), anchor='ctr'))
+        spid += 1
+        cor_ans = cd.get('correctAnswer', '')
+        if cor_ans:
+            add_sp(sld, sp(spid, 'CorAns',
+                           panel_x + 0.30, panel_y + 3.00, panel_w - 0.60, 0.55,
+                           f'Correct answer: {cor_ans}',
+                           font='Aptos', sz=20, bold=True,
+                           color='375623', align='ctr',
+                           fill=None, no_line=True, anchor='ctr'))
+
 
 # ===========================================================================
 # GRID DRAWING — core visual for teaching slides
@@ -981,14 +1322,14 @@ def draw_grid_slide(sld, visual_key, layout_num_was):
         add_sp(sld, sp(sha_spid, 'ShapeBLabel',
                        right_x, panel_y + 1.50, right_w, 0.50,
                        shape_b_label,
-                       font=WFA.CURSIVE, sz=20, bold=True,
+                       font='Twinkl Cursive Looped Light', sz=20, bold=True,
                        color=COLOR_B, align='l', fill=None, no_line=True))
 
         # Shape A label box — always visible (not animated)
         add_sp(sld, sp(base_spid+52, 'ShapeALabel',
                        right_x, panel_y + 0.15, right_w, 0.50,
                        shape_a_label,
-                       font=WFA.CURSIVE, sz=20, bold=True,
+                       font='Twinkl Cursive Looped Light', sz=20, bold=True,
                        color=v['points'][0][3], align='l', fill=None, no_line=True))
 
         # Animate all Shape B elements: hidden on load, all appear on single click
@@ -1048,14 +1389,14 @@ def draw_grid_slide(sld, visual_key, layout_num_was):
     if 'caption' in v:
         add_sp(sld, sp(130, 'Caption', right_x, right_y, right_w, 1.20,
                        v['caption'],
-                       font=WFA.CURSIVE, sz=20, bold=False,
+                       font='Twinkl Cursive Looped Light', sz=20, bold=False,
                        color='1F4E79', align='l', fill='DEECF8',
                        border=('156082', 1.5), anchor='ctr'))
 
     if 'sentence_stem' in v:
         add_sp(sld, sp(131, 'StemBox', right_x, right_y, right_w, 1.40,
                        v['sentence_stem'],
-                       font=WFA.CURSIVE, sz=18, bold=False,
+                       font='Twinkl Cursive Looped Light', sz=18, bold=False,
                        color='1F4E79', align='l', fill='FFF2CC',
                        border=('E8B825', 1.5), anchor='ctr'))
 
@@ -1077,6 +1418,8 @@ def build_teaching_slide(layout_num, visual_key, title_text, phase):
         draw_clock_slide(sld, visual_key)
     elif slide_type == 'number_line':
         draw_number_line_slide(sld, visual_key)
+    elif slide_type == 'column_calc':
+        draw_column_calc_slide(sld, visual_key)
     else:
         draw_grid_slide(sld, visual_key, layout_num)
     print(f"  Teaching slide ({title_text[:40]}) ✓")
@@ -1228,7 +1571,7 @@ def draw_symmetry_grid_slide(sld, visual_key):
         # Mirror line label
         add_sp(sld, sp(spid+1, 'MirrorLbl',
                        mx + 0.05, grid_y - 0.26, 1.20, 0.24,
-                       'mirror line', font=WFA.CURSIVE, sz=14,
+                       'mirror line', font='Twinkl Cursive Looped Light', sz=14,
                        color=MIRROR_COLOR, align='l', fill=None, no_line=True))
         spid += 2
     if mirror_row is not None:
@@ -1246,7 +1589,7 @@ def draw_symmetry_grid_slide(sld, visual_key):
   </p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>''')
         add_sp(sld, sp(spid+1, 'MirrorLblH',
                        grid_x + grid_w + 0.05, my - 0.15, 1.20, 0.24,
-                       'mirror line', font=WFA.CURSIVE, sz=14,
+                       'mirror line', font='Twinkl Cursive Looped Light', sz=14,
                        color=MIRROR_COLOR, align='l', fill=None, no_line=True))
         spid += 2
 
@@ -1300,12 +1643,12 @@ def draw_symmetry_grid_slide(sld, visual_key):
     right_y  = panel_y + 0.15
     if 'caption' in v:
         add_sp(sld, sp(200, 'Caption', right_x, right_y, right_w, 1.20,
-                       v['caption'], font=WFA.CURSIVE, sz=20,
+                       v['caption'], font='Twinkl Cursive Looped Light', sz=20,
                        color='1F4E79', align='l', fill='DEECF8',
                        border=('156082', 1.5), anchor='ctr'))
     if 'sentence_stem' in v:
         add_sp(sld, sp(201, 'Stem', right_x, right_y, right_w, 1.40,
-                       v['sentence_stem'], font=WFA.CURSIVE, sz=18,
+                       v['sentence_stem'], font='Twinkl Cursive Looped Light', sz=18,
                        color='1F4E79', align='l', fill='FFF2CC',
                        border=('E8B825', 1.5), anchor='ctr'))
     sld.notes_slide.notes_text_frame.text = v['notes']
@@ -1467,7 +1810,7 @@ def draw_clock_slide(sld, visual_key):
             lbl_sz = max(12, int(clock_r * 16))
             add_sp(sld, sp(spid, f'ClockLbl{ci}',
                            cx - clock_r, cy + clock_r + 0.05, clock_r*2, 0.35,
-                           label, font=WFA.CURSIVE, sz=lbl_sz,
+                           label, font='Twinkl Cursive Looped Light', sz=lbl_sz,
                            color='1F4E79', align='ctr', fill=None, no_line=True))
             spid += 1
 
@@ -1485,13 +1828,13 @@ def draw_clock_slide(sld, visual_key):
     right_y = panel_y + 0.15
     if 'caption' in v:
         add_sp(sld, sp(spid, 'Caption', right_x, right_y, right_w, 1.20,
-                       v['caption'], font=WFA.CURSIVE, sz=20,
+                       v['caption'], font='Twinkl Cursive Looped Light', sz=20,
                        color='1F4E79', align='l', fill='DEECF8',
                        border=('156082', 1.5), anchor='ctr'))
         spid += 1
     if 'sentence_stem' in v:
         add_sp(sld, sp(spid, 'Stem', right_x, right_y, right_w, 1.40,
-                       v['sentence_stem'], font=WFA.CURSIVE, sz=18,
+                       v['sentence_stem'], font='Twinkl Cursive Looped Light', sz=18,
                        color='1F4E79', align='l', fill='FFF2CC',
                        border=('E8B825', 1.5), anchor='ctr'))
         spid += 1
@@ -1594,7 +1937,7 @@ def draw_number_line_slide(sld, visual_key):
         # Marker label: two lines above the line, centred on marker x
         add_sp(sld, sp(spid, f'MkLbl{val}',
                        mx - 0.65, nl_y - 0.88, 1.30, 0.45,
-                       lbl, font=WFA.CURSIVE, sz=12, bold=True,
+                       lbl, font='Twinkl Cursive Looped Light', sz=12, bold=True,
                        color=color, align='ctr', fill=None, no_line=True))
         spid += 1
 
@@ -1605,7 +1948,7 @@ def draw_number_line_slide(sld, visual_key):
         ex_y = nl_y - 1.55 - (0.40 if ei % 2 == 0 else 0.0)
         add_sp(sld, sp(spid, f'Ex{ex["val"]}',
                        ex_x - 0.52, ex_y, 1.04, 0.55,
-                       ex['text'], font=WFA.CURSIVE, sz=12,
+                       ex['text'], font='Twinkl Cursive Looped Light', sz=12,
                        color='C00000', align='ctr', fill='FFE6E6',
                        border=('C00000', 1.0), anchor='ctr'))
         spid += 1
@@ -1614,7 +1957,7 @@ def draw_number_line_slide(sld, visual_key):
     right_y = panel_y + 0.15
     if 'caption' in v:
         add_sp(sld, sp(spid, 'Caption', right_x, right_y, right_w, 1.20,
-                       v['caption'], font=WFA.CURSIVE, sz=20,
+                       v['caption'], font='Twinkl Cursive Looped Light', sz=20,
                        color='1F4E79', align='l', fill='DEECF8',
                        border=('156082', 1.5), anchor='ctr'))
     sld.notes_slide.notes_text_frame.text = v['notes']
@@ -1638,8 +1981,12 @@ def build_spot_the_mistake_slide(layout_num, visual_key, title_text):
             ph.text = title_text
             break
 
-    # Draw the grid (without error elements — those come with animation)
-    draw_grid_slide(sld, visual_key, layout_num)
+    # Draw the panel background — arithmetic or grid
+    is_arithmetic_stm = (STM['gridSize'] == 0)
+    if is_arithmetic_stm:
+        draw_arithmetic_stm_panel(sld, visual_key)
+    else:
+        draw_grid_slide(sld, visual_key, layout_num)
 
     # Calculate grid geometry (matching draw_grid_slide)
     cols, rows = v['cols'], v['rows']
@@ -1717,7 +2064,7 @@ def build_spot_the_mistake_slide(layout_num, visual_key, title_text):
     add_sp(sld, sp(133, 'ErrorInstruction',
                    right_x, 1.60, right_w, 0.80,
                    f'Instruction given: "{v["error_instruction"]}"',
-                   font=WFA.CURSIVE, sz=16,
+                   font='Twinkl Cursive Looped Light', sz=16,
                    color='333333', align='l', fill=None, no_line=True))
 
     # Beat 2 element — error marker (hidden at start, appears on click 1)
@@ -1730,7 +2077,7 @@ def build_spot_the_mistake_slide(layout_num, visual_key, title_text):
     NOTE_SPID = 132
     add_sp(sld, sp(NOTE_SPID, 'ErrorNote', right_x, 2.60, right_w, 1.50,
                    v['error_note'],
-                   font=WFA.CURSIVE, sz=18, bold=True,
+                   font='Twinkl Cursive Looped Light', sz=18, bold=True,
                    color='C00000', align='l', fill='FFE6E6',
                    border=('C00000', 1.5), anchor='ctr'))
 
@@ -1811,13 +2158,13 @@ def build_trios_slide(layout_num, title, trios_data, notes):
     for i, (role_text, (text_col, fill_col)) in enumerate(zip(roles, roles_colors)):
         y_pos = 1.6 + i * 1.15
         add_sp(sld, sp(20+i, f'Role{i+1}', role_x, y_pos, role_w, role_h,
-                       role_text, font=WFA.CURSIVE, sz=18,
+                       role_text, font='Twinkl Cursive Looped Light', sz=18,
                        bold=True, color=text_col, align='l',
                        fill=fill_col, border=(text_col, 1.5), anchor='ctr'))
 
     add_sp(sld, sp(30, 'Task', 4.6, 1.6, 8.5, 1.4,
                    trios_data.get('task',''),
-                   font=WFA.CURSIVE, sz=18,
+                   font='Twinkl Cursive Looped Light', sz=18,
                    color='1F4E79', align='l', fill='DEECF8',
                    border=('156082', 1.5), anchor='ctr'))
 
@@ -1825,7 +2172,7 @@ def build_trios_slide(layout_num, title, trios_data, notes):
     if challenge:
         add_sp(sld, sp(31, 'Challenge', 4.6, 3.2, 8.5, 1.1,
                        f'Challenge: {challenge}',
-                       font=WFA.CURSIVE, sz=16,
+                       font='Twinkl Cursive Looped Light', sz=16,
                        color='7030A0', align='l', fill='F2E6F9',
                        border=('7030A0', 1.5), anchor='ctr'))
 
@@ -1845,13 +2192,13 @@ def build_independent_slide(layout_num, title, independent_data, notes):
 
     add_sp(sld, sp(20, 'Standard', 0.5, 1.6, 12.5, 1.3,
                    independent_data.get('standard',''),
-                   font=WFA.CURSIVE, sz=20,
+                   font='Twinkl Cursive Looped Light', sz=20,
                    color='1F4E79', align='l', fill='DEECF8',
                    border=('156082', 1.5), anchor='ctr'))
 
     add_sp(sld, sp(21, 'Supported', 0.5, 3.1, 12.5, 1.3,
                    f"Supported: {independent_data.get('supported','')}",
-                   font=WFA.CURSIVE, sz=18,
+                   font='Twinkl Cursive Looped Light', sz=18,
                    color='333333', align='l', fill='F2F2F2',
                    border=('BBBBBB', 1.5), anchor='ctr'))
 
@@ -1865,7 +2212,7 @@ def build_independent_slide(layout_num, title, independent_data, notes):
 def build_lp_slide(label):
     sld = new_slide(5)
     add_sp(sld, sp(20, 'LPTitle', 0.5, 0.1, 12.0, 0.9,
-                   label, font=WFA.CURSIVE,
+                   label, font='Twinkl Cursive Looped Light',
                    sz=32, bold=True, color='000000', align='ctr',
                    fill=None, no_line=True))
     sld.notes_slide.notes_text_frame.text = (
@@ -1883,7 +2230,7 @@ def build_learning_review():
     def nid(): sid[0]+=1; return sid[0]
 
     add_sp(sld, sp(nid(),'Title', 5.172,0.197, 3.352,0.640,
-                   'Learning Review', font=WFA.CURSIVE,
+                   'Learning Review', font='Twinkl Cursive Looped Light',
                    sz=24, bold=True, color='000000', align='ctr',
                    fill=None, no_line=True))
 
@@ -2022,7 +2369,7 @@ build_learning_review()
 # ---------------------------------------------------------------------------
 # SAVE
 # ---------------------------------------------------------------------------
-out = f'/home/claude/{week_label}_L{lesson_num}_Teaching.pptx'
+out = f'/home/claude/{week_label}_L{lesson_num}_{day[:3]}_Teaching.pptx'
 prs.save(out)
 print(f"\n=== Saved: {out} ({len(prs.slides)} slides) ===")
 
