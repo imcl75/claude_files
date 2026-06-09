@@ -251,7 +251,7 @@ function addFrame(slide, activityType, activityLabel, question, slideNum) {
 
 
   // Word list
-  s.addText("This week's words:  " + LESSON.words.join(", "), {
+  s.addText("Today's words:  " + LESSON.words.join(", "), {
     x: 0.5, y: 4.35, w: 9.0, h: 0.55,
     fontSize: 17, fontFace: "Calibri", color: C.BLACK,
     align: "center", valign: "middle"
@@ -365,10 +365,10 @@ function addFrame(slide, activityType, activityLabel, question, slideNum) {
   });
 }
 
-// ── Slide 4: This Week's Words ────────────────────────────
+// ── Slide 4: Today's Words ────────────────────────────
 {
   const s = pres.addSlide();
-  addFrame(s, "Whole Group", "This Week's Words",
+  addFrame(s, "Whole Group", "Today's Words",
     LESSON.thisWeeksWordsQ, `${LESSON.code}.3`);
 
   // Words in 5×2 grid with pink underline bar
@@ -408,7 +408,7 @@ function addFrame(slide, activityType, activityLabel, question, slideNum) {
 {
   const s = pres.addSlide();
   addFrame(s, "Whole Group", "Etymology",
-    "Which of this week's words is this?", `${LESSON.code}.4`);
+    "Which of today's words is this?", `${LESSON.code}.4`);
 
   // Featured word
   s.addText(LESSON.etymology.word, {
@@ -471,7 +471,7 @@ function addFrame(slide, activityType, activityLabel, question, slideNum) {
 {
   const s = pres.addSlide();
   addFrame(s, "Whole Group", "Syllable Count",
-    "How many syllables are in this week's words?", `${LESSON.code}.5`);
+    "How many syllables are in today's words?", `${LESSON.code}.5`);
 
   const items = LESSON.words.map(w => ({ word: w, n: LESSON.syllableCounts[w] }));
 
