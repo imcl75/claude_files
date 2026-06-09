@@ -357,3 +357,61 @@ DM header: same pattern (10pt bold, 8.5pt instr)
 DM box: T = DM_sep + 0.76 + offset, W=20.1, H=5.28 (5 rows × 1.056)
 DM rows (full width): number at L=0.55; def text at L=1.15 W=12.06 v_anchor='t'
 ```
+
+---
+
+## Post-build additions (apply after Step 4)
+
+After building and verifying the teaching deck, apply these three additions using a post-processor script (modelled on `post_process_c3.py` in GitHub `Spelling/`):
+
+### 1. Syllable & Phoneme Map — 2-click animation (slide 10)
+
+Slide 10 should show the word headings, "Syllable Breaks" and "Sound Buttons" labels on load, with everything else hidden. Two click-advance groups reveal content:
+
+- **Click 1** — all three words' syllable-break boxes and syllable counts appear simultaneously
+- **Click 2** — all three words' phoneme-map shapes and legends appear simultaneously
+
+**Implementation rules (non-negotiable):**
+
+- Copy the exact `<p:timing>` XML from a known-working reference file (e.g. `2-Tue-spelling_shed_slides_C2.pptx`) rather than generating timing XML from scratch
+- Replace shape IDs using a **two-step approach**: first replace all old IDs with temp placeholders (1000+original), then resolve placeholders to final IDs — prevents cascading collisions
+- The `<p:bldLst>` block with `animBg="1"` for every animated shape is what hides them on slide load — without it shapes appear immediately regardless of animations
+- Root cTn must have `restart="never"` (not `whenNotActive`)
+- stCondLst conditions use `<p:cond delay="indefinite"/>` with no `evt` attribute
+
+### 2. Independent Learning section slide (insert after slide 10)
+
+Insert after the Syllable & Phoneme Map, before independent activities begin. Structure:
+
+```
+Sky-blue rectangle:   L=0  T=0     W=25.4  H=9.14  fill=#87CEEB
+White rectangle:      L=0  T=8.38  W=25.4  H=5.91  fill=#FFFFFF
+Green footer:         L=0  T=13.72 W=25.4  H=0.57  fill=#57A657
+"Independent Learning": 64pt bold #F4C430, centred, L=0.4 T=0.38 W=24.55 H=3.56
+"You do" image:       L=8.18 T=4.41 W=8.4 H=3.49  (from you_do_image.png in GitHub Spelling/)
+"Learning Paper":     18pt #1A1A1A centred, L=8.0 T=8.5 W=9.4 H=0.9
+"Today's words: ...": 17pt #1A1A1A centred, lesson words joined by ", ", L=1.27 T=10.5 W=22.86 H=1.9
+```
+
+Image asset: `Spelling/you_do_image.png` in GitHub `imcl75/claude_files`.
+
+### 3. Morphology Matrix answers slide (append at end)
+
+Clone the MM question slide (zip-level copy of `slideN.xml`) and overlay answers:
+
+- Register the new slide in `presentation.xml`, `presentation.xml.rels` and `[Content_Types].xml`
+- Update the slide code label (e.g. `C3.19` → `C3.20`)
+- For each of the 6 suffix cells (positions from inspection of the question slide): overlay a white cover rect, a small grey suffix label (13pt `#757575`), and the answer word in pink bold (19pt `#E91E63`)
+- Cell positions (L, T) in cm: (12.70, 4.39), (18.54, 4.39), (12.70, 6.53), (18.54, 6.53), (12.70, 8.66), (18.54, 8.66) — each cell W=5.84 H=2.13
+
+### Slide terminology
+
+| Slide label | Text to use |
+|-------------|-------------|
+| `thisWeeksWords` slide header | **"Today's Words"** (not "This Week's Words") |
+| Subtitle questions on Etymology, Syllable Count | "today's words" (lower case) |
+| Section slide word list | "Today's words:  [list]" |
+| Key Spelling slide | unchanged |
+
+The `thisWeeksWordsQ / Prompt / Explanation` JSON fields keep their names (for backward compatibility) but their values should say "today's words" not "this week's words".
+
