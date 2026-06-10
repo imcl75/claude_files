@@ -1,0 +1,155 @@
+[
+  {
+    "type": "cover",
+    "day": "Thursday AM"
+  },
+  {
+    "type": "kc"
+  },
+  {
+    "type": "lo",
+    "wal": "write a complete explanation text using the features and structure we have planned",
+    "tib": "This is so I produce a piece of writing that genuinely explains how the Way of Jalal works.",
+    "isb": "completing a full draft including introduction, all chosen skill sections and a conclusion."
+  },
+  {
+    "type": "warmup",
+    "title": "Grammar Warm-Up",
+    "subtitle": "True or false? Decide whether each statement about explanation texts is correct.",
+    "cards": [
+      {
+        "label": "Statement 1",
+        "lines": [
+          "An explanation text is",
+          "written in the past tense",
+          "because it describes things",
+          "that already happened.",
+          "",
+          "True or False?"
+        ]
+      },
+      {
+        "label": "Statement 2",
+        "lines": [
+          "A rhetorical question at",
+          "the start of an explanation",
+          "text does not need an",
+          "answer in the text.",
+          "",
+          "True or False?"
+        ]
+      },
+      {
+        "label": "Statement 3",
+        "lines": [
+          "Causal connectives show",
+          "the link between why",
+          "something is done and",
+          "what effect it has.",
+          "",
+          "True or False?"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Before we write: the checklist.",
+    "lines": [
+      "As you draft today, keep these in mind:",
+      "",
+      "  •  Rhetorical question to open",
+      "  •  Subheading for each skill section",
+      "  •  Present tense throughout",
+      "  •  Formal register (not chatty, not instructions)",
+      "  •  Each section explains WHAT, HOW and WHY",
+      "  •  At least three different connectives across the piece",
+      "  •  Conclusion that links the skills together",
+      "",
+      "Use the model text and your boxing-up grid.",
+      "Your draft should be complete by the end of today’s session."
+    ]
+  },
+  {
+    "type": "i_do",
+    "title": "Modelling the introduction.",
+    "left_label": "My thinking",
+    "left_lines": [
+      "I need a rhetorical question",
+      "that makes the reader",
+      "imagine being a house cat.",
+      "",
+      "Then a framing sentence:",
+      "what is this text about?",
+      "",
+      "Then a purpose statement:",
+      "what will I explain?"
+    ],
+    "right_label": "Model introduction",
+    "right_lines": [
+      "Have you ever imagined stepping",
+      "outside the safety of your home",
+      "for the very first time?",
+      "",
+      "The city is full of dangers that",
+      "a house cat has never faced.",
+      "",
+      "Fortunately, the ancient Way of",
+      "Jalal teaches skills that can",
+      "help any cat survive."
+    ]
+  },
+  {
+    "type": "i_do",
+    "title": "Modelling a skill section.",
+    "left_label": "My thinking",
+    "left_lines": [
+      "Subheading: one word,",
+      "the name of the skill.",
+      "",
+      "Sentence 1: what is it?",
+      "",
+      "Sentence 2: how does it work?",
+      "",
+      "Sentence 3: what happens",
+      "as a result?",
+      "",
+      "Use a different connective",
+      "each time."
+    ],
+    "right_label": "Shadow-Walking",
+    "right_lines": [
+      "There are times when fighting",
+      "is not the best choice.",
+      "",
+      "By staying silent and moving",
+      "through dark places, a cat can",
+      "travel completely unnoticed.",
+      "",
+      "In this way, it can escape",
+      "trouble without anyone knowing",
+      "it was ever there."
+    ]
+  },
+  {
+    "type": "you_do",
+    "title": "Draft your explanation text.",
+    "lines": [
+      "Write your complete explanation text.",
+      "",
+      "Work through your boxing-up grid:",
+      "  1.  Introduction (rhetorical question + framing)",
+      "  2.  Each skill section (subheading, what / how / why)",
+      "  3.  Conclusion (link skills together)",
+      "",
+      "Keep your model text and plan visible as you write.",
+      "Your draft must be complete before the end of the session."
+    ]
+  },
+  {
+    "type": "learning_review",
+    "q1": "Which part of the draft was hardest to write? What made it tricky?",
+    "q2": "Did you manage to explain both HOW and WHY in every section? If not, which section needs more work?",
+    "q3": "Read back your introduction. Does the rhetorical question make a reader want to continue?"
+  }
+]
