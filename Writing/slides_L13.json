@@ -1,0 +1,108 @@
+[
+  {"type": "cover", "day": "Monday AM"},
+  {"type": "kc"},
+  {
+    "type": "lo",
+    "wal": "understand what an explanation text is and how it differs from a narrative",
+    "tib": "This is so I know the features I need to include when I plan and write this week.",
+    "isb": "reading the model text and identifying what the writer does differently to a story writer."
+  },
+  {
+    "type": "warmup",
+    "title": "Grammar Warm-Up",
+    "subtitle": "Story, instructions or explanation? Decide which genre each extract belongs to.",
+    "cards": [
+      {"label": "Extract A", "lines": ["Varjak crept forward.", "His paws made no sound.", "The darkness pressed around him.", "", "Which genre?"]},
+      {"label": "Extract B", "lines": ["First, find a safe shadow.", "Next, press your body low.", "Then wait until the danger passes.", "", "Which genre?"]},
+      {"label": "Extract C", "lines": ["Slow-Time works by calming", "the mind. As a result, danger", "seems to move more slowly.", "", "Which genre?"]}
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Back to Varjak\u2019s world.",
+    "lines": [
+      "Remember Jalal and the Seven Skills of the Way of Jalal.",
+      "",
+      "Re-read the sections where Jalal teaches each skill.",
+      "",
+      "Think about this:",
+      "  \u2022  Who needs to know this information?",
+      "  \u2022  Why would a house cat new to the city need it?",
+      "  \u2022  What is the most important thing they should understand?",
+      "",
+      "Talk to your partner. Which skill do you think matters most?"
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "A new kind of writing.",
+    "lines": [
+      "We have spent two weeks writing a narrative.",
+      "This week we are writing an explanation text.",
+      "",
+      "An explanation text:",
+      "  \u2022  tells you HOW and WHY something works",
+      "  \u2022  is written in the present tense",
+      "  \u2022  uses a formal, clear register",
+      "  \u2022  has subheadings to organise sections",
+      "  \u2022  links ideas using causal connectives",
+      "",
+      "A story shows events. An explanation explains processes."
+    ]
+  },
+  {
+    "type": "i_do",
+    "title": "Reading the model text.",
+    "left_label": "What the writer does",
+    "left_lines": [
+      "Starts with a rhetorical question",
+      "",
+      "Uses a subheading for each skill",
+      "",
+      "Explains how and why in present tense",
+      "",
+      "Uses connectives to show cause and effect",
+      "",
+      "Ends with a conclusion"
+    ],
+    "right_label": "Look for this in our model",
+    "right_lines": [
+      "\u201cHave you ever imagined leaving",
+      "the safety of your home\u2026\u201d",
+      "",
+      "\u201cOpen Mind\u201d  \u201cAwareness\u201d  \u201cHunting\u201d",
+      "",
+      "\u201cBy calming your mind\u2026",
+      "everything seems to move\u2026\u201d",
+      "",
+      "\u201cTherefore\u201d  \u201cAs a result\u201d  \u201cDue to\u201d",
+      "",
+      "\u201cHowever, by using the seven skills\u2026\u201d"
+    ]
+  },
+  {
+    "type": "you_do_trio",
+    "lines": [
+      "Read the model text together.",
+      "",
+      "Discuss these three questions:",
+      "",
+      "1.  Why does the writer open with a question instead of a statement?",
+      "    What effect does this have on the reader?",
+      "",
+      "2.  Pick one skill section. How does the writer show both",
+      "    WHAT the skill is AND WHY it helps?",
+      "",
+      "3.  What is different about reading this compared to reading",
+      "    the chapters from Varjak Paw?",
+      "",
+      "Be ready to share your best point with the class."
+    ]
+  },
+  {
+    "type": "learning_review",
+    "q1": "What was the trickiest difference to spot between a narrative and an explanation text?",
+    "q2": "Why does an explanation text use the present tense instead of the past tense?",
+    "q3": "Which part of the model text would you most like to try in your own writing?"
+  }
+]
