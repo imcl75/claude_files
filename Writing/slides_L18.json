@@ -1,0 +1,112 @@
+[
+  {"type": "cover", "day": "Friday AM"},
+  {"type": "kc"},
+  {
+    "type": "lo",
+    "wal": "edit and improve an explanation text using a checklist, then share the finished piece",
+    "tib": "This is so my final piece is accurate, well-structured and shows everything I have learned this week.",
+    "isb": "using the editing checklist to improve your draft, then reading your writing aloud to a partner or the class."
+  },
+  {
+    "type": "warmup",
+    "title": "Grammar Warm-Up",
+    "subtitle": "Spot the mistake. Each explanation text extract contains one error. Find it and fix it.",
+    "cards": [
+      {"label": "Extract 1", "lines": ["Open Mind meant that a cat", "must be ready to change its", "plan. Therefore, it found", "solutions more easily.", "", "What is wrong here?"]},
+      {"label": "Extract 2", "lines": ["By moving in circles, the cat", "keep moving in all directions.", "As a result, enemies cannot", "surround it.", "", "What is wrong here?"]},
+      {"label": "Extract 3", "lines": ["Awareness is important.", "Awareness also helps.", "Therefore awareness lets you", "spot danger. Awareness saves you.", "", "What is wrong here?"]}
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "The editing checklist.",
+    "lines": [
+      "Read your draft aloud quietly to yourself.",
+      "Then check each point below:",
+      "",
+      "  \u2022  Does the rhetorical question open the piece?",
+      "  \u2022  Is the present tense used consistently throughout?",
+      "  \u2022  Does each skill section explain WHAT, HOW and WHY?",
+      "  \u2022  Have you used at least three different connectives?",
+      "  \u2022  Is the register formal? (No chatty phrases or \u2018you should\u2019)",
+      "  \u2022  Does the conclusion link the skills together?",
+      "",
+      "Make corrections in a different colour.",
+      "Aim to improve at least two things before the partner share."
+    ]
+  },
+  {
+    "type": "i_do",
+    "title": "Editing a section together.",
+    "left_label": "First draft",
+    "left_lines": [
+      "Hunting",
+      "",
+      "Finding food is important.",
+      "You need to move quietly",
+      "and patiently. You should",
+      "wait for the right moment",
+      "before you strike.",
+      "",
+      "What needs improving?"
+    ],
+    "right_label": "Edited version",
+    "right_lines": [
+      "Hunting",
+      "",
+      "Finding food is essential for",
+      "survival. A skilled hunter",
+      "moves quietly and patiently,",
+      "waiting for the perfect moment.",
+      "",
+      "As a result, the prey has no",
+      "warning before it is caught."
+    ]
+  },
+  {
+    "type": "you_do_trio",
+    "lines": [
+      "Peer reading.",
+      "",
+      "Swap drafts with your partner.",
+      "",
+      "Read their explanation text carefully.",
+      "",
+      "Give two specific pieces of feedback:",
+      "",
+      "  \u25cf  One strength: what does their text do well?",
+      "       Be specific \u2014 quote the sentence or connective.",
+      "",
+      "  \u25cf  One suggestion: where could they explain HOW or WHY",
+      "       more clearly, or use a different connective?",
+      "",
+      "Then make any final improvements to your own draft."
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Sharing our writing.",
+    "lines": [
+      "Two or three writers will read their explanation text aloud.",
+      "",
+      "As you listen, think about:",
+      "",
+      "  \u2022  Which rhetorical question was the most effective?",
+      "  \u2022  Which skill section explained HOW and WHY most clearly?",
+      "  \u2022  Which connective use sounded the most natural?",
+      "",
+      "Return to the key question:",
+      "",
+      "How does a writer make a reader feel characters\u2019 emotions?",
+      "",
+      "How does the explanation text answer this question in a different way",
+      "to the narrative you wrote in weeks one and two?"
+    ]
+  },
+  {
+    "type": "learning_review",
+    "q1": "What is the most important thing you changed when you edited your draft?",
+    "q2": "How is explaining something in writing different from just describing it?",
+    "q3": "Looking at both your narrative and your explanation text, which do you think shows your best writing this term?"
+  }
+]
