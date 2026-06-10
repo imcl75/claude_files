@@ -1,0 +1,150 @@
+[
+  {
+    "type": "cover",
+    "day": "Thursday AM"
+  },
+  {
+    "type": "kc"
+  },
+  {
+    "type": "lo",
+    "wal": "plan an explanation text by choosing skills and organising information in a boxing-up grid",
+    "tib": "This is so my draft is focused and well-structured before I start writing.",
+    "isb": "completing a boxing-up grid with a chosen introduction, three or four skill sections and a conclusion."
+  },
+  {
+    "type": "warmup",
+    "title": "Grammar Warm-Up",
+    "subtitle": "Odd one out. Which item in each group does NOT belong in an explanation text?",
+    "cards": [
+      {
+        "label": "Group 1",
+        "lines": [
+          "A)  A rhetorical question",
+          "B)  A subheading",
+          "C)  A time connective:",
+          "     ‘The next morning…’",
+          "",
+          "Which is the odd one out?"
+        ]
+      },
+      {
+        "label": "Group 2",
+        "lines": [
+          "A)  Present tense verbs",
+          "B)  Third person writing",
+          "C)  A character’s feelings:",
+          "     ‘He felt afraid.’",
+          "",
+          "Which is the odd one out?"
+        ]
+      },
+      {
+        "label": "Group 3",
+        "lines": [
+          "A)  ‘As a result,’",
+          "B)  ‘Therefore,’",
+          "C)  ‘Suddenly,’",
+          "",
+          "Which is the odd one out?",
+          ""
+        ]
+      }
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Choosing your three or four skills.",
+    "lines": [
+      "You are writing for a house cat who has never left home.",
+      "They are stepping into the city for the first time.",
+      "",
+      "Think carefully:",
+      "  •  Which skills keep a cat safe from the very start?",
+      "  •  Which skills would be hardest to learn without guidance?",
+      "  •  Which skills have the most interesting HOW and WHY to explain?",
+      "",
+      "Talk to your partner. Choose three or four skills.",
+      "Be ready to explain WHY you chose those particular ones."
+    ]
+  },
+  {
+    "type": "i_do",
+    "title": "Building the boxing-up grid.",
+    "left_label": "What I need in each box",
+    "left_lines": [
+      "Introduction",
+      "  •  Rhetorical question",
+      "  •  1–2 framing sentences",
+      "",
+      "Skill section (x3 or x4)",
+      "  •  Subheading",
+      "  •  What the skill is",
+      "  •  How it works",
+      "  •  What happens as a result",
+      "",
+      "Conclusion",
+      "  •  Link skills together",
+      "  •  Final message to the reader"
+    ],
+    "right_label": "Model: Open Mind",
+    "right_lines": [
+      "Subheading: Open Mind",
+      "",
+      "What it is: being ready to",
+      "change your plan",
+      "",
+      "How it works: look at problems",
+      "in different ways",
+      "",
+      "As a result: find solutions,",
+      "avoid danger"
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Planning together.",
+    "lines": [
+      "Let’s plan the Awareness section as a class.",
+      "",
+      "Subheading: Awareness",
+      "",
+      "What is the skill?",
+      "  The city is full of sights, sounds and smells.",
+      "  A cat must pay attention to everything around it.",
+      "",
+      "How does it work?",
+      "  Listen carefully, watch closely, trust your senses.",
+      "",
+      "What happens as a result?",
+      "  Spot trouble before it reaches you.",
+      "",
+      "Now: how would you write the ‘how it works’ sentence using a connective?"
+    ]
+  },
+  {
+    "type": "you_do",
+    "title": "Complete your boxing-up grid.",
+    "lines": [
+      "Fill in your boxing-up grid independently.",
+      "",
+      "For each chosen skill, complete all four rows:",
+      "  •  Subheading",
+      "  •  What the skill is",
+      "  •  How it works",
+      "  •  What happens as a result",
+      "",
+      "Do not write full sentences yet.",
+      "Notes and key words are enough.",
+      "",
+      "When you have finished, discuss your plan with a partner.",
+      "Check: does each section explain both HOW and WHY?"
+    ]
+  },
+  {
+    "type": "learning_review",
+    "q1": "Was it hard to choose which skills to include? What helped you decide?",
+    "q2": "Why is it important to include both HOW and WHY in each section, not just WHAT the skill is?",
+    "q3": "Looking at your plan, which section do you think will be the strongest in your draft?"
+  }
+]
