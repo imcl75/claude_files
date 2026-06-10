@@ -1,0 +1,165 @@
+[
+  {
+    "type": "cover",
+    "day": "Wednesday AM"
+  },
+  {
+    "type": "kc"
+  },
+  {
+    "type": "lo",
+    "wal": "use causal connectives and fronted adverbials to explain how and why something happens",
+    "tib": "This is so my explanation text shows the link between cause and effect, not just what things are.",
+    "isb": "writing two or three sentences using at least two different connectives from the connective bank."
+  },
+  {
+    "type": "warmup",
+    "title": "Grammar Warm-Up",
+    "subtitle": "Which connective fits? Choose the best word or phrase to complete each sentence.",
+    "cards": [
+      {
+        "label": "Sentence 1",
+        "lines": [
+          "The cat keeps moving.",
+          "__________, enemies cannot",
+          "surround it.",
+          "",
+          "therefore / however / suddenly"
+        ]
+      },
+      {
+        "label": "Sentence 2",
+        "lines": [
+          "__________ staying silent,",
+          "the cat travels unnoticed",
+          "through the city.",
+          "",
+          "By / Although / When"
+        ]
+      },
+      {
+        "label": "Sentence 3",
+        "lines": [
+          "Danger can appear at any moment.",
+          "__________, you must pay",
+          "attention at all times.",
+          "",
+          "As a result / Despite / Until"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "What is a causal connective?",
+    "lines": [
+      "A causal connective shows a link between CAUSE and EFFECT.",
+      "",
+      "Cause: Slow-Time calms the mind.",
+      "Effect: Everything seems to move more slowly.",
+      "",
+      "We join them with a connective:",
+      "",
+      "  “By calming your mind, everything seems to move more slowly.”",
+      "  “As a result, you will have more time to dodge attacks.”",
+      "  “Therefore, a skilled hunter waits for the perfect moment.”",
+      "",
+      "Find two more examples of cause and effect in the model text."
+    ]
+  },
+  {
+    "type": "i_do",
+    "title": "The connective bank.",
+    "left_label": "Mid-sentence connectives",
+    "left_lines": [
+      "therefore",
+      "",
+      "so",
+      "",
+      "which means",
+      "",
+      "which is why"
+    ],
+    "right_label": "Fronted adverbials",
+    "right_lines": [
+      "As a result, ...",
+      "",
+      "Due to this, ...",
+      "",
+      "Because of this, ...",
+      "",
+      "By [doing this], ...",
+      "",
+      "When this happens, ..."
+    ]
+  },
+  {
+    "type": "i_do",
+    "title": "The same idea, three ways.",
+    "left_label": "The idea",
+    "left_lines": [
+      "Skill: Moving Circles",
+      "",
+      "Cause:",
+      "The cat keeps moving",
+      "in all directions.",
+      "",
+      "Effect:",
+      "Enemies cannot",
+      "surround it."
+    ],
+    "right_label": "Three versions",
+    "right_lines": [
+      "The cat keeps moving, so enemies",
+      "cannot surround it.",
+      "",
+      "As a result, it is much harder",
+      "for enemies to close in.",
+      "",
+      "By staying in constant motion,",
+      "the cat makes itself a",
+      "difficult target."
+    ]
+  },
+  {
+    "type": "you_do_trio",
+    "lines": [
+      "Choose one skill from the Seven Skills of the Way of Jalal.",
+      "",
+      "Write the cause and the effect in your own words.",
+      "",
+      "Then write the same idea THREE times,",
+      "each time using a different connective from the bank:",
+      "",
+      "  Version 1: use a mid-sentence connective (therefore, so, which means)",
+      "  Version 2: use a fronted adverbial (As a result, / Due to this, /",
+      "             Because of this, ...)",
+      "  Version 3: use a By + -ing fronted adverbial",
+      "",
+      "Share your three versions. Which do you think sounds the strongest?"
+    ]
+  },
+  {
+    "type": "you_do",
+    "title": "Now choose another skill.",
+    "lines": [
+      "Pick a different skill from the Seven Skills.",
+      "",
+      "Write two or three sentences about it.",
+      "",
+      "Use at least two different connectives from the bank.",
+      "Do not use the same connective twice.",
+      "",
+      "Check:",
+      "  •  Does your sentence explain HOW or WHY the skill works?",
+      "  •  Is the present tense used throughout?",
+      "  •  Is the register formal?"
+    ]
+  },
+  {
+    "type": "learning_review",
+    "q1": "Which connective did you find hardest to use naturally? What made it tricky?",
+    "q2": "What is the difference between a causal connective and a time connective? Give an example of each.",
+    "q3": "Which version of your three sentences do you think was the strongest? Why?"
+  }
+]
