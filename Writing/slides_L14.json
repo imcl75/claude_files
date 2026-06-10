@@ -1,0 +1,120 @@
+[
+  {"type": "cover", "day": "Monday PM"},
+  {"type": "kc"},
+  {
+    "type": "lo",
+    "wal": "identify the key features of an explanation text and use them to build a boxing-up grid",
+    "tib": "This is so I know exactly what to include when I write my own explanation text.",
+    "isb": "annotating the model text and completing the first row of the boxing-up grid together."
+  },
+  {
+    "type": "warmup",
+    "title": "Grammar Warm-Up",
+    "subtitle": "Explanation text feature or not? Sort each item into the correct column.",
+    "cards": [
+      {"label": "Item 1", "lines": ["Written in the past tense", "", "\u201cHe crept through the shadows\u201d", "", "Explanation text feature?", "Yes or No?"]},
+      {"label": "Item 2", "lines": ["Causal connective", "", "\u201cAs a result, the cat can", "escape undetected.\u201d", "", "Explanation text feature?", "Yes or No?"]},
+      {"label": "Item 3", "lines": ["Rhetorical question as a hook", "", "\u201cHave you ever wondered how", "a cat survives the city?\u201d", "", "Explanation text feature?", "Yes or No?"]}
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "The rhetorical question.",
+    "lines": [
+      "\u201cHave you ever imagined leaving the safety of your home",
+      "and stepping into the city for the very first time?\u201d",
+      "",
+      "Why does the writer start with a question?",
+      "",
+      "  \u2022  It pulls the reader in immediately.",
+      "  \u2022  It makes the reader think from a cat\u2019s point of view.",
+      "  \u2022  It sets up the problem the text will explain how to solve.",
+      "",
+      "You do not answer it straight away.",
+      "You make the reader want to read on."
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "Subheadings and register.",
+    "lines": [
+      "Each skill section has a one-word subheading.",
+      "",
+      "What does the subheading do?",
+      "  \u2022  It tells the reader exactly what the section is about.",
+      "  \u2022  It makes the text easy to navigate.",
+      "",
+      "What is the register of the writing?",
+      "  \u2022  Formal but not cold.",
+      "  \u2022  Third person \u2014 not \u2018you should\u2019 (that is instructions), not \u2018I did\u2019 (that is recount).",
+      "  \u2022  Present tense throughout.",
+      "",
+      "Find a sentence in the model text that shows this clearly."
+    ]
+  },
+  {
+    "type": "we_do",
+    "title": "How the connectives work.",
+    "lines": [
+      "Find these connectives in the model text:",
+      "",
+      "  therefore    \u2022  as a result    \u2022  due to",
+      "  since    \u2022  in that event    \u2022  when this happens",
+      "",
+      "For each one, ask:",
+      "  1.  What cause does it follow?",
+      "  2.  What effect does it introduce?",
+      "",
+      "Notice: they do not all go in the same position in the sentence.",
+      "Some start the sentence. Some appear in the middle.",
+      "",
+      "That variety is what makes the writing feel controlled, not mechanical."
+    ]
+  },
+  {
+    "type": "i_do",
+    "title": "Building the boxing-up grid.",
+    "left_label": "Introduction",
+    "left_lines": [
+      "Rhetorical question",
+      "to hook the reader",
+      "",
+      "One or two sentences:",
+      "who needs this? why?"
+    ],
+    "right_label": "Each skill section",
+    "right_lines": [
+      "Subheading (skill name)",
+      "",
+      "What the skill is",
+      "How it works",
+      "What happens as a result",
+      "",
+      "Conclusion: link all skills together"
+    ]
+  },
+  {
+    "type": "you_do_trio",
+    "lines": [
+      "With your partner, annotate your copy of the model text.",
+      "",
+      "Use three different colours or symbols:",
+      "",
+      "  \u25cf  Mark the rhetorical question and introduction",
+      "  \u25cf  Mark every subheading",
+      "  \u25cf  Underline every causal connective you find",
+      "",
+      "Then complete the boxing-up grid together for the",
+      "Open Mind and Awareness sections.",
+      "",
+      "What goes in each box?",
+      "What does the skill is / how it works / what happens as a result?"
+    ]
+  },
+  {
+    "type": "learning_review",
+    "q1": "Which explanation text feature did you find hardest to spot in the model text?",
+    "q2": "Why does the writer use a formal register rather than a chatty, friendly voice?",
+    "q3": "Looking at the boxing-up grid, which section of the model text do you think is the strongest? Why?"
+  }
+]
