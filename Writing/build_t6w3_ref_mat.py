@@ -201,7 +201,7 @@ sr_parts = [
      "e.g.  As a result, the cat avoids danger\n       and stays one step ahead."),
 ]
 SR_STEP_H = 2.20 * cm
-sr_body   = len(sr_parts)*SR_STEP_H + 0.18*cm
+sr_body   = SUBB + 0.15*cm + len(sr_parts)*SR_STEP_H + 0.18*cm
 
 SEC34_BODY = max(rc_body, sr_body)
 
@@ -243,7 +243,8 @@ for good, bad in rc_examples:
 c.setFillColor(LPURP); c.setStrokeColor(PURPLE); c.setLineWidth(0.5)
 c.rect(RX, cy-SEC34_BODY, HW, SEC34_BODY, fill=1, stroke=1)
 
-py = cy - 0.24*cm
+# Top clearance: align with register content start (after SUBB)
+py = cy - SUBB - 0.15*cm
 for label, desc, ex in sr_parts:
     c.setFillColor(PURPLE); c.setFont('Helvetica-Bold', 13)
     c.drawString(RX+0.26*cm, py, label)
