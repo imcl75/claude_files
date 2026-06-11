@@ -193,13 +193,9 @@ def draw_unit(ox):
     # -- Register check (left) --
     c.setFillColor(DBLUE)
     c.rect(LX, cy-BAND, HCW, BAND, fill=1, stroke=0)
-    c.setFillColor(white); c.setFont('Helvetica-Bold', 7.0)
+    c.setFillColor(white); c.setFont('Helvetica-Bold', 7.5)
     c.drawString(LX+0.18*cm, cy-BAND*0.70,
-                 "Which sounds like explanation?")
-    # Second line of header (tight)
-    c.setFont('Helvetica', 6.5)
-    c.drawString(LX+0.18*cm, cy-BAND*0.70-0.26*cm,
-                 "Which sounds like instructions?")
+                 "Explanation or instructions?")
 
     rc_top  = cy - BAND
     rc_body = remaining - BAND
@@ -227,9 +223,9 @@ def draw_unit(ox):
         c.setFillColor(white); c.setFont('Helvetica-Bold', 7.0)
         c.drawString(bx2+0.15*cm, rc_top-SUBB*0.72, sub_lbl)
 
-    ex_row_h = (rc_body - SUBB - 0.08*cm) / len(rc_examples)
+    ex_row_h = 1.55*cm   # fixed — pack from top, spare space at bottom
     for gi, (good, bad) in enumerate(rc_examples):
-        gy = rc_top - SUBB - 0.24*cm - gi*ex_row_h
+        gy = rc_top - SUBB - 0.28*cm - gi*ex_row_h
         for col_x, text, col in [(LX, good, GREEN), (LX+half_rc, bad, RED)]:
             c.setFillColor(col); c.setFont('Helvetica-Oblique', 6.8)
             for li, ln in enumerate(wrap(text,'Helvetica-Oblique',6.8,half_rc-0.28*cm)[:2]):
@@ -262,7 +258,7 @@ def draw_unit(ox):
     ]
 
     py = sr_top - 0.22*cm
-    step_h = sr_body / len(parts)
+    step_h = 1.90*cm   # fixed — pack from top, spare space at bottom
     for label, desc, ex in parts:
         c.setFillColor(PURPLE); c.setFont('Helvetica-Bold', 7.5)
         c.drawString(RX+0.18*cm, py, label)
