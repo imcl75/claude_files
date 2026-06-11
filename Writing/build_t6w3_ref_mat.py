@@ -1,16 +1,16 @@
 """
-T6W3 Explanation Text Reference Mat.
-A4 landscape — two A5 portrait instances side by side, cut to share.
+T6W3 Explanation Text Reference Mat — A4 portrait, single page, 9pt text.
+Content top-aligned; spare space accumulates at bottom, not distributed through content.
 """
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
 from reportlab.lib.colors import HexColor, white
 from reportlab.pdfbase.pdfmetrics import stringWidth
 
 OUT = '/home/claude/T6W3_Reference_Mat.pdf'
-
-PW, PH = landscape(A4)   # 841.9 × 595.3 pt
+PAGE_W, PAGE_H = A4
+MG = 1.0 * cm
 
 BLUE   = HexColor('#1798d3')
 DBLUE  = HexColor('#154360')
@@ -40,238 +40,232 @@ def wrap(text, font, size, max_w):
     if cur: lines.append(cur)
     return lines
 
-c = canvas.Canvas(OUT, pagesize=landscape(A4))
+c = canvas.Canvas(OUT, pagesize=A4)
 c.setTitle("T6W3 Explanation Text Reference Mat")
 
-# ── Cut line down centre ──────────────────────────────────────────────
-c.setStrokeColor(MGREY)
-c.setLineWidth(0.5)
-c.setDash(4, 4)
-c.line(PW/2, 0, PW/2, PH)
-c.setDash()
+# ── Header ───────────────────────────────────────────────────────────
+BAR = 0.90 * cm
+c.setFillColor(BLUE)
+c.rect(0, PAGE_H-BAR, PAGE_W, BAR, fill=1, stroke=0)
+c.setFillColor(white)
+c.setFont('Helvetica-Bold', 12)
+c.drawString(MG, PAGE_H-BAR+0.26*cm, "Explanation Text Reference Mat")
+c.setFont('Helvetica', 9.5)
+c.drawRightString(PAGE_W-MG, PAGE_H-BAR+0.26*cm, "T6W3  |  Being a Writer  |  Year 4")
 
-# ── Draw one A5 unit ─────────────────────────────────────────────────
-def draw_unit(ox):
-    """ox = x-offset for this A5 unit (0 or PW/2)"""
-    UW  = PW / 2       # unit width  ≈ 420.9 pt ≈ 14.84 cm
-    UH  = PH           # unit height ≈ 595.3 pt ≈ 21.0 cm
-    mg  = 0.72 * cm
-    cw  = UW - 2*mg    # content width
-    cx  = ox + mg
-    
-    bar_h  = 0.78 * cm
-    foot_h = 0.34 * cm
-    CT = UH - bar_h - 0.24*cm
-    CB = foot_h + 0.16*cm
+# ── Footer ───────────────────────────────────────────────────────────
+FOOT = 0.42 * cm
+c.setFillColor(BLUE)
+c.rect(0, 0, PAGE_W, FOOT, fill=1, stroke=0)
+c.setFillColor(white)
+c.setFont('Helvetica', 7.5)
+c.drawCentredString(PAGE_W/2, 0.13*cm, "Wallscourt Farm Academy  |  Year 4  |  Term 6")
 
-    # Header
-    c.setFillColor(BLUE)
-    c.rect(ox, UH-bar_h, UW, bar_h, fill=1, stroke=0)
+CW   = PAGE_W - 2*MG
+CX   = MG
+cy   = PAGE_H - BAR - 0.32*cm   # current y (top of next section)
+BAND = 0.64 * cm
+GAP  = 0.40 * cm
+COLG = 0.36 * cm
+HW   = (CW - COLG) / 2   # half content width
+
+# ── SECTION 1: Connectives (two columns) ─────────────────────────────
+conn = [
+    ("therefore",       "The cat kept moving; therefore, enemies could not surround it."),
+    ("so",              "Danger appeared, so the cat used Slow-Time immediately."),
+    ("which means",     "It focused completely, which means danger seemed to slow down."),
+    ("which is why",    "Trust comes from inside, which is why this skill is the hardest."),
+    ("and as a result", "It stayed alert, and as a result it spotted the enemy first."),
+]
+fron = [
+    ("As a result,",       "As a result, the cat spotted danger before it arrived."),
+    ("Due to this,",       "Due to this, enemies struggled to track its movements."),
+    ("Because of this,",   "Because of this, the cat reached safety undetected."),
+    ("By [doing this],",   "By calming the mind, everything seemed to move more slowly."),
+    ("When this happens,", "When this happens, the cat has more time to react."),
+    ("In this way,",       "In this way, the cat escapes without being seen."),
+]
+
+ENTRY  = 1.56 * cm          # height per connective entry
+PAD    = 0.16 * cm
+body1  = max(len(conn), len(fron)) * ENTRY + PAD
+LX     = CX
+RX     = CX + HW + COLG
+
+# Bands
+for bx, bc, lbl in [
+    (LX, MID,   "Causal connectives  \u2014  use mid-sentence"),
+    (RX, GREEN, "Fronted adverbials  \u2014  use to start a sentence"),
+]:
+    c.setFillColor(bc)
+    c.rect(bx, cy-BAND, HW, BAND, fill=1, stroke=0)
     c.setFillColor(white)
-    c.setFont('Helvetica-Bold', 9.5)
-    c.drawString(cx, UH-bar_h+0.20*cm, "Explanation Text Reference Mat")
-    c.setFont('Helvetica', 7.5)
-    c.drawRightString(ox+UW-mg, UH-bar_h+0.20*cm, "T6W3  |  Y4")
+    c.setFont('Helvetica-Bold', 9)
+    c.drawString(bx+0.24*cm, cy-BAND*0.68, lbl)
 
-    # Footer
-    c.setFillColor(BLUE)
-    c.rect(ox, 0, UW, foot_h, fill=1, stroke=0)
-    c.setFillColor(white)
-    c.setFont('Helvetica', 6)
-    c.drawCentredString(ox+UW/2, 0.10*cm, "Wallscourt Farm Academy  |  Year 4  |  Term 6")
+cy -= BAND
 
-    BAND  = 0.54*cm
-    GAP   = 0.24*cm
-    COLG  = 0.30*cm
-    HCW   = (cw - COLG) / 2   # half content width
-    LX    = cx
-    RX    = cx + HCW + COLG
+# Bodies
+for bx, bf in [(LX, LBLUE), (RX, LGREEN)]:
+    c.setFillColor(bf)
+    c.setStrokeColor(MGREY); c.setLineWidth(0.35)
+    c.rect(bx, cy-body1, HW, body1, fill=1, stroke=1)
 
-    # ── Section 1: Connectives ────────────────────────────────────────
-    conn = [
-        ("therefore",       "The cat kept moving; therefore, enemies could not surround it."),
-        ("so",              "Danger appeared, so the cat used Slow-Time immediately."),
-        ("which means",     "It focused completely, which means danger seemed to slow down."),
-        ("which is why",    "Trust comes from inside, which is why this is the hardest skill."),
-        ("and as a result", "It stayed alert, and as a result it spotted the enemy first."),
-    ]
-    fron = [
-        ("As a result,",       "As a result, the cat spotted danger before it arrived."),
-        ("Due to this,",       "Due to this, enemies struggled to track its movements."),
-        ("Because of this,",   "Because of this, the cat reached safety undetected."),
-        ("By [doing this],",   "By calming the mind, everything seemed to move more slowly."),
-        ("When this happens,", "When this happens, the cat has more time to react."),
-        ("In this way,",       "In this way, the cat escapes without being seen."),
-    ]
+def col_entries(entries, bx, top, accent):
+    ey = top - PAD
+    for word, ex in entries:
+        c.setFillColor(accent)
+        c.setFont('Helvetica-Bold', 9)
+        c.drawString(bx+0.22*cm, ey-0.28*cm, word)
+        c.setFillColor(DGREY)
+        c.setFont('Helvetica-Oblique', 8)
+        for li, ln in enumerate(wrap(ex, 'Helvetica-Oblique', 8, HW-0.40*cm)[:2]):
+            c.drawString(bx+0.34*cm, ey-0.58*cm-li*0.30*cm, ln)
+        ey -= ENTRY
+        if ey > top-body1+0.06*cm:
+            c.setStrokeColor(MGREY); c.setLineWidth(0.25)
+            c.line(bx+0.22*cm, ey+0.07*cm, bx+HW-0.22*cm, ey+0.07*cm)
 
-    ENTRY  = 1.08*cm
-    PAD    = 0.14*cm
-    n_rows = max(len(conn), len(fron))
-    body1  = n_rows * ENTRY + PAD
+col_entries(conn, LX, cy, MID)
+col_entries(fron, RX, cy, GREEN)
+cy -= body1 + GAP
 
-    cy = CT
-    # Bands
-    for bx, bc, lbl in [
-        (LX, MID,   "Causal connectives  \u2014  use mid-sentence"),
-        (RX, GREEN, "Fronted adverbials  \u2014  use to start a sentence"),
-    ]:
-        c.setFillColor(bc)
-        c.rect(bx, cy-BAND, HCW, BAND, fill=1, stroke=0)
-        c.setFillColor(white)
-        c.setFont('Helvetica-Bold', 7.5)
-        c.drawString(bx+0.18*cm, cy-BAND*0.70, lbl)
+# ── SECTION 2: Useful verbs ───────────────────────────────────────────
+verbs = [
+    ("allows",     "allows a cat to pass unseen"),
+    ("enables",    "enables the cat to react faster"),
+    ("prevents",   "prevents enemies surrounding it"),
+    ("requires",   "requires patience and silence"),
+    ("results in", "results in better decisions"),
+    ("leads to",   "leads to earlier warnings of danger"),
+    ("helps",      "helps every other skill work"),
+    ("means that", "means that danger seems to slow"),
+    ("keeps",      "keeps the cat one step ahead"),
+]
+N_VC   = 3
+vcw    = CW / N_VC
+v_rows = (len(verbs) + N_VC - 1) // N_VC
+vbody  = v_rows * 0.96*cm + 0.22*cm
 
-    cy -= BAND
-    for bx, bf in [(LX, LBLUE), (RX, LGREEN)]:
-        c.setFillColor(bf)
-        c.setStrokeColor(MGREY); c.setLineWidth(0.3)
-        c.rect(bx, cy-body1, HCW, body1, fill=1, stroke=1)
+c.setFillColor(AMBER)
+c.rect(CX, cy-BAND, CW, BAND, fill=1, stroke=0)
+c.setFillColor(white); c.setFont('Helvetica-Bold', 9)
+c.drawString(CX+0.24*cm, cy-BAND*0.68, "Useful verbs for explanation")
+cy -= BAND
 
-    def col_entries(entries, bx, top, accent):
-        ey = top - PAD
-        for word, ex in entries:
-            c.setFillColor(accent); c.setFont('Helvetica-Bold', 7.8)
-            c.drawString(bx+PAD, ey-0.24*cm, word)
-            c.setFillColor(DGREY); c.setFont('Helvetica-Oblique', 6.5)
-            for li, ln in enumerate(wrap(ex,'Helvetica-Oblique',6.5,HCW-PAD*2)[:2]):
-                c.drawString(bx+PAD+0.08*cm, ey-0.48*cm-li*0.24*cm, ln)
-            ey -= ENTRY
-            if ey > top-body1+0.04*cm:
-                c.setStrokeColor(MGREY); c.setLineWidth(0.2)
-                c.line(bx+PAD, ey+0.05*cm, bx+HCW-PAD, ey+0.05*cm)
+c.setFillColor(LAMBER); c.setStrokeColor(MGREY); c.setLineWidth(0.35)
+c.rect(CX, cy-vbody, CW, vbody, fill=1, stroke=1)
 
-    col_entries(conn, LX, cy, MID)
-    col_entries(fron, RX, cy, GREEN)
-    cy -= body1 + GAP
+vy0 = cy - 0.24*cm
+for i, (verb, ex) in enumerate(verbs):
+    col = i % N_VC; row = i // N_VC
+    vx  = CX + 0.22*cm + col*vcw
+    vy  = vy0 - row*0.82*cm
+    c.setFillColor(AMBER); c.setFont('Helvetica-Bold', 9)
+    c.drawString(vx, vy, verb)
+    c.setFillColor(DGREY); c.setFont('Helvetica-Oblique', 8)
+    exs = ex
+    while exs and stringWidth(exs, 'Helvetica-Oblique', 8) > vcw-0.36*cm:
+        exs = exs.rsplit(' ', 1)[0]
+    if exs != ex: exs += '\u2026'
+    c.drawString(vx, vy-0.30*cm, exs)
 
-    # ── Section 2: Useful verbs ───────────────────────────────────────
-    verbs = [
-        ("allows",     "allows a cat to pass unseen"),
-        ("enables",    "enables the cat to react faster"),
-        ("prevents",   "prevents enemies surrounding it"),
-        ("requires",   "requires patience and silence"),
-        ("results in", "results in better decisions"),
-        ("leads to",   "leads to earlier warnings"),
-        ("helps",      "helps every other skill work"),
-        ("means that", "means that danger seems slower"),
-        ("keeps",      "keeps the cat one step ahead"),
-    ]
-    N_VC   = 3
-    vcw    = cw / N_VC
-    v_rows = (len(verbs) + N_VC - 1) // N_VC
-    vbody  = v_rows * 0.64*cm + 0.18*cm
+cy -= vbody + GAP
 
-    c.setFillColor(AMBER)
-    c.rect(cx, cy-BAND, cw, BAND, fill=1, stroke=0)
-    c.setFillColor(white); c.setFont('Helvetica-Bold', 7.5)
-    c.drawString(cx+0.18*cm, cy-BAND*0.70, "Useful verbs for explanation")
-    cy -= BAND
+# ── SECTIONS 3 & 4: side by side, content-height only ────────────────
+SUBB = 0.52 * cm   # sub-band inside register box
 
-    c.setFillColor(LAMBER); c.setStrokeColor(MGREY); c.setLineWidth(0.3)
-    c.rect(cx, cy-vbody, cw, vbody, fill=1, stroke=1)
+# Calculate content heights
+rc_examples = [
+    ("\u201cSlow-Time allows a cat to slow its reactions.\u201d",
+     "\u201cYou should calm your mind and focus.\u201d"),
+    ("\u201cThis skill enables the cat to dodge attacks.\u201d",
+     "\u201cNext, move quietly through the shadows.\u201d"),
+    ("\u201cAwareness leads to earlier warnings of danger.\u201d",
+     "\u201cAlways pay attention to your surroundings.\u201d"),
+    ("\u201cBy staying silent, the cat travels unnoticed.\u201d",
+     "\u201cRemember to trust yourself at all times.\u201d"),
+]
+RC_EX_H = 1.62 * cm
+rc_body  = SUBB + len(rc_examples)*RC_EX_H + 0.16*cm
 
-    vy0 = cy - 0.22*cm
-    for i, (verb, ex) in enumerate(verbs):
-        col = i % N_VC; row = i // N_VC
-        vx  = cx + 0.14*cm + col*vcw
-        vy  = vy0 - row*0.64*cm
-        c.setFillColor(AMBER); c.setFont('Helvetica-Bold', 7.5)
-        c.drawString(vx, vy, verb)
-        c.setFillColor(DGREY); c.setFont('Helvetica-Oblique', 6.5)
-        exs = ex
-        while exs and stringWidth(exs,'Helvetica-Oblique',6.5) > vcw-0.28*cm:
-            exs = exs.rsplit(' ',1)[0]
-        if exs != ex: exs += '\u2026'
-        c.drawString(vx, vy-0.25*cm, exs)
+sr_parts = [
+    ("1  Subheading",
+     "One word: the name of the skill.",
+     "e.g.  Open Mind"),
+    ("2  What it is",
+     "A sentence explaining what the skill involves.",
+     "e.g.  Open Mind is the ability to change your\n       approach when things do not go as planned."),
+    ("3  How it works",
+     "Explain the process using a fronted adverbial.",
+     "e.g.  By looking at problems in different ways,\n       a cat can find solutions others would miss."),
+    ("4  What happens as a result",
+     "Use a causal connective to show the outcome.",
+     "e.g.  As a result, the cat avoids danger\n       and stays one step ahead."),
+]
+SR_STEP_H = 2.12 * cm
+sr_body   = len(sr_parts)*SR_STEP_H + 0.16*cm
 
-    cy -= vbody + GAP
+# Section height = taller of the two, plus the band
+SEC34_BODY = max(rc_body, sr_body)
+SEC34_H    = BAND + SEC34_BODY
 
-    # ── Sections 3 & 4: Register / Structure ─────────────────────────
-    remaining = cy - CB
-    SUBB = 0.46*cm
+# Register band
+c.setFillColor(DBLUE)
+c.rect(LX, cy-BAND, HW, BAND, fill=1, stroke=0)
+c.setFillColor(white); c.setFont('Helvetica-Bold', 9)
+c.drawString(LX+0.24*cm, cy-BAND*0.68, "Explanation or instructions?")
 
-    # -- Register check (left) --
-    c.setFillColor(DBLUE)
-    c.rect(LX, cy-BAND, HCW, BAND, fill=1, stroke=0)
-    c.setFillColor(white); c.setFont('Helvetica-Bold', 7.5)
-    c.drawString(LX+0.18*cm, cy-BAND*0.70,
-                 "Explanation or instructions?")
+# Structure band
+c.setFillColor(PURPLE)
+c.rect(RX, cy-BAND, HW, BAND, fill=1, stroke=0)
+c.setFillColor(white); c.setFont('Helvetica-Bold', 9)
+c.drawString(RX+0.24*cm, cy-BAND*0.68, "Structure of each skill section")
 
-    rc_top  = cy - BAND
-    rc_body = remaining - BAND
-    half_rc = HCW / 2
+rc_top = cy - BAND
+sr_top = cy - BAND
+cy -= BAND
 
-    rc_examples = [
-        ("\u201cSlow-Time allows a cat to slow its reactions.\u201d",
-         "\u201cYou should calm your mind and focus.\u201d"),
-        ("\u201cThis skill enables the cat to dodge attacks.\u201d",
-         "\u201cNext, move quietly through the shadows.\u201d"),
-        ("\u201cAwareness leads to earlier warnings of danger.\u201d",
-         "\u201cAlways pay attention to your surroundings.\u201d"),
-        ("\u201cBy staying silent, the cat travels unnoticed.\u201d",
-         "\u201cRemember to trust yourself at all times.\u201d"),
-    ]
+# Register outer boxes
+half_rc = HW / 2
+for bx2, bf2, bc2, lbl2 in [
+    (LX,          LGREEN, GREEN, "\u2713  Explanation"),
+    (LX+half_rc,  LRED,   RED,   "\u2717  Instructions  \u2014  avoid"),
+]:
+    c.setFillColor(bf2); c.setStrokeColor(bc2); c.setLineWidth(0.45)
+    c.rect(bx2, cy-SEC34_BODY, half_rc, SEC34_BODY, fill=1, stroke=1)
+    c.setFillColor(bc2)
+    c.rect(bx2, cy-SUBB, half_rc, SUBB, fill=1, stroke=0)
+    c.setFillColor(white); c.setFont('Helvetica-Bold', 8.5)
+    c.drawString(bx2+0.18*cm, cy-SUBB*0.70, lbl2)
 
-    for bx2, bf2, bc2, sub_lbl in [
-        (LX,           LGREEN, GREEN, "\u2713  Explanation"),
-        (LX+half_rc,   LRED,   RED,   "\u2717  Instructions \u2014 avoid"),
-    ]:
-        c.setFillColor(bf2); c.setStrokeColor(bc2); c.setLineWidth(0.4)
-        c.rect(bx2, rc_top-rc_body, half_rc, rc_body, fill=1, stroke=1)
-        c.setFillColor(bc2)
-        c.rect(bx2, rc_top-SUBB, half_rc, SUBB, fill=1, stroke=0)
-        c.setFillColor(white); c.setFont('Helvetica-Bold', 7.0)
-        c.drawString(bx2+0.15*cm, rc_top-SUBB*0.72, sub_lbl)
+ey = cy - SUBB - 0.22*cm
+for good, bad in rc_examples:
+    for col_x, text, col in [(LX, good, GREEN), (LX+half_rc, bad, RED)]:
+        c.setFillColor(col); c.setFont('Helvetica-Oblique', 8.5)
+        for li, ln in enumerate(wrap(text, 'Helvetica-Oblique', 8.5, half_rc-0.32*cm)[:2]):
+            c.drawString(col_x+0.18*cm, ey-li*0.31*cm, ln)
+    ey -= RC_EX_H
 
-    ex_row_h = 1.55*cm   # fixed — pack from top, spare space at bottom
-    for gi, (good, bad) in enumerate(rc_examples):
-        gy = rc_top - SUBB - 0.28*cm - gi*ex_row_h
-        for col_x, text, col in [(LX, good, GREEN), (LX+half_rc, bad, RED)]:
-            c.setFillColor(col); c.setFont('Helvetica-Oblique', 6.8)
-            for li, ln in enumerate(wrap(text,'Helvetica-Oblique',6.8,half_rc-0.28*cm)[:2]):
-                c.drawString(col_x+0.15*cm, gy-li*0.24*cm, ln)
+# Structure box
+c.setFillColor(LPURP); c.setStrokeColor(PURPLE); c.setLineWidth(0.45)
+c.rect(RX, cy-SEC34_BODY, HW, SEC34_BODY, fill=1, stroke=1)
 
-    # -- Structure reminder (right) --
-    c.setFillColor(PURPLE)
-    c.rect(RX, cy-BAND, HCW, BAND, fill=1, stroke=0)
-    c.setFillColor(white); c.setFont('Helvetica-Bold', 7.5)
-    c.drawString(RX+0.18*cm, cy-BAND*0.70, "Structure of each skill section")
-
-    sr_top  = cy - BAND
-    sr_body = remaining - BAND
-    c.setFillColor(LPURP); c.setStrokeColor(PURPLE); c.setLineWidth(0.4)
-    c.rect(RX, sr_top-sr_body, HCW, sr_body, fill=1, stroke=1)
-
-    parts = [
-        ("1  Subheading",
-         "One word: the name of the skill.",
-         "e.g.  Open Mind"),
-        ("2  What it is",
-         "A sentence explaining what the skill involves.",
-         "e.g.  Open Mind is the ability to change your\n       approach when things do not go as planned."),
-        ("3  How it works",
-         "Explain the process using a fronted adverbial.",
-         "e.g.  By looking at problems in different ways,\n       a cat can find solutions others would miss."),
-        ("4  What happens as a result",
-         "Use a causal connective to show the outcome.",
-         "e.g.  As a result, the cat avoids danger\n       and stays one step ahead."),
-    ]
-
-    py = sr_top - 0.22*cm
-    step_h = 1.90*cm   # fixed — pack from top, spare space at bottom
-    for label, desc, ex in parts:
-        c.setFillColor(PURPLE); c.setFont('Helvetica-Bold', 7.5)
-        c.drawString(RX+0.18*cm, py, label)
-        c.setFillColor(DGREY); c.setFont('Helvetica', 7.0)
-        c.drawString(RX+0.18*cm, py-0.26*cm, desc)
-        c.setFillColor(HexColor('#555555')); c.setFont('Helvetica-Oblique', 6.5)
-        for li, ln in enumerate(ex.split('\n')):
-            c.drawString(RX+0.28*cm, py-0.48*cm-li*0.22*cm, ln)
-        py -= step_h
-
-# Draw both units
-draw_unit(0)
-draw_unit(PW/2)
+py = cy - 0.22*cm
+for label, desc, ex in sr_parts:
+    c.setFillColor(PURPLE); c.setFont('Helvetica-Bold', 9)
+    c.drawString(RX+0.22*cm, py, label)
+    c.setFillColor(DGREY); c.setFont('Helvetica', 8.5)
+    c.drawString(RX+0.22*cm, py-0.32*cm, desc)
+    c.setFillColor(HexColor('#555555')); c.setFont('Helvetica-Oblique', 8)
+    for li, ln in enumerate(ex.split('\n')):
+        c.drawString(RX+0.34*cm, py-0.60*cm-li*0.27*cm, ln)
+    py -= SR_STEP_H
 
 c.save()
 print(f"Saved: {OUT}")
+
+# Print layout summary
+used = (PAGE_H - BAR - 0.32*cm) - (cy - SEC34_BODY)
+total = PAGE_H - BAR - 0.32*cm - FOOT - 0.18*cm
+print(f"Content used: {used/28.35:.1f}cm of {total/28.35:.1f}cm available")
