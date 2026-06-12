@@ -373,7 +373,8 @@ function addFrame(slide, activityType, activityLabel, question, slideNum) {
 
   // Words in 5×2 grid with pink underline bar
   const cellW = 9.0 / 5;
-  const _twwFontSize = Math.min(...WORDS.map(w => fitFontSize(w, cellW, 32, 16)));
+  // Use 82% of cellW as effective width to prevent long words wrapping
+  const _twwFontSize = Math.min(...WORDS.map(w => fitFontSize(w, cellW * 0.82, 28, 14)));
   [WORDS.slice(0,5), WORDS.slice(5,10)].forEach((row, ri) => {
     row.forEach((w, ci) => {
       const x = 0.5 + ci * cellW;
@@ -381,7 +382,8 @@ function addFrame(slide, activityType, activityLabel, question, slideNum) {
       s.addText(w, {
         x, y, w: cellW, h: 0.85,
         fontSize: _twwFontSize, fontFace: "Calibri", color: C.BLACK,
-        align: "center", valign: "bottom"
+        align: "center", valign: "bottom",
+        shrinkText: true
       });
       // Pink underline
       s.addShape(pres.shapes.RECTANGLE, {
@@ -478,7 +480,7 @@ function addFrame(slide, activityType, activityLabel, question, slideNum) {
   const cellW = 9.0 / 5, cellH = 1.6;
   const sx = 0.5, sy = CONT_Y + 0.2;
 
-  const _syllFontSize = Math.min(...items.map(it => fitFontSize(it.word, cellW, 28, 14)));
+  const _syllFontSize = Math.min(...items.map(it => fitFontSize(it.word, cellW * 0.82, 24, 12)));
   items.forEach((item, i) => {
     const col = i % 5, row = Math.floor(i / 5);
     const x = sx + col * cellW;
@@ -486,7 +488,8 @@ function addFrame(slide, activityType, activityLabel, question, slideNum) {
     s.addText(item.word, {
       x, y, w: cellW, h: 0.8,
       fontSize: _syllFontSize, fontFace: "Calibri", color: C.BLACK,
-      align: "center", valign: "middle"
+      align: "center", valign: "middle",
+      shrinkText: true
     });
     // Syllable count — green for 2, red for 1 — animated to appear on click
     const numCol = item.n === 1 ? "C62828" : "388E3C";
@@ -515,13 +518,18 @@ function addFrame(slide, activityType, activityLabel, question, slideNum) {
   addFrame(s, "Whole Group", "Word Sort",
     LESSON.wordSortQ, `${LESSON.code}.6`);
 
-  // Word bank — two rows of large text, no boxes
+  // Word bank — 5-column grid, one cell per word (prevents wrapping for long words)
+  const _wbCellW = 9.0 / 5;
+  const _wbFontSize = Math.min(...WORDS.map(w => fitFontSize(w, _wbCellW * 0.82, 22, 12)));
   [WORDS.slice(0,5), WORDS.slice(5,10)].forEach((row, ri) => {
-    s.addText(row.join("          "), {
-      x: 0.5, y: CONT_Y + 0.15 + ri * 0.5,
-      w: 9.0, h: 0.48,
-      fontSize: 22, fontFace: "Calibri", color: C.BLACK,
-      align: "center", valign: "middle"
+    row.forEach((w, ci) => {
+      s.addText(w, {
+        x: 0.5 + ci * _wbCellW, y: CONT_Y + 0.15 + ri * 0.5,
+        w: _wbCellW, h: 0.44,
+        fontSize: _wbFontSize, fontFace: "Calibri", color: C.BLACK,
+        align: "center", valign: "middle",
+        shrinkText: true
+      });
     });
   });
 
