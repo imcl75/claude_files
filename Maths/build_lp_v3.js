@@ -1974,11 +1974,11 @@ function _buildLP1Calculations(slide, labelPath, isMarkingStation) {
   }
 }
 
-// Word problems in LP1: 3-strip vertical layout (same as LP2)
+// Word problems in LP1: one question per strip, grouped by question, repeated to fill page.
+// Layout: [Q1×reps] [Q2×reps] [Q3×reps] — identical strips grouped so they cut into sets.
 function _buildLP1WordProblems(slide, labelPath, isMarkingStation) {
   const PAGE_TOP = MARGIN;
   const PAGE_BOT = SLIDE_H - MARGIN;
-
   const lblX     = SLIDE_W - LL_W - MARGIN;
   const contentW = lblX - GUTTER - MARGIN;
 
@@ -2002,38 +2002,46 @@ function _buildLP1WordProblems(slide, labelPath, isMarkingStation) {
   const questions = LP1_DATA.questions;
   const nQ        = questions.length;
   const usable    = PAGE_BOT - hdrY;
-  const TARGET    = 2;
-  const slotH     = usable / TARGET;
-  const QH_each   = (slotH - 0.22) / nQ;
   const ANS_H     = 0.22;
-  const fontSize  = Math.min(13, Math.max(10, Math.floor(QH_each * 26)));
 
-  for (let rep = 0; rep < TARGET; rep++) {
-    const stripTop = hdrY + rep * slotH;
-    if (rep > 0) _cutStrip(slide, MARGIN, stripTop - 0.04, contentW);
+  // One strip = one question. Calculate how many reps per question fit readably.
+  // Minimum strip height 1.20" ensures room for wrapped word problem text.
+  const MIN_STRIP_H = 1.20;
+  let repsPerQ = Math.floor(usable / (nQ * MIN_STRIP_H));
+  repsPerQ = Math.max(1, Math.min(repsPerQ, 4));
 
-    questions.forEach((q, i) => {
-      const qy = stripTop + i * QH_each;
-      const ay = qy + QH_each - ANS_H;
+  const totalStrips = nQ * repsPerQ;
+  const stripH      = usable / totalStrips;
+  const fontSize    = Math.min(13, Math.max(10, Math.floor(stripH * 12)));
+  // Marking station: use more height for the answer so long answers don't overflow upward
+  const ANS_AREA    = isMarkingStation ? Math.min(stripH * 0.40, 0.70) : ANS_H;
 
-      slide.addText(`Q${i + 1})   ${q.q}`, {
-        x: MARGIN, y: qy, w: contentW,
-        h: QH_each - ANS_H - 0.04,
+  let stripIdx = 0;
+  for (let qi = 0; qi < nQ; qi++) {
+    const q = questions[qi];
+    for (let rep = 0; rep < repsPerQ; rep++) {
+      const stripTop = hdrY + stripIdx * stripH;
+      if (stripIdx > 0) _cutStrip(slide, MARGIN, stripTop - 0.04, contentW);
+
+      slide.addText(`Q${qi + 1})   ${q.q}`, {
+        x: MARGIN, y: stripTop, w: contentW,
+        h: stripH - ANS_AREA - 0.04,
         fontSize, fontFace: FONT_C,
         color: isMarkingStation ? BLACK : "1F4E79",
         valign: "top", margin: 0, wrap: true
       });
 
+      const ay = stripTop + stripH - ANS_AREA;
       slide.addText("A:", {
-        x: MARGIN, y: ay, w: 0.28, h: ANS_H,
+        x: MARGIN, y: ay, w: 0.28, h: ANS_AREA,
         fontSize: fontSize - 1, fontFace: FONT_M, bold: true,
-        color: "333333", valign: "bottom", margin: 0
+        color: "333333", valign: "top", margin: 0
       });
       if (isMarkingStation && q.answer) {
         slide.addText(q.answer, {
-          x: MARGIN + 0.30, y: ay, w: contentW - 0.30, h: ANS_H,
+          x: MARGIN + 0.30, y: ay, w: contentW - 0.30, h: ANS_AREA,
           fontSize: fontSize - 1, fontFace: FONT_C, bold: true, color: GREEN,
-          valign: "bottom", margin: 0, wrap: true
+          valign: "top", margin: 0, wrap: true
         });
       } else {
         slide.addShape("line", {
@@ -2042,7 +2050,8 @@ function _buildLP1WordProblems(slide, labelPath, isMarkingStation) {
           line: { color: "888888", width: 0.5 }
         });
       }
-    });
+      stripIdx++;
+    }
   }
 
   if (!isMarkingStation) {
@@ -2145,10 +2154,117 @@ function buildLP2Arithmetic(slide, isMarkingStation) {
 }
 
 // ── ADAPTED LP1 — FULL PAGE ───────────────────────────────────────────────────
+// Detects word problems vs calculations and routes accordingly.
 function buildLP1ArithmeticAdapted(slide, labelPath) {
+  const questions = ADAPTED_SUPPORT.lp1Questions || LP1_DATA.questions.slice(0, 2);
+  const maxQLen   = Math.max(...questions.map(q => q.q.length));
+  const isWordProb = maxQLen > 50;
+
+  if (isWordProb) {
+    _buildLP1WordProblemsAdapted(slide, labelPath, questions);
+  } else {
+    _buildLP1CalcAdapted(slide, labelPath, questions);
+  }
+}
+
+// Adapted word problem strips — same one-per-strip logic as standard, with hint boxes on right.
+function _buildLP1WordProblemsAdapted(slide, labelPath, questions) {
   const PAGE_TOP = MARGIN;
   const PAGE_BOT = SLIDE_H - MARGIN;
+  const lblX     = SLIDE_W - LL_W - MARGIN;
+  const contentW = lblX - GUTTER - MARGIN;
 
+  let hdrY = PAGE_TOP;
+  slide.addText(LP1_DATA.title || "Problems", {
+    x: MARGIN, y: hdrY, w: contentW, h: 0.28,
+    fontSize: 13, fontFace: FONT_M, bold: true, color: BLACK, margin: 0
+  });
+  hdrY += 0.30;
+  if (LP1_DATA.instruction) {
+    slide.addText(LP1_DATA.instruction, {
+      x: MARGIN, y: hdrY, w: contentW, h: 0.18,
+      fontSize: 9, fontFace: FONT_C, color: "555555", margin: 0
+    });
+    hdrY += 0.20;
+  }
+
+  const nQ        = questions.length;
+  const usable    = PAGE_BOT - hdrY;
+  const ANS_H     = 0.22;
+  const MIN_STRIP_H = 1.20;
+  let repsPerQ = Math.floor(usable / (nQ * MIN_STRIP_H));
+  repsPerQ = Math.max(1, Math.min(repsPerQ, 4));
+
+  const totalStrips = nQ * repsPerQ;
+  const stripH      = usable / totalStrips;
+  const fontSize    = Math.min(13, Math.max(10, Math.floor(stripH * 12)));
+
+  let stripIdx = 0;
+  for (let qi = 0; qi < nQ; qi++) {
+    const q = questions[qi];
+    for (let rep = 0; rep < repsPerQ; rep++) {
+      const stripTop = hdrY + stripIdx * stripH;
+      if (stripIdx > 0) _cutStrip(slide, MARGIN, stripTop - 0.04, contentW);
+
+      slide.addText(`Q${qi + 1})   ${q.q}`, {
+        x: MARGIN, y: stripTop, w: contentW,
+        h: stripH - ANS_H - 0.04,
+        fontSize, fontFace: FONT_C, color: "1F4E79",
+        valign: "top", margin: 0, wrap: true
+      });
+
+      const ay = stripTop + stripH - ANS_H;
+      slide.addText("A:", {
+        x: MARGIN, y: ay, w: 0.28, h: ANS_H,
+        fontSize: fontSize - 1, fontFace: FONT_M, bold: true,
+        color: "333333", valign: "bottom", margin: 0
+      });
+      slide.addShape("line", {
+        x: MARGIN + 0.30, y: ay + ANS_H - 0.02,
+        w: contentW - 0.30, h: 0,
+        line: { color: "888888", width: 0.5 }
+      });
+      stripIdx++;
+    }
+  }
+
+  // Right column: label + hint boxes
+  slide.addImage({ path: labelPath, x: lblX, y: PAGE_TOP, w: LL_W, h: LL_H });
+  let rY = PAGE_TOP + LL_H + 0.12;
+  if (ADAPTED_SUPPORT.hint1) {
+    slide.addText("Step-by-step:", {
+      x: lblX, y: rY, w: LL_W, h: 0.20,
+      fontSize: 9, fontFace: FONT_C, bold: true, color: "156082", margin: 0
+    });
+    rY += 0.22;
+    const h1 = Math.min((PAGE_BOT - rY - 0.10) * 0.48, 1.30);
+    slide.addText(ADAPTED_SUPPORT.hint1, {
+      x: lblX, y: rY, w: LL_W, h: h1,
+      fontSize: 9, fontFace: FONT_C, color: BLACK,
+      fill: { color: "EBF3FB" }, line: { color: "156082", width: 0.75 },
+      margin: 5, valign: "top"
+    });
+    rY += h1 + 0.10;
+  }
+  if (ADAPTED_SUPPORT.hint2 && rY < PAGE_BOT - 0.35) {
+    slide.addText("Remember:", {
+      x: lblX, y: rY, w: LL_W, h: 0.20,
+      fontSize: 9, fontFace: FONT_C, bold: true, color: "156082", margin: 0
+    });
+    rY += 0.22;
+    slide.addText(ADAPTED_SUPPORT.hint2, {
+      x: lblX, y: rY, w: LL_W, h: PAGE_BOT - rY - 0.05,
+      fontSize: 9, fontFace: FONT_C, color: BLACK,
+      fill: { color: "FFFFFF" }, line: { color: "156082", width: 0.75 },
+      margin: 5, valign: "top"
+    });
+  }
+}
+
+// Adapted calculation strips — 10-strip single-column layout for short calculations.
+function _buildLP1CalcAdapted(slide, labelPath, questions) {
+  const PAGE_TOP = MARGIN;
+  const PAGE_BOT = SLIDE_H - MARGIN;
   const lblX     = SLIDE_W - LL_W - MARGIN;
   const contentW = lblX - GUTTER - MARGIN;
 
@@ -2166,22 +2282,18 @@ function buildLP1ArithmeticAdapted(slide, labelPath) {
     hdrY += 0.20;
   }
 
-  const questions = ADAPTED_SUPPORT.lp1Questions || LP1_DATA.questions.slice(0, 2);
-  const nQ        = questions.length;
-  const nCols     = 1;    // adapted: single column, fewer questions
-  const nRows     = nQ;
-  const usable    = PAGE_BOT - hdrY;
-  const TARGET    = 10;
-  const slotH     = usable / TARGET;
-  const Q_ROW_H   = slotH / (nRows + 0.6);
-  const fontSize  = Math.min(14, Math.max(10, Math.floor(Q_ROW_H * 58)));
+  const nQ      = questions.length;
+  const usable  = PAGE_BOT - hdrY;
+  const TARGET  = 10;
+  const slotH   = usable / TARGET;
+  const Q_ROW_H = slotH / (nQ + 0.6);
+  const fontSize = Math.min(14, Math.max(10, Math.floor(Q_ROW_H * 58)));
 
   for (let rep = 0; rep < TARGET; rep++) {
     const stripTop = hdrY + rep * slotH;
     if (rep > 0) _cutStrip(slide, MARGIN, stripTop - 0.04, contentW);
-
     questions.forEach((q, i) => {
-      const qy = stripTop + i * Q_ROW_H + (slotH - nRows * Q_ROW_H) / 2;
+      const qy = stripTop + i * Q_ROW_H + (slotH - nQ * Q_ROW_H) / 2;
       slide.addText(_calcText(i + 1, q.q), {
         x: MARGIN, y: qy, w: contentW - 0.05, h: Q_ROW_H,
         fontSize, fontFace: FONT_M, bold: true, color: "1F4E79",
@@ -2190,7 +2302,6 @@ function buildLP1ArithmeticAdapted(slide, labelPath) {
     });
   }
 
-  // Right column
   slide.addImage({ path: labelPath, x: lblX, y: PAGE_TOP, w: LL_W, h: LL_H });
   let rY = PAGE_TOP + LL_H + 0.12;
   if (ADAPTED_SUPPORT.hint1) {
