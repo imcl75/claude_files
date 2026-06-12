@@ -30,26 +30,12 @@ from pptx.util import Inches, Emu
 from pptx.oxml.ns import qn
 from lxml import etree
 
-# Teaching slide → (lp_slide_index 0-based, crop_half or None for full page)
-# Traditional 3-slide LP (half-page format):
-#   Slide 0: Standard (top=LP1, bottom=LP2)
-#   Slide 1: Adapted
-#   Slide 2: Marking Station (top=MS1, bottom=MS2)
-# Arithmetic 6-slide LP (full-page format):
-#   Slide 0: LP1 pupil    Slide 1: LP2 pupil
-#   Slide 2: LP1 adapted  Slide 3: LP2 adapted
-#   Slide 4: LP1 marking  Slide 5: LP2 marking
-SLIDE_MAP_TRADITIONAL = {
+# Teaching slide → (lp_slide_index 0-based, crop_half)
+SLIDE_MAP = {
     'Learning Paper 1':   (0, 'top'),
     'Marking Station 1':  (2, 'top'),
     'Learning Paper 2':   (0, 'bottom'),
     'Marking Station 2':  (2, 'bottom'),
-}
-SLIDE_MAP_ARITHMETIC = {
-    'Learning Paper 1':   (0, None),
-    'Marking Station 1':  (4, None),
-    'Learning Paper 2':   (1, None),
-    'Marking Station 2':  (5, None),
 }
 
 # Image placement on teaching slide (inches)
@@ -61,12 +47,11 @@ IMG_BOT   = 7.30
 
 def get_slide_title(slide):
     """Return plain text of the title shape, or ''."""
-    all_titles = set(SLIDE_MAP_TRADITIONAL) | set(SLIDE_MAP_ARITHMETIC)
     for shape in slide.shapes:
         if shape.has_text_frame:
             tf = shape.text_frame
             text = tf.text.strip()
-            if text in all_titles:
+            if text in SLIDE_MAP:
                 return text
     return ''
 
@@ -117,12 +102,11 @@ def crop_half(img_path, half):
 
 def clear_slide_content(slide):
     """Remove all shapes except the title from a slide."""
-    all_titles = set(SLIDE_MAP_TRADITIONAL) | set(SLIDE_MAP_ARITHMETIC)
     to_remove = []
     for shape in slide.shapes:
         if shape.has_text_frame:
             text = shape.text_frame.text.strip()
-            if text in all_titles:
+            if text in SLIDE_MAP:
                 continue  # keep the title
         to_remove.append(shape)
     sp_tree = slide.shapes._spTree
@@ -174,34 +158,19 @@ def inject(teaching_pptx, lp_pptx):
         if len(lp_images) < 3:
             raise RuntimeError(f"Expected at least 3 LP slide images, got {len(lp_images)}")
 
-        # Detect LP format by slide count
-        n_lp_slides = len(lp_images)
-        if n_lp_slides >= 6:
-            slide_map = SLIDE_MAP_ARITHMETIC
-            print(f"  Using arithmetic LP map ({n_lp_slides} slides)")
-        else:
-            slide_map = SLIDE_MAP_TRADITIONAL
-            print(f"  Using traditional LP map ({n_lp_slides} slides)")
-
         injected = 0
         for slide in prs.slides:
             title = get_slide_title(slide)
-            if title not in slide_map:
+            if title not in SLIDE_MAP:
                 continue
 
-            lp_idx, half = slide_map[title]
-            if half is None:
-                # Full-page arithmetic LP slide — no crop
-                img = Image.open(lp_images[lp_idx])
-                loc = 'full page'
-            else:
-                img = crop_half(lp_images[lp_idx], half)
-                loc = f'{half} half'
+            lp_idx, half = SLIDE_MAP[title]
+            img = crop_half(lp_images[lp_idx], half)
 
             clear_slide_content(slide)
             add_image_to_slide(slide, img, slide_w, slide_h)
             injected += 1
-            print(f"  Injected '{title}' ← slide {lp_idx+1} {loc}")
+            print(f"  Injected '{title}' ← slide {lp_idx+1} {half} half")
 
     prs.save(teaching_pptx)
     print(f"\nInjected {injected} LP previews.")

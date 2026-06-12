@@ -43,12 +43,8 @@ REL_SLD = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/s
 REL_LAY = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout'
 REL_IMG = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image'
 
-from wfa_fonts import WFA
-from xccw_render import xccw_p_xml
-
-# FONT: now use WFA.CURSIVE sentinel — xccw_p_xml() generates split runs.
-# The old Twinkl Cursive Looped typeface has been replaced by XCCW Joined.
-FONT = WFA.CURSIVE
+FONT = ('<a:latin typeface="Twinkl Cursive Looped" '
+        'panose="02000000000000000000" pitchFamily="2" charset="77"/>')
 
 # Slide layout numbers in the base PPTX
 LAYOUT = {
@@ -135,17 +131,11 @@ def text_box(uid, name, x, y, w, h, lines, sz=2000, bold=False,
         c = f'<a:solidFill><a:srgbClr val="{color}"/></a:solidFill>' if color else ''
         f_xml = FONT if font else ''
         if ln == '':
-            if WFA.is_xccw(FONT):
-                paras += xccw_p_xml('', sz, bold, color or '000000', align)
-            else:
-                paras += f'<a:p><a:pPr algn="{align}"/><a:endParaRPr lang="en-GB">{f_xml}</a:endParaRPr></a:p>'
+            paras += f'<a:p><a:pPr algn="{align}"/><a:endParaRPr lang="en-GB">{f_xml}</a:endParaRPr></a:p>'
         else:
-            if font and WFA.is_xccw(FONT):
-                paras += xccw_p_xml(ln, sz, bold, color or '000000', align)
-            else:
-                paras += (f'<a:p><a:pPr algn="{align}"/><a:r>'
-                          f'<a:rPr {rpr}>{c}{f_xml}</a:rPr>'
-                          f'<a:t>{_esc(ln)}</a:t></a:r></a:p>')
+            paras += (f'<a:p><a:pPr algn="{align}"/><a:r>'
+                      f'<a:rPr {rpr}>{c}{f_xml}</a:rPr>'
+                      f'<a:t>{_esc(ln)}</a:t></a:r></a:p>')
     return (f'<p:sp><p:nvSpPr><p:cNvPr id="{uid}" name="{name}"/>'
             f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
             f'<p:spPr><a:xfrm><a:off x="{x}" y="{y}"/><a:ext cx="{w}" cy="{h}"/></a:xfrm>'
@@ -259,8 +249,10 @@ def build_warmup(spec):
                    f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
                    f'<a:solidFill><a:srgbClr val="{hc}"/></a:solidFill><a:ln/></p:spPr>'
                    f'<p:txBody><a:bodyPr anchor="ctr"/><a:lstStyle/>'
-                   + xccw_p_xml(label, 2400, bold=True, color_hex='FFFFFF', align='ctr')
-                   + '</p:txBody></p:sp>')
+                   f'<a:p><a:pPr algn="ctr"/><a:r>'
+                   f'<a:rPr lang="en-GB" sz="2400" b="1" dirty="0">'
+                   f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>{FONT}</a:rPr>'
+                   f'<a:t>{_esc(label)}</a:t></a:r></a:p></p:txBody></p:sp>')
         uid += 1
 
         # Body card
@@ -270,7 +262,8 @@ def build_warmup(spec):
             if ln == '':
                 body_paras += '<a:p><a:endParaRPr lang="en-GB" dirty="0"/></a:p>'
             else:
-                body_paras += xccw_p_xml(ln, 2200, color_hex='000000', align='l')
+                body_paras += (f'<a:p><a:r><a:rPr lang="en-GB" sz="2200" dirty="0">{FONT}</a:rPr>'
+                               f'<a:t>{_esc(ln)}</a:t></a:r></a:p>')
         shapes += (f'<p:sp><p:nvSpPr><p:cNvPr id="{uid}" name="Body{uid}"/>'
                    f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
                    f'<p:spPr><a:xfrm><a:off x="{cx}" y="{by}"/>'
