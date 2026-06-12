@@ -1,5 +1,15 @@
 [
   {
+    "lesson": 5,
+    "week": "T6W2",
+    "day": "Monday",
+    "date": "12/06/2026",
+    "topic": "Multiplication and Division",
+    "lf": "LF: To multiply a 4-digit number by a 1-digit number using short multiplication.",
+    "ican1": "I can multiply a 4-digit number by a 1-digit number using short multiplication.",
+    "ican2": "I can regroup correctly and estimate to check my answer is reasonable."
+  },
+  {
     "lesson": 9,
     "week": "T6W3",
     "day": "Monday",
