@@ -170,8 +170,8 @@ module.exports = LESSON_DATA_JS;
 
 module.exports[9] = {
   iCan: [
-    'I can identify which operation a problem needs and explain why.',
-    'I can find the signal word or key structure that tells me the operation.',
+    'I can identify which operation a problem needs.',
+    'I can use signal words to find the operation.',
   ],
   lp1: {
     title: 'Identify the Operation',
@@ -236,7 +236,7 @@ module.exports[9] = {
 
 module.exports[10] = {
   iCan: [
-    'I can follow the two-step routine: identify the operation, then calculate.',
+    'I can follow the two-step routine.',
     'I can solve word problems using all four operations.',
   ],
   lp1: {
@@ -302,8 +302,8 @@ module.exports[10] = {
 
 module.exports[11] = {
   iCan: [
-    'I can use a bar model to plan a two-step problem before calculating.',
-    'I can identify the operation for each step and work through them in the right order.',
+    'I can use a bar model to plan a two-step problem.',
+    'I can work through steps in the correct order.',
   ],
   lp1: {
     title: 'Two-Step Problems',
@@ -364,7 +364,7 @@ module.exports[11] = {
 
 module.exports[12] = {
   iCan: [
-    'I can solve money and measurement problems by identifying the correct operation.',
+    'I can solve money and measurement problems.',
     'I can include the correct unit in every answer.',
   ],
   lp1: {

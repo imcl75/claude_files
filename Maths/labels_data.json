@@ -6,8 +6,8 @@
     "date": "12/06/2026",
     "topic": "Calculation",
     "lf": "LF: To identify which operation a word problem needs and explain why.",
-    "ican1": "I can identify which operation a problem needs and explain why.",
-    "ican2": "I can find the signal word or key structure that tells me the operation."
+    "ican1": "I can identify which operation a problem needs.",
+    "ican2": "I can use signal words to find the operation."
   },
   {
     "lesson": 10,
@@ -16,7 +16,7 @@
     "date": "12/06/2026",
     "topic": "Multiplicative Reasoning",
     "lf": "LF: To solve word problems by identifying the operation first, then calculating.",
-    "ican1": "I can follow the two-step routine: identify the operation, then calculate.",
+    "ican1": "I can follow the two-step routine.",
     "ican2": "I can solve word problems using all four operations."
   },
   {
@@ -26,8 +26,8 @@
     "date": "12/06/2026",
     "topic": "Calculation",
     "lf": "LF: To plan and solve two-step problems using a bar model.",
-    "ican1": "I can use a bar model to plan a two-step problem before calculating.",
-    "ican2": "I can identify the operation for each step and work through them in the right order."
+    "ican1": "I can use a bar model to plan a two-step problem.",
+    "ican2": "I can work through steps in the correct order."
   },
   {
     "lesson": 12,
@@ -36,7 +36,7 @@
     "date": "12/06/2026",
     "topic": "Measurement",
     "lf": "LF: To solve problems in money and measurement contexts by choosing the right operation.",
-    "ican1": "I can solve money and measurement problems by identifying the correct operation.",
+    "ican1": "I can solve money and measurement problems.",
     "ican2": "I can include the correct unit in every answer."
   }
 ]
