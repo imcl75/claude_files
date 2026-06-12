@@ -171,7 +171,7 @@ module.exports = LESSON_DATA_JS;
 module.exports[9] = {
   iCan: [
     'I can identify which operation a problem needs.',
-    'I can use signal words to find the operation.',
+    'I can find clues in a word problem to choose the right calculation.',
   ],
   lp1: {
     title: 'Identify the Operation',

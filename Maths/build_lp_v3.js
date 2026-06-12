@@ -79,80 +79,92 @@ const ADAPTED_SUPPORT = ld.adaptedSupport;
 const outFile = `/home/claude/${LESSON.week}_L${LESSON_NUM}_${LESSON.day.slice(0,3)}_LP.pptx`;
 
 
-// ─── Maths label PNG ─────────────────────────────────────────────────────────
+// ─── Maths label PNG — matches WFA school label format ───────────────────────
 async function renderMathsLabel() {
-  const DPI = 300;
-  const wCm = 9.7 * 0.72 * 0.85;
-  const hCm = 4.24 * 0.72 * 0.85;
-  const cW  = Math.round(wCm * DPI / 2.54);
-  const cH  = Math.round(hCm * DPI / 2.54);
-  const cv  = createCanvas(cW, cH);
-  const ctx = cv.getContext("2d");
+  const { registerFont } = require("canvas");
+  try {
+    registerFont("/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+                 { family: "LiberationSans" });
+    registerFont("/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+                 { family: "LiberationSans", weight: "bold" });
+  } catch(e) { /* already registered */ }
 
-  // Word-wrap helper: splits text into lines that fit within maxW pixels
-  function wrapText(text, maxW) {
-    const words = text.split(' ');
+  const DPI  = 300;
+  const wCm  = 9.7 * 0.72 * 0.85;   // = 5.94 cm  (matches LL_W in slide inches)
+  const hCm  = 4.24 * 0.72 * 0.85;  // = 2.60 cm  (matches LL_H)
+  const cW   = Math.round(wCm * DPI / 2.54);   // ~701 px
+  const cH   = Math.round(hCm * DPI / 2.54);   // ~307 px
+  const cv   = createCanvas(cW, cH);
+  const ctx  = cv.getContext("2d");
+  const pt   = sz => Math.round(sz * 0.62 * DPI / 72);  // scale to LP box (62% of Avery sticker)
+  const LH   = sz => Math.round(sz * 0.62 * DPI / 72 * 1.25); // line height
+  const FONT = "LiberationSans";
+  const PAD  = Math.round(cW * 0.025);           // ~18 px left/right margin
+
+  // White background + thin border
+  ctx.fillStyle = "#FFFFFF";
+  ctx.fillRect(0, 0, cW, cH);
+  ctx.strokeStyle = "#CCCCCC";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(0.5, 0.5, cW - 1, cH - 1);
+
+  // ── Icon (top right — no "mathematician" text, too small at LP scale) ────
+  const ICON_W = Math.round(cW * 0.115);
+  const ICON_H = Math.round(ICON_W * 103 / 120);
+  const ICON_X = cW - PAD - ICON_W;
+  try {
+    const icon = await loadImage(path.join(ASSETS, "mathematician_icon.png"));
+    ctx.drawImage(icon, ICON_X, PAD, ICON_W, ICON_H);
+  } catch(e) { /* icon not available */ }
+
+  const textW_narrow = ICON_X - PAD - Math.round(cW * 0.01);
+  const textW_full   = cW - 2 * PAD;
+
+  // Word-wrap helper
+  function wrap(text, maxW) {
+    const words = text.split(" ");
     const lines = [];
-    let line = '';
-    for (const word of words) {
-      const test = line ? line + ' ' + word : word;
-      if (ctx.measureText(test).width > maxW && line) {
-        lines.push(line);
-        line = word;
-      } else {
-        line = test;
-      }
+    let line = "";
+    for (const w of words) {
+      const test = line ? line + " " + w : w;
+      if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; }
+      else line = test;
     }
     if (line) lines.push(line);
     return lines;
   }
 
-  ctx.fillStyle = "#FFFFFF";
-  ctx.fillRect(0, 0, cW, cH);
+  ctx.textAlign = "left";
+  let y = PAD + pt(10);
 
-  const icon  = await loadImage(path.join(ASSETS, "mathematician.png"));
-  const iconW = cW * 0.11;
-  const iconH = iconW * (icon.height / icon.width);
-  ctx.drawImage(icon, cW * 0.02, cH * 0.04, iconW, iconH);
+  // Date
+  ctx.font = `${pt(10)}px ${FONT}`; ctx.fillStyle = "#333333";
+  ctx.fillText(TODAY, PAD, y); y += LH(10) + 1;
 
-  ctx.font = `${Math.round(cH * 0.09)}px sans-serif`;
-  ctx.fillStyle = "#000000"; ctx.textAlign = "right";
-  ctx.fillText(TODAY, cW * 0.97, cH * 0.14);
+  // Topic bold underlined (narrow column, beside icon)
+  ctx.font = `bold ${pt(13)}px ${FONT}`; ctx.fillStyle = "#000000";
+  const topicLines = wrap(LABEL_TOPIC, textW_narrow);
+  topicLines.forEach((line, i) => {
+    const ly = y + i * LH(13);
+    ctx.fillText(line, PAD, ly);
+    if (i === 0) {
+      const tw = ctx.measureText(line).width;
+      ctx.beginPath(); ctx.moveTo(PAD, ly + 1); ctx.lineTo(PAD + tw, ly + 1);
+      ctx.strokeStyle = "#000000"; ctx.lineWidth = 1.2; ctx.stroke();
+    }
+  });
+  y += topicLines.length * LH(13) + 3;
 
-  const maxTextW = cW * 0.94;   // leave 3% margin each side
-  const textX    = cW * 0.03;
+  // LF (full width — below icon level)
+  ctx.font = `${pt(11)}px ${FONT}`; ctx.fillStyle = "#333333";
+  wrap(LABEL_LF, textW_full).forEach(line => { ctx.fillText(line, PAD, y); y += LH(11); });
+  y += 2;
 
-  const topicY  = iconH + cH * 0.18;
-  const topicSz = Math.round(cH * 0.088);
-  ctx.font = `bold ${topicSz}px sans-serif`;
-  ctx.textAlign = "left"; ctx.fillStyle = "#000000";
-  // Topic may also be long — wrap it too
-  const topicLines = wrapText(LABEL_TOPIC, maxTextW);
-  topicLines.forEach((line, i) => ctx.fillText(line, textX, topicY + i * topicSz * 1.2));
-  const tw = ctx.measureText(topicLines[0]).width;  // underline first line only
-  ctx.beginPath();
-  ctx.moveTo(textX, topicY + 2);
-  ctx.lineTo(textX + tw, topicY + 2);
-  ctx.lineWidth = 1.5; ctx.stroke();
-
-  const topicBlockH = topicLines.length * topicSz * 1.2;
-
-  const sm = Math.round(cH * 0.083);
-  ctx.font = `${sm}px sans-serif`;
-  const lg = sm * 1.55;   // line height based on font size, not canvas height
-  let textY = topicY + topicBlockH + lg * 0.4;
-
-  // LF line — wrap if needed
-  const lfLines = wrapText(LABEL_LF, maxTextW);
-  lfLines.forEach(line => { ctx.fillText(line, textX, textY); textY += lg; });
-
-  // I can 1 — wrap if needed
-  const ic1Lines = wrapText(LABEL_ICAN[0], maxTextW);
-  ic1Lines.forEach(line => { ctx.fillText(line, textX, textY); textY += lg; });
-
-  // I can 2 — wrap if needed
-  const ic2Lines = wrapText(LABEL_ICAN[1], maxTextW);
-  ic2Lines.forEach(line => { ctx.fillText(line, textX, textY); textY += lg; });
+  // I can lines
+  ctx.font = `${pt(11)}px ${FONT}`;
+  for (const ic of LABEL_ICAN) {
+    wrap(ic, textW_full).forEach(line => { ctx.fillText(line, PAD, y); y += LH(11); });
+  }
 
   const out = `/home/claude/maths_label_L${LESSON_NUM}.png`;
   fs.writeFileSync(out, cv.toBuffer("image/png"));
