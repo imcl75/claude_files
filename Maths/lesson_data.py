@@ -1,580 +1,595 @@
 """
-lesson_data.py — Hand-authored per-lesson visual and assessment data.
+lesson_data.py — T6W2 Multiplication and Division (L5–L8)
 
-This file contains content that cannot be machine-derived from the JSON plan:
-  - VISUALS: exact grid point coordinates for each teaching slide
-  - WM: working memory sequences and Q&A
-  - RM: rapid maths questions
-  - vocab: word/definition pairs
+WM CYCLING RULE (must follow exactly):
+  Monday    (day 1) → numbers    e.g. [7, 13, 4, 28, 11, 5, 19]
+  Tuesday   (day 2) → words      e.g. ['robin', 'castle', 'proud', ...]
+  Wednesday (day 3) → emojis     e.g. ['🐝','🌵','🎺','🦊','⚡','🍕','🏔️']
+  Thursday  (day 4) → text+image (sentences with embedded emojis)
 
-WM CYCLING RULE — must follow every week without exception:
-  Monday    (day 1) → numbers   (e.g. [7, 13, 4, 28, 11, 5, 19])
-  Tuesday   (day 2) → words     (e.g. ['robin', 'castle', 'proud', ...])
-  Wednesday (day 3) → emojis    (e.g. ['🐝', '🌵', '🎺', '🦊', '⚡', '🍕', '🏔️'])
-  Thursday  (day 4) → text+image (handled by separate text+image slide builder — TBD)
-  Check day position: Monday=1, Tuesday=2, Wednesday=3, Thursday=4
+WM Q&A: questions must be MEMORY RECALL about the sequence shown,
+not standalone maths questions.
 """
 
-# ---------------------------------------------------------------------------
-# COLOUR CONSTANTS (shared)
-# ---------------------------------------------------------------------------
 BLUE   = '1F4E79'
 RED    = 'C00000'
 PURPLE = '7030A0'
 GREEN  = '375623'
 TEAL   = '156082'
+ORANGE = 'E07000'
 
-# ---------------------------------------------------------------------------
-# LESSON 1 — T5W1 Monday — Directions on a Grid
-# ---------------------------------------------------------------------------
 LESSON_DATA = {
 
-1: {
+# ---------------------------------------------------------------------------
+# LESSON 5 — T6W2 Monday — Short multiplication (4-digit × 1-digit)
+# ---------------------------------------------------------------------------
+5: {
     'visuals': {
         'c1_ido1': {
-            'title': 'Giving directions on a grid',
-            'cols': 6, 'rows': 6,
-            'points': [(1,1,'A',BLUE), (4,3,'B',RED)],
-            'caption': 'How do we get from A to B?',
-            'notes': "I DO C1 — Narrate: 'From A, I move 3 right, then 2 up, and I arrive at B.'"
+            'title': 'Short multiplication — build up',
+            'slide_type': 'column_calc',
+            'calc_type': 'multiplication',
+            'top': '236',
+            'bottom': '4',
+            'regroups': '',
+            'show_answer': False,
+            'answer': '',
+            'caption': '236 × 4\n\nOnes first.\nThen tens.\nThen hundreds.\n\nThe regrouped digit goes ABOVE the next column.',
+            'notes': 'I DO C1 — Build from 3-digit. Narrate every step. Demonstrate on the squared paper.',
         },
         'c1_ido2': {
-            'title': 'Does the order of moves matter?',
-            'cols': 6, 'rows': 6,
-            'points': [(1,4,'A',BLUE), (4,2,'B',RED)],
-            'caption': 'Try: 3 right then 2 down. Now try: 2 down then 3 right. Where do you end up?',
-            'notes': "I DO C1 — Key question: does the order of moves change the destination?"
-        },
-        'c1_wedo': {
-            'title': 'Your turn — write the directions',
-            'cols': 6, 'rows': 6,
-            'points': [(1,2,'A',BLUE), (5,5,'B',RED)],
-            'sentence_stem': 'From A, move ___ right/left and ___ up/down to reach B.',
-            'notes': "WE DO C1 — Pupils tell the teacher what moves to make. Compare correct answers."
+            'title': '4-digit × 1-digit — step by step',
+            'slide_type': 'column_calc',
+            'calc_type': 'multiplication',
+            'top': '2,364',
+            'bottom': '3',
+            'regroups': '',
+            'show_answer': False,
+            'answer': '',
+            'caption': '2,364 × 3\n\nSame method, one more column.\n\nOnes → tens → hundreds → thousands.',
+            'notes': 'I DO C1 — Extend to 4-digit. Pause on hundreds column: 3×3+1=10, write 0, regroup 1.',
         },
         'c2_ido1': {
-            'title': 'Multi-step journeys — three positions',
-            'cols': 7, 'rows': 7,
-            'points': [(1,1,'A',BLUE), (3,2,'B',PURPLE), (5,5,'C',RED)],
-            'caption': 'Journey: A → B → C. Write directions for each leg separately.',
-            'notes': "I DO C2 — Model leg 1 (A→B): 2 right, 1 up. Leg 2 (B→C): 2 right, 3 up."
+            'title': 'Multiple regroups — 3,476 × 8',
+            'slide_type': 'column_calc',
+            'calc_type': 'multiplication',
+            'top': '3,476',
+            'bottom': '8',
+            'regroups': '',
+            'show_answer': False,
+            'answer': '',
+            'caption': '3,476 × 8\n\nEstimate first:\n3,500 × 8 = 28,000\n\nEvery column will have a regroup.\nWork slowly.',
+            'notes': 'I DO C2 — Multiple regroups every column. Always look for the regroup BEFORE multiplying.',
         },
     },
     'wm': {
-        'items': [7, 13, 4, 28, 11, 5, 19],
+        'items': [17, 8, 34, 6, 25, 12, 41],
         'qa': [
-            {'q': 'What was the 1st number?',        'a': '7'},
-            {'q': 'What was the 3rd number?',         'a': '4'},
-            {'q': 'Sum of the first two numbers?',    'a': '20  (7 + 13)'},
-            {'q': 'How many odd numbers were there?', 'a': '4  (7, 13, 11, 19)'},
-            {'q': 'What was the largest number?',     'a': '28'},
+            {'q': 'What was the 3rd number?',                      'a': '34'},
+            {'q': 'What was the last number?',                     'a': '41'},
+            {'q': 'Which number was the largest?',                 'a': '41'},
+            {'q': 'What were the first two numbers?',              'a': '17 and 8'},
+            {'q': 'What was the 5th number?',                      'a': '25'},
         ]
     },
     'rm': {
         'day': 1,
         'questions': [
-            {'num':1,'topic':'Place Value',              'q':'What is the value of the digit 4 in 34,512?','a':'4,000'},
-            {'num':2,'topic':'Fractions and Decimals',   'q':'What is 1/2 as a decimal?',                  'a':'0.5'},
-            {'num':3,'topic':'Multiplication / Division','q':'What is 7 × 8?',                             'a':'56'},
-            {'num':4,'topic':'Geometry',                 'q':'How many sides does a hexagon have?',         'a':'6'},
-            {'num':5,'topic':'Measurement',              'q':'How many centimetres are in 2 metres?',       'a':'200 cm'},
+            {'num':1,'topic':'Place Value','q':'Write 40,507 in words.','a':'Forty thousand, five hundred and seven'},
+            {'num':2,'topic':'Fractions','q':'What is 3/4 as a decimal?','a':'0.75'},
+            {'num':3,'topic':'Multiplication','q':'What is 7 × 8?','a':'56'},
+            {'num':4,'topic':'Geometry','q':'How many degrees in a right angle?','a':'90°'},
+            {'num':5,'topic':'Measurement','q':'How many cm in 1.5 m?','a':'150 cm'},
         ]
     },
     'vocab': [
-        ('grid',      'A pattern of lines making rows and columns of squares.'),
-        ('direction', 'The way you move on a grid — left, right, up or down.'),
-        ('steps',     'The number of squares you move in one direction.'),
-        ('route',     'The path you take from one place to another.'),
-        ('position',  'The exact place where something sits on a grid.'),
+        ('short multiplication', 'A formal written method for multiplying a number by a 1-digit number, working column by column from ones to the highest place value.'),
+        ('product',   'The answer when two numbers are multiplied together.'),
+        ('regroup',     'A digit written small above the next column when a column total reaches 10 or more.'),
+        ('factor',    'A number that divides exactly into another. 3 and 4 are both factors of 12.'),
+        ('estimate',  'A rounded approximation used to check a calculated answer is reasonable.'),
     ],
 },
 
 # ---------------------------------------------------------------------------
-# LESSON 2 — T5W1 Tuesday — Translating shapes on a grid
+# LESSON 6 — T6W2 Tuesday — Short division (4-digit ÷ 1-digit)
 # ---------------------------------------------------------------------------
-2: {
+6: {
     'visuals': {
         'c1_ido1': {
-            'title': 'Moving a point, then a shape',
-            'cols': 7, 'rows': 7,
-            'points': [(2,2,'A','1F4E79')],
-            'caption': 'Move A: 4 right, 2 up. Where does it land?',
-            # Single point shown first — no polygon, no translation yet
-            # Pedagogy: establish the principle with a dot before scaling to a shape
-            'notes': "I DO C1 — Model moving a single point, then extend to a square (track each corner)."
+            'title': 'Short division — the bus stop layout',
+            'slide_type': 'column_calc',
+            'calc_type': 'division',
+            'top': '8,484',
+            'bottom': '4',
+            'regroups': '',
+            'show_answer': False,
+            'answer': '',
+            'caption': '8,484 ÷ 4\n\nWork LEFT to RIGHT.\nQuotient goes ABOVE.\n\nCheck: 4 × answer = 8,484.',
+            'notes': 'I DO C1 — Stress direction (left to right). Quotient above the bracket. Model checking with multiplication.',
         },
         'c1_ido2': {
-            'title': 'What stays the same?',
-            'cols': 7, 'rows': 7,
-            'points': [(1,1,'A','1F4E79'),(3,1,'B','1F4E79'),(3,3,'C','1F4E79'),(1,3,'D','1F4E79')],
-            'polygon': ['A','B','C','D'],
-            'translation': [3, 2],           # 3 right, 2 up
-            'shape_a_label': 'Shape A',
-            'shape_b_label': 'Shape B',
-            'caption': 'Move the square 3 right, 2 up. Has its size or shape changed?',
-            'notes': "I DO C1 — Shape A static on load. Click: Shape B appears with translation arrow. Ask: has anything changed about the shape? Size? Orientation?"
-        },
-        'c1_wedo': {
-            'title': 'Your turn — track the vertices',
-            'cols': 7, 'rows': 7,
-            'points': [(1,1,'A','1F4E79'),(4,1,'B','1F4E79'),(2,3,'C','1F4E79')],
-            'polygon': ['A','B','C'],
-            # No translation — pupils predict the destination, We Do
-            'sentence_stem': 'Move each vertex ___ right and ___ up. Draw the new triangle.',
-            'notes': "WE DO C1 — Show triangle, pupils track all three vertices using the same direction on mini-whiteboards."
+            'title': 'Short division — with a remainder',
+            'slide_type': 'column_calc',
+            'calc_type': 'division',
+            'top': '7,543',
+            'bottom': '3',
+            'regroups': '',
+            'show_answer': False,
+            'answer': '',
+            'caption': '7,543 ÷ 3\n\nRegroup the remainder into the next digit.\n\nFinal remainder written as r N.',
+            'notes': 'I DO C1 — Show how remainders are regrouped. Final remainder written as "r N".',
         },
         'c2_ido1': {
-            'title': 'Moving polygons with more vertices',
-            'cols': 7, 'rows': 7,
-            'points': [(1,1,'A','1F4E79'),(3,1,'B','1F4E79'),(4,3,'C','1F4E79'),(2,4,'D','1F4E79'),(0,3,'E','1F4E79')],
-            'polygon': ['A','B','C','D','E'],
-            'translation': [2, 3],           # 2 right, 3 up
-            'shape_a_label': 'Shape A',
-            'shape_b_label': 'Shape B',
-            'caption': 'Move the pentagon 2 right, 3 up. Track every vertex.',
-            'notes': "I DO C2 — Pentagon. Click reveals Shape B. Stress: every vertex moves the same distance. What stays the same? Size, shape, orientation — all identical."
+            'title': 'What does the remainder mean?',
+            'slide_type': 'column_calc',
+            'calc_type': 'division',
+            'top': '9,157',
+            'bottom': '6',
+            'regroups': '',
+            'show_answer': False,
+            'answer': '',
+            'caption': '9,157 ÷ 6\n\nIn context:\n9,157 sweets shared between 6 bags.\n\nThe remainder = sweets left over — cannot be shared equally.',
+            'notes': 'I DO C2 — Interpret the remainder in context. Ask: does the remainder mean we round up or down?',
         },
     },
     'wm': {
-        'items': ['robin', 'castle', 'proud', 'February', 'enormous', 'gravity', 'swift'],
+        'items': ['castle', 'multiply', 'penguin', 'divide', 'trophy', 'whisper', 'balance'],
         'qa': [
-            {'q': 'What was the 1st word?',                        'a': 'robin'},
-            {'q': 'What was the 4th word?',                        'a': 'February'},
-            {'q': 'Which word means very large?',                  'a': 'enormous'},
-            {'q': 'How many words had more than 6 letters?',       'a': '3  (February, enormous, gravity)'},
-            {'q': 'What was the last word?',                       'a': 'swift'},
+            {'q': 'What was the 2nd word?',                        'a': 'multiply'},
+            {'q': 'What was the last word?',                       'a': 'balance'},
+            {'q': 'Which two words are maths operations?',         'a': 'multiply and divide'},
+            {'q': 'What was the 4th word?',                        'a': 'divide'},
+            {'q': 'How many words were there altogether?',         'a': '7'},
         ]
     },
     'rm': {
         'day': 2,
         'questions': [
-            {'num':1,'topic':'Place Value',              'q':'What is 10 more than 4,756?',                 'a':'4,766'},
-            {'num':2,'topic':'Fractions and Decimals',   'q':'What is 3/4 as a decimal?',                   'a':'0.75'},
-            {'num':3,'topic':'Multiplication / Division','q':'What is 63 ÷ 9?',                             'a':'7'},
-            {'num':4,'topic':'Geometry',                 'q':'What is the sum of angles in a triangle?',    'a':'180°'},
-            {'num':5,'topic':'Measurement',              'q':'How many grams are in 1.5 kg?',               'a':'1,500 g'},
+            {'num':1,'topic':'Place Value','q':'Round 37,846 to the nearest thousand.','a':'38,000'},
+            {'num':2,'topic':'Fractions','q':'What is 0.6 as a fraction?','a':'3/5'},
+            {'num':3,'topic':'Division','q':'What is 63 ÷ 9?','a':'7'},
+            {'num':4,'topic':'Geometry','q':'How many lines of symmetry does a square have?','a':'4'},
+            {'num':5,'topic':'Measurement','q':'How many ml in 2.5 litres?','a':'2,500 ml'},
         ]
     },
     'vocab': [
-        ('translation', 'Moving a shape without rotating or flipping it.'),
-        ('vertex',      'A corner point of a shape (plural: vertices).'),
-        ('congruent',   'Shapes that are identical in size and shape.'),
-        ('polygon',     'A flat shape with straight sides.'),
-        ('orientation', 'The direction a shape is facing.'),
+        ('short division', 'A formal written method for dividing a number by a 1-digit number using the bus stop layout, working left to right.'),
+        ('dividend',  'The number being divided. In 24 ÷ 6, the dividend is 24.'),
+        ('divisor',   'The number you are dividing by. In 24 ÷ 6, the divisor is 6.'),
+        ('quotient',  'The result of a division. In 24 ÷ 6 = 4, the quotient is 4.'),
+        ('remainder', 'The amount left over when a number does not divide exactly. 25 ÷ 4 = 6 remainder 1.'),
     ],
 },
 
-
 # ---------------------------------------------------------------------------
-# LESSON 3 — T5W1 Wednesday — Describing translations
+# LESSON 7 — T6W2 Wednesday — Multistep multiplication problems
 # ---------------------------------------------------------------------------
-3: {
+7: {
     'visuals': {
         'c1_ido1': {
-            'title': 'What is a translation?',
-            'cols': 7, 'rows': 7,
-            'points': [(1,1,'A','1F4E79'),(3,1,'B','1F4E79'),(2,3,'C','1F4E79')],
-            'polygon': ['A','B','C'],
-            'translation': [4, 2],   # 4 right, 2 up
-            'shape_a_label': 'Original',
-            'shape_b_label': 'Image',
-            'caption': 'The shape slides without rotating or flipping.\nThis is called a translation.',
-            'notes': "I DO C1 — Triangle in lower-left. Click: translated image appears 4 right 2 up. Introduce the word 'translation'. Stress: no rotation, no reflection — pure slide."
+            'title': 'Choose your method — multiplication',
+            'slide_type': 'column_calc',
+            'calc_type': 'multiplication',
+            'top': '1,234',
+            'bottom': '6',
+            'regroups': '',
+            'show_answer': False,
+            'answer': '',
+            'caption': '1,234 × 6\n\nEstimate: 1,200 × 6 = 7,200\n\nA box holds 1,234 crayons.\nHow many in 6 boxes?',
+            'notes': 'I DO C1 — Model full process: underline key words, estimate, calculate, check vs estimate.',
         },
         'c1_ido2': {
-            'title': 'Describing single-direction translations',
-            'cols': 7, 'rows': 7,
-            'points': [(1,2,'A','1F4E79'),(4,2,'B','1F4E79'),(1,4,'C','1F4E79')],
-            'polygon': ['A','B','C'],
-            'translation': [0, 3],   # 3 up only — single direction
-            'shape_a_label': 'Original',
-            'shape_b_label': 'Image',
-            'caption': 'Count how far one vertex has moved.\nThe same move applies to all vertices.',
-            'notes': "I DO C1 — Single direction (vertical only). Track vertex A: was at row 2, now at row 5 — moved 3 up. Sentence stem: 'Translated 3 up.'"
-        },
-        'c1_wedo': {
-            'title': 'Your turn — describe the move',
-            'cols': 7, 'rows': 7,
-            'points': [(2,1,'A','1F4E79'),(5,1,'B','1F4E79'),(6,3,'C','1F4E79'),(2,3,'D','1F4E79'),
-                       (2,4,'E','C00000'),(5,4,'F','C00000'),(6,6,'G','C00000'),(2,6,'H','C00000')],
-            'polygon': ['A','B','C','D'],
-            # Image polygon drawn separately using red points — no animation needed
-            # Red points show the image in its translated position (3 up)
-            'sentence_stem': 'The shape has been translated ___ right/left and ___ up/down.',
-            'notes': "WE DO C1 — Show original (blue) and image (red) rectangle. Pupils write description on whiteboards: 3 up. Share."
+            'title': 'Two-step multiplication — find the hidden step',
+            'slide_type': 'column_calc',
+            'calc_type': 'multiplication',
+            'top': '1,256',
+            'bottom': '3',
+            'regroups': '',
+            'show_answer': False,
+            'answer': '',
+            'caption': 'Step 1: 1,256 × 3 = blue pens\nStep 2: 1,256 + answer = total\n\n1,256 red pens.\nBlue pens: 3 times as many.\nHow many altogether?',
+            'notes': 'I DO C1 I2 — Two-step. Slide shows Step 1. Narrate Step 2 verbally and on the squared paper.',
         },
         'c2_ido1': {
-            'title': 'Translations in two directions',
-            'cols': 7, 'rows': 7,
-            'points': [(1,1,'A','1F4E79'),(3,1,'B','1F4E79'),(2,3,'C','1F4E79')],
-            'polygon': ['A','B','C'],
-            'translation': [3, 2],   # 3 right, 2 up — two directions
-            'shape_a_label': 'Original',
-            'shape_b_label': 'Image',
-            'caption': 'Track any one vertex from original to image.\nCount right/left first, then up/down.',
-            'notes': "I DO C2 — Two-directional translation. Track vertex A: col 1→4 (3 right), row 1→3 (2 up). Sentence: 'Translated 3 right and 2 up.' Key Q: does it matter which vertex you track? Try C."
+            'title': 'Two-step — plan before you calculate',
+            'slide_type': 'column_calc',
+            'calc_type': 'multiplication',
+            'top': '2,135',
+            'bottom': '4',
+            'regroups': '',
+            'show_answer': False,
+            'answer': '',
+            'caption': 'Stadium: 2,135 seats per tier.\n4 tiers.\nStep 1: 2,135 × 4 = total seats\nStep 2: total − 975 = occupied\n\nWhat is the second operation?',
+            'notes': 'I DO C2 — Model planning both steps (× then −). Ask pupils to predict the second operation.',
         },
     },
     'wm': {
-        # Wednesday = emojis
-        'items': ['🐠', '🎸', '🌋', '🐧', '🎃', '🦋', '🚂'],
+        'items': ['🚀', '🌊', '🎯', '🦁', '🍎', '🔑', '⭐'],
         'qa': [
-            {'q': 'What was the 1st emoji?',                 'a': '🐠 (fish)'},
-            {'q': 'What was the 3rd emoji?',                 'a': '🌋 (volcano)'},
-            {'q': 'Which emoji was an insect?',              'a': '🦋 (butterfly)'},
-            {'q': 'How many emojis were living things?',     'a': '3  (🐠 🐧 🦋)'},
-            {'q': 'What was the last emoji?',                'a': '🚂 (train)'},
+            {'q': 'What was the 3rd emoji?',                        'a': '🎯'},
+            {'q': 'What was the first emoji?',                      'a': '🚀'},
+            {'q': 'Which emoji came after the lion?',               'a': '🍎'},
+            {'q': 'What was the 6th emoji?',                        'a': '🔑'},
+            {'q': 'How many emojis were there altogether?',         'a': '7'},
         ]
     },
     'rm': {
         'day': 3,
         'questions': [
-            {'num':1,'topic':'Place Value',              'q':'What is 1,000 more than 23,450?',              'a':'24,450'},
-            {'num':2,'topic':'Fractions and Decimals',   'q':'What is 1/4 as a decimal?',                    'a':'0.25'},
-            {'num':3,'topic':'Multiplication / Division','q':'What is 9 × 4?',                               'a':'36'},
-            {'num':4,'topic':'Geometry',                 'q':'What is the name for a shape with 8 sides?',   'a':'Octagon'},
-            {'num':5,'topic':'Measurement',              'q':'How many millimetres are in 3 cm?',             'a':'30 mm'},
+            {'num':1,'topic':'Place Value','q':'What is the value of 7 in 47,362?','a':'7,000'},
+            {'num':2,'topic':'Fractions','q':'Order from smallest: 0.5, 3/4, 0.25','a':'0.25, 0.5, 3/4'},
+            {'num':3,'topic':'Multiplication','q':'What is 8 × 12?','a':'96'},
+            {'num':4,'topic':'Geometry','q':'Area of a rectangle 6 cm × 9 cm?','a':'54 cm²'},
+            {'num':5,'topic':'Measurement','q':'How many minutes in 2.5 hours?','a':'150 minutes'},
         ]
     },
     'vocab': [
-        ('translation', 'A sliding movement where a shape moves without rotating or flipping.'),
-        ('image',       'The new position of a shape after it has been translated.'),
-        ('original',    'The starting position of a shape before it is translated.'),
-        ('horizontal',  'Going left or right — along the x-direction.'),
-        ('vertical',    'Going up or down — along the y-direction.'),
+        ('multiply',         'To find the total of equal groups. 4 × 6 = 24.'),
+        ('multiple',         'A number in a times table. 24 is a multiple of both 6 and 4.'),
+        ('efficient',        'Using the quickest or most straightforward method to get the right answer.'),
+        ('approximate',      'A value close to the exact answer, often found by rounding first.'),
+        ('two-step problem', 'A problem that needs two separate calculations to reach the final answer.'),
     ],
 },
 
 # ---------------------------------------------------------------------------
-# LESSON 4 — T5W1 Thursday — Drawing translations
+# LESSON 8 — T6W2 Thursday — Multistep × and ÷ problems
 # ---------------------------------------------------------------------------
-4: {
+8: {
     'visuals': {
         'c1_ido1': {
-            'title': 'Drawing a translation — vertex by vertex',
-            'cols': 7, 'rows': 7,
-            'points': [(1,1,'A','1F4E79'),(3,1,'B','1F4E79'),(3,3,'C','1F4E79'),(1,3,'D','1F4E79')],
-            'polygon': ['A','B','C','D'],
-            'translation': [3, 2],   # 3 right, 2 up
-            'shape_a_label': 'Original',
-            'shape_b_label': 'Image',
-            'caption': "Translate square ABCD: 3 right, 2 up.\nMove each vertex individually — never move the whole shape by eye.",
-            'notes': "I DO C1 — Square. Move vertex A first: col 1+3=4, row 1+2=3. Repeat for B, C, D. Click reveals image. Join vertices and label A', B', C', D'."
+            'title': 'Mixed × and ÷ — divide first',
+            'slide_type': 'column_calc',
+            'calc_type': 'division',
+            'top': '5,640',
+            'bottom': '8',
+            'regroups': '',
+            'show_answer': False,
+            'answer': '',
+            'caption': '5,640 apples → boxes of 8.\nStep 1: 5,640 ÷ 8 = boxes\nStep 2: boxes − 3 = boxes for sale\n\nWhat do I need to find first?',
+            'notes': 'I DO C1 — Model a ÷ then − two-step. Stress: identify what you find first before calculating.',
         },
         'c1_ido2': {
-            'title': 'Spot the error',
-            'cols': 7, 'rows': 7,
-            # Triangle original: A(1,1) B(3,1) C(2,3)
-            # Correct image (3 right, 2 up): A'(4,3) B'(6,3) C'(5,5)
-            # Error: only A translated, B and C left in place — shown in red
-            'points': [
-                (1,1,"A",'1F4E79'),(3,1,"B",'1F4E79'),(2,3,"C",'1F4E79'),  # original
-                (4,3,"A'",'C00000'),                                          # only A moved — error
-                (3,1,"B",'C00000'),(2,3,"C",'C00000'),                       # B and C unchanged — error
-            ],
-            'polygon': ['A','B','C'],
-            'caption': "Instruction: translate 3 right, 2 up.\nOnly A has moved — what went wrong?\nAll vertices must move the same distance.",
-            'notes': "I DO C1 STM — Error: only vertex A moved. B and C left in place. Result: misshapen triangle. Rule: every vertex moves by the same translation vector."
-        },
-        'c1_wedo': {
-            'title': "Label original and image vertices",
-            'cols': 7, 'rows': 7,
-            # Triangle original: (1,1)(4,1)(2,4) — translation 2 right 1 up
-            'points': [(1,1,'A','1F4E79'),(4,1,'B','1F4E79'),(2,4,'C','1F4E79')],
-            'polygon': ['A','B','C'],
-            'translation': [2, 1],
-            'shape_a_label': 'Original',
-            'shape_b_label': 'Image',
-            'sentence_stem': "Label the original vertices A, B, C.\nLabel the image vertices A', B', C'.",
-            'notes': "WE DO C1 — Class draw the translated triangle together, labelling both sets of vertices. Peer-check by measuring the distance each vertex moved."
+            'title': 'Multiply then subtract',
+            'slide_type': 'column_calc',
+            'calc_type': 'multiplication',
+            'top': '1,425',
+            'bottom': '6',
+            'regroups': '',
+            'show_answer': False,
+            'answer': '',
+            'caption': '1,425 parts/hour × 6 hours\nStep 1: 1,425 × 6 = parts made\nStep 2: answer − 2,340 = remaining\n\nDraw a bar model to plan.',
+            'notes': 'I DO C1 I2 — Draw a bar model on the board first. Pupils sketch bar model in LP.',
         },
         'c2_ido1': {
-            'title': 'Two-directional translations',
-            'cols': 7, 'rows': 7,
-            # Pentagon original: (1,1)(3,1)(4,3)(2,4)(0,3)
-            'points': [(1,1,'A','1F4E79'),(3,1,'B','1F4E79'),(4,3,'C','1F4E79'),(2,4,'D','1F4E79'),(0,3,'E','1F4E79')],
-            'polygon': ['A','B','C','D','E'],
-            'translation': [2, 2],   # 2 right, 2 up
-            'shape_a_label': 'Original',
-            'shape_b_label': 'Image',
-            'caption': 'Translate pentagon: 2 right, 2 up.\nTrack each vertex in turn — right first, then up.',
-            'notes': "I DO C2 — Pentagon with two-directional translation. Stress moving each vertex separately. Click reveals image."
-        },
-        'c2_ido2': {
-            'title': 'Working backwards',
-            'cols': 7, 'rows': 7,
-            # Show image only, original to be found
-            # Image (red) at (4,3)(6,3)(5,5) — translation was 3 right 2 up
-            # So original is at (1,1)(3,1)(2,3)
-            'points': [
-                (4,3,"A'",'C00000'),(6,3,"B'",'C00000'),(5,5,"C'",'C00000'),  # image shown
-                (1,1,"A",'4FAD5B'),(3,1,"B",'4FAD5B'),(2,3,"C",'4FAD5B'),    # original revealed on click
-            ],
-            'polygon': ["A'","B'","C'"],
-            'caption': "Translation was 3 right, 2 up.\nThe image is shown. Find the original.\nReverse: move 3 left and 2 down.",
-            'notes': "I DO C2 — Reverse task: given image (red), find original. Reverse translation: 3 left, 2 down. Click reveals original (green). Key Q: what is the reverse of any translation?"
-        },
-        'c2_wedo': {
-            'title': 'Find the original shape',
-            'cols': 7, 'rows': 7,
-            # Image rectangle (red): corners at (4,4)(6,4)(6,6)(4,6), translation was 3 right 3 up
-            # Original to find: (1,1)(3,1)(3,3)(1,3)
-            'points': [(4,4,"A'",'C00000'),(6,4,"B'",'C00000'),(6,6,"C'",'C00000'),(4,6,"D'",'C00000')],
-            'polygon': ["A'","B'","C'","D'"],
-            'sentence_stem': "The image moved 3 right and 3 up to get here.\nTo find the original, I move ___ left and ___ down.",
-            'notes': "WE DO C2 — Pupils reverse the translation to find and draw the original rectangle on whiteboards."
+            'title': 'Work backwards — how large is each team?',
+            'slide_type': 'column_calc',
+            'calc_type': 'division',
+            'top': '4,250',
+            'bottom': '5',
+            'regroups': '',
+            'show_answer': False,
+            'answer': '',
+            'caption': '85 coaches total.\nEach team gets 5 coaches.\nStep 1: 85 ÷ 5 = number of teams\nStep 2: 4,250 ÷ teams = team size\n\nCheck: teams × size = 4,250?',
+            'notes': 'I DO C2 — Work backwards problem. Find teams first, then size. Model on squared paper.',
         },
     },
     'wm': {
-        # Thursday = text + image (picture_scene type)
         'items': [
-            {'text': 'planet',    'image': 'https://em-content.zobj.net/source/google/387/ringed-planet_1fa90.png'},
-            {'text': 'forest',    'image': 'https://em-content.zobj.net/source/google/387/deciduous-tree_1f333.png'},
-            {'text': 'triangle',  'image': 'https://em-content.zobj.net/source/google/387/red-triangle-pointed-up_1f53a.png'},
-            {'text': 'lightning', 'image': 'https://em-content.zobj.net/source/google/387/high-voltage_26a1.png'},
-            {'text': 'castle',    'image': 'https://em-content.zobj.net/source/google/387/european-castle_1f3f0.png'},
-            {'text': 'compass',   'image': 'https://em-content.zobj.net/source/google/387/compass_1f9ed.png'},
-            {'text': 'cactus',    'image': 'https://em-content.zobj.net/source/google/387/cactus_1f335.png'},
+            'The 🚀 travels at great speed.',
+            'She found a 🔑 under the mat.',
+            'He ate an 🍎 after school.',
+            'The 🦁 roared loudly.',
+            'They sailed on the 🌊.',
+            'She aimed at the 🎯.',
+            'One ⭐ shone above the rest.',
         ],
         'qa': [
-            {'q': 'What was the 1st word?',                   'a': 'planet'},
-            {'q': 'What was the 4th word?',                   'a': 'lightning'},
-            {'q': 'Which word is linked to navigation?',      'a': 'compass'},
-            {'q': 'How many words were natural features?',    'a': '3  (forest, lightning, cactus)'},
-            {'q': 'What was the last word?',                  'a': 'cactus'},
+            {'q': 'What did she find under the mat?',               'a': 'A key 🔑'},
+            {'q': 'What did he eat after school?',                   'a': 'An apple 🍎'},
+            {'q': 'What animal roared loudly?',                     'a': 'The lion 🦁'},
+            {'q': 'What was the last sentence about?',              'a': 'A star ⭐'},
+            {'q': 'Which sentence mentioned the sea?',              'a': 'They sailed on the 🌊'},
         ]
     },
     'rm': {
         'day': 4,
         'questions': [
-            {'num':1,'topic':'Place Value',              'q':'What is the value of the digit 7 in 57,083?',    'a':'7,000'},
-            {'num':2,'topic':'Fractions and Decimals',   'q':'What is 3/10 as a decimal?',                     'a':'0.3'},
-            {'num':3,'topic':'Multiplication / Division','q':'What is 48 ÷ 6?',                                'a':'8'},
-            {'num':4,'topic':'Geometry',                 'q':'A shape has 4 equal sides and 4 right angles. What is it?', 'a':'A square'},
-            {'num':5,'topic':'Measurement',              'q':'How many seconds are in 2 minutes?',              'a':'120 seconds'},
+            {'num':1,'topic':'Place Value','q':'What is 10 × 3,456?','a':'34,560'},
+            {'num':2,'topic':'Fractions','q':'What is half of 3/4?','a':'3/8'},
+            {'num':3,'topic':'Division','q':'What is 144 ÷ 12?','a':'12'},
+            {'num':4,'topic':'Geometry','q':'How many right angles in a rectangle?','a':'4'},
+            {'num':5,'topic':'Measurement','q':'A jug holds 2 litres. How many 250 ml cups can it fill?','a':'8 cups'},
         ]
     },
     'vocab': [
-        ('congruent',  'Identical in shape and size — a translated shape is always congruent to the original.'),
-        ('label',      "To mark the vertices of a shape — use A, B, C for the original and A', B', C' for the image."),
-        ('image',      'The new position of a shape after a translation.'),
-        ('original',   'The shape before it is moved.'),
-        ('describe',   'To say how far and in which direction a shape has moved.'),
+        ('divide',     'To split a number into equal groups. 24 ÷ 6 = 4.'),
+        ('quotient',   'The result of a division.'),
+        ('bar model',  'A diagram using rectangles to represent quantities and relationships in a problem.'),
+        ('reasoning',  'Explaining why an answer is correct using evidence from the calculation or context.'),
+        ('justify',    'To provide mathematical argument that proves an answer is correct.'),
     ],
 },
 
-# ---------------------------------------------------------------------------
-# LESSON 11 — T5W3 Wednesday — Completing symmetrical patterns
-# ---------------------------------------------------------------------------
-11: {
-    'visuals': {
-        'c1_ido1': {
-            'slide_type': 'symmetry_grid',
-            'title': 'Completing symmetrical patterns',
-            'cols': 8, 'rows': 8,
-            # Mirror line at column 4 (vertical)
-            'mirror_col': 4,
-            # Shape A: 5 squares on the left side (col < 4)
-            # Squares specified as (col, row) in grid coords, row 0 = bottom
-            'squares_a': [(1,6),(2,5),(2,6),(3,4),(1,4)],
-            # Shape B: reflected across mirror at col 4 (each col c → 8-c)
-            'squares_b': [(7,6),(6,5),(6,6),(5,4),(7,4)],
-            # Pedagogy: animate the reflection — pupils predict, then reveal
-            'animate_b': True,
-            'caption': 'How far is each square from the mirror line?\nCount carefully — then mark the same distance on the other side.',
-            'notes': "I DO C1 — Shape A static on load. Click: Shape B (reflection) appears. Stress: count distance from mirror line, not from edge."
-        },
-        'c1_ido2': {
-            # C1 Spot the error: reflected point placed at wrong distance from mirror
-            # A at col 2 (distance 2 from mirror at col 4). Correct reflection = col 6.
-            # Error: pupil placed reflection at col 7 (distance 3 — one too far).
-            'slide_type':  'symmetry_grid',
-            'title':       'Spot the error — wrong distance',
-            'cols': 8, 'rows': 8,
-            'mirror_col':  4,
-            'squares_a':   [],
-            'squares_b':   [],
-            'animate_b':   False,
-            'points': [
-                (2, 4, 'A',  '1F4E79'),   # original point, 2 squares left of mirror
-                (7, 4, '✗',  'C00000'),   # wrong reflection (3 squares right — too far)
-                (6, 4, "A'", '4FAD5B'),   # correct reflection (2 squares right) — revealed on click
-            ],
-            'animate_labels': ["A'"],
-            'animate_b':  True,
-            'caption':    'A is 2 squares from the mirror.\nWhere should its reflection be?\nIs the red mark correct?',
-            'notes':      "C1 STM — A is 2 from mirror (col 4). Error mark at col 7 (3 squares right). Click reveals correct position at col 6 (2 squares right). Rule: equidistant from the mirror line."
-        },
-        'c1_wedo': {
-            'slide_type': 'symmetry_grid',
-            'title': 'Complete the half-pattern',
-            'cols': 8, 'rows': 8,
-            'mirror_col': 4,
-            'squares_a': [(2,7),(1,6),(3,6),(2,5),(3,4)],
-            'squares_b': [],   # blank — pupils complete
-            'animate_b': False,
-            'sentence_stem': 'For each square, count its distance from the mirror line. Mark the same distance on the other side.',
-            'notes': "WE DO C1 — Pupils complete the reflection on mini-whiteboards. Share and compare."
-        },
-        'c2_ido1': {
-            # Composing symmetrical shapes: two congruent right-angled triangles
-            # Draw them as polygons. First triangle static, second animated into position.
-            'slide_type': 'grid',
-            'title': 'Composing symmetrical shapes from congruent pieces',
-            'cols': 8, 'rows': 8,
-            # Triangle 1 (bottom-left): A(1,1) B(3,1) C(1,3)
-            'points': [(1,1,'A','1F4E79'),(3,1,'B','1F4E79'),(1,3,'C','1F4E79')],
-            'polygon': ['A','B','C'],
-            # Triangle 2 (reflected to make rectangle): joins along hypotenuse
-            # B(3,1) D(3,3) C(1,3) — appears on click
-            'translation': None,
-            # Use polygon_b to define second triangle separately
-            'polygon_b_points': [(3,1,'B','E8642A'),(3,3,'D','E8642A'),(1,3,'C','E8642A')],
-            'polygon_b_edges': [['B','D'],['D','C'],['C','B']],
-            'shape_a_label': 'Triangle 1',
-            'shape_b_label': 'Triangle 2',
-            'caption': 'Join the two triangles along the hypotenuse.\nWhat shape do you make?\nIs the join line a line of symmetry?',
-            'notes': "I DO C2 — Triangle 1 static. Click: Triangle 2 appears joined along hypotenuse making a rectangle. Mark line of symmetry."
-        },
-    },
-    'wm': {
-        # Wednesday = emojis
-        'items': ['🐝', '🌵', '🎺', '🦊', '⚡', '🍕', '🏔️'],
-        'qa': [
-            {'q': 'What was the 1st emoji?',                    'a': '🐝 (bee)'},
-            {'q': 'What was the 4th emoji?',                    'a': '🦊 (fox)'},
-            {'q': 'Which emoji was a musical instrument?',      'a': '🎺 (trumpet)'},
-            {'q': 'How many emojis were living things?',        'a': '3  (🐝 🌵 🦊)'},
-            {'q': 'What was the last emoji?',                   'a': '🏔️ (mountain)'},
-        ]
-    },
-    'rm': {
-        'day': 3,
-        'questions': [
-            {'num':1,'topic':'Place Value',              'q':'What is 100 less than 7,340?',              'a':'7,240'},
-            {'num':2,'topic':'Fractions and Decimals',   'q':'What is 0.25 as a fraction?',               'a':'1/4'},
-            {'num':3,'topic':'Multiplication / Division','q':'What is 8 × 7?',                            'a':'56'},
-            {'num':4,'topic':'Geometry',                 'q':'How many lines of symmetry does a square have?', 'a':'4'},
-            {'num':5,'topic':'Measurement',              'q':'How many mm are in 4.5 cm?',                'a':'45 mm'},
-        ]
-    },
-    'vocab': [
-        ('symmetry',    'When one half of a shape or pattern is a mirror image of the other.'),
-        ('mirror line', 'The line across which a shape or pattern is reflected.'),
-        ('reflect',     'To flip a shape or point across a mirror line.'),
-        ('equidistant', 'The same distance away — a reflected point is equidistant from the mirror line.'),
-        ('congruent',   'Identical in shape and size.'),
-    ],
-},
 
-# ---------------------------------------------------------------------------
-# LESSON 17 — T5W5 Monday — Analogue and digital time
-# ---------------------------------------------------------------------------
-17: {
-    'visuals': {
-        'c1_ido1': {
-            'slide_type': 'clock',
-            'title': 'Reading analogue clocks',
-            # Four clocks showing common times — o'clock, half past, quarter past, quarter to
-            'clocks': [
-                {'hour': 3,  'minute': 0,  'label': '3:00'},
-                {'hour': 7,  'minute': 30, 'label': '7:30'},
-                {'hour': 11, 'minute': 15, 'label': '11:15'},
-                {'hour': 4,  'minute': 45, 'label': '4:45'},
-            ],
-            'caption': 'Read each clock aloud.\nWrite the 12-hour digital time.',
-            'notes': "I DO C1 — Work through each clock. Stress: short hand = hours, long hand = minutes. 4:45 = quarter to 5."
+    9: {
+        'visuals': {
+            'c1_ido1': {
+                'title': 'What does × mean?',
+                'slide_type': 'column_calc',
+                'calc_type': 'multiplication',
+                'top': '6',
+                'bottom': '4',
+                'regroups': '',
+                'show_answer': False,
+                'answer': '',
+                'caption': 'There are 6 bags.\nEach bag holds 4 oranges.\nHow many oranges altogether?\n\nSignal word: "each" → equal groups → ×',
+                'notes': 'I DO C1 — Model each operation in turn: ×, ÷, +, −. Use tiny numbers so the operation is the focus, not the arithmetic.',
+            },
+            'c1_ido2': {
+                'title': 'Finding the signal word',
+                'slide_type': 'column_calc',
+                'calc_type': 'division',
+                'top': '30',
+                'bottom': '5',
+                'regroups': '',
+                'show_answer': False,
+                'answer': '',
+                'caption': '30 stickers shared equally\nbetween 5 friends.\nHow many does each get?\n\nSignal: "shared equally" → ÷\nCircle the signal word before calculating.',
+                'notes': 'I DO C1 I2 — Model circling the signal word on the board. Show that identifying the operation happens BEFORE writing the calculation.',
+            },
+            'c2_ido1': {
+                'title': 'What if there is no signal word?',
+                'slide_type': 'column_calc',
+                'calc_type': 'division',
+                'top': '48',
+                'bottom': '6',
+                'regroups': '',
+                'show_answer': False,
+                'answer': '',
+                'caption': 'I packed 48 eggs into boxes.\nEach box holds 6 eggs.\nHow many boxes did I fill?\n\nNo "share" word — but structure shows\nhow many groups of 6 in 48? → ÷',
+                'notes': 'I DO C2 — Show that structure, not just vocabulary, signals the operation. Ask: what do I know? What am I finding? That reveals the operation.',
+            },
         },
-        'c1_ido2': {
-            'slide_type': 'clock',
-            'title': "am and pm — what's the difference?",
-            # Same time shown twice — morning and afternoon
-            'clocks': [
-                {'hour': 7, 'minute': 45, 'label': '7:45 am'},
-                {'hour': 7, 'minute': 45, 'label': '7:45 pm'},
+        'wm': {
+            'items': [8, 24, 56, 12, 48, 36, 64],
+            'qa': [
+                {'q': 'What was the 3rd number?',        'a': '56'},
+                {'q': 'What was the first number?',      'a': '8'},
+                {'q': 'Which number came after 56?',     'a': '12'},
+                {'q': 'What was the 5th number?',        'a': '48'},
+                {'q': 'How many numbers were there?',    'a': '7'},
             ],
-            'caption': 'Both clocks show the same time.\nWhat is different about them?\nHow do we know which is morning and which is evening?',
-            'notes': "I DO C1 — Key question: same clock reading, different meaning. am = before noon, pm = after noon."
         },
-        'c1_wedo': {
-            'slide_type': 'clock',
-            'title': 'Write the 12-hour digital time',
-            # Three clocks, digital boxes blank for pupils to write
-            'clocks': [
-                {'hour': 9,  'minute': 20, 'label': '', 'show_digital': True},
-                {'hour': 1,  'minute': 50, 'label': '', 'show_digital': True},
-                {'hour': 6,  'minute': 35, 'label': '', 'show_digital': True},
+        'rm': {
+            'day': 1,
+            'questions': [
+                {'num': 1, 'topic': 'Place Value',    'q': 'What is the value of 4 in 84,362?',          'a': '4,000'},
+                {'num': 2, 'topic': 'Fractions',      'q': 'What is 1/4 of 48?',                         'a': '12'},
+                {'num': 3, 'topic': 'Multiplication', 'q': '7 × 9 = ?',                                  'a': '63'},
+                {'num': 4, 'topic': 'Geometry',       'q': 'How many sides does a hexagon have?',        'a': '6'},
+                {'num': 5, 'topic': 'Measurement',    'q': 'How many cm in 1.5 m?',                      'a': '150 cm'},
             ],
-            'sentence_stem': 'The short hand shows ___. The long hand shows ___ minutes. The time is ___.',
-            'notes': "WE DO C1 — Pupils write digital time in the box. Sentence stem supports less confident."
         },
-        'c2_ido1': {
-            'slide_type': 'number_line',
-            'title': 'Converting to 24-hour time',
-            'nl_start': 0, 'nl_end': 24,
-            'nl_ticks': [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24],
-            'nl_markers': [
-                {'val': 0,  'label': '00:00\nmidnight', 'color': '7030A0'},
-                {'val': 12, 'label': '12:00\nmidday',   'color': 'C00000'},
-            ],
-            'examples': [
-                {'val': 9,  'text': '9:15 am\n= 09:15'},
-                {'val': 15, 'text': '3:45 pm\n= 15:45'},
-            ],
-            'caption': 'am times: same digits in 24-hour.\npm times: add 12 to the hours.\nSpecial cases: midday = 12:00, midnight = 00:00.',
-            'notes': "I DO C2 — Number line from 00:00 to 23:59. Midday marked at 12:00. Show am times = same, pm times = +12."
-        },
-        'c2_ido2': {
-            # Special cases: noon and midnight
-            'slide_type': 'clock',
-            'title': 'Special cases — noon and midnight',
-            'clocks': [
-                {'hour': 12, 'minute': 0, 'label': '12:00 noon\n= 12:00'},
-                {'hour': 0,  'minute': 0, 'label': '12:00 midnight\n= 00:00'},
-            ],
-            'caption': 'Noon and midnight are the two special cases.\n12:00 midday stays as 12:00.\n12:00 midnight becomes 00:00.',
-            'notes': "I DO C2 — Special cases only: noon (12:00 stays 12:00) and midnight (12:00 am becomes 00:00). Common error: writing midnight as 12:00."
-        },
-        'c2_wedo': {
-            'slide_type': 'clock',
-            'title': '12 conversion tasks on whiteboards',
-            'clocks': [
-                {'hour': 2,  'minute': 30, 'label': '', 'show_digital': True},
-                {'hour': 8,  'minute': 15, 'label': '', 'show_digital': True},
-                {'hour': 11, 'minute': 50, 'label': '', 'show_digital': True},
-            ],
-            'sentence_stem': 'If the time is pm, I add ___ to the hours. If the time is am, the 24-hour time is ___.',
-            'notes': "WE DO C2 — Pupils convert each clock to 24-hour time on whiteboards."
-        },
+        'vocab': [
+            ['operation',    'A mathematical process: add, subtract, multiply or divide.'],
+            ['signal word',  'A word in a problem that tells you which operation to use.'],
+            ['groups of',    'Equal groups — a signal that multiplication is needed.'],
+            ['share equally','Splitting into equal parts — a signal that division is needed.'],
+            ['altogether',   'All amounts combined — a signal that addition is needed.'],
+        ],
     },
-    'wm': {
-        'items': [8, 3, 15, 6, 22, 11, 4],
-        'qa': [
-            {'q': 'What was the 2nd number?',          'a': '3'},
-            {'q': 'What was the 5th number?',           'a': '22'},
-            {'q': 'Sum of the 1st and last numbers?',   'a': '12  (8 + 4)'},
-            {'q': 'Which numbers were multiples of 3?', 'a': '3, 15, 6'},
-            {'q': 'What was the largest number?',       'a': '22'},
-        ]
-    },
-    'rm': {
-        'day': 1,
-        'questions': [
-            {'num':1,'topic':'Place Value',              'q':'What is 1,000 more than 45,620?',           'a':'46,620'},
-            {'num':2,'topic':'Fractions and Decimals',   'q':'What is 0.75 as a fraction?',               'a':'3/4'},
-            {'num':3,'topic':'Multiplication / Division','q':'What is 9 × 6?',                            'a':'54'},
-            {'num':4,'topic':'Measurement',              'q':'How many minutes in 3 hours?',              'a':'180 minutes'},
-            {'num':5,'topic':'Measurement – Time',       'q':'What is 7:45 pm in 24-hour time?',          'a':'19:45'},
-        ]
-    },
-    'vocab': [
-        ('analogue',    'A clock with hands that move around a numbered face.'),
-        ('digital',     'A clock that shows the time as numbers.'),
-        ('12-hour',     'A clock system using am (midnight to midday) and pm (midday to midnight).'),
-        ('24-hour',     'A clock system using hours 00 to 23, with no am or pm.'),
-        ('am / pm',     'am = before midday; pm = after midday.'),
-    ],
-},
 
+    10: {
+        'visuals': {
+            'c1_ido1': {
+                'title': 'The two-step routine: identify then calculate',
+                'slide_type': 'column_calc',
+                'calc_type': 'multiplication',
+                'top': '32',
+                'bottom': '4',
+                'regroups': '',
+                'show_answer': False,
+                'answer': '',
+                'caption': 'There are 32 marbles in a bag.\nI have 4 bags.\nHow many marbles altogether?\n\nStep 1: "equal groups" → ×\nStep 2: 32 × 4 =',
+                'notes': 'I DO C1 — Use a problem from Monday\'s sorted set. Model the two-step routine explicitly: identify and justify BEFORE writing the calculation.',
+            },
+            'c1_ido2': {
+                'title': 'Division: identify then calculate',
+                'slide_type': 'column_calc',
+                'calc_type': 'division',
+                'top': '96',
+                'bottom': '3',
+                'regroups': '',
+                'show_answer': False,
+                'answer': '',
+                'caption': '96 apples packed equally\ninto 3 crates.\nHow many per crate?\n\nStep 1: "equally" → ÷\nStep 2: 96 ÷ 3 =',
+                'notes': 'I DO C1 I2 — Same routine, different operation. Stress that Step 1 (identify) always comes before Step 2 (calculate).',
+            },
+            'c2_ido1': {
+                'title': 'Same routine: addition and subtraction',
+                'slide_type': 'column_calc',
+                'calc_type': 'addition',
+                'top': '47',
+                'bottom': '35',
+                'regroups': '',
+                'show_answer': False,
+                'answer': '',
+                'caption': 'There are 47 red beads\nand 35 blue beads.\nHow many beads altogether?\n\nStep 1: "altogether" → +\nStep 2: 47 + 35 =',
+                'notes': 'I DO C2 — Show that the same two-step routine works for all four operations. Model + then introduce a − example verbally.',
+            },
+        },
+        'wm': {
+            'items': ['share', 'multiply', 'total', 'groups', 'equal', 'divide', 'steps'],
+            'qa': [
+                {'q': 'What was the 3rd word?',              'a': 'total'},
+                {'q': 'What was the first word?',            'a': 'share'},
+                {'q': 'Which word came after "total"?',      'a': 'groups'},
+                {'q': 'What was the 6th word?',              'a': 'divide'},
+                {'q': 'How many words were there?',          'a': '7'},
+            ],
+        },
+        'rm': {
+            'day': 2,
+            'questions': [
+                {'num': 1, 'topic': 'Place Value',  'q': 'Round 7,841 to the nearest 1,000',         'a': '8,000'},
+                {'num': 2, 'topic': 'Fractions',    'q': 'Which is greater: 2/3 or 3/4?',             'a': '3/4'},
+                {'num': 3, 'topic': 'Division',     'q': '56 ÷ 7 = ?',                               'a': '8'},
+                {'num': 4, 'topic': 'Geometry',     'q': 'Perimeter of a square with sides 8 cm?',   'a': '32 cm'},
+                {'num': 5, 'topic': 'Measurement',  'q': 'How many ml in 3.5 litres?',               'a': '3,500 ml'},
+            ],
+        },
+        'vocab': [
+            ['identify',          'To name or recognise which operation a problem needs.'],
+            ['estimate',          'A sensible approximation before calculating.'],
+            ['regroup',           'To exchange 10 ones for 1 ten (or 10 tens for 1 hundred) during a calculation.'],
+            ['two-step routine',  'Step 1: identify the operation. Step 2: calculate.'],
+            ['short multiplication', 'A compact written method for multiplying by a 1-digit number.'],
+        ],
+    },
+
+    11: {
+        'visuals': {
+            'c1_ido1': {
+                'title': 'Bar model: making steps visible',
+                'slide_type': 'column_calc',
+                'calc_type': 'division',
+                'top': '36',
+                'bottom': '6',
+                'regroups': '',
+                'show_answer': False,
+                'answer': '',
+                'caption': '36 children split into groups of 6.\nEach group plants 4 seeds.\nStep 1: 36 ÷ 6 = groups\nStep 2: groups × 4 = seeds total\n\nDraw the bar model BEFORE calculating.',
+                'notes': 'I DO C1 — Draw bar model on board first: top bar = 36, split into 6 equal sections. Label Step 1. Then show where Step 2 connects. Only calculate once both steps are labelled.',
+            },
+            'c1_ido2': {
+                'title': 'Label before you calculate',
+                'slide_type': 'column_calc',
+                'calc_type': 'multiplication',
+                'top': '5',
+                'bottom': '8',
+                'regroups': '',
+                'show_answer': False,
+                'answer': '',
+                'caption': '5 bags each have 8 counters.\nThen 4 counters are removed\nfrom each bag.\nStep 1: 5 × 8 = total counters\nStep 2: total − 4 = ?',
+                'notes': 'I DO C1 I2 — Model labelling both steps on the bar model before touching the calculation. Ask: "Which step must happen first? Why?"',
+            },
+            'c2_ido1': {
+                'title': 'Two routes — which is more efficient?',
+                'slide_type': 'column_calc',
+                'calc_type': 'multiplication',
+                'top': '5',
+                'bottom': '8',
+                'regroups': '',
+                'show_answer': False,
+                'answer': '',
+                'caption': '5 children each have 8 counters.\nThey share all counters among 4 tables.\nRoute A: (5 × 8) ÷ 4\nRoute B: 5 × (8 ÷ 4)\n\nBoth give 10. Which is simpler?',
+                'notes': 'I DO C2 — Work through both routes. Show that for this problem, Route B (8÷4=2 first, then ×5=10) is simpler. Establish: some problems have fixed order, some are flexible.',
+            },
+        },
+        'wm': {
+            'items': ['🌟', '🎯', '🦋', '🍕', '🎪', '🦁', '🌈'],
+            'qa': [
+                {'q': 'What was the 3rd emoji?',               'a': '🦋'},
+                {'q': 'What was the first emoji?',             'a': '🌟'},
+                {'q': 'Which emoji came after the butterfly?', 'a': '🍕'},
+                {'q': 'What was the 5th emoji?',               'a': '🎪'},
+                {'q': 'How many emojis were there?',           'a': '7'},
+            ],
+        },
+        'rm': {
+            'day': 3,
+            'questions': [
+                {'num': 1, 'topic': 'Place Value',    'q': 'Write 30,500 in words',                   'a': 'thirty thousand five hundred'},
+                {'num': 2, 'topic': 'Fractions',      'q': 'What is 3/5 of 40?',                      'a': '24'},
+                {'num': 3, 'topic': 'Multiplication', 'q': '11 × 12 = ?',                             'a': '132'},
+                {'num': 4, 'topic': 'Geometry',       'q': 'What type of angle is 120°?',             'a': 'obtuse'},
+                {'num': 5, 'topic': 'Measurement',    'q': 'How many grams in 2.25 kg?',              'a': '2,250 g'},
+            ],
+        },
+        'vocab': [
+            ['two-step',  'A problem that needs two separate calculations to find the answer.'],
+            ['bar model', 'A diagram using rectangles to show what a problem is asking.'],
+            ['plan',      'To decide the steps needed before you start calculating.'],
+            ['justify',   'To explain why your answer is correct using evidence.'],
+            ['efficient', 'Finding the answer using the fewest and simplest steps.'],
+        ],
+    },
+
+    12: {
+        'visuals': {
+            'c1_ido1': {
+                'title': 'Money: identify then calculate',
+                'slide_type': 'column_calc',
+                'calc_type': 'multiplication',
+                'top': '35',
+                'bottom': '4',
+                'regroups': '',
+                'show_answer': False,
+                'answer': '',
+                'caption': 'Each pen costs 35p.\nI buy 4 pens.\nHow much do I spend?\n\nStep 1: "each" → ×\nStep 2: 35 × 4 = ___ p',
+                'notes': 'I DO C1 — Model money problem with tiny amounts. Emphasise: same two-step routine, same process. Remind: units go in the answer.',
+            },
+            'c1_ido2': {
+                'title': 'Two-step money problem',
+                'slide_type': 'column_calc',
+                'calc_type': 'multiplication',
+                'top': '25',
+                'bottom': '6',
+                'regroups': '',
+                'show_answer': False,
+                'answer': '',
+                'caption': '6 stickers cost 25p each.\nI pay with £2 (= 200p).\nStep 1: 25 × 6 = total cost\nStep 2: 200 − total = change\n\nBar model before calculating.',
+                'notes': 'I DO C1 I2 — Two-step money. Draw bar model. Show unit conversion (£2 → 200p) as a key step before calculating.',
+            },
+            'c2_ido1': {
+                'title': 'Measurement: same routine',
+                'slide_type': 'column_calc',
+                'calc_type': 'division',
+                'top': '240',
+                'bottom': '6',
+                'regroups': '',
+                'show_answer': False,
+                'answer': '',
+                'caption': '240 g of rice shared equally\ninto 6 portions.\nHow many grams each?\n\nStep 1: "shared equally" → ÷\nStep 2: 240 ÷ 6 = ___ g',
+                'notes': 'I DO C2 — Same identify-then-calculate routine, measurement context. Emphasise: the operation does not change because the context is different. Unit must be included in the answer.',
+            },
+        },
+        'wm': {
+            'items': [
+                'The 🌟 shone in the dark sky.',
+                'She found a 🎯 in the garden.',
+                'He counted 🦋 on the bush.',
+                'They shared the 🍕 at the party.',
+                'The 🎪 opened on a hot day.',
+                'A 🦁 walked across the path.',
+                'The 🌈 appeared after the rain.',
+            ],
+            'qa': [
+                {'q': 'What shone in the dark sky?',               'a': 'A star 🌟'},
+                {'q': 'What did she find in the garden?',          'a': 'A target 🎯'},
+                {'q': 'What did they share at the party?',         'a': 'A pizza 🍕'},
+                {'q': 'What appeared after the rain?',             'a': 'A rainbow 🌈'},
+                {'q': 'What sentence mentioned the big top?',      'a': 'The 🎪 opened on a hot day.'},
+            ],
+        },
+        'rm': {
+            'day': 4,
+            'questions': [
+                {'num': 1, 'topic': 'Place Value',  'q': 'What is 100 × 349?',                              'a': '34,900'},
+                {'num': 2, 'topic': 'Fractions',    'q': 'Order from largest: 1/2, 3/8, 5/6',              'a': '5/6, 1/2, 3/8'},
+                {'num': 3, 'topic': 'Division',     'q': '108 ÷ 9 = ?',                                    'a': '12'},
+                {'num': 4, 'topic': 'Geometry',     'q': 'Area of a rectangle 7 cm × 8 cm?',               'a': '56 cm²'},
+                {'num': 5, 'topic': 'Measurement',  'q': 'How many minutes in 3/4 of an hour?',            'a': '45 minutes'},
+            ],
+        },
+        'vocab': [
+            ['pence',   'The smaller unit of British money. 100 pence = £1.'],
+            ['change',  'The money you get back when you pay more than something costs.'],
+            ['total',   'The complete amount after adding everything together.'],
+            ['mass',    'How heavy something is, measured in grams or kilograms.'],
+            ['unit',    'The standard measurement for an answer: cm, g, p, etc.'],
+        ],
+    },
 }  # end LESSON_DATA
-
