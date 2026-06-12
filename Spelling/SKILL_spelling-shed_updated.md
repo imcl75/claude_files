@@ -2,7 +2,7 @@
 name: spelling-shed
 description: >
   Generates a complete Spelling Shed lesson for Innes McLean's Year 4 class at WFA. Produces
-  two PPTX files per lesson: (1) a 22-slide animated teaching deck built with pptxgenjs and a
+  two PPTX files per lesson: (1) a 23-slide animated teaching deck built with pptxgenjs and a
   Python animation post-processor, and (2) a 2-slide LP (Learning Paper) built with lp_builder.py.
   Use this skill whenever Innes asks to prepare, plan, create or build a spelling lesson, spelling
   slides, or a Spelling Shed lesson for any spelling rule or pattern. Also trigger when he mentions
@@ -13,7 +13,7 @@ description: >
 # Spelling Shed Lesson Generator
 
 Produces two files for every lesson:
-- **`spelling_shed_slides_<CODE>_<Day>.pptx`** — 22-slide animated teaching deck (21 + key spelling slide)
+- **`spelling_shed_slides_<CODE>_<Day>.pptx`** — 23-slide animated teaching deck (21 base + 1 key spelling + 1 section slide)
 - **`spelling_lp_<CODE>_<Day>.pptx`** — 2-slide LP (Learning Paper), half-A4 cut-and-fold format
 
 **File naming rule (non-negotiable):** always include the day name — e.g. `spelling_shed_slides_CN_Mon.pptx`, `spelling_lp_CN_Mon.pptx`.
@@ -51,7 +51,7 @@ Read `references/lesson-data-schema.md` for the full specification and worked ex
 - -cian words → `CN`
 - Sorting -tion/-sion/-ssion/-cian → `C2`
 - Mixed contrast all four → `C3`
-- Y→ILY → `ILY`, Doubling → `DC`, etc.
+- Y→ILY → `ILY`, Doubling → `DC`, -ous → `OU`, -ious/-eous → `IO`, -ge+ous → `GE`, etc.
 
 **Definitions** — `"When he, she or it [verb]; also, [noun use]."`
 
@@ -66,6 +66,38 @@ Read `references/lesson-data-schema.md` for the full specification and worked ex
 **Spell Check variants** — 2 plausible misspellings per word. Randomise the correct-column position across rows.
 
 **Cloze order** — `clozeOrder` is the order in which SENTENCES appear. It must be shuffled so no word sits in the same position as its entry in `words`. Verify this before writing the JSON.
+
+#### Critical JSON field rules (non-negotiable — causes broken slides if wrong)
+
+**`starter.perPairNote`** — ALWAYS set to `""` (empty string). The same note appears on every word pair on the starter answers slide, making it repeat 6 times. Put any teaching note in `ruleBox` instead.
+
+**`starter.words` / `starter.answers`** — pass key spelling word to `inject_key_spelling.py` in **lowercase** (e.g. `"favourite"` not `"FAVOURITE"`). The inject script uses literal string replacement.
+
+**`wordSort.verbNoun`** — MUST be an array of `{word: string, eg: string}` objects, NOT plain strings. The template accesses `.word` and `.eg` on each item; plain strings produce "undefined" on the answers slide.
+
+```json
+"verbNoun": [
+  {"word": "vigorous",  "eg": "vigour → vigorous"},
+  {"word": "jealous",   "eg": "French: jalous"},
+  {"word": "enormous",  "eg": "Latin: enormis"}
+]
+```
+
+**`wordSort.verbOnly`** — plain string array (unchanged):
+```json
+"verbOnly": ["dangerous", "mountainous", "thunderous"]
+```
+
+**`wordMaps.syllables`** — use pipe `|` as the syllable break character, NOT hyphen `-`:
+```json
+"syllables": {
+  "poisonous":  "poi|son|ous",
+  "dangerous":  "dan|ger|ous",
+  "enormous":   "e|nor|mous"
+}
+```
+
+**`etymology.baseForm`** — keep to **≤12 characters**. This field is rendered at 26pt in a 2.5" box. Longer strings overflow visibly. Use just the root components: `"ē- + norma"`, `"cura"`, `"corage + -ous"`.
 
 #### LP fields (required for lp_builder.py)
 
@@ -104,63 +136,49 @@ Assign `"vn_dm_sc"` to Mon and Wed; `"sc_dm"` to Tue — unless the lesson conte
 
 Write `/home/claude/lesson.json` — generated fresh for this lesson. Do not reuse any values from previous lessons.
 
-**Restore templates from skill folder:**
+**Restore all scripts from GitHub** (all four are tracked in `imcl75/claude_files/Spelling/`):
 
-```bash
-python3 << 'EXTRACT'
-import zipfile, os, shutil
+```python
+import re, os, urllib.request, urllib.parse
 
-skill_locations = [
-    '/mnt/user-data/uploads/skill-spelling-shed.skill',
-    '/mnt/skills/user/spelling-shed/skill-spelling-shed.skill',
+with open('/mnt/skills/user/github-sync/SKILL.md') as f:
+    skill_text = f.read()
+TOKEN    = re.search(r'GITHUB_TOKEN:\s*(\S+)', skill_text).group(1)
+RAW_BASE = 'https://raw.githubusercontent.com/imcl75/claude_files/main/Spelling'
+
+files = [
+    'slides-template.js',
+    'lp_builder.py',
+    'animation-injector.py',   # → add_animation.py
+    'inject_key_spelling.py',
+    'post_process_spelling.py',
+    'you_do_image.png',
 ]
-skill_path = next((p for p in skill_locations if os.path.exists(p)), None)
+dest_names = {
+    'slides-template.js':    'spelling_shed_slides_template.js',
+    'animation-injector.py': 'add_animation.py',
+}
 
-if skill_path:
-    with zipfile.ZipFile(skill_path) as z:
-        ref = 'skill-spelling-shed/references/'
-        files = {
-            'slides-template.js':    'spelling_shed_slides_template.js',
-            'animation-injector.py': 'add_animation.py',
-            'inject_key_spelling.py':'inject_key_spelling.py',
-        }
-        for src_name, dest_name in files.items():
-            data = z.read(ref + src_name)
-            open(f'/home/claude/{dest_name}', 'wb').write(data)
-            print(f"Extracted: {dest_name}")
-        for asset in ['key_spelling_template.pptx', '1_min_timer.mp4']:
-            open(f'/home/claude/{asset}', 'wb').write(z.read(ref + asset))
-            print(f"Extracted: {asset}")
-else:
-    ref = '/mnt/skills/user/spelling-shed/references/'
-    for src, dst in {
-        'slides-template.js':    'spelling_shed_slides_template.js',
-        'animation-injector.py': 'add_animation.py',
-        'inject_key_spelling.py':'inject_key_spelling.py',
-        'key_spelling_template.pptx':'key_spelling_template.pptx',
-        '1_min_timer.mp4':       '1_min_timer.mp4',
-    }.items():
-        shutil.copy(ref + src, f'/home/claude/{dst}')
-        print(f"Copied: {dst}")
-EXTRACT
+for fname in files:
+    dest = dest_names.get(fname, fname)
+    url  = f'{RAW_BASE}/{urllib.parse.quote(fname)}'
+    req  = urllib.request.Request(url, headers={'Authorization': f'token {TOKEN}'})
+    with urllib.request.urlopen(req, timeout=15) as r:
+        open(f'/home/claude/{dest}', 'wb').write(r.read())
+    print(f'Fetched {fname} → /home/claude/{dest}')
 ```
 
-**Restore lp_builder.py from GitHub** (it is not in the skill zip — fetch from `imcl75/claude_files`):
-
-```bash
-# Read github-sync SKILL.md to get the token, then:
-curl -s -H "Authorization: token $GITHUB_TOKEN" \
-  "https://api.github.com/repos/imcl75/claude_files/contents/Spelling/lp_builder.py" \
-| python3 -c "import sys,json,base64; d=json.load(sys.stdin); open('/home/claude/lp_builder.py','wb').write(base64.b64decode(d['content']))"
-echo "lp_builder.py restored"
+Also copy the key spelling template:
+```python
+import shutil
+shutil.copy('/mnt/skills/user/spelling-shed/references/key_spelling_template.pptx',
+            '/home/claude/key_spelling_template.pptx')
 ```
-
-If the GitHub fetch fails, recreate lp_builder.py from scratch using the spec in **Appendix: LP Builder Spec** below.
 
 Install dependencies if needed:
 ```bash
 npm list -g pptxgenjs || npm install -g pptxgenjs
-pip install python-pptx --break-system-packages -q
+pip install python-pptx lxml --break-system-packages -q
 ```
 
 ---
@@ -172,14 +190,18 @@ cd /home/claude
 
 # Teaching deck
 node spelling_shed_slides_template.js           # → spelling_shed_slides_<CODE>.pptx (21 slides)
-python3 inject_key_spelling.py "WORD"           # → prepends key spelling slide → 22 slides
+python3 inject_key_spelling.py "word"           # → prepends key spelling slide → 22 slides
+                                                #   IMPORTANT: pass word in lowercase, e.g. "favourite"
 python3 add_animation.py                        # → animates slides 4–7, strips phantom CT entries
+
+# Post-build additions (slide 10 animation + Independent Learning section slide)
+python3 post_process_spelling.py <CODE>         # → animates slide 10, inserts section slide → 23 slides
 
 # LP
 python3 lp_builder.py lesson.json              # → spelling_lp_<CODE>_<Day>.pptx (2 slides)
 ```
 
-Skip `inject_key_spelling.py` only if no key spelling word was given.
+Skip `inject_key_spelling.py` only if no key spelling word was given. `post_process_spelling.py` should always run.
 
 ---
 
@@ -191,7 +213,7 @@ from pptx import Presentation
 CODE = 'XX'   # replace
 DAY  = 'Mon'  # replace
 for f, exp in [
-    (f'spelling_shed_slides_{CODE}.pptx', 22),
+    (f'spelling_shed_slides_{CODE}.pptx', 23),
     (f'spelling_lp_{CODE}_{DAY}.pptx', 2),
 ]:
     p = Presentation(f)
@@ -220,16 +242,6 @@ The cloze activity has two independent columns:
 
 **Never use `clozeOrder` for both columns.** If you do, every word sits next to the sentence it belongs to, making the activity trivial.
 
-In `draw_cloze_half()`:
-```python
-label_words = lesson["words"]       # original order — for left column labels
-sent_words  = lesson["clozeOrder"]  # shuffled order — for right column sentences
-for i in range(len(label_words)):
-    label    = label_words[i]
-    sent_key = sent_words[i]
-    ...
-```
-
 `clozeOrder` must be shuffled so no word sits in the same position as its entry in `words`. Verify before committing to JSON.
 
 ### File naming (non-negotiable)
@@ -248,17 +260,33 @@ Keep `lpDefinitions` entries short — max ~70 characters. At 9.5pt in a 1.056cm
 
 ---
 
+## Template fixes (applied June 2026 — already in slides-template.js on GitHub)
+
+The following fixes are baked into the current `slides-template.js`. **Do not revert them** when fetching from GitHub.
+
+| Slide | Problem fixed | Fix applied |
+|-------|--------------|-------------|
+| Today's Words | Long words (e.g. "mountainous") wrapped onto next cell | Per-cell grid with `cellW * 0.82` fit + `shrinkText: true` |
+| Syllable Count | Same wrapping issue | Per-cell grid with `cellW * 0.82` fit + `shrinkText: true` |
+| Word Sort blank | Joined word string overflowed 9" width | Per-cell grid — same approach as Today's Words |
+
+If for any reason the template is regenerated from scratch, these must be re-applied to the relevant slides.
+
+---
+
 ## Reference Files
 
 | File | Purpose | When to read |
 |------|---------|--------------|
 | `references/lesson-data-schema.md` | Full JSON schema + worked example | Step 2 — always |
 | `references/phoneme-rules.md` | Sound button rules | Step 2 — before phonemes |
-| `references/slides-template.js` | Teaching deck JS (reads `lesson.json`) | Step 3 — copy only |
-| `references/animation-injector.py` | Post-processor for animations | Step 3 — copy only |
-| `references/inject_key_spelling.py` | Prepends Key Spelling slide | Step 4 — if key word given |
-| `references/key_spelling_template.pptx` | Template with embedded timer | Step 4 — read by inject script |
-| `lp_builder.py` | LP PPTX generator (fetch from GitHub, not in skill zip) | Step 3 — fetch or recreate |
+| `slides-template.js` → `spelling_shed_slides_template.js` | Teaching deck JS (reads `lesson.json`) | Fetch from GitHub at session start |
+| `animation-injector.py` → `add_animation.py` | Animates slides 4–7 | Fetch from GitHub at session start |
+| `inject_key_spelling.py` | Prepends Key Spelling slide | Fetch from GitHub at session start |
+| `post_process_spelling.py` | Slide 10 animation + section slide | Fetch from GitHub at session start |
+| `lp_builder.py` | LP PPTX generator | Fetch from GitHub at session start |
+| `you_do_image.png` | Image for section slide | Fetch from GitHub at session start |
+| `references/key_spelling_template.pptx` | Template with embedded timer | Copy from skill references |
 
 ---
 
@@ -266,8 +294,60 @@ Keep `lpDefinitions` entries short — max ~70 characters. At 9.5pt in a 1.056cm
 
 | File | Slides | Notes |
 |------|--------|-------|
-| `spelling_shed_slides_<CODE>_<Day>.pptx` | 22 | Animated teaching deck. 22 slides = 21 base + 1 key spelling slide. |
+| `spelling_shed_slides_<CODE>_<Day>.pptx` | 23 | 21 base + 1 key spelling + 1 Independent Learning section slide |
 | `spelling_lp_<CODE>_<Day>.pptx` | 2 | LP: Slide 1 = Side A (cloze), Slide 2 = Side B. Each slide = two identical half-A4 panels (cut line at 14.85cm). |
+
+---
+
+## Post-build additions (handled by post_process_spelling.py)
+
+`post_process_spelling.py` runs after `add_animation.py` and applies two additions to the teaching deck:
+
+### 1. Syllable & Phoneme Map — 2-click animation (slide 10)
+
+Slide 10 shows the word headings, "Syllable Breaks" and "Sound Buttons" labels on load, with everything else hidden. Two click-advance groups reveal content:
+
+- **Click 1** — all three words' syllable-break boxes and syllable counts appear simultaneously
+- **Click 2** — all three words' phoneme-map shapes (letter tables, dots, lines) and legends appear simultaneously
+
+**Implementation approach (Y-position classification):**
+
+Shapes on slide 10 are classified by their Y coordinate in EMU:
+- Y < 1,100,000 — frame shapes: skip
+- "Syllable Breaks" / "Sound Buttons" label text and word heading text — always visible
+- 2,200,000 ≤ Y ≤ 2,900,000 — syllable content (boxes + text + counts): **click 1**
+- Y ≥ 3,150,000 — phoneme content (tables + dots + lines + legend): **click 2**
+
+pptxgenjs creates duplicate IDs between `<p:sp>` shapes and `<p:graphicFrame>` (table) elements. **Renumber graphicFrame IDs to unique values** before building the timing XML, otherwise PowerPoint cannot target them.
+
+The `<p:bldLst>` block with `animBg="1"` on every animated shape ID hides shapes on load. Root `<p:cTn>` must have `restart="never"`. `<p:cond delay="indefinite"/>` (no `evt` attribute) triggers each group on click advance.
+
+### 2. Independent Learning section slide (insert after slide 10)
+
+Inserted after the Syllable & Phoneme Map worked examples, before independent activities begin.
+
+```
+Sky-blue rectangle:   L=0  T=0     W=25.4  H=9.14  fill=#87CEEB
+White rectangle:      L=0  T=8.38  W=25.4  H=5.91  fill=#FFFFFF
+Green footer:         L=0  T=13.72 W=25.4  H=0.57  fill=#57A657
+"Independent Learning": 64pt bold #F4C430, centred, L=0.4 T=0.38 W=24.55 H=3.56
+"You do" image:       L=8.18 T=4.41 W=8.4 H=3.49  (you_do_image.png)
+"Learning Paper":     18pt #1A1A1A centred, L=8.0 T=8.5 W=9.4 H=0.9
+"Today's words: ...": 17pt #1A1A1A centred, lesson words joined by ", ", L=1.27 T=10.5 W=22.86 H=1.9
+```
+
+Inserting this slide requires: renaming slides 11+ to 12+, adding a new slide11.xml, updating `presentation.xml` sldIdLst, `ppt/_rels/presentation.xml.rels`, and `[Content_Types].xml`.
+
+### Slide terminology
+
+| Slide label | Text to use |
+|-------------|-------------|
+| `thisWeeksWords` slide header | **"Today's Words"** (not "This Week's Words") |
+| Subtitle questions on Etymology, Syllable Count | "today's words" (lower case) |
+| Section slide word list | "Today's words:  [list]" |
+| Key Spelling slide | unchanged |
+
+The `thisWeeksWordsQ / Prompt / Explanation` JSON fields keep their names (for backward compatibility) but their values should say "today's words" not "this week's words".
 
 ---
 
@@ -357,61 +437,3 @@ DM header: same pattern (10pt bold, 8.5pt instr)
 DM box: T = DM_sep + 0.76 + offset, W=20.1, H=5.28 (5 rows × 1.056)
 DM rows (full width): number at L=0.55; def text at L=1.15 W=12.06 v_anchor='t'
 ```
-
----
-
-## Post-build additions (apply after Step 4)
-
-After building and verifying the teaching deck, apply these three additions using a post-processor script (modelled on `post_process_c3.py` in GitHub `Spelling/`):
-
-### 1. Syllable & Phoneme Map — 2-click animation (slide 10)
-
-Slide 10 should show the word headings, "Syllable Breaks" and "Sound Buttons" labels on load, with everything else hidden. Two click-advance groups reveal content:
-
-- **Click 1** — all three words' syllable-break boxes and syllable counts appear simultaneously
-- **Click 2** — all three words' phoneme-map shapes and legends appear simultaneously
-
-**Implementation rules (non-negotiable):**
-
-- Copy the exact `<p:timing>` XML from a known-working reference file (e.g. `2-Tue-spelling_shed_slides_C2.pptx`) rather than generating timing XML from scratch
-- Replace shape IDs using a **two-step approach**: first replace all old IDs with temp placeholders (1000+original), then resolve placeholders to final IDs — prevents cascading collisions
-- The `<p:bldLst>` block with `animBg="1"` for every animated shape is what hides them on slide load — without it shapes appear immediately regardless of animations
-- Root cTn must have `restart="never"` (not `whenNotActive`)
-- stCondLst conditions use `<p:cond delay="indefinite"/>` with no `evt` attribute
-
-### 2. Independent Learning section slide (insert after slide 10)
-
-Insert after the Syllable & Phoneme Map, before independent activities begin. Structure:
-
-```
-Sky-blue rectangle:   L=0  T=0     W=25.4  H=9.14  fill=#87CEEB
-White rectangle:      L=0  T=8.38  W=25.4  H=5.91  fill=#FFFFFF
-Green footer:         L=0  T=13.72 W=25.4  H=0.57  fill=#57A657
-"Independent Learning": 64pt bold #F4C430, centred, L=0.4 T=0.38 W=24.55 H=3.56
-"You do" image:       L=8.18 T=4.41 W=8.4 H=3.49  (from you_do_image.png in GitHub Spelling/)
-"Learning Paper":     18pt #1A1A1A centred, L=8.0 T=8.5 W=9.4 H=0.9
-"Today's words: ...": 17pt #1A1A1A centred, lesson words joined by ", ", L=1.27 T=10.5 W=22.86 H=1.9
-```
-
-Image asset: `Spelling/you_do_image.png` in GitHub `imcl75/claude_files`.
-
-### 3. Morphology Matrix answers slide (append at end)
-
-Clone the MM question slide (zip-level copy of `slideN.xml`) and overlay answers:
-
-- Register the new slide in `presentation.xml`, `presentation.xml.rels` and `[Content_Types].xml`
-- Update the slide code label (e.g. `C3.19` → `C3.20`)
-- For each of the 6 suffix cells (positions from inspection of the question slide): overlay a white cover rect, a small grey suffix label (13pt `#757575`), and the answer word in pink bold (19pt `#E91E63`)
-- Cell positions (L, T) in cm: (12.70, 4.39), (18.54, 4.39), (12.70, 6.53), (18.54, 6.53), (12.70, 8.66), (18.54, 8.66) — each cell W=5.84 H=2.13
-
-### Slide terminology
-
-| Slide label | Text to use |
-|-------------|-------------|
-| `thisWeeksWords` slide header | **"Today's Words"** (not "This Week's Words") |
-| Subtitle questions on Etymology, Syllable Count | "today's words" (lower case) |
-| Section slide word list | "Today's words:  [list]" |
-| Key Spelling slide | unchanged |
-
-The `thisWeeksWordsQ / Prompt / Explanation` JSON fields keep their names (for backward compatibility) but their values should say "today's words" not "this week's words".
-
