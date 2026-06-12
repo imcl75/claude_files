@@ -64,7 +64,7 @@ const lfLine = LESSON.li.replace(/\.$/, '').toLowerCase();
 const iwstb = lo.iwstb.replace(/^…/, '');
 // Use lp1 topic area for the maths label topic line
 const LABEL_TOPIC   = lp1Topic;
-const LABEL_LF      = `LF: ${lfLine}`;
+const LABEL_LF      = `LF: To ${LESSON.loText.walt.replace(/^…/, '').trim()}`;
 const LABEL_ICAN    = ld.iCan || [
   `I can ${iwstb.split(',')[0].trim()}`,
   `I can ${(iwstb.split(',')[1] || iwstb.split(' and ')[1] || 'check my work').trim()}`,

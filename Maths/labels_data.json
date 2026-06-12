@@ -1,0 +1,42 @@
+[
+  {
+    "lesson": 9,
+    "week": "T6W3",
+    "day": "Monday",
+    "date": "12/06/2026",
+    "topic": "Operation Identification",
+    "lf": "LF: To identify which operation a word problem needs and explain why.",
+    "ican1": "I can identify which operation a problem needs and explain why.",
+    "ican2": "I can find the signal word or key structure that tells me the operation."
+  },
+  {
+    "lesson": 10,
+    "week": "T6W3",
+    "day": "Tuesday",
+    "date": "12/06/2026",
+    "topic": "Multiplication and Division",
+    "lf": "LF: To solve word problems by identifying the operation first, then calculating.",
+    "ican1": "I can follow the two-step routine: identify the operation, then calculate.",
+    "ican2": "I can solve word problems using all four operations."
+  },
+  {
+    "lesson": 11,
+    "week": "T6W3",
+    "day": "Wednesday",
+    "date": "12/06/2026",
+    "topic": "Two-Step Problems",
+    "lf": "LF: To plan and solve two-step problems using a bar model.",
+    "ican1": "I can use a bar model to plan a two-step problem before calculating.",
+    "ican2": "I can identify the operation for each step and work through them in the right order."
+  },
+  {
+    "lesson": 12,
+    "week": "T6W3",
+    "day": "Thursday",
+    "date": "12/06/2026",
+    "topic": "Money",
+    "lf": "LF: To solve problems in money and measurement contexts by choosing the right operation.",
+    "ican1": "I can solve money and measurement problems by identifying the correct operation.",
+    "ican2": "I can include the correct unit in every answer."
+  }
+]
