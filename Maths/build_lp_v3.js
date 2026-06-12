@@ -63,7 +63,7 @@ const lfLine = LESSON.li.replace(/\.$/, '').toLowerCase();
 // I can statements derived from iwstb — split on comma/and
 const iwstb = lo.iwstb.replace(/^…/, '');
 // Use lp1 topic area for the maths label topic line
-const LABEL_TOPIC   = lp1Topic;
+const LABEL_TOPIC   = LESSON.labelTopic || lp1Topic;
 const LABEL_LF      = `LF: To ${LESSON.loText.walt.replace(/^…/, '').trim()}`;
 const LABEL_ICAN    = ld.iCan || [
   `I can ${iwstb.split(',')[0].trim()}`,

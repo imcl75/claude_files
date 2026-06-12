@@ -1125,7 +1125,8 @@
           "correctAnswer": "18 \u00f7 3 = 6 children per group",
           "note": "'Split equally into groups' \u2192 \u00f7, not \u00d7."
         }
-      }
+      },
+      "labelTopic": "Calculation"
     },
     {
       "lesson": 10,
@@ -1243,7 +1244,8 @@
           "correctAnswer": "9 \u00d7 7 = 63 marbles",
           "note": "'Each bag has 7' = equal groups \u2192 multiply, not add."
         }
-      }
+      },
+      "labelTopic": "Multiplicative Reasoning"
     },
     {
       "lesson": 11,
@@ -1362,7 +1364,8 @@
           "correctAnswer": "Step 1: 8 \u00d7 5 = 40. Step 2: 40 \u00f7 4 = 10 bags.",
           "note": "Always complete Step 1 before Step 2."
         }
-      }
+      },
+      "labelTopic": "Calculation"
     },
     {
       "lesson": 12,
@@ -1483,7 +1486,8 @@
           "correctAnswer": "12 \u00d7 5 = 60p",
           "note": "Buying several of the same item \u2192 multiply price by quantity."
         }
-      }
+      },
+      "labelTopic": "Measurement"
     },
     {
       "lesson": 13,
