@@ -1,5 +1,5 @@
 {
-  "title": "Year 4 Maths — Term 6 Consolidation",
+  "title": "Year 4 Maths \u2014 Term 6 Consolidation",
   "term": "Term 6",
   "weeks": 7,
   "lessonsPerWeek": 4,
@@ -14,17 +14,17 @@
     "T6W7"
   ],
   "topicAllocation": {
-    "Addition and subtraction": "Lessons 1–4 (Week 1)",
-    "Multiplication and division": "Lessons 5–8 (Week 2)",
-    "Multistep problems": "Lessons 9–12 (Week 3)",
-    "Fractions": "Lessons 13–16 (Week 4)",
-    "Statistics": "Lessons 17–23 (Weeks 5–6)",
-    "End of year consolidation": "Lessons 24–27 (Week 7)"
+    "Addition and subtraction": "Lessons 1\u20134 (Week 1)",
+    "Multiplication and division": "Lessons 5\u20138 (Week 2)",
+    "Multistep problems": "Lessons 9\u201312 (Week 3)",
+    "Fractions": "Lessons 13\u201316 (Week 4)",
+    "Statistics": "Lessons 17\u201323 (Weeks 5\u20136)",
+    "End of year consolidation": "Lessons 24\u201327 (Week 7)"
   },
   "keyQuestions": {
     "Addition and subtraction": "How do we add and subtract large numbers without making mistakes?",
     "Multiplication and division": "How does knowing place value help us multiply and divide?",
-    "Multistep problems": "How do we decide which operation to use — and in what order?",
+    "Multistep problems": "How do we decide which operation to use \u2014 and in what order?",
     "Fractions": "How can a fraction be greater than one whole?",
     "Statistics": "What can a graph or chart tell us that a list of numbers cannot?",
     "End of year consolidation": "How do we tackle a problem we have never seen before?"
@@ -51,22 +51,22 @@
       "cycle1": {
         "focus": "Setting up column addition correctly",
         "ido": [
-          "Model aligning digits by place value. Stress: ones under ones, tens under tens. Show a common error — misaligned digits.",
+          "Model aligning digits by place value. Stress: ones under ones, tens under tens. Show a common error \u2014 misaligned digits.",
           "Work through 3,456 + 2,371 step by step. No regrouping needed. Narrate: 'ones column first, always.'"
         ],
         "slideTitles": {
           "ido": [
-            "Column addition — line up the digits",
+            "Column addition \u2014 line up the digits",
             "Ones first, always"
           ],
           "wedo": [
-            "Add — no regrouping"
+            "Add \u2014 no regrouping"
           ],
           "trios": [
-            "Trios — set it up and check"
+            "Trios \u2014 set it up and check"
           ],
           "independent": [
-            "Independent — four additions"
+            "Independent \u2014 four additions"
           ]
         },
         "slideCount": {
@@ -77,7 +77,7 @@
         }
       },
       "cycle2": {
-        "focus": "Regrouping once — regrouping into the next column",
+        "focus": "Regrouping once \u2014 regrouping into the next column",
         "ido": [
           "Model 3,456 + 1,785. Ones: 6+5=11, write 1, regroup 1. Tens: 5+8+1=14, write 4, regroup 1. Show regrouping digit above."
         ],
@@ -86,13 +86,13 @@
             "regrouping into the next column"
           ],
           "wedo": [
-            "Your turn — regroup once"
+            "Your turn \u2014 regroup once"
           ],
           "trios": [
-            "Trios — spot the regroup"
+            "Trios \u2014 spot the regroup"
           ],
           "independent": [
-            "Independent — four with regrouping"
+            "Independent \u2014 four with regrouping"
           ]
         },
         "slideCount": {
@@ -104,10 +104,10 @@
       },
       "spotTheMistake": {
         "slideTitle": "Spot the mistake",
-        "concept": "regrouping the wrong digit — writing the tens digit instead of the ones digit in the answer row",
+        "concept": "regrouping the wrong digit \u2014 writing the tens digit instead of the ones digit in the answer row",
         "errorType": "wrong_carry",
         "errorInstruction": "Work out 2,847 + 1,375",
-        "errorNote": "The answer shown is 4,112 — the pupil wrote 12 in the ones column instead of 2 (regroup 1). Always write the ones digit below the line and regroup the tens digit.",
+        "errorNote": "The answer shown is 4,112 \u2014 the pupil wrote 12 in the ones column instead of 2 (regroup 1). Always write the ones digit below the line and regroup the tens digit.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -124,9 +124,9 @@
         }
       },
       "loText": {
-        "walt": "…add two 4-digit numbers using column addition.",
-        "tiob": "…column addition gives us a reliable written method that keeps place value clear no matter how large the numbers are.",
-        "iwstb": "…setting out a column addition correctly, adding from ones to thousands, and regrouping when a column total reaches ten or more."
+        "walt": "\u2026add two 4-digit numbers using column addition.",
+        "tiob": "\u2026column addition gives us a reliable written method that keeps place value clear no matter how large the numbers are.",
+        "iwstb": "\u2026setting out a column addition correctly, adding from ones to thousands, and regrouping when a column total reaches ten or more."
       },
       "lp1": {
         "topic": "Addition and Subtraction",
@@ -139,9 +139,9 @@
         "questions": 5
       },
       "learningReviewStems": [
-        "Column addition works because…",
-        "When I regroup a digit I…",
-        "An answer I can check by…"
+        "Column addition works because\u2026",
+        "When I regroup a digit I\u2026",
+        "An answer I can check by\u2026"
       ]
     },
     {
@@ -164,21 +164,21 @@
         "focus": "regrouping across two or more columns",
         "ido": [
           "Model 3,756 + 2,489. Walk through all four columns with regrouping in three of them. Say each step out loud.",
-          "Estimate first: 3,800 + 2,500 ≈ 6,300. Does the answer make sense?"
+          "Estimate first: 3,800 + 2,500 \u2248 6,300. Does the answer make sense?"
         ],
         "slideTitles": {
           "ido": [
-            "Multiple regroupings — step by step",
+            "Multiple regroupings \u2014 step by step",
             "Estimate first"
           ],
           "wedo": [
-            "Your turn — multiple regroups"
+            "Your turn \u2014 multiple regroups"
           ],
           "trios": [
-            "Trios — estimate, calculate, check"
+            "Trios \u2014 estimate, calculate, check"
           ],
           "independent": [
-            "Independent — three additions"
+            "Independent \u2014 three additions"
           ]
         },
         "slideCount": {
@@ -191,7 +191,7 @@
       "cycle2": {
         "focus": "Using the inverse to check",
         "ido": [
-          "Introduce inverse checking: if 3,756 + 2,489 = 6,245 then 6,245 − 2,489 should equal 3,756. Model the subtraction check."
+          "Introduce inverse checking: if 3,756 + 2,489 = 6,245 then 6,245 \u2212 2,489 should equal 3,756. Model the subtraction check."
         ],
         "slideTitles": {
           "ido": [
@@ -201,10 +201,10 @@
             "Check your partner's work"
           ],
           "trios": [
-            "Trios — inverse checking"
+            "Trios \u2014 inverse checking"
           ],
           "independent": [
-            "Independent — add and check"
+            "Independent \u2014 add and check"
           ]
         },
         "slideCount": {
@@ -219,7 +219,7 @@
         "concept": "Forgetting to add the regrouped digit in the next column",
         "errorType": "forgot_carry",
         "errorInstruction": "Work out 4,583 + 2,749",
-        "errorNote": "The answer shown is 7,222 — the pupil forgot to add the regrouped 1 into the hundreds column. Always look above the column for a regrouped digit before you add.",
+        "errorNote": "The answer shown is 7,222 \u2014 the pupil forgot to add the regrouped 1 into the hundreds column. Always look above the column for a regrouped digit before you add.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -236,9 +236,9 @@
         }
       },
       "loText": {
-        "walt": "…add two 4-digit numbers with more than one regrouping.",
-        "tiob": "…many real additions require regrouping in several columns, and checking with the inverse makes sure we haven't made a slip.",
-        "iwstb": "…working through a column addition with multiple regroups and checking my answer using the inverse operation."
+        "walt": "\u2026add two 4-digit numbers with more than one regrouping.",
+        "tiob": "\u2026many real additions require regrouping in several columns, and checking with the inverse makes sure we haven't made a slip.",
+        "iwstb": "\u2026working through a column addition with multiple regroups and checking my answer using the inverse operation."
       },
       "lp1": {
         "topic": "Addition and Subtraction",
@@ -251,9 +251,9 @@
         "questions": 3
       },
       "learningReviewStems": [
-        "Multiple regroups are tricky because…",
-        "Estimating first helps me because…",
-        "I checked my answer by…"
+        "Multiple regroups are tricky because\u2026",
+        "Estimating first helps me because\u2026",
+        "I checked my answer by\u2026"
       ]
     },
     {
@@ -273,24 +273,24 @@
         "subtrahend"
       ],
       "cycle1": {
-        "focus": "Decomposition — exchanging from the next column",
+        "focus": "Decomposition \u2014 exchanging from the next column",
         "ido": [
-          "Model 6,352 − 2,174. Ones: 2−4 can't do it. Exchange from tens: 12−4=8.",
-          "Tens now: 4−7 can't do it (one ten was exchanged). Exchange from hundreds: 14−7=7."
+          "Model 6,352 \u2212 2,174. Ones: 2\u22124 can't do it. Exchange from tens: 12\u22124=8.",
+          "Tens now: 4\u22127 can't do it (one ten was exchanged). Exchange from hundreds: 14\u22127=7."
         ],
         "slideTitles": {
           "ido": [
-            "Decomposition — exchanging step by step",
+            "Decomposition \u2014 exchanging step by step",
             "Exchanging twice"
           ],
           "wedo": [
-            "Your turn — exchange once"
+            "Your turn \u2014 exchange once"
           ],
           "trios": [
-            "Trios — narrate each exchange"
+            "Trios \u2014 narrate each exchange"
           ],
           "independent": [
-            "Independent — three subtractions"
+            "Independent \u2014 three subtractions"
           ]
         },
         "slideCount": {
@@ -303,20 +303,20 @@
       "cycle2": {
         "focus": "Exchanging across zeros",
         "ido": [
-          "Model 5,003 − 2,456. Ones: 3−6 can't do it. Tens is 0 — must go to hundreds. Hundreds is also 0 — go to thousands. Walk through carefully."
+          "Model 5,003 \u2212 2,456. Ones: 3\u22126 can't do it. Tens is 0 \u2014 must go to hundreds. Hundreds is also 0 \u2014 go to thousands. Walk through carefully."
         ],
         "slideTitles": {
           "ido": [
             "What if there is a zero?"
           ],
           "wedo": [
-            "Exchange across a zero — together"
+            "Exchange across a zero \u2014 together"
           ],
           "trios": [
-            "Trios — the zero challenge"
+            "Trios \u2014 the zero challenge"
           ],
           "independent": [
-            "Independent — includes zeros"
+            "Independent \u2014 includes zeros"
           ]
         },
         "slideCount": {
@@ -328,10 +328,10 @@
       },
       "spotTheMistake": {
         "slideTitle": "Spot the mistake",
-        "concept": "Subtracting the wrong way round — taking the top digit from the bottom instead of exchanging",
+        "concept": "Subtracting the wrong way round \u2014 taking the top digit from the bottom instead of exchanging",
         "errorType": "wrong_subtraction_direction",
-        "errorInstruction": "Work out 5,362 − 2,748",
-        "errorNote": "The answer shown is 3,426 — in the ones column the pupil calculated 8−2=6 instead of exchanging and calculating 12−8=4. Always check: is the top digit smaller? If so, exchange.",
+        "errorInstruction": "Work out 5,362 \u2212 2,748",
+        "errorNote": "The answer shown is 3,426 \u2014 in the ones column the pupil calculated 8\u22122=6 instead of exchanging and calculating 12\u22128=4. Always check: is the top digit smaller? If so, exchange.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -348,9 +348,9 @@
         }
       },
       "loText": {
-        "walt": "…subtract two 4-digit numbers using column subtraction with decomposition.",
-        "tiob": "…decomposition is the most reliable written method for subtraction because it keeps place value clear even when exchanging across several columns.",
-        "iwstb": "…setting out column subtraction correctly, recognising when to exchange, and exchanging accurately even when a column contains zero."
+        "walt": "\u2026subtract two 4-digit numbers using column subtraction with decomposition.",
+        "tiob": "\u2026decomposition is the most reliable written method for subtraction because it keeps place value clear even when exchanging across several columns.",
+        "iwstb": "\u2026setting out column subtraction correctly, recognising when to exchange, and exchanging accurately even when a column contains zero."
       },
       "lp1": {
         "topic": "Addition and Subtraction",
@@ -363,9 +363,9 @@
         "questions": 3
       },
       "learningReviewStems": [
-        "I exchange when…",
-        "Zeros in a number make subtraction harder because…",
-        "I can check a subtraction by…"
+        "I exchange when\u2026",
+        "Zeros in a number make subtraction harder because\u2026",
+        "I can check a subtraction by\u2026"
       ]
     },
     {
@@ -388,22 +388,22 @@
       "cycle1": {
         "focus": "Identifying operations in two-step problems",
         "ido": [
-          "Read a word problem. Underline key words. Ask: what do I find first? What next? Is this + or −?",
+          "Read a word problem. Underline key words. Ask: what do I find first? What next? Is this + or \u2212?",
           "Model: 'A school had 3,450 books. They bought 1,275 more. Then 862 were lost in a flood. How many remain?'"
         ],
         "slideTitles": {
           "ido": [
-            "Two-step problems — reading carefully",
-            "Model — school books"
+            "Two-step problems \u2014 reading carefully",
+            "Model \u2014 school books"
           ],
           "wedo": [
-            "Together — two steps"
+            "Together \u2014 two steps"
           ],
           "trios": [
-            "Trios — write the steps"
+            "Trios \u2014 write the steps"
           ],
           "independent": [
-            "Independent — two-step problems"
+            "Independent \u2014 two-step problems"
           ]
         },
         "slideCount": {
@@ -426,10 +426,10 @@
             "Check this solution"
           ],
           "trios": [
-            "Trios — backwards check"
+            "Trios \u2014 backwards check"
           ],
           "independent": [
-            "Independent — solve and verify"
+            "Independent \u2014 solve and verify"
           ]
         },
         "slideCount": {
@@ -444,7 +444,7 @@
         "concept": "regrouping out the two operations in the wrong order",
         "errorType": "wrong_order_two_step",
         "errorInstruction": "A stadium holds 6,250 seats. 1,430 fans leave at half time. 850 more arrive for the second half. How many fans are there now?",
-        "errorNote": "The pupil added 850 first and got 7,100, then subtracted 1,430 to get 5,670. The correct order gives 6,250−1,430=4,820, then +850=5,670. Here the answer is the same, but show that order matters with non-commutative steps.",
+        "errorNote": "The pupil added 850 first and got 7,100, then subtracted 1,430 to get 5,670. The correct order gives 6,250\u22121,430=4,820, then +850=5,670. Here the answer is the same, but show that order matters with non-commutative steps.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -454,13 +454,13 @@
         "calcDisplay": {
           "type": "word_problem",
           "correctAnswer": "5,670",
-          "note": "Order of operations matters — always read what happens first."
+          "note": "Order of operations matters \u2014 always read what happens first."
         }
       },
       "loText": {
-        "walt": "…solve problems that need two addition or subtraction steps.",
-        "tiob": "…real problems rarely need just one calculation. Identifying the steps and the right order is part of the maths.",
-        "iwstb": "…reading a two-step problem carefully, deciding which operation to use first, and checking my answer makes sense."
+        "walt": "\u2026solve problems that need two addition or subtraction steps.",
+        "tiob": "\u2026real problems rarely need just one calculation. Identifying the steps and the right order is part of the maths.",
+        "iwstb": "\u2026reading a two-step problem carefully, deciding which operation to use first, and checking my answer makes sense."
       },
       "lp1": {
         "topic": "Addition and Subtraction",
@@ -473,9 +473,9 @@
         "questions": 2
       },
       "learningReviewStems": [
-        "I spotted two steps by…",
-        "The order matters because…",
-        "I checked my answer by…"
+        "I spotted two steps by\u2026",
+        "The order matters because\u2026",
+        "I checked my answer by\u2026"
       ]
     },
     {
@@ -495,28 +495,28 @@
         "factor",
         "times"
       ],
-      "cycleNote": "Build up from 2-digit × 1-digit before moving to 4-digit. Make the link to repeated addition and area models explicit.",
+      "cycleNote": "Build up from 2-digit \u00d7 1-digit before moving to 4-digit. Make the link to repeated addition and area models explicit.",
       "cycle1": {
-        "focus": "Short multiplication — building up to 4-digit × 1-digit",
+        "focus": "Short multiplication \u2014 building up to 4-digit \u00d7 1-digit",
         "ido": [
-          "Warm up: 23 × 4 using the formal method. Ones: 3×4=12, write 2 regroup 1. Tens: 2×4=8, +1=9. Answer: 92.",
-          "Extend to 3-digit: 236 × 4. Same process, one more column. Narrate every step.",
-          "Extend to 4-digit: 2,364 × 3. Work through all four columns, regroup where needed."
+          "Warm up: 23 \u00d7 4 using the formal method. Ones: 3\u00d74=12, write 2 regroup 1. Tens: 2\u00d74=8, +1=9. Answer: 92.",
+          "Extend to 3-digit: 236 \u00d7 4. Same process, one more column. Narrate every step.",
+          "Extend to 4-digit: 2,364 \u00d7 3. Work through all four columns, regroup where needed."
         ],
         "slideTitles": {
           "ido": [
-            "Short multiplication — build up",
-            "3-digit × 1-digit",
-            "4-digit × 1-digit — step by step"
+            "Short multiplication \u2014 build up",
+            "3-digit \u00d7 1-digit",
+            "4-digit \u00d7 1-digit \u2014 step by step"
           ],
           "wedo": [
-            "Your turn — 4-digit × 1-digit"
+            "Your turn \u2014 4-digit \u00d7 1-digit"
           ],
           "trios": [
-            "Trios — one digit at a time"
+            "Trios \u2014 one digit at a time"
           ],
           "independent": [
-            "Independent — four multiplications"
+            "Independent \u2014 four multiplications"
           ]
         },
         "slideCount": {
@@ -526,33 +526,33 @@
           "independent": 1
         },
         "trios": {
-          "task": "Pupil A reads out a 4-digit × 1-digit calculation. Pupil B estimates the answer. Pupil C works it out using short multiplication. Swap roles each question.",
+          "task": "Pupil A reads out a 4-digit \u00d7 1-digit calculation. Pupil B estimates the answer. Pupil C works it out using short multiplication. Swap roles each question.",
           "challenge": "Can you find a calculation where the estimate is within 100 of the exact answer?"
         },
         "independent": {
-          "standard": "Work out: (a) 1,342 × 4   (b) 2,135 × 6   (c) 3,241 × 5   (d) 1,824 × 7. Estimate each one first.",
+          "standard": "Work out: (a) 1,342 \u00d7 4   (b) 2,135 \u00d7 6   (c) 3,241 \u00d7 5   (d) 1,824 \u00d7 7. Estimate each one first.",
           "challenge": "What is the largest product you can make using the digits 2, 3, 4 and 5 once each as the multiplicand, with a single digit multiplier of your choice?"
         }
       },
       "cycle2": {
         "focus": "Short multiplication with regrouping in multiple columns",
         "ido": [
-          "Model 3,476 × 8. Every column produces a large product — multiple regroups. Work slowly, labelling each regroup.",
-          "Estimate first: 3,500 × 8 = 28,000. Does the answer make sense?"
+          "Model 3,476 \u00d7 8. Every column produces a large product \u2014 multiple regroups. Work slowly, labelling each regroup.",
+          "Estimate first: 3,500 \u00d7 8 = 28,000. Does the answer make sense?"
         ],
         "slideTitles": {
           "ido": [
-            "Multiple regroups — 3,476 × 8",
+            "Multiple regroups \u2014 3,476 \u00d7 8",
             "Estimate to check"
           ],
           "wedo": [
-            "Together — large multiplier"
+            "Together \u2014 large multiplier"
           ],
           "trios": [
-            "Trios — estimate then calculate"
+            "Trios \u2014 estimate then calculate"
           ],
           "independent": [
-            "Independent — multiply and estimate"
+            "Independent \u2014 multiply and estimate"
           ]
         },
         "slideCount": {
@@ -562,11 +562,11 @@
           "independent": 1
         },
         "trios": {
-          "task": "Pupil A chooses a 4-digit number with large digits (e.g. 3,876). Pupil B estimates ×8. Pupil C calculates. Compare — how close was the estimate?",
+          "task": "Pupil A chooses a 4-digit number with large digits (e.g. 3,876). Pupil B estimates \u00d78. Pupil C calculates. Compare \u2014 how close was the estimate?",
           "challenge": "What is the biggest regroup you can create in a short multiplication? Which column is most likely to have the largest regroup when multiplying by 8?"
         },
         "independent": {
-          "standard": "Work out: (a) 2,847 × 8   (b) 1,963 × 7   (c) 3,456 × 9. Show regroups clearly. Estimate before each calculation.",
+          "standard": "Work out: (a) 2,847 \u00d7 8   (b) 1,963 \u00d7 7   (c) 3,456 \u00d7 9. Show regroups clearly. Estimate before each calculation.",
           "challenge": "A stadium has 3,476 seats and holds 8 events. Every seat is sold for every event. How many tickets are sold in total? Estimate first."
         }
       },
@@ -574,8 +574,8 @@
         "slideTitle": "Spot the mistake",
         "concept": "Forgetting to add the regrouped digit before writing the next column's product",
         "errorType": "forgot_carry_multiplication",
-        "errorInstruction": "Work out 2,364 × 3",
-        "errorNote": "The answer shown is 6,992 — in the hundreds column 3×3=9, but the pupil forgot to add the regrouped 1, giving 9 instead of 10 (write 0, regroup 1). The correct answer is 7,092.",
+        "errorInstruction": "Work out 2,364 \u00d7 3",
+        "errorNote": "The answer shown is 6,992 \u2014 in the hundreds column 3\u00d73=9, but the pupil forgot to add the regrouped 1, giving 9 instead of 10 (write 0, regroup 1). The correct answer is 7,092.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -593,13 +593,13 @@
         }
       },
       "loText": {
-        "walt": "…multiply a 4-digit number by a 1-digit number using short multiplication.",
-        "tiob": "…short multiplication is a compact written method that uses our knowledge of place value and times tables to multiply large numbers accurately.",
-        "iwstb": "…working through each column from ones to thousands, regrouping correctly, and estimating to check the answer is reasonable."
+        "walt": "\u2026multiply a 4-digit number by a 1-digit number using short multiplication.",
+        "tiob": "\u2026short multiplication is a compact written method that uses our knowledge of place value and times tables to multiply large numbers accurately.",
+        "iwstb": "\u2026working through each column from ones to thousands, regrouping correctly, and estimating to check the answer is reasonable."
       },
       "lp1": {
         "topic": "Multiplication and Division",
-        "task": "Four short multiplications (4-digit × 1-digit); estimate each answer first.",
+        "task": "Four short multiplications (4-digit \u00d7 1-digit); estimate each answer first.",
         "questions": 4
       },
       "lp2": {
@@ -608,9 +608,9 @@
         "questions": 3
       },
       "learningReviewStems": [
-        "I start short multiplication from the…",
-        "When I regroup in multiplication I…",
-        "I estimated the answer first by…"
+        "I start short multiplication from the\u2026",
+        "When I regroup in multiplication I\u2026",
+        "I estimated the answer first by\u2026"
       ]
     },
     {
@@ -631,26 +631,26 @@
         "share",
         "regroup over"
       ],
-      "cycleNote": "Introduce the bus stop layout carefully — pupils often confuse where the quotient is written. Stress that we work left to right (opposite to multiplication).",
+      "cycleNote": "Introduce the bus stop layout carefully \u2014 pupils often confuse where the quotient is written. Stress that we work left to right (opposite to multiplication).",
       "cycle1": {
-        "focus": "Short division — exact division, no remainder",
+        "focus": "Short division \u2014 exact division, no remainder",
         "ido": [
-          "Model 96 ÷ 4 using the bus stop. 9÷4=2 rem 1; regroup 1 to tens column; 16÷4=4. Answer: 24. Stress: quotient goes above, we work left to right.",
-          "Extend to 4-digit: 8,484 ÷ 4. Step through each digit. Check: 4 × 2,121 = 8,484."
+          "Model 96 \u00f7 4 using the bus stop. 9\u00f74=2 rem 1; regroup 1 to tens column; 16\u00f74=4. Answer: 24. Stress: quotient goes above, we work left to right.",
+          "Extend to 4-digit: 8,484 \u00f7 4. Step through each digit. Check: 4 \u00d7 2,121 = 8,484."
         ],
         "slideTitles": {
           "ido": [
-            "Short division — the bus stop layout",
-            "4-digit ÷ 1-digit, no remainder"
+            "Short division \u2014 the bus stop layout",
+            "4-digit \u00f7 1-digit, no remainder"
           ],
           "wedo": [
-            "Your turn — no remainder"
+            "Your turn \u2014 no remainder"
           ],
           "trios": [
-            "Trios — divide and verify"
+            "Trios \u2014 divide and verify"
           ],
           "independent": [
-            "Independent — four exact divisions"
+            "Independent \u2014 four exact divisions"
           ]
         },
         "slideCount": {
@@ -664,29 +664,29 @@
           "challenge": "Without calculating, how do you know whether a number is divisible by 4? Test your rule on three numbers."
         },
         "independent": {
-          "standard": "Work out: (a) 6,484 ÷ 4   (b) 9,369 ÷ 3   (c) 8,484 ÷ 6   (d) 5,124 ÷ 4. Check each with the inverse.",
+          "standard": "Work out: (a) 6,484 \u00f7 4   (b) 9,369 \u00f7 3   (c) 8,484 \u00f7 6   (d) 5,124 \u00f7 4. Check each with the inverse.",
           "challenge": "Write a 4-digit number that divides exactly by 6. Prove it divides exactly using short division."
         }
       },
       "cycle2": {
         "focus": "Short division with a remainder",
         "ido": [
-          "Model 7,543 ÷ 3. Some digits don't divide exactly. Show how to regroup the remainder to the next digit. The final remainder is written as 'r N'.",
-          "Discuss: what does the remainder mean? In context — '7,543 stickers shared equally between 3 children gives 2,514 each with 1 left over.'"
+          "Model 7,543 \u00f7 3. Some digits don't divide exactly. Show how to regroup the remainder to the next digit. The final remainder is written as 'r N'.",
+          "Discuss: what does the remainder mean? In context \u2014 '7,543 stickers shared equally between 3 children gives 2,514 each with 1 left over.'"
         ],
         "slideTitles": {
           "ido": [
-            "Short division — with a remainder",
+            "Short division \u2014 with a remainder",
             "What does the remainder mean?"
           ],
           "wedo": [
-            "Together — remainder problems"
+            "Together \u2014 remainder problems"
           ],
           "trios": [
-            "Trios — interpret the remainder"
+            "Trios \u2014 interpret the remainder"
           ],
           "independent": [
-            "Independent — divide with remainders"
+            "Independent \u2014 divide with remainders"
           ]
         },
         "slideCount": {
@@ -700,7 +700,7 @@
           "challenge": "Can the remainder when dividing by 3 ever be 3? Why or why not?"
         },
         "independent": {
-          "standard": "Work out: (a) 7,543 ÷ 3   (b) 5,473 ÷ 6   (c) 9,157 ÷ 6   (d) 4,285 ÷ 4. Write the remainder and interpret it as a sentence.",
+          "standard": "Work out: (a) 7,543 \u00f7 3   (b) 5,473 \u00f7 6   (c) 9,157 \u00f7 6   (d) 4,285 \u00f7 4. Write the remainder and interpret it as a sentence.",
           "challenge": "3,672 stickers are shared equally between 8 children. Write the calculation and interpret the answer in context."
         }
       },
@@ -708,8 +708,8 @@
         "slideTitle": "Spot the mistake",
         "concept": "Forgetting to regroup the remainder to the next digit",
         "errorType": "forgot_carry_division",
-        "errorInstruction": "Work out 9,156 ÷ 4",
-        "errorNote": "The answer shown is 2,139 — after dividing 9÷4=2 rem 1, the pupil forgot to regroup the 1 to the next digit (1). So they divided 1÷4=0 rem 1 rather than 11÷4=2 rem 3. The correct answer is 2,289.",
+        "errorInstruction": "Work out 9,156 \u00f7 4",
+        "errorNote": "The answer shown is 2,139 \u2014 after dividing 9\u00f74=2 rem 1, the pupil forgot to regroup the 1 to the next digit (1). So they divided 1\u00f74=0 rem 1 rather than 11\u00f74=2 rem 3. The correct answer is 2,289.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -726,13 +726,13 @@
         }
       },
       "loText": {
-        "walt": "…divide a 4-digit number by a 1-digit number using short division.",
-        "tiob": "…short division is a compact method for dividing large numbers, and understanding what a remainder means in context is as important as calculating it.",
-        "iwstb": "…using the bus stop layout correctly, working left to right, regrouping remainders accurately, and interpreting any remainder in the context of the problem."
+        "walt": "\u2026divide a 4-digit number by a 1-digit number using short division.",
+        "tiob": "\u2026short division is a compact method for dividing large numbers, and understanding what a remainder means in context is as important as calculating it.",
+        "iwstb": "\u2026using the bus stop layout correctly, working left to right, regrouping remainders accurately, and interpreting any remainder in the context of the problem."
       },
       "lp1": {
         "topic": "Multiplication and Division",
-        "task": "Four short divisions — two exact, two with remainders.",
+        "task": "Four short divisions \u2014 two exact, two with remainders.",
         "questions": 4
       },
       "lp2": {
@@ -741,9 +741,9 @@
         "questions": 3
       },
       "learningReviewStems": [
-        "In short division I write the quotient…",
-        "I regroup the remainder by…",
-        "The remainder in this problem means…"
+        "In short division I write the quotient\u2026",
+        "I regroup the remainder by\u2026",
+        "The remainder in this problem means\u2026"
       ]
     },
     {
@@ -764,26 +764,26 @@
         "formal method",
         "approximate"
       ],
-      "cycleNote": "Some problems can be solved mentally (e.g. ×10, ×5, doubling). Encourage pupils to select the most efficient method before writing.",
+      "cycleNote": "Some problems can be solved mentally (e.g. \u00d710, \u00d75, doubling). Encourage pupils to select the most efficient method before writing.",
       "cycle1": {
         "focus": "Choosing an efficient method for multiplication problems",
         "ido": [
-          "Problem: 'A box holds 1,234 crayons. How many crayons in 6 boxes?' — model choosing short multiplication. Estimate first.",
-          "Problem: 'A stadium has 3,000 seats in each of 8 sections.' — could use ×8 mentally or as short multiplication. Discuss efficiency."
+          "Problem: 'A box holds 1,234 crayons. How many crayons in 6 boxes?' \u2014 model choosing short multiplication. Estimate first.",
+          "Problem: 'A stadium has 3,000 seats in each of 8 sections.' \u2014 could use \u00d78 mentally or as short multiplication. Discuss efficiency."
         ],
         "slideTitles": {
           "ido": [
-            "Choose your method — multiplication",
+            "Choose your method \u2014 multiplication",
             "Mental or written?"
           ],
           "wedo": [
-            "Together — one-step × problems"
+            "Together \u2014 one-step \u00d7 problems"
           ],
           "trios": [
-            "Trios — estimate, choose, calculate"
+            "Trios \u2014 estimate, choose, calculate"
           ],
           "independent": [
-            "Independent — one-step problems"
+            "Independent \u2014 one-step problems"
           ]
         },
         "slideCount": {
@@ -804,22 +804,22 @@
       "cycle2": {
         "focus": "Two-step problems involving multiplication",
         "ido": [
-          "Problem: 'A shop sells 1,256 red pens and 3 times as many blue pens. How many pens altogether?' — two steps: multiply then add.",
+          "Problem: 'A shop sells 1,256 red pens and 3 times as many blue pens. How many pens altogether?' \u2014 two steps: multiply then add.",
           "Model finding the hidden step: 'How many blue pens first, then the total.'"
         ],
         "slideTitles": {
           "ido": [
-            "Two-step × problems",
+            "Two-step \u00d7 problems",
             "Find the hidden step"
           ],
           "wedo": [
-            "Together — two steps with ×"
+            "Together \u2014 two steps with \u00d7"
           ],
           "trios": [
-            "Trios — write the steps"
+            "Trios \u2014 write the steps"
           ],
           "independent": [
-            "Independent — two-step × problems"
+            "Independent \u2014 two-step \u00d7 problems"
           ]
         },
         "slideCount": {
@@ -829,7 +829,7 @@
           "independent": 1
         },
         "trios": {
-          "task": "Pupil A writes a two-step problem using ×. Pupil B identifies both steps. Pupil C solves it. Rotate.",
+          "task": "Pupil A writes a two-step problem using \u00d7. Pupil B identifies both steps. Pupil C solves it. Rotate.",
           "challenge": "Create a two-step problem where one answer is exactly 10,000."
         },
         "independent": {
@@ -839,10 +839,10 @@
       },
       "spotTheMistake": {
         "slideTitle": "Spot the mistake",
-        "concept": "Multiplying only part of the number — treating 3-digit as 2-digit",
+        "concept": "Multiplying only part of the number \u2014 treating 3-digit as 2-digit",
         "errorType": "missed_column_multiplication",
         "errorInstruction": "A school orders 1,245 pencils for each of 4 year groups. How many pencils altogether?",
-        "errorNote": "The answer shown is 4,180 — the pupil multiplied 1,045 × 4, ignoring the hundreds digit. The correct calculation is 1,245 × 4 = 4,980. Check by estimating: 1,200 × 4 = 4,800.",
+        "errorNote": "The answer shown is 4,180 \u2014 the pupil multiplied 1,045 \u00d7 4, ignoring the hundreds digit. The correct calculation is 1,245 \u00d7 4 = 4,980. Check by estimating: 1,200 \u00d7 4 = 4,800.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -857,9 +857,9 @@
         }
       },
       "loText": {
-        "walt": "…solve one-step and two-step problems that involve multiplication.",
-        "tiob": "…choosing the most efficient method before calculating saves time and reduces errors, and estimating first helps us spot mistakes.",
-        "iwstb": "…reading a problem carefully, deciding on a mental or written method, and showing my working for two-step problems."
+        "walt": "\u2026solve one-step and two-step problems that involve multiplication.",
+        "tiob": "\u2026choosing the most efficient method before calculating saves time and reduces errors, and estimating first helps us spot mistakes.",
+        "iwstb": "\u2026reading a problem carefully, deciding on a mental or written method, and showing my working for two-step problems."
       },
       "lp1": {
         "topic": "Multiplication and Division",
@@ -872,9 +872,9 @@
         "questions": 2
       },
       "learningReviewStems": [
-        "I chose this method because…",
-        "My estimate told me…",
-        "The two steps in this problem were…"
+        "I chose this method because\u2026",
+        "My estimate told me\u2026",
+        "The two steps in this problem were\u2026"
       ]
     },
     {
@@ -896,24 +896,24 @@
         "reasoning"
       ],
       "cycle1": {
-        "focus": "Two-step problems mixing × and ÷",
+        "focus": "Two-step problems mixing \u00d7 and \u00f7",
         "ido": [
-          "Problem: '5,640 apples arrive at a warehouse. They are packed into boxes of 8. Then 3 boxes are set aside for display. How many boxes are left?' — divide first, then subtract.",
+          "Problem: '5,640 apples arrive at a warehouse. They are packed into boxes of 8. Then 3 boxes are set aside for display. How many boxes are left?' \u2014 divide first, then subtract.",
           "Model using a bar model to plan the two steps before calculating."
         ],
         "slideTitles": {
           "ido": [
-            "Mixed × and ÷ — plan first",
-            "Bar model — plan your steps"
+            "Mixed \u00d7 and \u00f7 \u2014 plan first",
+            "Bar model \u2014 plan your steps"
           ],
           "wedo": [
-            "Together — × then ÷"
+            "Together \u2014 \u00d7 then \u00f7"
           ],
           "trios": [
-            "Trios — ÷ then reason"
+            "Trios \u2014 \u00f7 then reason"
           ],
           "independent": [
-            "Independent — two-step × and ÷"
+            "Independent \u2014 two-step \u00d7 and \u00f7"
           ]
         },
         "slideCount": {
@@ -923,33 +923,33 @@
           "independent": 1
         },
         "trios": {
-          "task": "Pupil A reads a mixed ×/÷ problem. Pupil B draws a bar model to plan. Pupil C calculates. Together, check the answer is reasonable.",
-          "challenge": "Design a two-step × then ÷ problem where the final answer is exactly 100."
+          "task": "Pupil A reads a mixed \u00d7/\u00f7 problem. Pupil B draws a bar model to plan. Pupil C calculates. Together, check the answer is reasonable.",
+          "challenge": "Design a two-step \u00d7 then \u00f7 problem where the final answer is exactly 100."
         },
         "independent": {
-          "standard": "Solve with a bar model plan: (a) 5,640 apples packed into boxes of 8 — then 3 boxes set aside. How many boxes for sale? (b) A factory makes 1,425 parts per hour for 6 hours. Parts shared equally between 9 warehouses — how many per warehouse?",
+          "standard": "Solve with a bar model plan: (a) 5,640 apples packed into boxes of 8 \u2014 then 3 boxes set aside. How many boxes for sale? (b) A factory makes 1,425 parts per hour for 6 hours. Parts shared equally between 9 warehouses \u2014 how many per warehouse?",
           "challenge": "3,600 raffle tickets are sold in books of 8. Each seller takes 9 books. How many sellers are there?"
         }
       },
       "cycle2": {
-        "focus": "Reasoning about × and ÷ problems — justify your answer",
+        "focus": "Reasoning about \u00d7 and \u00f7 problems \u2014 justify your answer",
         "ido": [
-          "Problem with a twist: 'There are 4,250 pupils at a sports event. They split into equal teams. Each team gets 5 coaches. There are 85 coaches altogether. How large is each team?' — work backwards using division.",
-          "Key question: 'How do I know my answer is right?' — demonstrate two different checking strategies."
+          "Problem with a twist: 'There are 4,250 pupils at a sports event. They split into equal teams. Each team gets 5 coaches. There are 85 coaches altogether. How large is each team?' \u2014 work backwards using division.",
+          "Key question: 'How do I know my answer is right?' \u2014 demonstrate two different checking strategies."
         ],
         "slideTitles": {
           "ido": [
-            "Work backwards — how many in a team?",
+            "Work backwards \u2014 how many in a team?",
             "Two ways to check"
           ],
           "wedo": [
-            "Together — check each other's reasoning"
+            "Together \u2014 check each other's reasoning"
           ],
           "trios": [
-            "Trios — justify the answer"
+            "Trios \u2014 justify the answer"
           ],
           "independent": [
-            "Independent — reason and justify"
+            "Independent \u2014 reason and justify"
           ]
         },
         "slideCount": {
@@ -960,11 +960,11 @@
         },
         "trios": {
           "task": "Pupil A reads a justify problem. Pupil B writes a full solution with working. Pupil C writes a justification sentence. Swap.",
-          "challenge": "Can you write a × and ÷ problem where you must divide first or the answer is wrong?"
+          "challenge": "Can you write a \u00d7 and \u00f7 problem where you must divide first or the answer is wrong?"
         },
         "independent": {
-          "standard": "Solve and justify: (a) Is 4,500 ÷ 6 less than 1,250 × 3? Prove it. (b) A coach costs £1,350. A school needs 8 coaches. Budget: £12,000. Can they afford it? Show your working.",
-          "challenge": "Write a real-life two-step × and ÷ problem with an answer of 360. Swap with a partner and solve theirs."
+          "standard": "Solve and justify: (a) Is 4,500 \u00f7 6 less than 1,250 \u00d7 3? Prove it. (b) A coach costs \u00a31,350. A school needs 8 coaches. Budget: \u00a312,000. Can they afford it? Show your working.",
+          "challenge": "Write a real-life two-step \u00d7 and \u00f7 problem with an answer of 360. Swap with a partner and solve theirs."
         }
       },
       "spotTheMistake": {
@@ -972,7 +972,7 @@
         "concept": "Doing the operations in the wrong order in a two-step problem",
         "errorType": "wrong_order_mult_div",
         "errorInstruction": "3,600 concert tickets are sold equally across 9 sessions. Each session sells twice as many children's tickets as adult tickets. How many children's tickets are sold per session?",
-        "errorNote": "The answer shown is 800 — the pupil multiplied 3,600 × 2 first (7,200) then divided by 9 (800). The correct method is 3,600 ÷ 9 = 400 tickets per session, then 400 × 2 ÷ 3... re-read the problem. Simpler STM: pupil reversed × and ÷, getting wrong intermediate.",
+        "errorNote": "The answer shown is 800 \u2014 the pupil multiplied 3,600 \u00d7 2 first (7,200) then divided by 9 (800). The correct method is 3,600 \u00f7 9 = 400 tickets per session, then 400 \u00d7 2 \u00f7 3... re-read the problem. Simpler STM: pupil reversed \u00d7 and \u00f7, getting wrong intermediate.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -986,13 +986,13 @@
         }
       },
       "loText": {
-        "walt": "…solve two-step problems that use both multiplication and division.",
-        "tiob": "…many real problems need more than one operation, and planning the steps — rather than just calculating — makes us more accurate.",
-        "iwstb": "…using a bar model to plan two-step problems, working through each step in the correct order, and checking my answer in two different ways."
+        "walt": "\u2026solve two-step problems that use both multiplication and division.",
+        "tiob": "\u2026many real problems need more than one operation, and planning the steps \u2014 rather than just calculating \u2014 makes us more accurate.",
+        "iwstb": "\u2026using a bar model to plan two-step problems, working through each step in the correct order, and checking my answer in two different ways."
       },
       "lp1": {
         "topic": "Multiplication and Division",
-        "task": "Three two-step word problems mixing × and ÷; show both steps.",
+        "task": "Three two-step word problems mixing \u00d7 and \u00f7; show both steps.",
         "questions": 3
       },
       "lp2": {
@@ -1001,9 +1001,9 @@
         "questions": 2
       },
       "learningReviewStems": [
-        "I planned my steps by…",
-        "I knew which operation to use first because…",
-        "I checked my answer by…"
+        "I planned my steps by\u2026",
+        "I knew which operation to use first because\u2026",
+        "I checked my answer by\u2026"
       ]
     },
     {
@@ -1011,110 +1011,81 @@
       "week": "T6W3",
       "weekIndex": 3,
       "day": "Monday",
-      "topic": "Multistep problems — all 4 operations",
-      "li": "Pupils solve two-step problems choosing from all four operations.",
-      "vocabularyFocus": [
-        "operation",
-        "multi-step",
-        "total",
-        "difference",
-        "product",
-        "quotient",
-        "reason",
-        "justify",
-        "efficient"
-      ],
+      "topic": "Multistep problems \u2014 all 4 operations",
+      "li": "Pupils identify which operation a problem requires and explain why, using key language and mathematical reasoning.",
       "cycle1": {
-        "focus": "Selecting the right operations",
+        "focus": "What each operation means \u2014 revisiting with small numbers",
         "ido": [
-          "Read a mixed problem. Underline key words. Identify which two operations are needed and in what order.",
-          "Model: 'A factory makes 2,400 items per day for 5 days. 3,750 are sold. How many remain?'"
+          "Model what \u00d7, \u00f7, +, \u2212 each represent using very small numbers. Emphasise language signals: 'groups of', 'share equally', 'altogether', 'how many more'. Make clear that the operation is the focus, not the arithmetic.",
+          "Read a problem aloud. Circle the signal word or phrase. Name the operation. Show that you do not calculate yet \u2014 just identify."
         ],
         "slideTitles": {
           "ido": [
-            "All four operations — choosing wisely",
-            "Model — factory problem"
+            "What does each operation mean?",
+            "Finding the signal word"
           ],
           "wedo": [
-            "Together — choose and calculate"
+            "Identify the operation together"
           ],
           "trios": [
-            "Trios — justify your choice"
+            "Sort and label"
           ],
           "independent": [
-            "Independent — mixed two-step"
+            "Match and explain"
           ]
         },
-        "slideCount": {
-          "ido": 2,
-          "wedo": 1,
-          "trios": 1,
-          "independent": 1
+        "trios": {
+          "task": "Sort 8 problems into four groups (\u00d7, \u00f7, +, \u2212). For each problem, write the signal word or phrase that told you which operation to use.",
+          "challenge": "Find a problem in the set where the signal word is misleading or missing. Explain how you worked out the operation without it."
+        },
+        "independent": {
+          "standard": "Match 4 problems to their operations. For each, write one sentence: 'This needs ___ because ___.'",
+          "supported": "Match 4 problems to their operations using a word bank of signal words. For each, circle the signal word.",
+          "stretch": "Write your own problem for each of the four operations. Make sure each one has a clear signal word or phrase."
         }
       },
       "cycle2": {
-        "focus": "Representing problems with bar models",
+        "focus": "Sorting when there is no obvious signal word \u2014 reasoning about structure",
         "ido": [
-          "Show how a bar model helps identify relationships between quantities before choosing an operation."
+          "Show a problem where the operation must be inferred from structure, not vocabulary. Model reasoning aloud: 'There is no signal word, but I can see that... so this must be...'",
+          "Show a second example. Discuss why two pupils might disagree about the operation \u2014 and how to resolve it."
         ],
         "slideTitles": {
           "ido": [
-            "Bar models — represent the problem"
+            "What if there is no signal word?",
+            "Reasoning from structure"
           ],
           "wedo": [
-            "Draw the bar model first"
+            "Sort these together"
           ],
           "trios": [
-            "Trios — bar model challenge"
+            "Sort, justify and save"
           ],
           "independent": [
-            "Independent — draw, then calculate"
+            "Write your own"
           ]
         },
-        "slideCount": {
-          "ido": 1,
-          "wedo": 1,
-          "trios": 1,
-          "independent": 1
+        "trios": {
+          "task": "Sort and justify 8 mixed problems. Every problem must have a written justification: 'This needs ___ because ___.' Keep these \u2014 you will use them in tomorrow's lesson.",
+          "challenge": "Find two problems that could be confused for a different operation. Explain what makes them different."
+        },
+        "independent": {
+          "standard": "Write your own problem for an assigned operation. Swap with a partner and check they identified your operation correctly.",
+          "supported": "Choose from a list of sentence starters to write one problem for each operation. Check a partner's work.",
+          "stretch": "Write two problems that look similar but need different operations. Can your partner spot the difference?"
         }
       },
-      "spotTheMistake": {
-        "slideTitle": "Spot the mistake",
-        "concept": "Using addition when the problem requires multiplication",
-        "errorType": "wrong_operation",
-        "errorInstruction": "A chef makes 1,248 portions of soup each day for 6 days. How many portions altogether?",
-        "errorNote": "The answer shown is 1,254 — the pupil added 1,248 + 6. The correct operation is multiplication: 1,248 × 6 = 7,488. Read carefully: 'each day for 6 days' means × 6.",
-        "gridSize": 0,
-        "startPoint": [
-          0,
-          0
-        ],
-        "extraPoints": [],
-        "calcDisplay": {
-          "type": "word_problem",
-          "correctAnswer": "7,488",
-          "errorAnswer": "1,254"
-        }
-      },
-      "loText": {
-        "walt": "…solve two-step problems that involve any combination of the four operations.",
-        "tiob": "…choosing the right operation is as important as calculating correctly, and a bar model helps us see the maths before we start.",
-        "iwstb": "…reading problems carefully, using a bar model to plan, and selecting the most efficient operations in the right order."
-      },
-      "lp1": {
-        "topic": "Multiplication and Division",
-        "task": "Three two-step problems using mixed operations.",
-        "questions": 3
-      },
-      "lp2": {
-        "topic": "Multiplication and Division",
-        "task": "Two problems requiring a bar model and justification.",
-        "questions": 2
-      },
-      "learningReviewStems": [
-        "I chose × instead of + because…",
-        "The bar model helped me because…",
-        "I checked my answer was sensible by…"
+      "vocabularyFocus": [
+        "operation",
+        "multiply",
+        "divide",
+        "add",
+        "subtract",
+        "signal word",
+        "groups of",
+        "share equally",
+        "altogether",
+        "difference"
       ]
     },
     {
@@ -1122,112 +1093,79 @@
       "week": "T6W3",
       "weekIndex": 3,
       "day": "Tuesday",
-      "topic": "Multistep problems — all 4 operations",
-      "li": "Pupils solve multi-step problems in money and measurement contexts.",
-      "vocabularyFocus": [
-        "pence",
-        "pounds",
-        "kilometre",
-        "metre",
-        "centimetre",
-        "gram",
-        "kilogram",
-        "litre",
-        "millilitre",
-        "convert",
-        "context"
-      ],
+      "topic": "Multistep problems \u2014 all 4 operations",
+      "li": "Pupils solve single-step problems across all four operations, identifying the correct operation before calculating.",
       "cycle1": {
-        "focus": "Money contexts",
+        "focus": "Multiplication and division problems from Monday \u2014 identify, then calculate",
         "ido": [
-          "Problem: 'A family buys 3 tickets at £12.50 each and 2 programmes at £3.75 each. How much do they spend altogether?' Model: multiply then add.",
-          "Discuss: working in pence avoids decimal confusion."
+          "Take a \u00d7 problem from Monday's sorted set. Establish the two-step routine: Step 1 \u2014 which operation and why? Step 2 \u2014 calculate. Use short multiplication with small numbers (2-digit \u00d7 1-digit).",
+          "Repeat with a \u00f7 problem (3-digit \u00f7 1-digit, no remainder). Show that Step 1 happens before any calculation begins."
         ],
         "slideTitles": {
           "ido": [
-            "Money — multiply then add",
-            "Work in pence to avoid decimals"
+            "The two-step routine: identify then calculate",
+            "Division: identify then calculate"
           ],
           "wedo": [
-            "Together — money problems"
+            "Use the routine together"
           ],
           "trios": [
-            "Trios — cost problems"
+            "Work through Monday's \u00d7 and \u00f7 problems"
           ],
           "independent": [
-            "Independent — money contexts"
+            "\u00d7 and \u00f7: identify and solve"
           ]
         },
-        "slideCount": {
-          "ido": 2,
-          "wedo": 1,
-          "trios": 1,
-          "independent": 1
+        "trios": {
+          "task": "Work through Monday's sorted \u00d7 and \u00f7 problems using the two-step routine. For each: write the operation, write why, then calculate.",
+          "challenge": "For each answer, write a checking statement: 'I can check this by...'"
+        },
+        "independent": {
+          "standard": "Solve a set of \u00d7 and \u00f7 problems. For each: circle the signal word, write the operation, show the method.",
+          "supported": "Solve 4 \u00d7 and \u00f7 problems with small numbers. An operation word bank is provided. Show each step.",
+          "stretch": "Solve \u00d7 and \u00f7 problems and write an estimate before each calculation. Explain whether your answer is reasonable."
         }
       },
       "cycle2": {
-        "focus": "Measurement and distance contexts",
+        "focus": "Adding + and \u2212 to the mix \u2014 all four operations",
         "ido": [
-          "Problem: 'A road is 4,800 m long. Workers have surfaced 3 equal sections. Each section is 1,200 m. How many sections remain?' Model: divide then subtract."
+          "Take an + and a \u2212 problem from Monday's set. Apply the same two-step routine. Show that the routine is the same regardless of the operation.",
+          "Model a mixed set of 4 problems. Identify the operations first, then calculate in order."
         ],
         "slideTitles": {
           "ido": [
-            "Measurement — divide then reason"
+            "Same routine: addition and subtraction",
+            "Mixed operations \u2014 plan before you calculate"
           ],
           "wedo": [
-            "Together — measurement problems"
+            "Mixed problems together"
           ],
           "trios": [
-            "Trios — distance and mass"
+            "All four operations"
           ],
           "independent": [
-            "Independent — measurement contexts"
+            "Mixed: identify, show, solve"
           ]
         },
-        "slideCount": {
-          "ido": 1,
-          "wedo": 1,
-          "trios": 1,
-          "independent": 1
+        "trios": {
+          "task": "Solve a mixed set of problems using all four operations. For each: state the operation, show the method, give the answer.",
+          "challenge": "Write a word problem that would trick someone into using the wrong operation. Explain the trap."
+        },
+        "independent": {
+          "standard": "Six problems across all four operations. For each: state the operation, show the method, give the answer.",
+          "supported": "Four problems across all four operations with a prompt card showing the two-step routine.",
+          "stretch": "Six problems. For each, write an alternative problem that uses the same numbers but a different operation."
         }
       },
-      "spotTheMistake": {
-        "slideTitle": "Spot the mistake",
-        "concept": "Mixing units — adding pounds and pence without converting",
-        "errorType": "mixed_units",
-        "errorInstruction": "3 books cost £4 each. 1 bookmark costs 85p. What is the total cost?",
-        "errorNote": "The answer shown is £12.85 — actually that is correct! The common error: showing £4 + 85 = £89. Always convert to the same unit: 85p = £0.85, so 3 × £4 + £0.85 = £12.85.",
-        "gridSize": 0,
-        "startPoint": [
-          0,
-          0
-        ],
-        "extraPoints": [],
-        "calcDisplay": {
-          "type": "word_problem",
-          "correctAnswer": "£12.85",
-          "note": "Convert all amounts to the same unit before calculating."
-        }
-      },
-      "loText": {
-        "walt": "…solve multi-step problems set in money and measurement contexts.",
-        "tiob": "…real-world maths almost always involves measurement or money, so practising in context helps us apply our calculation skills where they matter.",
-        "iwstb": "…converting units where needed, selecting the right operations, and showing clear working in money and measurement problems."
-      },
-      "lp1": {
-        "topic": "Addition and Subtraction",
-        "task": "Two money problems and one measurement problem.",
-        "questions": 3
-      },
-      "lp2": {
-        "topic": "Addition and Subtraction",
-        "task": "Two multi-step problems in measurement contexts.",
-        "questions": 2
-      },
-      "learningReviewStems": [
-        "I converted the units by…",
-        "Working in pence helped me because…",
-        "My answer made sense because…"
+      "vocabularyFocus": [
+        "short multiplication",
+        "short division",
+        "column addition",
+        "column subtraction",
+        "regroup",
+        "estimate",
+        "identify",
+        "two-step routine"
       ]
     },
     {
@@ -1235,111 +1173,80 @@
       "week": "T6W3",
       "weekIndex": 3,
       "day": "Wednesday",
-      "topic": "Multistep problems — all 4 operations",
-      "li": "Pupils solve multi-step problems involving time.",
-      "vocabularyFocus": [
-        "hours",
-        "minutes",
-        "seconds",
-        "duration",
-        "elapsed",
-        "timetable",
-        "start",
-        "finish",
-        "interval",
-        "convert"
-      ],
+      "topic": "Multistep problems \u2014 all 4 operations",
+      "li": "Pupils identify the operations needed in a two-step problem and plan their steps before calculating.",
       "cycle1": {
-        "focus": "Duration and elapsed time",
+        "focus": "Planning two steps \u2014 bar model first, calculate second",
         "ido": [
-          "Problem: 'A film starts at 14:35 and lasts 1 hour 48 minutes. What time does it end?' Model number line method.",
-          "Convert: seconds to minutes, minutes to hours where required."
+          "Model a two-step problem using a bar model. Label each step: 'Step 1: I need to ___ because ___. Step 2: I need to ___ because ___.' Use small friendly numbers. Do not calculate until the bar model is complete.",
+          "Show that the bar model reveals the structure of the problem \u2014 it makes the two steps visible before any arithmetic begins."
         ],
         "slideTitles": {
           "ido": [
-            "Time — start and finish",
-            "Converting units of time"
+            "Bar model: making steps visible",
+            "Label before you calculate"
           ],
           "wedo": [
-            "Together — duration problems"
+            "Plan this problem together"
           ],
           "trios": [
-            "Trios — timetable challenge"
+            "Bar model, label, solve"
           ],
           "independent": [
-            "Independent — time problems"
+            "Three two-step problems"
           ]
         },
-        "slideCount": {
-          "ido": 2,
-          "wedo": 1,
-          "trios": 1,
-          "independent": 1
+        "trios": {
+          "task": "Plan and solve three two-step problems. Draw a bar model for each. Label each step's operation before calculating.",
+          "challenge": "For one problem, draw two different bar models showing the same problem. Do both work?"
+        },
+        "independent": {
+          "standard": "Solve three two-step problems. Must show a bar model and label each step's operation.",
+          "supported": "Solve two two-step problems with a partially completed bar model provided. Label the operation for each step.",
+          "stretch": "Solve three two-step problems. For each, write a sentence explaining why the steps must happen in that order."
         }
       },
       "cycle2": {
-        "focus": "Multi-step time problems",
+        "focus": "Problems where the order of steps matters",
         "ido": [
-          "Problem: 'Three trains leave at 09:15, 10:42 and 12:08. Each journey takes 1 hour 35 minutes. Which train arrives first after 12:00 noon?' Model checking all three."
+          "Show a problem that can be solved in two different orders. Work through both routes and compare. Which is more efficient?",
+          "Show a problem where the order is fixed \u2014 doing step 2 first gives a wrong answer. Explain why."
         ],
         "slideTitles": {
           "ido": [
-            "Multi-step — which train?"
+            "Two routes \u2014 which is more efficient?",
+            "When order is fixed"
           ],
           "wedo": [
-            "Together — compare durations"
+            "Compare approaches"
           ],
           "trios": [
-            "Trios — time table problems"
+            "Solve, then justify your order"
           ],
           "independent": [
-            "Independent — multi-step time"
+            "Solve and explain"
           ]
         },
-        "slideCount": {
-          "ido": 1,
-          "wedo": 1,
-          "trios": 1,
-          "independent": 1
+        "trios": {
+          "task": "Solve three problems. For one of them, show both possible routes and explain which is more efficient.",
+          "challenge": "Write a two-step problem where the order of steps is fixed. Explain why it cannot be done in reverse."
+        },
+        "independent": {
+          "standard": "Solve three two-step problems. Explain the order you chose for each.",
+          "supported": "Solve two two-step problems with step labels provided. Explain one choice in a sentence.",
+          "stretch": "Solve three problems. For each, explain whether a different order would still give the correct answer and why."
         }
       },
-      "spotTheMistake": {
-        "slideTitle": "Spot the mistake",
-        "concept": "Adding 60 minutes as if it were 100 — treating time as decimal",
-        "errorType": "time_decimal_error",
-        "errorInstruction": "A journey starts at 10:45 and takes 75 minutes. What time does it end?",
-        "errorNote": "The answer shown is 11:20 — the pupil added 45 + 75 = 120 and wrote 11:20 thinking 120 minutes = 1:20. Correct: 10:45 + 75 min = 10:45 + 1hr 15min = 12:00.",
-        "gridSize": 0,
-        "startPoint": [
-          0,
-          0
-        ],
-        "extraPoints": [],
-        "calcDisplay": {
-          "type": "word_problem",
-          "correctAnswer": "12:00",
-          "errorAnswer": "11:20"
-        }
-      },
-      "loText": {
-        "walt": "…solve multi-step problems that involve time, including converting between units.",
-        "tiob": "…time uses a base-60 system, not base-10, so we need careful conversion rather than treating it like a decimal number.",
-        "iwstb": "…calculating durations, converting between seconds, minutes and hours, and solving multi-step time problems."
-      },
-      "lp1": {
-        "topic": "Measurement",
-        "task": "Three time duration problems.",
-        "questions": 3
-      },
-      "lp2": {
-        "topic": "Measurement",
-        "task": "Two multi-step time problems.",
-        "questions": 2
-      },
-      "learningReviewStems": [
-        "Time is different from decimals because…",
-        "I converted the time by…",
-        "I found the end time by…"
+      "vocabularyFocus": [
+        "two-step",
+        "bar model",
+        "step",
+        "plan",
+        "justify",
+        "efficient",
+        "order",
+        "first",
+        "then"
       ]
     },
     {
@@ -1347,110 +1254,82 @@
       "week": "T6W3",
       "weekIndex": 3,
       "day": "Thursday",
-      "topic": "Multistep problems — all 4 operations",
-      "li": "Pupils reason and justify answers to multi-step problems.",
-      "vocabularyFocus": [
-        "justify",
-        "explain",
-        "prove",
-        "counterexample",
-        "reason",
-        "conjecture",
-        "efficient",
-        "estimate",
-        "approximate"
-      ],
+      "topic": "Multistep problems \u2014 all 4 operations",
+      "li": "Pupils solve problems in money and measurement contexts by identifying the correct operations and calculating accurately.",
       "cycle1": {
-        "focus": "Justifying strategies and answers",
+        "focus": "Money contexts \u2014 identify, plan, solve",
         "ido": [
-          "Model reasoning: not just what the answer is, but why the method works and how you know the answer is right.",
-          "Show two different approaches to the same problem — discuss which is more efficient."
+          "Model a money problem using the identify-then-calculate routine. Use small amounts (pence and simple pounds). Show: which operation and why, then calculate.",
+          "Model a two-step money problem. Bar model first. Label each operation. Then calculate."
         ],
         "slideTitles": {
           "ido": [
-            "Justify — not just the answer, the method",
-            "Two approaches — which is better?"
+            "Money: identify then calculate",
+            "Two-step money problem"
           ],
           "wedo": [
-            "Together — write a justification"
+            "Solve this money problem together"
           ],
           "trios": [
-            "Trios — argue your method"
+            "Four money problems"
           ],
           "independent": [
-            "Independent — justify fully"
+            "Money: show your thinking"
           ]
         },
-        "slideCount": {
-          "ido": 2,
-          "wedo": 1,
-          "trios": 1,
-          "independent": 1
+        "trios": {
+          "task": "Solve four money problems. For each: state the operation(s), show the working, give the answer with the correct unit (p or \u00a3).",
+          "challenge": "Write your own two-step money problem. Solve it and write the answer, then swap with a partner."
+        },
+        "independent": {
+          "standard": "Four money problems. Show operation identification and working for each.",
+          "supported": "Three money problems with the operation labelled. Show working and give the answer.",
+          "stretch": "Four money problems including one two-step. Write an estimate before each calculation."
         }
       },
       "cycle2": {
-        "focus": "Finding and correcting errors in multi-step reasoning",
+        "focus": "Measurement contexts \u2014 same routine, new context",
         "ido": [
-          "Present a worked solution with an error. Pupils identify the mistake and explain what went wrong."
+          "Model a length or mass problem. Apply the same routine. Emphasise that the context changes but the process does not.",
+          "Model a two-step measurement problem mixing + and \u00d7. Bar model. Label. Solve."
         ],
         "slideTitles": {
           "ido": [
-            "Find and fix the error"
+            "Measurement: same routine",
+            "Two-step measurement problem"
           ],
           "wedo": [
-            "Together — error analysis"
+            "Mixed money and measurement"
           ],
           "trios": [
-            "Trios — write a correction"
+            "Measurement problems: identify and solve"
           ],
           "independent": [
-            "Independent — correct the working"
+            "Mixed context problems"
           ]
         },
-        "slideCount": {
-          "ido": 1,
-          "wedo": 1,
-          "trios": 1,
-          "independent": 1
+        "trios": {
+          "task": "Solve four measurement problems (mix of \u00d7, \u00f7, +, \u2212). Identify the operation for each and show working.",
+          "challenge": "Sort four problems by whether they need one step or two. Solve the two-step ones and explain your planning."
+        },
+        "independent": {
+          "standard": "Mixed money and measurement problems. State the operation, show the method, include the unit in your answer.",
+          "supported": "Three measurement problems with units labelled. Show working and give the answer.",
+          "stretch": "Mixed context problems. For each, write what a wrong answer would look like if you chose the wrong operation \u2014 then give the correct answer."
         }
       },
-      "spotTheMistake": {
-        "slideTitle": "Spot the mistake",
-        "concept": "Rounding to the wrong place before estimating, giving an unhelpful estimate",
-        "errorType": "wrong_rounding",
-        "errorInstruction": "Estimate 3,782 × 6",
-        "errorNote": "The answer shown is 18,000 — the pupil rounded 3,782 to 3,000. A better estimate is 4,000 × 6 = 24,000 (round to nearest thousand). 3,782 is closer to 4,000 than to 3,000.",
-        "gridSize": 0,
-        "startPoint": [
-          0,
-          0
-        ],
-        "extraPoints": [],
-        "calcDisplay": {
-          "type": "word_problem",
-          "correctAnswer": "≈ 24,000",
-          "errorAnswer": "≈ 18,000"
-        }
-      },
-      "loText": {
-        "walt": "…reason about multi-step problems, justifying the method as well as the answer.",
-        "tiob": "…explaining our thinking in maths helps us find our own errors and communicate clearly with others.",
-        "iwstb": "…writing a clear justification for my method, estimating to check, and explaining any errors I find in a worked example."
-      },
-      "lp1": {
-        "topic": "Multiplication and Division",
-        "task": "Two problems — show full working and write a justification sentence.",
-        "questions": 2
-      },
-      "lp2": {
-        "topic": "Multiplication and Division",
-        "task": "Find and correct an error in a given worked solution.",
-        "questions": 2
-      },
-      "learningReviewStems": [
-        "My justification explained…",
-        "I found the error because…",
-        "I know my estimate is better because…"
+      "vocabularyFocus": [
+        "pence",
+        "pounds",
+        "change",
+        "total",
+        "length",
+        "mass",
+        "grams",
+        "kilograms",
+        "centimetres",
+        "metres",
+        "unit"
       ]
     },
     {
@@ -1473,22 +1352,22 @@
       "cycle1": {
         "focus": "Mixed numbers to improper fractions",
         "ido": [
-          "Model 2¾: 2 wholes = 8 quarters. Add 3 more = 11 quarters. Show with fraction circles.",
+          "Model 2\u00be: 2 wholes = 8 quarters. Add 3 more = 11 quarters. Show with fraction circles.",
           "Rule: multiply the whole number by the denominator and add the numerator."
         ],
         "slideTitles": {
           "ido": [
-            "Mixed numbers → improper fractions",
+            "Mixed numbers \u2192 improper fractions",
             "The rule and why it works"
           ],
           "wedo": [
-            "Your turn — convert mixed numbers"
+            "Your turn \u2014 convert mixed numbers"
           ],
           "trios": [
-            "Trios — check each other"
+            "Trios \u2014 check each other"
           ],
           "independent": [
-            "Independent — four conversions"
+            "Independent \u2014 four conversions"
           ]
         },
         "slideCount": {
@@ -1501,20 +1380,20 @@
       "cycle2": {
         "focus": "Improper fractions to mixed numbers",
         "ido": [
-          "Model 17/5: 17 ÷ 5 = 3 rem 2. So 3 and 2/5. Division is the key."
+          "Model 17/5: 17 \u00f7 5 = 3 rem 2. So 3 and 2/5. Division is the key."
         ],
         "slideTitles": {
           "ido": [
-            "Improper fractions → mixed numbers"
+            "Improper fractions \u2192 mixed numbers"
           ],
           "wedo": [
-            "Your turn — divide to convert"
+            "Your turn \u2014 divide to convert"
           ],
           "trios": [
-            "Trios — both directions"
+            "Trios \u2014 both directions"
           ],
           "independent": [
-            "Independent — convert both ways"
+            "Independent \u2014 convert both ways"
           ]
         },
         "slideCount": {
@@ -1528,8 +1407,8 @@
         "slideTitle": "Spot the mistake",
         "concept": "Adding the numerator and denominator instead of multiplying when converting",
         "errorType": "wrong_fraction_conversion",
-        "errorInstruction": "Convert 3½ to an improper fraction",
-        "errorNote": "The answer shown is 4/2 — the pupil added 3+1=4. Correct: 3×2+1=7, so 7/2. Multiply the whole by the denominator first, then add the numerator.",
+        "errorInstruction": "Convert 3\u00bd to an improper fraction",
+        "errorNote": "The answer shown is 4/2 \u2014 the pupil added 3+1=4. Correct: 3\u00d72+1=7, so 7/2. Multiply the whole by the denominator first, then add the numerator.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -1543,9 +1422,9 @@
         }
       },
       "loText": {
-        "walt": "…convert between mixed numbers and improper fractions.",
-        "tiob": "…both forms represent the same amount. Being able to move between them makes adding and subtracting fractions much easier.",
-        "iwstb": "…converting a mixed number to an improper fraction using multiplication and addition, and converting back using division."
+        "walt": "\u2026convert between mixed numbers and improper fractions.",
+        "tiob": "\u2026both forms represent the same amount. Being able to move between them makes adding and subtracting fractions much easier.",
+        "iwstb": "\u2026converting a mixed number to an improper fraction using multiplication and addition, and converting back using division."
       },
       "lp1": {
         "topic": "Fractions",
@@ -1558,9 +1437,9 @@
         "questions": 4
       },
       "learningReviewStems": [
-        "To convert a mixed number I…",
-        "Division helps me because…",
-        "Both forms are equal because…"
+        "To convert a mixed number I\u2026",
+        "Division helps me because\u2026",
+        "Both forms are equal because\u2026"
       ]
     },
     {
@@ -1583,22 +1462,22 @@
       "cycle1": {
         "focus": "Adding fractions within one whole",
         "ido": [
-          "Model 2/7 + 3/7 = 5/7. Same denominator — add numerators only.",
+          "Model 2/7 + 3/7 = 5/7. Same denominator \u2014 add numerators only.",
           "Common mistake: adding denominators too. Show why that is wrong with fraction strips."
         ],
         "slideTitles": {
           "ido": [
-            "Adding fractions — same denominator",
+            "Adding fractions \u2014 same denominator",
             "Don't add the denominators!"
           ],
           "wedo": [
-            "Your turn — same denominator"
+            "Your turn \u2014 same denominator"
           ],
           "trios": [
-            "Trios — fraction addition"
+            "Trios \u2014 fraction addition"
           ],
           "independent": [
-            "Independent — within one whole"
+            "Independent \u2014 within one whole"
           ]
         },
         "slideCount": {
@@ -1611,20 +1490,20 @@
       "cycle2": {
         "focus": "Crossing the whole",
         "ido": [
-          "Model 5/8 + 6/8 = 11/8 = 1 and 3/8. Crossing the whole means the numerator exceeds the denominator — convert."
+          "Model 5/8 + 6/8 = 11/8 = 1 and 3/8. Crossing the whole means the numerator exceeds the denominator \u2014 convert."
         ],
         "slideTitles": {
           "ido": [
             "Crossing the whole"
           ],
           "wedo": [
-            "Together — cross the whole"
+            "Together \u2014 cross the whole"
           ],
           "trios": [
-            "Trios — spot the crossing"
+            "Trios \u2014 spot the crossing"
           ],
           "independent": [
-            "Independent — crossing problems"
+            "Independent \u2014 crossing problems"
           ]
         },
         "slideCount": {
@@ -1639,7 +1518,7 @@
         "concept": "Adding both numerator and denominator",
         "errorType": "fraction_add_denominator",
         "errorInstruction": "Work out 3/5 + 4/5",
-        "errorNote": "The answer shown is 7/10 — the pupil added both numerators and denominators. Same denominator stays the same: 3/5 + 4/5 = 7/5 = 1 and 2/5.",
+        "errorNote": "The answer shown is 7/10 \u2014 the pupil added both numerators and denominators. Same denominator stays the same: 3/5 + 4/5 = 7/5 = 1 and 2/5.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -1653,13 +1532,13 @@
         }
       },
       "loText": {
-        "walt": "…add fractions with the same denominator, including when the answer is greater than one.",
-        "tiob": "…when fractions share a denominator, only the numerators change. Understanding this avoids the most common fraction mistake.",
-        "iwstb": "…adding fractions with the same denominator correctly, recognising when the answer crosses one whole, and converting to a mixed number."
+        "walt": "\u2026add fractions with the same denominator, including when the answer is greater than one.",
+        "tiob": "\u2026when fractions share a denominator, only the numerators change. Understanding this avoids the most common fraction mistake.",
+        "iwstb": "\u2026adding fractions with the same denominator correctly, recognising when the answer crosses one whole, and converting to a mixed number."
       },
       "lp1": {
         "topic": "Fractions",
-        "task": "Six additions — three within one whole, three crossing the whole.",
+        "task": "Six additions \u2014 three within one whole, three crossing the whole.",
         "questions": 6
       },
       "lp2": {
@@ -1668,9 +1547,9 @@
         "questions": 4
       },
       "learningReviewStems": [
-        "The denominator stays the same because…",
-        "I knew the answer crossed the whole when…",
-        "I converted to a mixed number by…"
+        "The denominator stays the same because\u2026",
+        "I knew the answer crossed the whole when\u2026",
+        "I converted to a mixed number by\u2026"
       ]
     },
     {
@@ -1693,22 +1572,22 @@
       "cycle1": {
         "focus": "Subtracting fractions within one whole",
         "ido": [
-          "Model 6/9 − 2/9 = 4/9. Same denominator — subtract numerators.",
+          "Model 6/9 \u2212 2/9 = 4/9. Same denominator \u2014 subtract numerators.",
           "Show subtraction on a fraction number line."
         ],
         "slideTitles": {
           "ido": [
-            "Subtracting fractions — same denominator",
+            "Subtracting fractions \u2014 same denominator",
             "Number line method"
           ],
           "wedo": [
-            "Your turn — within one whole"
+            "Your turn \u2014 within one whole"
           ],
           "trios": [
-            "Trios — subtract and show"
+            "Trios \u2014 subtract and show"
           ],
           "independent": [
-            "Independent — six subtractions"
+            "Independent \u2014 six subtractions"
           ]
         },
         "slideCount": {
@@ -1719,22 +1598,22 @@
         }
       },
       "cycle2": {
-        "focus": "Subtracting from a mixed number — crossing the whole",
+        "focus": "Subtracting from a mixed number \u2014 crossing the whole",
         "ido": [
-          "Model 2 and 3/8 − 7/8. Can't do 3/8 − 7/8. Exchange: 1 whole = 8/8. Now 11/8 − 7/8 = 4/8. So answer = 1 and 4/8."
+          "Model 2 and 3/8 \u2212 7/8. Can't do 3/8 \u2212 7/8. Exchange: 1 whole = 8/8. Now 11/8 \u2212 7/8 = 4/8. So answer = 1 and 4/8."
         ],
         "slideTitles": {
           "ido": [
-            "Subtracting — crossing the whole"
+            "Subtracting \u2014 crossing the whole"
           ],
           "wedo": [
-            "Together — exchange the whole"
+            "Together \u2014 exchange the whole"
           ],
           "trios": [
-            "Trios — exchange challenge"
+            "Trios \u2014 exchange challenge"
           ],
           "independent": [
-            "Independent — crossing problems"
+            "Independent \u2014 crossing problems"
           ]
         },
         "slideCount": {
@@ -1748,8 +1627,8 @@
         "slideTitle": "Spot the mistake",
         "concept": "Subtracting the smaller numerator from the larger regardless of which is on top",
         "errorType": "fraction_subtract_wrong_direction",
-        "errorInstruction": "Work out 1 and 2/7 − 5/7",
-        "errorNote": "The answer shown is 1 and 3/7 — the pupil subtracted 5−2=3 instead of exchanging. Correct: exchange 1 whole for 7/7, giving 9/7 − 5/7 = 4/7. Answer: 4/7.",
+        "errorInstruction": "Work out 1 and 2/7 \u2212 5/7",
+        "errorNote": "The answer shown is 1 and 3/7 \u2014 the pupil subtracted 5\u22122=3 instead of exchanging. Correct: exchange 1 whole for 7/7, giving 9/7 \u2212 5/7 = 4/7. Answer: 4/7.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -1763,13 +1642,13 @@
         }
       },
       "loText": {
-        "walt": "…subtract fractions with the same denominator, including from a mixed number.",
-        "tiob": "…subtraction sometimes requires us to exchange a whole for a fraction, just as we exchange in column subtraction.",
-        "iwstb": "…subtracting fraction from fraction correctly, and exchanging a whole when the numerator being subtracted is larger."
+        "walt": "\u2026subtract fractions with the same denominator, including from a mixed number.",
+        "tiob": "\u2026subtraction sometimes requires us to exchange a whole for a fraction, just as we exchange in column subtraction.",
+        "iwstb": "\u2026subtracting fraction from fraction correctly, and exchanging a whole when the numerator being subtracted is larger."
       },
       "lp1": {
         "topic": "Fractions",
-        "task": "Six subtractions — three straightforward, three requiring exchange.",
+        "task": "Six subtractions \u2014 three straightforward, three requiring exchange.",
         "questions": 6
       },
       "lp2": {
@@ -1778,9 +1657,9 @@
         "questions": 4
       },
       "learningReviewStems": [
-        "I needed to exchange because…",
-        "Exchanging a whole gives me…",
-        "The answer made sense because…"
+        "I needed to exchange because\u2026",
+        "Exchanging a whole gives me\u2026",
+        "The answer made sense because\u2026"
       ]
     },
     {
@@ -1801,24 +1680,24 @@
         "of means multiply"
       ],
       "cycle1": {
-        "focus": "Fractions of amounts — unit and non-unit fractions",
+        "focus": "Fractions of amounts \u2014 unit and non-unit fractions",
         "ido": [
           "Find 1/4 of 3,600: divide by 4. Find 3/4 of 3,600: divide by 4 then multiply by 3.",
-          "Link to multiplication and division: 'of' means ×."
+          "Link to multiplication and division: 'of' means \u00d7."
         ],
         "slideTitles": {
           "ido": [
-            "Fractions of amounts — find the unit fraction first",
+            "Fractions of amounts \u2014 find the unit fraction first",
             "Non-unit fractions of amounts"
           ],
           "wedo": [
-            "Your turn — fractions of amounts"
+            "Your turn \u2014 fractions of amounts"
           ],
           "trios": [
-            "Trios — unit then non-unit"
+            "Trios \u2014 unit then non-unit"
           ],
           "independent": [
-            "Independent — six fraction of amounts"
+            "Independent \u2014 six fraction of amounts"
           ]
         },
         "slideCount": {
@@ -1831,8 +1710,8 @@
       "cycle2": {
         "focus": "Fraction word problems",
         "ido": [
-          "Problem: '3/5 of a school's 1,250 pupils walk to school. How many is that?' Model: ÷5 then ×3.",
-          "Problem: 'After spending 1/3 of her money, Afia has £240 left. How much did she start with?' — work backwards."
+          "Problem: '3/5 of a school's 1,250 pupils walk to school. How many is that?' Model: \u00f75 then \u00d73.",
+          "Problem: 'After spending 1/3 of her money, Afia has \u00a3240 left. How much did she start with?' \u2014 work backwards."
         ],
         "slideTitles": {
           "ido": [
@@ -1840,13 +1719,13 @@
             "Work backwards from what's left"
           ],
           "wedo": [
-            "Together — fraction problems"
+            "Together \u2014 fraction problems"
           ],
           "trios": [
-            "Trios — word problem challenge"
+            "Trios \u2014 word problem challenge"
           ],
           "independent": [
-            "Independent — fraction problems"
+            "Independent \u2014 fraction problems"
           ]
         },
         "slideCount": {
@@ -1861,7 +1740,7 @@
         "concept": "Dividing by the numerator instead of the denominator",
         "errorType": "fraction_divide_wrong_number",
         "errorInstruction": "Find 2/5 of 360",
-        "errorNote": "The answer shown is 180 — the pupil divided by 2 (the numerator) instead of 5 (the denominator). Correct: 360 ÷ 5 = 72, then 72 × 2 = 144.",
+        "errorNote": "The answer shown is 180 \u2014 the pupil divided by 2 (the numerator) instead of 5 (the denominator). Correct: 360 \u00f7 5 = 72, then 72 \u00d7 2 = 144.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -1875,13 +1754,13 @@
         }
       },
       "loText": {
-        "walt": "…find fractions of amounts and solve word problems involving fractions.",
-        "tiob": "…fractions of amounts link multiplication and division: dividing finds the unit fraction and multiplying scales it up.",
-        "iwstb": "…finding a unit fraction of an amount by dividing, scaling up to non-unit fractions by multiplying, and applying this to word problems."
+        "walt": "\u2026find fractions of amounts and solve word problems involving fractions.",
+        "tiob": "\u2026fractions of amounts link multiplication and division: dividing finds the unit fraction and multiplying scales it up.",
+        "iwstb": "\u2026finding a unit fraction of an amount by dividing, scaling up to non-unit fractions by multiplying, and applying this to word problems."
       },
       "lp1": {
         "topic": "Fractions",
-        "task": "Six fractions of amounts — mix of unit and non-unit.",
+        "task": "Six fractions of amounts \u2014 mix of unit and non-unit.",
         "questions": 6
       },
       "lp2": {
@@ -1890,9 +1769,9 @@
         "questions": 3
       },
       "learningReviewStems": [
-        "To find 1/5 of an amount I…",
-        "To find 3/5 I…",
-        "I worked backwards by…"
+        "To find 1/5 of an amount I\u2026",
+        "To find 3/5 I\u2026",
+        "I worked backwards by\u2026"
       ]
     },
     {
@@ -1921,17 +1800,17 @@
         ],
         "slideTitles": {
           "ido": [
-            "Pictograms — what does the key tell us?",
-            "Bar charts — reading between gridlines"
+            "Pictograms \u2014 what does the key tell us?",
+            "Bar charts \u2014 reading between gridlines"
           ],
           "wedo": [
-            "Together — read the data"
+            "Together \u2014 read the data"
           ],
           "trios": [
-            "Trios — write three statements"
+            "Trios \u2014 write three statements"
           ],
           "independent": [
-            "Independent — read and answer"
+            "Independent \u2014 read and answer"
           ]
         },
         "slideCount": {
@@ -1942,22 +1821,22 @@
         }
       },
       "cycle2": {
-        "focus": "Tables — reading and interpreting",
+        "focus": "Tables \u2014 reading and interpreting",
         "ido": [
           "Show a two-way table. Model reading rows, columns, totals. Identify patterns."
         ],
         "slideTitles": {
           "ido": [
-            "Tables — rows, columns, totals"
+            "Tables \u2014 rows, columns, totals"
           ],
           "wedo": [
-            "Together — table reading"
+            "Together \u2014 table reading"
           ],
           "trios": [
-            "Trios — table challenge"
+            "Trios \u2014 table challenge"
           ],
           "independent": [
-            "Independent — table questions"
+            "Independent \u2014 table questions"
           ]
         },
         "slideCount": {
@@ -1969,10 +1848,10 @@
       },
       "spotTheMistake": {
         "slideTitle": "Spot the mistake",
-        "concept": "Misreading the scale — treating each bar division as 1 when the scale is 5",
+        "concept": "Misreading the scale \u2014 treating each bar division as 1 when the scale is 5",
         "errorType": "scale_misread",
         "errorInstruction": "The bar chart shows the scale goes up in 5s. The bar for 'swimming' reaches the 4th line. What is the value?",
-        "errorNote": "The answer shown is 4 — the pupil counted lines instead of reading the scale. Each line represents 5, so the 4th line = 20. Always check the scale first.",
+        "errorNote": "The answer shown is 4 \u2014 the pupil counted lines instead of reading the scale. Each line represents 5, so the 4th line = 20. Always check the scale first.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -1986,9 +1865,9 @@
         }
       },
       "loText": {
-        "walt": "…interpret data presented in pictograms, bar charts and tables.",
-        "tiob": "…graphs and tables let us spot patterns and compare data at a glance, but only if we read the scale correctly.",
-        "iwstb": "…reading values from pictograms and bar charts using the scale, and reading data from rows and columns of a table accurately."
+        "walt": "\u2026interpret data presented in pictograms, bar charts and tables.",
+        "tiob": "\u2026graphs and tables let us spot patterns and compare data at a glance, but only if we read the scale correctly.",
+        "iwstb": "\u2026reading values from pictograms and bar charts using the scale, and reading data from rows and columns of a table accurately."
       },
       "lp1": {
         "topic": "Statistics",
@@ -2001,9 +1880,9 @@
         "questions": 4
       },
       "learningReviewStems": [
-        "The scale told me…",
-        "I read between grid lines by…",
-        "A pattern I noticed in the data was…"
+        "The scale told me\u2026",
+        "I read between grid lines by\u2026",
+        "A pattern I noticed in the data was\u2026"
       ]
     },
     {
@@ -2033,17 +1912,17 @@
         ],
         "slideTitles": {
           "ido": [
-            "Sum — add the values",
-            "Difference — find the gap"
+            "Sum \u2014 add the values",
+            "Difference \u2014 find the gap"
           ],
           "wedo": [
-            "Together — sum and difference"
+            "Together \u2014 sum and difference"
           ],
           "trios": [
-            "Trios — write the question and answer"
+            "Trios \u2014 write the question and answer"
           ],
           "independent": [
-            "Independent — six comparison questions"
+            "Independent \u2014 six comparison questions"
           ]
         },
         "slideCount": {
@@ -2063,13 +1942,13 @@
             "Comparing two data sets"
           ],
           "wedo": [
-            "Together — two-chart comparison"
+            "Together \u2014 two-chart comparison"
           ],
           "trios": [
-            "Trios — find the most interesting difference"
+            "Trios \u2014 find the most interesting difference"
           ],
           "independent": [
-            "Independent — compare and write"
+            "Independent \u2014 compare and write"
           ]
         },
         "slideCount": {
@@ -2084,7 +1963,7 @@
         "concept": "Confusing sum with difference",
         "errorType": "sum_difference_confusion",
         "errorInstruction": "Class A sold 240 cakes. Class B sold 185. How many more did Class A sell?",
-        "errorNote": "The answer shown is 425 — the pupil added instead of subtracting. 'How many more' means difference: 240 − 185 = 55.",
+        "errorNote": "The answer shown is 425 \u2014 the pupil added instead of subtracting. 'How many more' means difference: 240 \u2212 185 = 55.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -2098,9 +1977,9 @@
         }
       },
       "loText": {
-        "walt": "…compare data sets and calculate the sum and difference between values.",
-        "tiob": "…sum and difference are the two most common calculations needed when reading charts, and knowing which to use depends on the question asked.",
-        "iwstb": "…identifying whether a question asks for a sum or a difference, and calculating accurately from data shown in charts or tables."
+        "walt": "\u2026compare data sets and calculate the sum and difference between values.",
+        "tiob": "\u2026sum and difference are the two most common calculations needed when reading charts, and knowing which to use depends on the question asked.",
+        "iwstb": "\u2026identifying whether a question asks for a sum or a difference, and calculating accurately from data shown in charts or tables."
       },
       "lp1": {
         "topic": "Statistics",
@@ -2113,9 +1992,9 @@
         "questions": 4
       },
       "learningReviewStems": [
-        "I know this is a difference question because…",
-        "To find the total I…",
-        "The most interesting comparison I found was…"
+        "I know this is a difference question because\u2026",
+        "To find the total I\u2026",
+        "The most interesting comparison I found was\u2026"
       ]
     },
     {
@@ -2141,21 +2020,21 @@
         "focus": "Reading labelled points on a line graph",
         "ido": [
           "Show a line graph of temperature over 12 hours. Read labelled points. Key question: what does the line between points tell us?",
-          "Stress: line graphs show continuous data — the line represents what happens between readings."
+          "Stress: line graphs show continuous data \u2014 the line represents what happens between readings."
         ],
         "slideTitles": {
           "ido": [
-            "Line graphs — reading labelled points",
+            "Line graphs \u2014 reading labelled points",
             "What does the line between tell us?"
           ],
           "wedo": [
-            "Your turn — temperature graph"
+            "Your turn \u2014 temperature graph"
           ],
           "trios": [
-            "Trios — write three findings"
+            "Trios \u2014 write three findings"
           ],
           "independent": [
-            "Independent — read the line graph"
+            "Independent \u2014 read the line graph"
           ]
         },
         "slideCount": {
@@ -2166,23 +2045,23 @@
         }
       },
       "cycle2": {
-        "focus": "Reading between points — interpolation",
+        "focus": "Reading between points \u2014 interpolation",
         "ido": [
           "Model: scale is in hours but question asks for a point between labels. Estimate from the position of the line.",
-          "Model a descending line graph — same skills, different direction."
+          "Model a descending line graph \u2014 same skills, different direction."
         ],
         "slideTitles": {
           "ido": [
             "Reading between the labels"
           ],
           "wedo": [
-            "Together — interpolation"
+            "Together \u2014 interpolation"
           ],
           "trios": [
-            "Trios — between-point challenge"
+            "Trios \u2014 between-point challenge"
           ],
           "independent": [
-            "Independent — interpolation questions"
+            "Independent \u2014 interpolation questions"
           ]
         },
         "slideCount": {
@@ -2197,7 +2076,7 @@
         "concept": "Reading the nearest labelled value instead of interpolating",
         "errorType": "line_graph_snap_to_label",
         "errorInstruction": "The line graph shows 200 at 10:00 and 300 at 12:00. What does it show at 11:00?",
-        "errorNote": "The answer shown is 300 — the pupil read the nearest label. The correct estimate is 250 (halfway between 200 and 300) since the line rises steadily.",
+        "errorNote": "The answer shown is 300 \u2014 the pupil read the nearest label. The correct estimate is 250 (halfway between 200 and 300) since the line rises steadily.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -2211,9 +2090,9 @@
         }
       },
       "loText": {
-        "walt": "…read and interpret line graphs, including estimating values between labelled points.",
-        "tiob": "…line graphs show continuous change and the line itself regroups meaning between the plotted points, which makes them different from bar charts.",
-        "iwstb": "…reading values at labelled points, estimating between labels, and describing the trend shown by a line graph."
+        "walt": "\u2026read and interpret line graphs, including estimating values between labelled points.",
+        "tiob": "\u2026line graphs show continuous change and the line itself regroups meaning between the plotted points, which makes them different from bar charts.",
+        "iwstb": "\u2026reading values at labelled points, estimating between labels, and describing the trend shown by a line graph."
       },
       "lp1": {
         "topic": "Statistics",
@@ -2222,13 +2101,13 @@
       },
       "lp2": {
         "topic": "Statistics",
-        "task": "Four questions including interpolation from a distance–time graph.",
+        "task": "Four questions including interpolation from a distance\u2013time graph.",
         "questions": 4
       },
       "learningReviewStems": [
-        "Line graphs show continuous data because…",
-        "I estimated a value between points by…",
-        "The trend in this graph shows…"
+        "Line graphs show continuous data because\u2026",
+        "I estimated a value between points by\u2026",
+        "The trend in this graph shows\u2026"
       ]
     },
     {
@@ -2253,22 +2132,22 @@
       "cycle1": {
         "focus": "Setting up axes and choosing a scale",
         "ido": [
-          "Model: given a data set 0–350, choose scale of 50. Label both axes including units. Draw and label the y-axis.",
+          "Model: given a data set 0\u2013350, choose scale of 50. Label both axes including units. Draw and label the y-axis.",
           "Common errors: not starting scale at 0, unequal intervals, missing axis labels."
         ],
         "slideTitles": {
           "ido": [
             "Setting up the axes",
-            "Common errors — scale and labels"
+            "Common errors \u2014 scale and labels"
           ],
           "wedo": [
-            "Together — draw the axes"
+            "Together \u2014 draw the axes"
           ],
           "trios": [
-            "Trios — scale decisions"
+            "Trios \u2014 scale decisions"
           ],
           "independent": [
-            "Independent — set up and start"
+            "Independent \u2014 set up and start"
           ]
         },
         "slideCount": {
@@ -2288,13 +2167,13 @@
             "Plot, join, check"
           ],
           "wedo": [
-            "Together — complete the graph"
+            "Together \u2014 complete the graph"
           ],
           "trios": [
-            "Trios — check each other's graph"
+            "Trios \u2014 check each other's graph"
           ],
           "independent": [
-            "Independent — complete the line graph"
+            "Independent \u2014 complete the line graph"
           ]
         },
         "slideCount": {
@@ -2309,7 +2188,7 @@
         "concept": "Unequal intervals on the y-axis",
         "errorType": "unequal_scale_intervals",
         "errorInstruction": "A pupil drew a line graph with y-axis labels: 0, 10, 20, 35, 50.",
-        "errorNote": "The gaps between labels are not equal (10, 10, 15, 15). This distorts the graph — the line will look steeper or flatter than the data actually shows. Intervals must be equal.",
+        "errorNote": "The gaps between labels are not equal (10, 10, 15, 15). This distorts the graph \u2014 the line will look steeper or flatter than the data actually shows. Intervals must be equal.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -2323,9 +2202,9 @@
         }
       },
       "loText": {
-        "walt": "…draw and label an accurate line graph from a data set.",
-        "tiob": "…drawing accurate graphs requires careful decisions about scale and labelling — a poorly scaled graph gives the wrong impression of the data.",
-        "iwstb": "…choosing an appropriate scale, labelling both axes including units, plotting points accurately, and joining them with a straight line."
+        "walt": "\u2026draw and label an accurate line graph from a data set.",
+        "tiob": "\u2026drawing accurate graphs requires careful decisions about scale and labelling \u2014 a poorly scaled graph gives the wrong impression of the data.",
+        "iwstb": "\u2026choosing an appropriate scale, labelling both axes including units, plotting points accurately, and joining them with a straight line."
       },
       "lp1": {
         "topic": "Statistics",
@@ -2338,9 +2217,9 @@
         "questions": 2
       },
       "learningReviewStems": [
-        "I chose my scale by…",
-        "A label I mustn't forget is…",
-        "My graph shows that…"
+        "I chose my scale by\u2026",
+        "A label I mustn't forget is\u2026",
+        "My graph shows that\u2026"
       ]
     },
     {
@@ -2364,8 +2243,8 @@
       "cycle1": {
         "focus": "Combining reading data with calculation",
         "ido": [
-          "Show a bar chart. Q: 'What is the total of the three highest categories?' — read three values then add.",
-          "Q: 'How many more than the lowest category does the highest have?' — read then subtract."
+          "Show a bar chart. Q: 'What is the total of the three highest categories?' \u2014 read three values then add.",
+          "Q: 'How many more than the lowest category does the highest have?' \u2014 read then subtract."
         ],
         "slideTitles": {
           "ido": [
@@ -2373,13 +2252,13 @@
             "Sum of the top three"
           ],
           "wedo": [
-            "Together — read then calculate"
+            "Together \u2014 read then calculate"
           ],
           "trios": [
-            "Trios — write your own question"
+            "Trios \u2014 write your own question"
           ],
           "independent": [
-            "Independent — mixed questions"
+            "Independent \u2014 mixed questions"
           ]
         },
         "slideCount": {
@@ -2392,20 +2271,20 @@
       "cycle2": {
         "focus": "Multi-step reasoning from statistics",
         "ido": [
-          "Show a table of weekly sales. Q: 'Which week had the greatest increase from the week before?' — calculate differences between adjacent values."
+          "Show a table of weekly sales. Q: 'Which week had the greatest increase from the week before?' \u2014 calculate differences between adjacent values."
         ],
         "slideTitles": {
           "ido": [
-            "Greatest increase — find the differences"
+            "Greatest increase \u2014 find the differences"
           ],
           "wedo": [
-            "Together — week-to-week changes"
+            "Together \u2014 week-to-week changes"
           ],
           "trios": [
-            "Trios — data reasoning"
+            "Trios \u2014 data reasoning"
           ],
           "independent": [
-            "Independent — reasoning questions"
+            "Independent \u2014 reasoning questions"
           ]
         },
         "slideCount": {
@@ -2420,7 +2299,7 @@
         "concept": "Using the wrong column from a table",
         "errorType": "wrong_table_column",
         "errorInstruction": "The table shows Monday: 145, Tuesday: 210, Wednesday: 185. What is the total for the week?",
-        "errorNote": "The answer shown is 540 — the pupil added 145 + 210 + 185 = 540, which is the correct method. A common error: adding Monday + Wednesday only (145 + 185 = 330) and missing Tuesday. Always check you have used every row.",
+        "errorNote": "The answer shown is 540 \u2014 the pupil added 145 + 210 + 185 = 540, which is the correct method. A common error: adding Monday + Wednesday only (145 + 185 = 330) and missing Tuesday. Always check you have used every row.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -2434,9 +2313,9 @@
         }
       },
       "loText": {
-        "walt": "…answer mixed questions that combine reading from a chart or table with calculation.",
-        "tiob": "…statistics and calculation go together: data gives us numbers and calculation turns those numbers into answers to real questions.",
-        "iwstb": "…reading values from charts or tables accurately, then applying addition, subtraction, multiplication or division to find answers."
+        "walt": "\u2026answer mixed questions that combine reading from a chart or table with calculation.",
+        "tiob": "\u2026statistics and calculation go together: data gives us numbers and calculation turns those numbers into answers to real questions.",
+        "iwstb": "\u2026reading values from charts or tables accurately, then applying addition, subtraction, multiplication or division to find answers."
       },
       "lp1": {
         "topic": "Statistics",
@@ -2449,9 +2328,9 @@
         "questions": 4
       },
       "learningReviewStems": [
-        "I read the data first by…",
-        "The calculation I chose was…",
-        "I justified my answer by…"
+        "I read the data first by\u2026",
+        "The calculation I chose was\u2026",
+        "I justified my answer by\u2026"
       ]
     },
     {
@@ -2479,16 +2358,16 @@
         ],
         "slideTitles": {
           "ido": [
-            "Describing trends — faster, slower, steady"
+            "Describing trends \u2014 faster, slower, steady"
           ],
           "wedo": [
-            "Together — describe the trend"
+            "Together \u2014 describe the trend"
           ],
           "trios": [
-            "Trios — three trend statements"
+            "Trios \u2014 three trend statements"
           ],
           "independent": [
-            "Independent — trend questions"
+            "Independent \u2014 trend questions"
           ]
         },
         "slideCount": {
@@ -2505,16 +2384,16 @@
         ],
         "slideTitles": {
           "ido": [
-            "Two representations — what's different?"
+            "Two representations \u2014 what's different?"
           ],
           "wedo": [
-            "Together — table and graph"
+            "Together \u2014 table and graph"
           ],
           "trios": [
-            "Trios — which is better?"
+            "Trios \u2014 which is better?"
           ],
           "independent": [
-            "Independent — compare representations"
+            "Independent \u2014 compare representations"
           ]
         },
         "slideCount": {
@@ -2529,7 +2408,7 @@
         "concept": "Describing a trend as a single event rather than a pattern",
         "errorType": "point_vs_trend",
         "errorInstruction": "The line graph shows sales increase each month. Describe the trend.",
-        "errorNote": "The answer shown is 'Sales were highest in December' — that is a fact, not a trend. A trend describes what happens over time: 'Sales increased steadily throughout the year, with the largest rise in the last quarter.'",
+        "errorNote": "The answer shown is 'Sales were highest in December' \u2014 that is a fact, not a trend. A trend describes what happens over time: 'Sales increased steadily throughout the year, with the largest rise in the last quarter.'",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -2543,9 +2422,9 @@
         }
       },
       "loText": {
-        "walt": "…draw conclusions and describe trends using information from line graphs and tables.",
-        "tiob": "…data becomes useful when we can draw conclusions from it, not just read individual values.",
-        "iwstb": "…describing what a line graph shows over time, comparing two representations, and writing a clear trend statement."
+        "walt": "\u2026draw conclusions and describe trends using information from line graphs and tables.",
+        "tiob": "\u2026data becomes useful when we can draw conclusions from it, not just read individual values.",
+        "iwstb": "\u2026describing what a line graph shows over time, comparing two representations, and writing a clear trend statement."
       },
       "lp1": {
         "topic": "Statistics",
@@ -2554,13 +2433,13 @@
       },
       "lp2": {
         "topic": "Statistics",
-        "task": "Two representations of the same data — comparison and conclusion questions.",
+        "task": "Two representations of the same data \u2014 comparison and conclusion questions.",
         "questions": 4
       },
       "learningReviewStems": [
-        "A trend is different from a single fact because…",
-        "I described the trend by…",
-        "Two representations I compared were…"
+        "A trend is different from a single fact because\u2026",
+        "I described the trend by\u2026",
+        "Two representations I compared were\u2026"
       ]
     },
     {
@@ -2582,22 +2461,22 @@
         "table"
       ],
       "cycle1": {
-        "focus": "Consolidation — statistics and calculation mixed",
+        "focus": "Consolidation \u2014 statistics and calculation mixed",
         "ido": [
           "Model a complex problem: a table of monthly income. 'What was the total for the first quarter? How much more was earned in summer than in spring? What fraction of annual income came in December?'"
         ],
         "slideTitles": {
           "ido": [
-            "Consolidation — layered questions from data"
+            "Consolidation \u2014 layered questions from data"
           ],
           "wedo": [
-            "Together — work through the layers"
+            "Together \u2014 work through the layers"
           ],
           "trios": [
-            "Trios — create a question"
+            "Trios \u2014 create a question"
           ],
           "independent": [
-            "Independent — full challenge"
+            "Independent \u2014 full challenge"
           ]
         },
         "slideCount": {
@@ -2608,7 +2487,7 @@
         }
       },
       "cycle2": {
-        "focus": "Justify and explain — statistics reasoning",
+        "focus": "Justify and explain \u2014 statistics reasoning",
         "ido": [
           "Show a claim: 'The data shows that Wednesdays are always the busiest day.' Pupils decide if the data supports this claim."
         ],
@@ -2617,13 +2496,13 @@
             "Does the data support the claim?"
           ],
           "wedo": [
-            "Together — agree or disagree?"
+            "Together \u2014 agree or disagree?"
           ],
           "trios": [
-            "Trios — evidence from data"
+            "Trios \u2014 evidence from data"
           ],
           "independent": [
-            "Independent — support or challenge"
+            "Independent \u2014 support or challenge"
           ]
         },
         "slideCount": {
@@ -2652,9 +2531,9 @@
         }
       },
       "loText": {
-        "walt": "…solve mixed problems that combine interpreting data with multi-step calculation.",
-        "tiob": "…combining statistics skills with calculation gives us a full toolkit for answering complex data questions.",
-        "iwstb": "…reading data accurately, selecting the right calculations, showing clear working, and writing conclusions that stay close to the evidence."
+        "walt": "\u2026solve mixed problems that combine interpreting data with multi-step calculation.",
+        "tiob": "\u2026combining statistics skills with calculation gives us a full toolkit for answering complex data questions.",
+        "iwstb": "\u2026reading data accurately, selecting the right calculations, showing clear working, and writing conclusions that stay close to the evidence."
       },
       "lp1": {
         "topic": "Statistics",
@@ -2667,9 +2546,9 @@
         "questions": 2
       },
       "learningReviewStems": [
-        "I used the data to show…",
-        "My conclusion was supported by…",
-        "I made sure not to go beyond the data by…"
+        "I used the data to show\u2026",
+        "My conclusion was supported by\u2026",
+        "I made sure not to go beyond the data by\u2026"
       ]
     },
     {
@@ -2693,20 +2572,20 @@
       "cycle1": {
         "focus": "Mixed calculation reasoning",
         "ido": [
-          "Worked example: a complex multi-step problem requiring ×, ÷ and −. Model selecting the method, estimating, calculating, checking."
+          "Worked example: a complex multi-step problem requiring \u00d7, \u00f7 and \u2212. Model selecting the method, estimating, calculating, checking."
         ],
         "slideTitles": {
           "ido": [
-            "Reasoning — full method model"
+            "Reasoning \u2014 full method model"
           ],
           "wedo": [
-            "Together — reason it through"
+            "Together \u2014 reason it through"
           ],
           "trios": [
-            "Trios — choose the best method"
+            "Trios \u2014 choose the best method"
           ],
           "independent": [
-            "Independent — calculation reasoning"
+            "Independent \u2014 calculation reasoning"
           ]
         },
         "slideCount": {
@@ -2717,22 +2596,22 @@
         }
       },
       "cycle2": {
-        "focus": "Justify your answer — explain the maths",
+        "focus": "Justify your answer \u2014 explain the maths",
         "ido": [
           "Model writing a full justification: answer, method chosen, check used, why the answer is reasonable."
         ],
         "slideTitles": {
           "ido": [
-            "Justification — all four parts"
+            "Justification \u2014 all four parts"
           ],
           "wedo": [
-            "Together — write a justification"
+            "Together \u2014 write a justification"
           ],
           "trios": [
-            "Trios — mark each other's justification"
+            "Trios \u2014 mark each other's justification"
           ],
           "independent": [
-            "Independent — full justification"
+            "Independent \u2014 full justification"
           ]
         },
         "slideCount": {
@@ -2746,8 +2625,8 @@
         "slideTitle": "Spot the mistake",
         "concept": "Estimating after calculating, and accepting an unreasonable answer",
         "errorType": "estimate_after_calc",
-        "errorInstruction": "Work out 3,876 × 7 and check using an estimate.",
-        "errorNote": "The answer shown is 27,132 but the estimate 4,000 × 7 = 28,000 was not compared. 27,132 is close to 28,000 — it is correct. Show a case where the estimate reveals an error: answer 21,132 → compare to 28,000 → too far away → error found.",
+        "errorInstruction": "Work out 3,876 \u00d7 7 and check using an estimate.",
+        "errorNote": "The answer shown is 27,132 but the estimate 4,000 \u00d7 7 = 28,000 was not compared. 27,132 is close to 28,000 \u2014 it is correct. Show a case where the estimate reveals an error: answer 21,132 \u2192 compare to 28,000 \u2192 too far away \u2192 error found.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -2761,9 +2640,9 @@
         }
       },
       "loText": {
-        "walt": "…apply calculation strategies to reason through complex problems.",
-        "tiob": "…consolidating our calculation skills and justifying our reasoning prepares us for the problem-solving challenges ahead in Year 5.",
-        "iwstb": "…selecting efficient methods, estimating to check, showing full working, and writing clear justifications."
+        "walt": "\u2026apply calculation strategies to reason through complex problems.",
+        "tiob": "\u2026consolidating our calculation skills and justifying our reasoning prepares us for the problem-solving challenges ahead in Year 5.",
+        "iwstb": "\u2026selecting efficient methods, estimating to check, showing full working, and writing clear justifications."
       },
       "lp1": {
         "topic": "Multiplication and Division",
@@ -2776,9 +2655,9 @@
         "questions": 2
       },
       "learningReviewStems": [
-        "The method I chose was most efficient because…",
-        "My estimate of __ was close to my answer of __ which told me…",
-        "My justification included…"
+        "The method I chose was most efficient because\u2026",
+        "My estimate of __ was close to my answer of __ which told me\u2026",
+        "My justification included\u2026"
       ]
     },
     {
@@ -2802,20 +2681,20 @@
       "cycle1": {
         "focus": "Fractions and measurement combined",
         "ido": [
-          "Problem: '3/4 of a 2,400 ml bottle is used. How many ml remain?' — link fraction of an amount to measurement."
+          "Problem: '3/4 of a 2,400 ml bottle is used. How many ml remain?' \u2014 link fraction of an amount to measurement."
         ],
         "slideTitles": {
           "ido": [
             "Fractions of measurements"
           ],
           "wedo": [
-            "Together — fraction + measurement"
+            "Together \u2014 fraction + measurement"
           ],
           "trios": [
-            "Trios — multi-step problems"
+            "Trios \u2014 multi-step problems"
           ],
           "independent": [
-            "Independent — fractions and measurement"
+            "Independent \u2014 fractions and measurement"
           ]
         },
         "slideCount": {
@@ -2832,16 +2711,16 @@
         ],
         "slideTitles": {
           "ido": [
-            "Full problem — measure, convert, justify"
+            "Full problem \u2014 measure, convert, justify"
           ],
           "wedo": [
-            "Together — work it through"
+            "Together \u2014 work it through"
           ],
           "trios": [
-            "Trios — peer justification"
+            "Trios \u2014 peer justification"
           ],
           "independent": [
-            "Independent — full method"
+            "Independent \u2014 full method"
           ]
         },
         "slideCount": {
@@ -2856,7 +2735,7 @@
         "concept": "Dividing by the wrong number when finding a fraction of a measurement",
         "errorType": "fraction_measure_divide_error",
         "errorInstruction": "Find 2/3 of 840 ml",
-        "errorNote": "The answer shown is 420 ml — the pupil divided by 2 instead of 3. Correct: 840 ÷ 3 = 280, then 280 × 2 = 560 ml. The denominator tells you how many equal parts to divide into.",
+        "errorNote": "The answer shown is 420 ml \u2014 the pupil divided by 2 instead of 3. Correct: 840 \u00f7 3 = 280, then 280 \u00d7 2 = 560 ml. The denominator tells you how many equal parts to divide into.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -2870,9 +2749,9 @@
         }
       },
       "loText": {
-        "walt": "…solve problems involving fractions and measurement, showing full reasoning.",
-        "tiob": "…fractions and measurement often appear together in real life, and applying both skills to the same problem is a key Year 4 challenge.",
-        "iwstb": "…finding fractions of measurements, converting units where needed, and showing full working with a justification."
+        "walt": "\u2026solve problems involving fractions and measurement, showing full reasoning.",
+        "tiob": "\u2026fractions and measurement often appear together in real life, and applying both skills to the same problem is a key Year 4 challenge.",
+        "iwstb": "\u2026finding fractions of measurements, converting units where needed, and showing full working with a justification."
       },
       "lp1": {
         "topic": "Fractions",
@@ -2885,9 +2764,9 @@
         "questions": 2
       },
       "learningReviewStems": [
-        "To find a fraction of a measurement I…",
-        "The unit I worked in was…",
-        "My justification explained…"
+        "To find a fraction of a measurement I\u2026",
+        "The unit I worked in was\u2026",
+        "My justification explained\u2026"
       ]
     },
     {
@@ -2910,22 +2789,22 @@
         "evidence"
       ],
       "cycle1": {
-        "focus": "Statistics reasoning — full method",
+        "focus": "Statistics reasoning \u2014 full method",
         "ido": [
           "Model: given a table of data, answer a layered set of questions: read, compare, calculate, conclude, justify."
         ],
         "slideTitles": {
           "ido": [
-            "Statistics — full reasoning model"
+            "Statistics \u2014 full reasoning model"
           ],
           "wedo": [
-            "Together — work through the table"
+            "Together \u2014 work through the table"
           ],
           "trios": [
-            "Trios — data challenge"
+            "Trios \u2014 data challenge"
           ],
           "independent": [
-            "Independent — statistics reasoning"
+            "Independent \u2014 statistics reasoning"
           ]
         },
         "slideCount": {
@@ -2942,16 +2821,16 @@
         ],
         "slideTitles": {
           "ido": [
-            "Bar chart or line graph — which is better?"
+            "Bar chart or line graph \u2014 which is better?"
           ],
           "wedo": [
-            "Together — choose and justify"
+            "Together \u2014 choose and justify"
           ],
           "trios": [
-            "Trios — argue your choice"
+            "Trios \u2014 argue your choice"
           ],
           "independent": [
-            "Independent — represent and justify"
+            "Independent \u2014 represent and justify"
           ]
         },
         "slideCount": {
@@ -2975,14 +2854,14 @@
         "extraPoints": [],
         "calcDisplay": {
           "type": "word_problem",
-          "correctAnswer": "Use a bar chart — favourite colour is discrete data.",
+          "correctAnswer": "Use a bar chart \u2014 favourite colour is discrete data.",
           "errorAnswer": "Line graph"
         }
       },
       "loText": {
-        "walt": "…solve statistics reasoning problems and justify the choice of graph type.",
-        "tiob": "…choosing the right type of graph matters because the wrong choice can mislead the reader, and justifying that choice is part of mathematical reasoning.",
-        "iwstb": "…answering layered statistics questions, choosing an appropriate graph type for a data set, and justifying the choice."
+        "walt": "\u2026solve statistics reasoning problems and justify the choice of graph type.",
+        "tiob": "\u2026choosing the right type of graph matters because the wrong choice can mislead the reader, and justifying that choice is part of mathematical reasoning.",
+        "iwstb": "\u2026answering layered statistics questions, choosing an appropriate graph type for a data set, and justifying the choice."
       },
       "lp1": {
         "topic": "Statistics",
@@ -2995,9 +2874,9 @@
         "questions": 2
       },
       "learningReviewStems": [
-        "I chose a bar chart / line graph because…",
-        "The most interesting conclusion from the data was…",
-        "I justified my choice by…"
+        "I chose a bar chart / line graph because\u2026",
+        "The most interesting conclusion from the data was\u2026",
+        "I justified my choice by\u2026"
       ]
     },
     {
@@ -3019,22 +2898,22 @@
         "Y4"
       ],
       "cycle1": {
-        "focus": "Mixed Y4 reasoning — end of year challenge",
+        "focus": "Mixed Y4 reasoning \u2014 end of year challenge",
         "ido": [
           "Model a genuinely complex problem drawing on multiple topic areas. Show how to plan, estimate, calculate and justify."
         ],
         "slideTitles": {
           "ido": [
-            "End of year challenge — model method"
+            "End of year challenge \u2014 model method"
           ],
           "wedo": [
-            "Together — tackle the challenge"
+            "Together \u2014 tackle the challenge"
           ],
           "trios": [
-            "Trios — Y4 problem solving"
+            "Trios \u2014 Y4 problem solving"
           ],
           "independent": [
-            "Independent — end of year challenge"
+            "Independent \u2014 end of year challenge"
           ]
         },
         "slideCount": {
@@ -3045,22 +2924,22 @@
         }
       },
       "cycle2": {
-        "focus": "Reflect and explain — Year 4 in review",
+        "focus": "Reflect and explain \u2014 Year 4 in review",
         "ido": [
           "Pupils identify the Y4 maths they feel most and least confident about. Class discussion. Review key vocabulary."
         ],
         "slideTitles": {
           "ido": [
-            "Year 4 maths — reflect and look forward"
+            "Year 4 maths \u2014 reflect and look forward"
           ],
           "wedo": [
-            "Together — what did you find hardest?"
+            "Together \u2014 what did you find hardest?"
           ],
           "trios": [
-            "Trios — teach it to your partner"
+            "Trios \u2014 teach it to your partner"
           ],
           "independent": [
-            "Independent — write a Year 4 maths summary"
+            "Independent \u2014 write a Year 4 maths summary"
           ]
         },
         "slideCount": {
@@ -3089,9 +2968,9 @@
         }
       },
       "loText": {
-        "walt": "…tackle multi-step problems across all Y4 topics, showing full working and justifying my answers.",
-        "tiob": "…Year 4 maths is a foundation for everything that comes next — being able to apply it flexibly and explain our reasoning is what we have been working towards all year.",
-        "iwstb": "…choosing efficient strategies, working through multi-step problems accurately, and writing a clear justification that shows my reasoning."
+        "walt": "\u2026tackle multi-step problems across all Y4 topics, showing full working and justifying my answers.",
+        "tiob": "\u2026Year 4 maths is a foundation for everything that comes next \u2014 being able to apply it flexibly and explain our reasoning is what we have been working towards all year.",
+        "iwstb": "\u2026choosing efficient strategies, working through multi-step problems accurately, and writing a clear justification that shows my reasoning."
       },
       "lp1": {
         "topic": "Multiplication and Division",
@@ -3104,9 +2983,9 @@
         "questions": 1
       },
       "learningReviewStems": [
-        "The Y4 topic I feel most confident about is…",
-        "I tackled the challenge by…",
-        "I would explain Y4 maths to a Y3 pupil by…"
+        "The Y4 topic I feel most confident about is\u2026",
+        "I tackled the challenge by\u2026",
+        "I would explain Y4 maths to a Y3 pupil by\u2026"
       ]
     }
   ]
