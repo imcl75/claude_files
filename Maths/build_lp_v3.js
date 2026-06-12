@@ -79,96 +79,67 @@ const ADAPTED_SUPPORT = ld.adaptedSupport;
 const outFile = `/home/claude/${LESSON.week}_L${LESSON_NUM}_${LESSON.day.slice(0,3)}_LP.pptx`;
 
 
-// ─── Maths label PNG — matches WFA school label format ───────────────────────
-async function renderMathsLabel() {
-  const { registerFont } = require("canvas");
-  try {
-    registerFont("/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
-                 { family: "LiberationSans" });
-    registerFont("/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
-                 { family: "LiberationSans", weight: "bold" });
-  } catch(e) { /* already registered */ }
+// ─── Maths label — native PptxGenJS elements (no PNG, no border) ─────────────
+// Matches the school's Avery sticker format: Calibri, same hierarchy, no border.
+// Called once per slide wherever the LL sits.
+function injectLabel(slide, x, y) {
+  const W   = LL_W;
+  const CAL = "Calibri";
+  const PAD = 0.04;
+  const ICO_W = 0.26;
+  const ICO_H = ICO_W * (103 / 120);
 
-  const DPI  = 300;
-  const wCm  = 9.7 * 0.72 * 0.85;   // = 5.94 cm  (matches LL_W in slide inches)
-  const hCm  = 4.24 * 0.72 * 0.85;  // = 2.60 cm  (matches LL_H)
-  const cW   = Math.round(wCm * DPI / 2.54);   // ~701 px
-  const cH   = Math.round(hCm * DPI / 2.54);   // ~307 px
-  const cv   = createCanvas(cW, cH);
-  const ctx  = cv.getContext("2d");
-  const pt   = sz => Math.round(sz * 0.62 * DPI / 72);  // scale to LP box (62% of Avery sticker)
-  const LH   = sz => Math.round(sz * 0.62 * DPI / 72 * 1.25); // line height
-  const FONT = "LiberationSans";
-  const PAD  = Math.round(cW * 0.025);           // ~18 px left/right margin
-
-  // White background + thin border
-  ctx.fillStyle = "#FFFFFF";
-  ctx.fillRect(0, 0, cW, cH);
-  ctx.strokeStyle = "#CCCCCC";
-  ctx.lineWidth = 1;
-  ctx.strokeRect(0.5, 0.5, cW - 1, cH - 1);
-
-  // ── Icon (top right — no "mathematician" text, too small at LP scale) ────
-  const ICON_W = Math.round(cW * 0.115);
-  const ICON_H = Math.round(ICON_W * 103 / 120);
-  const ICON_X = cW - PAD - ICON_W;
-  try {
-    const icon = await loadImage(path.join(ASSETS, "mathematician_icon.png"));
-    ctx.drawImage(icon, ICON_X, PAD, ICON_W, ICON_H);
-  } catch(e) { /* icon not available */ }
-
-  const textW_narrow = ICON_X - PAD - Math.round(cW * 0.01);
-  const textW_full   = cW - 2 * PAD;
-
-  // Word-wrap helper
-  function wrap(text, maxW) {
-    const words = text.split(" ");
-    const lines = [];
-    let line = "";
-    for (const w of words) {
-      const test = line ? line + " " + w : w;
-      if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; }
-      else line = test;
-    }
-    if (line) lines.push(line);
-    return lines;
+  // Icon top-right
+  const iconFile = path.join(ASSETS, "mathematician_icon.png");
+  if (fs.existsSync(iconFile)) {
+    slide.addImage({ path: iconFile,
+      x: x + W - ICO_W - PAD, y: y + PAD, w: ICO_W, h: ICO_H });
   }
 
-  ctx.textAlign = "left";
-  let y = PAD + pt(10);
+  const NARROW_W = W - ICO_W - PAD * 3;  // beside icon
+  const FULL_W   = W - PAD * 2;           // full width (below icon level)
+  let ty = y + PAD;
 
-  // Date
-  ctx.font = `${pt(10)}px ${FONT}`; ctx.fillStyle = "#333333";
-  ctx.fillText(TODAY, PAD, y); y += LH(10) + 1;
-
-  // Topic bold underlined (narrow column, beside icon)
-  ctx.font = `bold ${pt(13)}px ${FONT}`; ctx.fillStyle = "#000000";
-  const topicLines = wrap(LABEL_TOPIC, textW_narrow);
-  topicLines.forEach((line, i) => {
-    const ly = y + i * LH(13);
-    ctx.fillText(line, PAD, ly);
-    if (i === 0) {
-      const tw = ctx.measureText(line).width;
-      ctx.beginPath(); ctx.moveTo(PAD, ly + 1); ctx.lineTo(PAD + tw, ly + 1);
-      ctx.strokeStyle = "#000000"; ctx.lineWidth = 1.2; ctx.stroke();
-    }
+  // Date — 7pt
+  slide.addText(TODAY, {
+    x: x + PAD, y: ty, w: NARROW_W, h: 0.11,
+    fontFace: CAL, fontSize: 7, color: "333333",
+    valign: "top", margin: 0
   });
-  y += topicLines.length * LH(13) + 3;
+  ty += 0.11;
 
-  // LF (full width — below icon level)
-  ctx.font = `${pt(11)}px ${FONT}`; ctx.fillStyle = "#333333";
-  wrap(LABEL_LF, textW_full).forEach(line => { ctx.fillText(line, PAD, y); y += LH(11); });
-  y += 2;
+  // Topic — 9pt bold underlined (narrow col, beside icon)
+  slide.addText(LABEL_TOPIC, {
+    x: x + PAD, y: ty, w: NARROW_W, h: 0.23,
+    fontFace: CAL, fontSize: 9, bold: true, underline: true,
+    color: "000000", valign: "top", margin: 0, wrap: true
+  });
+  ty += 0.23;
 
-  // I can lines
-  ctx.font = `${pt(11)}px ${FONT}`;
-  for (const ic of LABEL_ICAN) {
-    wrap(ic, textW_full).forEach(line => { ctx.fillText(line, PAD, y); y += LH(11); });
+  // LF — 7pt, full width
+  slide.addText(LABEL_LF, {
+    x: x + PAD, y: ty, w: FULL_W, h: 0.22,
+    fontFace: CAL, fontSize: 7, color: "333333",
+    valign: "top", margin: 0, wrap: true
+  });
+  ty += 0.22;
+
+  // I can 1 — 6.5pt
+  slide.addText(LABEL_ICAN[0] || "", {
+    x: x + PAD, y: ty, w: FULL_W, h: 0.13,
+    fontFace: CAL, fontSize: 6.5, color: "333333",
+    valign: "top", margin: 0, wrap: true
+  });
+  ty += 0.13;
+
+  // I can 2 — 6.5pt
+  if (LABEL_ICAN[1]) {
+    slide.addText(LABEL_ICAN[1], {
+      x: x + PAD, y: ty, w: FULL_W, h: 0.13,
+      fontFace: CAL, fontSize: 6.5, color: "333333",
+      valign: "top", margin: 0, wrap: true
+    });
   }
-
-  const out = `/home/claude/maths_label_L${LESSON_NUM}.png`;
-  fs.writeFileSync(out, cv.toBuffer("image/png"));
-  return out;
 }
 
 // ─── Grid drawing ─────────────────────────────────────────────────────────────
@@ -337,14 +308,14 @@ function addGlueHere(slide, halfTopY, halfH) {
 // ─────────────────────────────────────────────────────────────────────────────
 // TOP HALF — dispatch based on LP type
 // ─────────────────────────────────────────────────────────────────────────────
-function buildLP1(slide, labelPath, isMarkingStation) {
+function buildLP1(slide, isMarkingStation) {
   if (LP1_DATA.type === 'arithmetic') {
-    return buildLP1Arithmetic(slide, labelPath, isMarkingStation);
+    return buildLP1Arithmetic(slide, isMarkingStation);
   }
   if (LP1_DATA.type === 'polygon_translation') {
-    return buildLP1Polygon(slide, labelPath, isMarkingStation);
+    return buildLP1Polygon(slide, isMarkingStation);
   }
-  buildLP1Directions(slide, labelPath, isMarkingStation);
+  buildLP1Directions(slide, isMarkingStation);
 }
 
 function buildLP2(slide, isMarkingStation) {
@@ -358,7 +329,7 @@ function buildLP2(slide, isMarkingStation) {
 }
 
 
-function buildLP1Directions(slide, labelPath, isMarkingStation) {
+function buildLP1Directions(slide, isMarkingStation) {
   const HALF_TOP  = MARGIN;
   const HALF_BOT  = MID_Y - CUT_GAP;
   const HALF_H    = HALF_BOT - HALF_TOP;
@@ -437,7 +408,7 @@ function buildLP1Directions(slide, labelPath, isMarkingStation) {
   // ── Right column ──────────────────────────────────────────────────────────
   if (!isMarkingStation) {
     // Learning label
-    slide.addImage({ path: labelPath, x: lblX, y: lblY, w: LL_W, h: LL_H });
+    injectLabel(slide, lblX, lblY);
 
     let rY = lblY + LL_H + 0.10;
 
@@ -746,14 +717,14 @@ function drawCompass(slide, boxX, boxY, boxW, boxH) {
 // ADAPTED LP1 — compass replaces top row; 2 questions; helpful hint box
 // support: { hint: "..." } — hint text for the right column box
 // ─────────────────────────────────────────────────────────────────────────────
-function buildLP1Adapted(slide, labelPath) {
+function buildLP1Adapted(slide) {
   if (LP1_DATA.type === 'arithmetic') {
-    return buildLP1ArithmeticAdapted(slide, labelPath);
+    return buildLP1ArithmeticAdapted(slide);
   }
   if (LP1_DATA.type === 'polygon_translation') {
-    return buildLP1PolygonAdapted(slide, labelPath);
+    return buildLP1PolygonAdapted(slide);
   }
-  buildLP1DirectionsAdapted(slide, labelPath);
+  buildLP1DirectionsAdapted(slide);
 }
 
 function buildLP2Adapted(slide) {
@@ -766,7 +737,7 @@ function buildLP2Adapted(slide) {
   buildLP2JourneysAdapted(slide);
 }
 
-function buildLP1DirectionsAdapted(slide, labelPath) {
+function buildLP1DirectionsAdapted(slide) {
   const HALF_TOP  = MARGIN;
   const HALF_BOT  = MID_Y - CUT_GAP;
   const HALF_H    = HALF_BOT - HALF_TOP;
@@ -830,7 +801,7 @@ function buildLP1DirectionsAdapted(slide, labelPath) {
   });
 
   // ── Right column ───────────────────────────────────────────────────────────
-  slide.addImage({ path: labelPath, x: lblX, y: lblY, w: LL_W, h: LL_H });
+  injectLabel(slide, lblX, lblY);
 
   let rY = lblY + LL_H + 0.10;
 
@@ -1083,7 +1054,7 @@ function drawPolygon(slide, gx, gy, cell, rows, vertices, labels, color, showLab
 //   - Answer line below
 // Right column: label + worked example showing Shape A + Shape B
 // ─────────────────────────────────────────────────────────────────────────────
-function buildLP1Polygon(slide, labelPath, isMarkingStation) {
+function buildLP1Polygon(slide, isMarkingStation) {
   const HALF_TOP = MARGIN;
   const HALF_BOT = MID_Y - CUT_GAP;
 
@@ -1208,7 +1179,7 @@ function buildLP1Polygon(slide, labelPath, isMarkingStation) {
 
   // ── Right column ──────────────────────────────────────────────────────────
   if (!isMarkingStation) {
-    slide.addImage({ path: labelPath, x: lblX, y: lblY, w: LL_W, h: LL_H });
+    injectLabel(slide, lblX, lblY);
     let rY = lblY + LL_H + 0.10;
 
     // Worked example: Q1 with both shapes shown
@@ -1490,7 +1461,7 @@ function drawTranslationScaffold(slide, boxX, boxY, boxW, boxH) {
   });
 }
 
-function buildLP1PolygonAdapted(slide, labelPath) {
+function buildLP1PolygonAdapted(slide) {
   const HALF_TOP = MARGIN;
   const HALF_BOT = MID_Y - CUT_GAP;
 
@@ -1588,7 +1559,7 @@ function buildLP1PolygonAdapted(slide, labelPath) {
   });
 
   // ── Right column: label, worked example, helpful hint ──
-  slide.addImage({ path: labelPath, x: lblX, y: lblY, w: LL_W, h: LL_H });
+  injectLabel(slide, lblX, lblY);
   let rY = lblY + LL_H + 0.10;
 
   slide.addText("Worked Example:", {
@@ -1825,8 +1796,6 @@ function addCutLine(slide) {
 // MAIN
 (async () => {
   console.log(`Building LP for lesson ${LESSON_NUM}: ${LESSON.week} ${LESSON.day}`);
-  console.log("Rendering label...");
-  const labelPath = await renderMathsLabel();
 
   const pres = new PptxGenJS();
   pres.defineLayout({ name: "A4P", width: SLIDE_W, height: SLIDE_H });
@@ -1837,32 +1806,32 @@ function addCutLine(slide) {
   if (isArithmetic) {
     // Arithmetic: full-page separate slides for LP1 and LP2
     console.log("Building LP1 (calculations)...");
-    buildLP1(pres.addSlide(), labelPath, false);
+    buildLP1(pres.addSlide(), false);
     console.log("Building LP2 (problems)...");
     buildLP2(pres.addSlide(), false);
     console.log("Building adapted LP1...");
-    buildLP1Adapted(pres.addSlide(), labelPath);
+    buildLP1Adapted(pres.addSlide());
     console.log("Building adapted LP2...");
     buildLP2Adapted(pres.addSlide());
     console.log("Building marking station LP1...");
-    buildLP1(pres.addSlide(), labelPath, true);
+    buildLP1(pres.addSlide(), true);
     console.log("Building marking station LP2...");
     buildLP2(pres.addSlide(), true);
   } else {
     // Non-arithmetic: original half-page layout
     console.log("Building pupil sheet...");
     const qSlide = pres.addSlide();
-    buildLP1(qSlide, labelPath, false);
+    buildLP1(qSlide, false);
     addCutLine(qSlide);
     buildLP2(qSlide, false);
     console.log("Building adapted sheet...");
     const aSlide = pres.addSlide();
-    buildLP1Adapted(aSlide, labelPath);
+    buildLP1Adapted(aSlide);
     addCutLine(aSlide);
     buildLP2Adapted(aSlide);
     console.log("Building marking station...");
     const mSlide = pres.addSlide();
-    buildLP1(mSlide, labelPath, true);
+    buildLP1(mSlide, true);
     addCutLine(mSlide);
     buildLP2(mSlide, true);
   }
@@ -1919,20 +1888,20 @@ function _calcText(n, raw) {
 
 // ── LP1 ARITHMETIC — FULL PAGE ───────────────────────────────────────────────
 // Auto-detects short calculations vs word problems by question length.
-function buildLP1Arithmetic(slide, labelPath, isMarkingStation) {
+function buildLP1Arithmetic(slide, isMarkingStation) {
   const questions  = LP1_DATA.questions;
   const maxQLen    = Math.max(...questions.map(q => q.q.length));
   const isWordProb = maxQLen > 50;   // word problems need vertical layout
 
   if (isWordProb) {
-    _buildLP1WordProblems(slide, labelPath, isMarkingStation);
+    _buildLP1WordProblems(slide, isMarkingStation);
   } else {
-    _buildLP1Calculations(slide, labelPath, isMarkingStation);
+    _buildLP1Calculations(slide, isMarkingStation);
   }
 }
 
 // Short calculations: 10-strip, 2-column grid
-function _buildLP1Calculations(slide, labelPath, isMarkingStation) {
+function _buildLP1Calculations(slide, isMarkingStation) {
   const PAGE_TOP = MARGIN;
   const PAGE_BOT = SLIDE_H - MARGIN;
 
@@ -2003,7 +1972,7 @@ function _buildLP1Calculations(slide, labelPath, isMarkingStation) {
   }
 }
 // Layout: [Q1×reps] [Q2×reps] [Q3×reps] — identical strips grouped so they cut into sets.
-function _buildLP1WordProblems(slide, labelPath, isMarkingStation) {
+function _buildLP1WordProblems(slide, isMarkingStation) {
   const PAGE_TOP = MARGIN;
   const PAGE_BOT = SLIDE_H - MARGIN;
   // Full width — no label column. Label is a separate printed sticker.
@@ -2149,20 +2118,20 @@ function buildLP2Arithmetic(slide, isMarkingStation) {
 
 // ── ADAPTED LP1 — FULL PAGE ───────────────────────────────────────────────────
 // Detects word problems vs calculations and routes accordingly.
-function buildLP1ArithmeticAdapted(slide, labelPath) {
+function buildLP1ArithmeticAdapted(slide) {
   const questions = ADAPTED_SUPPORT.lp1Questions || LP1_DATA.questions.slice(0, 2);
   const maxQLen   = Math.max(...questions.map(q => q.q.length));
   const isWordProb = maxQLen > 50;
 
   if (isWordProb) {
-    _buildLP1WordProblemsAdapted(slide, labelPath, questions);
+    _buildLP1WordProblemsAdapted(slide, questions);
   } else {
-    _buildLP1CalcAdapted(slide, labelPath, questions);
+    _buildLP1CalcAdapted(slide, questions);
   }
 }
 
 // Adapted word problem strips — same one-per-strip logic as standard, with hint boxes on right.
-function _buildLP1WordProblemsAdapted(slide, labelPath, questions) {
+function _buildLP1WordProblemsAdapted(slide, questions) {
   const PAGE_TOP = MARGIN;
   const PAGE_BOT = SLIDE_H - MARGIN;
   // Keep right column for hint boxes (no label image at top — sticker goes in book).
@@ -2244,7 +2213,7 @@ function _buildLP1WordProblemsAdapted(slide, labelPath, questions) {
 }
 
 // Adapted calculation strips — 10-strip single-column layout for short calculations.
-function _buildLP1CalcAdapted(slide, labelPath, questions) {
+function _buildLP1CalcAdapted(slide, questions) {
   const PAGE_TOP = MARGIN;
   const PAGE_BOT = SLIDE_H - MARGIN;
   const lblX     = SLIDE_W - LL_W - MARGIN;
