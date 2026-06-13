@@ -30,13 +30,42 @@ from pptx.util import Inches, Emu
 from pptx.oxml.ns import qn
 from lxml import etree
 
-# Teaching slide → (lp_slide_index 0-based, crop_half)
-SLIDE_MAP = {
-    'Learning Paper 1':   (0, 'top'),
-    'Marking Station 1':  (2, 'top'),
-    'Learning Paper 2':   (0, 'bottom'),
-    'Marking Station 2':  (2, 'bottom'),
-}
+# Teaching slide label → resolved at inject time based on LP slide count
+SLIDE_LABELS = ['Learning Paper 1', 'Marking Station 1', 'Learning Paper 2', 'Marking Station 2']
+
+def resolve_slide_map(n_lp_slides):
+    """
+    Map teaching slide labels to (lp_slide_index, crop) based on LP format.
+
+    3-slide LP (old half-page format):
+      slide 0 = combined LP (top half = strip 1, bottom = strip 2)
+      slide 1 = adapted LP
+      slide 2 = combined MS (top half = MS1, bottom = MS2)
+
+    6-slide LP (arithmetic/full-page format):
+      slide 0 = LP1 standard
+      slide 1 = LP2 standard
+      slide 2 = adapted LP1
+      slide 3 = adapted LP2
+      slide 4 = marking station LP1
+      slide 5 = marking station LP2
+    """
+    if n_lp_slides >= 6:
+        # Full-page arithmetic format — show whole slide, no crop needed
+        return {
+            'Learning Paper 1':   (0, 'full'),
+            'Marking Station 1':  (4, 'full'),
+            'Learning Paper 2':   (1, 'full'),
+            'Marking Station 2':  (5, 'full'),
+        }
+    else:
+        # Original half-page format
+        return {
+            'Learning Paper 1':   (0, 'top'),
+            'Marking Station 1':  (2, 'top'),
+            'Learning Paper 2':   (0, 'bottom'),
+            'Marking Station 2':  (2, 'bottom'),
+        }
 
 # Image placement on teaching slide (inches)
 IMG_TOP   = 1.05
@@ -51,7 +80,7 @@ def get_slide_title(slide):
         if shape.has_text_frame:
             tf = shape.text_frame
             text = tf.text.strip()
-            if text in SLIDE_MAP:
+            if text in SLIDE_LABELS:
                 return text
     return ''
 
@@ -90,14 +119,16 @@ def convert_lp_to_images(lp_pptx, tmpdir, dpi=200):
 
 
 def crop_half(img_path, half):
-    """Crop image to top or bottom half. Returns PIL Image."""
+    """Crop image to top half, bottom half, or return full image."""
     img = Image.open(img_path)
     w, h = img.size
     mid = h // 2
     if half == 'top':
         return img.crop((0, 0, w, mid))
-    else:
+    elif half == 'bottom':
         return img.crop((0, mid, w, h))
+    else:  # 'full'
+        return img
 
 
 def clear_slide_content(slide):
@@ -106,7 +137,7 @@ def clear_slide_content(slide):
     for shape in slide.shapes:
         if shape.has_text_frame:
             text = shape.text_frame.text.strip()
-            if text in SLIDE_MAP:
+            if text in SLIDE_LABELS:
                 continue  # keep the title
         to_remove.append(shape)
     sp_tree = slide.shapes._spTree
@@ -158,13 +189,14 @@ def inject(teaching_pptx, lp_pptx):
         if len(lp_images) < 3:
             raise RuntimeError(f"Expected at least 3 LP slide images, got {len(lp_images)}")
 
+        slide_map = resolve_slide_map(len(lp_images))
         injected = 0
         for slide in prs.slides:
             title = get_slide_title(slide)
-            if title not in SLIDE_MAP:
+            if title not in slide_map:
                 continue
 
-            lp_idx, half = SLIDE_MAP[title]
+            lp_idx, half = slide_map[title]
             img = crop_half(lp_images[lp_idx], half)
 
             clear_slide_content(slide)
