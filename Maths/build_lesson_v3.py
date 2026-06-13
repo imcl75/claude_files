@@ -490,6 +490,33 @@ def build_slide5():
         "YOU DO — WM Q&A\nAll cards hidden at start. Reveal: Q1→A1→Q2→A2→Q3→A3→Q4→A4→Q5→A5")
     print("Slide 5 (WM Q&A) ✓")
 
+
+import re as _re_rm
+_RM_FRAC_RE = _re_rm.compile(r'(\d+)/(\d+)')
+
+def _rm_has_frac(text):
+    return bool(_RM_FRAC_RE.search(text))
+
+def _rm_render_frac(text, w_in, h_in, fontsize=24, color='#1a1a1a'):
+    """Render text with n/d fractions as PNG using matplotlib mathtext."""
+    import io as _io2
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as _plt2
+    mt = _RM_FRAC_RE.sub(lambda m: f'$\\frac{{{m.group(1)}}}{{{m.group(2)}}}$', text)
+    fig = _plt2.figure(figsize=(w_in, h_in), dpi=150)
+    fig.patch.set_facecolor('white')
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis('off')
+    ax.text(0.03, 0.5, mt, fontsize=fontsize, ha='left', va='center',
+            color=color, transform=ax.transAxes, fontfamily='DejaVu Sans')
+    buf = _io2.BytesIO()
+    fig.savefig(buf, format='png', dpi=150, bbox_inches=None,
+                facecolor='white', edgecolor='none')
+    _plt2.close(fig)
+    buf.seek(0)
+    return buf.read()
+
 # ===========================================================================
 # SLIDE 6 & 7 — RAPID MATHS (unchanged from v1 — working correctly)
 # ===========================================================================
@@ -498,7 +525,7 @@ def build_slide6():
     qs = RM_DATA['questions']
     day = RM_DATA['day']
     add_sp(sld, sp(2,'Title', 0.917,0.069, 11.500,0.814,
-                   f'Rapid Maths \u2013 Day {day}',
+                   f'Rapid Maths \u2013 {["Monday","Tuesday","Wednesday","Friday"][day-1] if 1<=day<=4 else f"Day {day}"}',
                    font='Twinkl Cursive Looped Light', sz=28,
                    color='000000', align='l', fill=None, no_line=True))
 
@@ -553,9 +580,13 @@ def build_slide6():
       </a:rPr><a:t>{_esc(q["q"])}</a:t>
     </a:r></a:p></p:txBody></p:sp>''')
         spid += 1
+        # Fraction image: render n/d as proper vinculum PNG, overlay on QText box
+        if _rm_has_frac(q['q']):
+            png = _rm_render_frac(q['q'], lw, q_h_text, fontsize=24)
+            sld.shapes.add_picture(_io.BytesIO(png), emu(lx), emu(cy+0.414), emu(lw), emu(q_h_text))
 
     sld.notes_slide.notes_text_frame.text = (
-        f"YOU DO — Rapid Maths Day {day}\n" +
+        f"YOU DO — Rapid Maths {['Monday','Tuesday','Wednesday','Friday'][day-1] if 1<=day<=4 else f'Day {day}'}\n" +
         '\n'.join(f"Q{q['num']} ({q['topic']}): {q['q']} → {q['a']}" for q in qs))
     print("Slide 6 (RM Questions) ✓")
 
@@ -565,7 +596,7 @@ def build_slide7():
     qs = RM_DATA['questions']
     day = RM_DATA['day']
     add_sp(sld, sp(2,'Title', 0.917,-0.009, 11.500,1.009,
-                   f'Rapid Maths \u2013 Answers \u2013 Day {day}',
+                   f'Rapid Maths \u2013 Answers \u2013 {["Monday","Tuesday","Wednesday","Friday"][day-1] if 1<=day<=4 else f"Day {day}"}',
                    font='Twinkl Cursive Looped Light', sz=28,
                    color='000000', align='l', fill=None, no_line=True))
 
@@ -611,6 +642,12 @@ def build_slide7():
       </a:rPr><a:t>{_esc(txt)}</a:t>
     </a:r></a:p></p:txBody></p:sp>''')
             spid += 1
+
+        # Fraction image on answer slide: overlay mathtext PNG over AText box
+        if _rm_has_frac(q['a']):
+            a_h_f = 1.189 if i < 3 else 2.283
+            png = _rm_render_frac(q['a'], lw, a_h_f, fontsize=30, color='#1D6B40')
+            sld.shapes.add_picture(_io.BytesIO(png), emu(lx), emu(cy+0.800), emu(lw), emu(a_h_f))
 
     sld.notes_slide.notes_text_frame.text = (
         f"YOU DO — RM Answers Day {day}\n" +
