@@ -14,6 +14,24 @@ AVAILABLE SHAPE KEYS:
 import os, shutil, zipfile, io, math
 from lxml import etree
 from copy import deepcopy
+
+import re as _re
+
+_FRAC_PATTERN = _re.compile(r'(\d+)/(\d+)')
+
+def _parse_frac_segments(text):
+    """Split text into plain-str and (num,denom) tuple segments."""
+    parts = []; last = 0
+    for m in _FRAC_PATTERN.finditer(text):
+        if m.start() > last:
+            parts.append(text[last:m.start()])
+        parts.append((m.group(1), m.group(2)))
+        last = m.end()
+    if last < len(text):
+        parts.append(text[last:])
+    return parts if parts else [text]
+
+
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -154,19 +172,40 @@ def find_shape(tree,name):
     return None
 
 def set_runs(sp,*texts):
+    """Set text runs in a shape, rendering n/d fractions as raised num + ⁄ + lowered denom."""
     txBody=sp.find(".//p:txBody",NS)
     if txBody is None: return
     for para in txBody.findall("a:p",NS):
         runs=para.findall("a:r",NS)
         if not runs: continue
-        while len(runs)<len(texts):
-            clone=deepcopy(runs[-1]); runs[-1].addnext(clone); runs=para.findall("a:r",NS)
-        for extra in runs[len(texts):]: para.remove(extra)
-        runs=para.findall("a:r",NS)
-        for run,text in zip(runs,texts):
-            t=run.find("a:t",NS)
-            if t is None: t=etree.SubElement(run,f"{{{NS_A}}}t")
-            t.text=text
+        # Capture base run properties (font, size, colour etc.) before removing runs
+        base_rpr = runs[0].find("a:rPr",NS)
+        # Remove all existing runs — we rebuild from scratch
+        for r in list(para.findall("a:r",NS)):
+            para.remove(r)
+        # Rebuild: one outer loop per text argument, inner loop per segment
+        for text in texts:
+            for seg in _parse_frac_segments(text):
+                if isinstance(seg, str):
+                    # Plain text run
+                    r = etree.SubElement(para,f"{{{NS_A}}}r")
+                    if base_rpr is not None:
+                        rpr = deepcopy(base_rpr)
+                        rpr.attrib.pop("baseline", None)
+                        r.append(rpr)
+                    t = etree.SubElement(r,f"{{{NS_A}}}t"); t.text = seg
+                else:
+                    # Fraction: raised numerator, fraction-slash, lowered denominator
+                    num, denom = seg
+                    for frac_text, baseline in [(num, 25000), ("⁄", 0), (denom, -20000)]:
+                        r = etree.SubElement(para,f"{{{NS_A}}}r")
+                        if base_rpr is not None:
+                            rpr = deepcopy(base_rpr)
+                            rpr.attrib.pop("baseline", None)
+                            if baseline != 0:
+                                rpr.set("baseline", str(baseline))
+                            r.append(rpr)
+                        t = etree.SubElement(r,f"{{{NS_A}}}t"); t.text = frac_text
         break
 
 def add_image_to_slide(tree,slot_idx,rid,elem_id):
@@ -202,7 +241,7 @@ def make_rels(img_refs=None):
                      f' Target="../media/{fname}"/>')
     lines.append("</Relationships>"); return "\n".join(lines)
 
-DAY_NAMES = ['Monday','Tuesday','Wednesday','Thursday','Friday']
+DAY_NAMES = ['Monday','Tuesday','Wednesday','Friday']  # Y4 maths: Mon Tue Wed Fri (no Thursday)
 
 def populate_q_slide(tree,day_num,qs):
     day_name = DAY_NAMES[day_num-1] if 1 <= day_num <= len(DAY_NAMES) else f"Day {day_num}"
