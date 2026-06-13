@@ -10,6 +10,10 @@ const PptxGenJS  = require("pptxgenjs");
 const { createCanvas, loadImage } = require("canvas");
 const fs   = require("fs");
 const path = require("path");
+// Preview mode (set LP_PREVIEW=1): one strip per distinct question, no cut lines.
+// Used only when building the LP previews shown in the teaching deck. The
+// printable LP is built without this flag and keeps its repeats to save paper.
+const PREVIEW = process.env.LP_PREVIEW === "1";
 
 // ─── Lesson number ────────────────────────────────────────────────────────────
 const LESSON_NUM = parseInt(process.argv[2] || "1", 10);
@@ -1870,6 +1874,7 @@ function addCutLine(slide) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function _cutStrip(slide, x, y, w) {
+  if (PREVIEW) return;   // no cut lines in deck previews
   slide.addShape("line", {
     x, y, w, h: 0,
     line: { color: "BBBBBB", width: 0.5, dashType: "lgDash" }
@@ -2009,7 +2014,7 @@ function _buildLP1WordProblems(slide, isMarkingStation) {
   const ANS_H      = isTypeA ? 0.26 : 0;   // answer line per strip for Type A
   const usable     = PAGE_BOT - hdrY - GF_RESERVE;
 
-  const repsPerQ    = 2;
+  const repsPerQ    = PREVIEW ? 1 : 2;
   const totalStrips = nQ * repsPerQ;
   const stripH      = usable / totalStrips;
   const fontSize    = Math.min(13, Math.max(10, Math.floor(stripH * 12)));
@@ -2101,7 +2106,7 @@ function buildLP2Arithmetic(slide, isMarkingStation) {
   const usable    = PAGE_BOT - hdrY;
   const ANS_H     = isTypeA ? 0.26 : 0;   // answer line per strip for Type A
 
-  const TARGET   = 3;
+  const TARGET   = PREVIEW ? 1 : 3;
   const slotH    = usable / TARGET;
   const QH_each  = (slotH / nQ) - ANS_H / nQ;
   const fontSize = Math.min(13, Math.max(10, Math.floor(QH_each * 30)));
@@ -2187,6 +2192,7 @@ function _buildLP1WordProblemsAdapted(slide, questions) {
   const MIN_STRIP_H = 1.20;
   let repsPerQ = Math.floor(usable / (nQ * MIN_STRIP_H));
   repsPerQ = Math.max(1, Math.min(repsPerQ, 4));
+  if (PREVIEW) repsPerQ = 1;
 
   const totalStrips = nQ * repsPerQ;
   const stripH      = usable / totalStrips;
@@ -2348,7 +2354,7 @@ function buildLP2ArithmeticAdapted(slide) {
   const nQ        = questions.length;
   const ANS_H     = isTypeA ? 0.26 : 0;
   const usable    = PAGE_BOT - hdrY;
-  const TARGET    = 3;
+  const TARGET    = PREVIEW ? 1 : 3;
   const slotH     = usable / TARGET;
   const QH_each   = (slotH / nQ) - ANS_H / nQ;
   const fontSize  = Math.min(13, Math.max(10, Math.floor(QH_each * 30)));
