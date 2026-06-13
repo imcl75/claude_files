@@ -17,19 +17,79 @@ from copy import deepcopy
 
 import re as _re
 
-_FRAC_PATTERN = _re.compile(r'(\d+)/(\d+)')
+_FRAC_RE = _re.compile(r'(\d+)/(\d+)')
 
-def _parse_frac_segments(text):
-    """Split text into plain-str and (num,denom) tuple segments."""
-    parts = []; last = 0
-    for m in _FRAC_PATTERN.finditer(text):
-        if m.start() > last:
-            parts.append(text[last:m.start()])
-        parts.append((m.group(1), m.group(2)))
-        last = m.end()
-    if last < len(text):
-        parts.append(text[last:])
-    return parts if parts else [text]
+def _has_frac(text):
+    return bool(_FRAC_RE.search(text))
+
+def _to_mathtext(text):
+    return _FRAC_RE.sub(r'$\\frac{\1}{\2}$', text)
+
+# EMU positions of question text boxes on Q slide (slot 0–4)
+_Q_BOX = [
+    (365760,  1231392, 5462016, 1440688),
+    (365760,  3232912, 5462016, 1440688),
+    (365760,  5234432, 5462016, 1440688),
+    (6461760, 1231392, 5462016, 2441448),
+    (6461760, 4233672, 5462016, 2441448),
+]
+# EMU positions of answer text boxes on A slide (slot 0–4)
+_A_BOX = [
+    (365760,  1584960, 5462016, 1087120),
+    (365760,  3586480, 5462016, 1087120),
+    (365760,  5588000, 5462016, 1087120),
+    (6461760, 1584960, 5462016, 2087880),
+    (6461760, 4587240, 5462016, 2087880),
+]
+
+def render_frac_image(text, w_emu, h_emu, fontsize=26, color='#1a1a1a'):
+    """Render text with n/d fractions as PNG using matplotlib mathtext vinculum."""
+    import io as _io
+    mt = _to_mathtext(text)
+    w_in = w_emu / 914400
+    h_in = h_emu / 914400
+    import matplotlib.pyplot as _plt
+    fig = _plt.figure(figsize=(w_in, h_in), dpi=150)
+    fig.patch.set_facecolor('white')
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis('off')
+    ax.text(0.03, 0.5, mt, fontsize=fontsize, ha='left', va='center',
+            color=color, transform=ax.transAxes, fontfamily='DejaVu Sans')
+    buf = _io.BytesIO()
+    fig.savefig(buf, format='png', dpi=150, bbox_inches=None,
+                facecolor='white', edgecolor='none')
+    _plt.close(fig)
+    buf.seek(0)
+    return buf.read()
+
+def _clear_textbox(tree, box_name):
+    sp = find_shape(tree, box_name)
+    if sp is None: return
+    NS2 = {"p": NS_P, "a": NS_A}
+    txBody = sp.find('.//p:txBody', NS2)
+    if txBody is None: return
+    for para in txBody.findall('a:p', NS2):
+        for r in list(para.findall('a:r', NS2)):
+            para.remove(r)
+
+def _insert_pic(tree, x, y, w, h, rid, img_name, elem_id):
+    pic_xml = (
+        f'<p:pic xmlns:p="{NS_P}" xmlns:a="{NS_A}" xmlns:r="{NS_R}">'
+        f'<p:nvPicPr>'
+        f'<p:cNvPr id="{elem_id}" name="{img_name}"/>'
+        f'<p:cNvPicPr><a:picLocks noChangeAspect="1"/></p:cNvPicPr>'
+        f'<p:nvPr/></p:nvPicPr>'
+        f'<p:blipFill><a:blip r:embed="{rid}"/>'
+        f'<a:stretch><a:fillRect/></a:stretch></p:blipFill>'
+        f'<p:spPr><a:xfrm><a:off x="{x}" y="{y}"/>'
+        f'<a:ext cx="{w}" cy="{h}"/></a:xfrm>'
+        f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+        f'<a:noFill/></p:spPr></p:pic>'
+    )
+    NS2 = {"p": NS_P, "a": NS_A}
+    spTree = tree.find('.//p:spTree', NS2)
+    if spTree is not None:
+        spTree.append(etree.fromstring(pic_xml))
 
 
 import matplotlib
@@ -172,42 +232,21 @@ def find_shape(tree,name):
     return None
 
 def set_runs(sp,*texts):
-    """Set text runs in a shape, rendering n/d fractions as raised num + ⁄ + lowered denom."""
+    """Set text runs. Fractions handled via render_frac_image() at build level."""
     txBody=sp.find(".//p:txBody",NS)
     if txBody is None: return
     for para in txBody.findall("a:p",NS):
         runs=para.findall("a:r",NS)
         if not runs: continue
-        # Capture base run properties (font, size, colour etc.) before removing runs
-        base_rpr = runs[0].find("a:rPr",NS)
-        # Remove all existing runs — we rebuild from scratch
-        for r in list(para.findall("a:r",NS)):
-            para.remove(r)
-        # Rebuild: one outer loop per text argument, inner loop per segment
-        for text in texts:
-            for seg in _parse_frac_segments(text):
-                if isinstance(seg, str):
-                    # Plain text run
-                    r = etree.SubElement(para,f"{{{NS_A}}}r")
-                    if base_rpr is not None:
-                        rpr = deepcopy(base_rpr)
-                        rpr.attrib.pop("baseline", None)
-                        r.append(rpr)
-                    t = etree.SubElement(r,f"{{{NS_A}}}t"); t.text = seg
-                else:
-                    # Fraction: raised numerator, fraction-slash, lowered denominator
-                    num, denom = seg
-                    for frac_text, baseline in [(num, 25000), ("⁄", 0), (denom, -20000)]:
-                        r = etree.SubElement(para,f"{{{NS_A}}}r")
-                        if base_rpr is not None:
-                            rpr = deepcopy(base_rpr)
-                            rpr.attrib.pop("baseline", None)
-                            if baseline != 0:
-                                rpr.set("baseline", str(baseline))
-                            r.append(rpr)
-                        t = etree.SubElement(r,f"{{{NS_A}}}t"); t.text = frac_text
+        while len(runs)<len(texts):
+            clone=deepcopy(runs[-1]); runs[-1].addnext(clone); runs=para.findall("a:r",NS)
+        for extra in runs[len(texts):]: para.remove(extra)
+        runs=para.findall("a:r",NS)
+        for run,text in zip(runs,texts):
+            t=run.find("a:t",NS)
+            if t is None: t=etree.SubElement(run,f"{{{NS_A}}}t")
+            t.text=text
         break
-
 def add_image_to_slide(tree,slot_idx,rid,elem_id):
     cfg=IMG_SLOTS[slot_idx]
     sp=find_shape(tree,cfg["txt_box"])
@@ -288,16 +327,48 @@ def build(template_path,output_path,days,shape_cache):
         for slot_idx,q in img_qs:
             rid=f"rId{2+len(img_refs)}"; img_refs.append((rid,f"shape_{q['shape']}.png")); q["_rid"]=rid
         fn_q=f"slide{day_idx*2+1}.xml"; fn_a=f"slide{day_idx*2+2}.xml"
+
+        # ── Q slide ─────────────────────────────────────────────────────────
         q_tree=etree.fromstring(s1); populate_q_slide(q_tree,day_num,qs)
+        # Shape images (geometry questions)
         for (slot_idx,q),(rid,_) in zip(img_qs,img_refs):
             add_image_to_slide(q_tree,slot_idx,rid,elem_id=100+slot_idx*10)
+        # Fraction images — render question text as mathtext PNG, insert at box position
+        frac_refs_q=[]
+        Q_NAMES=['Text 5','Text 9','Text 13','Text 17','Text 21']
+        for i,q in enumerate(qs):
+            if "shape" in q: continue   # geometry card already has image
+            if not _has_frac(q["question"]): continue
+            x,y,w,h=_Q_BOX[i]
+            fname=f"frac_q_{day_idx}_{i}.png"
+            png=render_frac_image(q["question"],w,h,fontsize=26,color="#1a1a1a")
+            with open(os.path.join(media_dir,fname),"wb") as ff: ff.write(png)
+            rid_f=f"rId{2+len(img_refs)+len(frac_refs_q)}"
+            frac_refs_q.append((rid_f,fname))
+            _clear_textbox(q_tree,Q_NAMES[i])
+            _insert_pic(q_tree,x,y,w,h,rid_f,f"FracQ_{i}",200+i*10)
+        all_refs_q=img_refs+frac_refs_q
         with open(os.path.join(slides_dir,fn_q),"wb") as f:
             f.write(etree.tostring(q_tree,xml_declaration=True,encoding="utf-8",standalone=True))
-        with open(os.path.join(rels_dir,fn_q+".rels"),"w") as f: f.write(make_rels(img_refs))
+        with open(os.path.join(rels_dir,fn_q+".rels"),"w") as f: f.write(make_rels(all_refs_q))
+
+        # ── A slide ─────────────────────────────────────────────────────────
         a_tree=etree.fromstring(s2); populate_a_slide(a_tree,day_num,qs)
+        frac_refs_a=[]
+        A_NAMES=['Text 6','Text 11','Text 16','Text 21','Text 26']
+        for i,q in enumerate(qs):
+            if not _has_frac(q["answer"]): continue
+            x,y,w,h=_A_BOX[i]
+            fname=f"frac_a_{day_idx}_{i}.png"
+            png=render_frac_image(q["answer"],w,h,fontsize=30,color="#00703C")
+            with open(os.path.join(media_dir,fname),"wb") as ff: ff.write(png)
+            rid_f=f"rId{2+len(frac_refs_a)}"
+            frac_refs_a.append((rid_f,fname))
+            _clear_textbox(a_tree,A_NAMES[i])
+            _insert_pic(a_tree,x,y,w,h,rid_f,f"FracA_{i}",300+i*10)
         with open(os.path.join(slides_dir,fn_a),"wb") as f:
             f.write(etree.tostring(a_tree,xml_declaration=True,encoding="utf-8",standalone=True))
-        with open(os.path.join(rels_dir,fn_a+".rels"),"w") as f: f.write(make_rels())
+        with open(os.path.join(rels_dir,fn_a+".rels"),"w") as f: f.write(make_rels(frac_refs_a))
     prs_path=os.path.join(work,"ppt/presentation.xml")
     with open(prs_path,"rb") as f: prs=etree.fromstring(f.read())
     sldIdLst=prs.find(f"{{{NS_P}}}sldIdLst")
