@@ -202,9 +202,12 @@ def make_rels(img_refs=None):
                      f' Target="../media/{fname}"/>')
     lines.append("</Relationships>"); return "\n".join(lines)
 
+DAY_NAMES = ['Monday','Tuesday','Wednesday','Thursday','Friday']
+
 def populate_q_slide(tree,day_num,qs):
+    day_name = DAY_NAMES[day_num-1] if 1 <= day_num <= len(DAY_NAMES) else f"Day {day_num}"
     sp=find_shape(tree,"Title 26")
-    if sp is not None: set_runs(sp,f"Rapid Maths \u2013 Day {day_num}")
+    if sp is not None: set_runs(sp,f"Rapid Maths \u2013 {day_name}")
     for lbl,qtxt,i in [("Text 4","Text 5",0),("Text 8","Text 9",1),("Text 12","Text 13",2),
                         ("Text 16","Text 17",3),("Text 20","Text 21",4)]:
         q=qs[i]; sp_l=find_shape(tree,lbl); sp_q=find_shape(tree,qtxt)
@@ -212,8 +215,9 @@ def populate_q_slide(tree,day_num,qs):
         if sp_q is not None: set_runs(sp_q,q["question"])
 
 def populate_a_slide(tree,day_num,qs):
+    day_name = DAY_NAMES[day_num-1] if 1 <= day_num <= len(DAY_NAMES) else f"Day {day_num}"
     sp=find_shape(tree,"Title 28")
-    if sp is not None: set_runs(sp,f"Rapid Maths \u2013 Answers \u2013 Day {day_num}")
+    if sp is not None: set_runs(sp,f"Rapid Maths \u2013 Answers \u2013 {day_name}")
     for lbl,muted,ans,i in [("Text 4","Text 5","Text 6",0),("Text 9","Text 10","Text 11",1),
                               ("Text 14","Text 15","Text 16",2),("Text 19","Text 20","Text 21",3),
                               ("Text 24","Text 25","Text 26",4)]:

@@ -72,7 +72,9 @@ stm_visual = {
 }
 
 VISUALS = dict(_ld['visuals'])
-VISUALS['c2_ido2'] = stm_visual
+# If lesson_data provides c2_ido2 (e.g. stm_word_problem), use that instead of grid STM
+if 'c2_ido2' not in VISUALS:
+    VISUALS['c2_ido2'] = stm_visual
 
 # ---------------------------------------------------------------------------
 prs = Presentation('/home/claude/template.pptx')
@@ -115,7 +117,19 @@ def add_pic(slide, image_filename, x, y, w, h):
     with open(img_path, 'rb') as f:
         img_bytes = f.read()
     pic = slide.shapes.add_picture(_io.BytesIO(img_bytes), emu(x), emu(y), emu(w), emu(h))
-    return pic.element
+    return pic
+
+def add_pic_id(slide, image_filename, x, y, w, h):
+    """Add picture and return (element, shape_id) for use in animations."""
+    pic = add_pic(slide, image_filename, x, y, w, h)
+    ns = 'http://schemas.openxmlformats.org/drawingml/2006/picture'
+    cNvPr = pic.element.find(f'.//{{{ns}}}cNvPr')
+    if cNvPr is None:
+        # try presentation namespace
+        ns2 = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+        cNvPr = pic.element.find('.//cNvPr')
+    shape_id = int(pic.shape_id)
+    return pic.element, shape_id
 
 # ---------------------------------------------------------------------------
 # XML HELPERS
@@ -216,8 +230,8 @@ def build_slide2():
                    'Being a Mathematician', font='Twinkl Cursive Looped Light',
                    sz=18, bold=True, color='000000', align='ctr',
                    fill=None, no_line=True))
-    add_sp(sld, sp(nid(),'DayText', 4.484,2.448, 4.504,2.036,
-                   f'Day {day_num}', font='Twinkl Cursive Looped Light',
+    add_sp(sld, sp(nid(),'DayText', 0.761,2.448, 11.811,2.036,
+                   L1['day'], font='Twinkl Cursive Looped Light',
                    sz=100, bold=False, color='000000', align='ctr',
                    fill=None, no_line=True))
     add_pic(sld,'image1.png', 5.634,0.168, 2.066,1.796)
@@ -1061,12 +1075,22 @@ def build_teaching_slide(layout_num, visual_key, title_text, phase):
             break
     v = VISUALS[visual_key]
     slide_type = v.get('slide_type', 'grid')
-    if slide_type == 'symmetry_grid':
+    if slide_type == 'word_problem':
+        draw_word_problem_slide(sld, visual_key)
+    elif slide_type == 'identify_calculate':
+        draw_identify_calculate_slide(sld, visual_key)
+    elif slide_type == 'bar_model':
+        draw_bar_model_slide(sld, visual_key)
+    elif slide_type == 'stm_word_problem':
+        draw_stm_word_problem_slide(sld, visual_key)
+    elif slide_type == 'symmetry_grid':
         draw_symmetry_grid_slide(sld, visual_key)
     elif slide_type == 'clock':
         draw_clock_slide(sld, visual_key)
     elif slide_type == 'number_line':
         draw_number_line_slide(sld, visual_key)
+    elif slide_type == 'column_calc':
+        draw_column_calc(sld, visual_key)
     else:
         draw_grid_slide(sld, visual_key, layout_num)
     print(f"  Teaching slide ({title_text[:40]}) ✓")
@@ -1486,6 +1510,919 @@ def draw_clock_slide(sld, visual_key):
                        border=('E8B825', 1.5), anchor='ctr'))
         spid += 1
     sld.notes_slide.notes_text_frame.text = v['notes']
+
+
+
+# ===========================================================================
+# ANIMATION HELPER
+# Generates <p:timing> XML for click-by-click reveal of shape groups.
+# anim_groups: list of lists of int shape IDs.
+# Each inner list = all shapes revealed together on one click.
+# ===========================================================================
+def _apply_animation(sld, anim_groups, pic_ids=None):
+    """Inject click-by-click appear animations matching PowerPoint's native format.
+    - bldLst entry added for EVERY animated shape (required for initial hide)
+    - nodeType: clickEffect for first shape per group, withEffect for rest
+    - evt names match PowerPoint native: onPrev / onNext (not onPrevClick)
+    """
+    if not anim_groups:
+        return
+    NS_P = "http://schemas.openxmlformats.org/presentationml/2006/main"
+    cid = [100]
+    def nid():
+        cid[0] += 1
+        return cid[0]
+
+    def make_set(spid, node_type, grp_id=None):
+        grp = f' grpId="{grp_id}"' if grp_id is not None else ''
+        ic = nid(); ic2 = nid()
+        return (
+            f'<p:par xmlns:p="{NS_P}"><p:cTn id="{ic}" presetID="1" presetClass="entr"' +
+            f' presetSubtype="0" fill="hold"{grp} nodeType="{node_type}">' +
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>' +
+            f'<p:childTnLst><p:set><p:cBhvr>' +
+            f'<p:cTn id="{ic2}" dur="1" fill="hold">' +
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>' +
+            f'<p:tgtEl><p:spTgt spid="{spid}"/></p:tgtEl>' +
+            f'<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst>' +
+            f'</p:cBhvr><p:to><p:strVal val="visible"/></p:to></p:set>' +
+            f'</p:childTnLst></p:cTn></p:par>'
+        )
+
+    click_pars = []
+    all_spids = []  # collect all animated shape IDs for bldLst
+    for group in anim_groups:
+        io = nid(); ii = nid()
+        inner_pars = ''
+        for idx, spid in enumerate(group):
+            node_type = 'clickEffect' if idx == 0 else 'withEffect'
+            grp_id = 0 if idx > 0 else None
+            inner_pars += make_set(spid, node_type, grp_id)
+            all_spids.append(spid)
+        click_pars.append(
+            f'<p:par xmlns:p="{NS_P}"><p:cTn id="{io}" fill="hold">' +
+            f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>' +
+            f'<p:childTnLst><p:par><p:cTn id="{ii}" fill="hold">' +
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>' +
+            f'<p:childTnLst>{inner_pars}</p:childTnLst>' +
+            f'</p:cTn></p:par></p:childTnLst></p:cTn></p:par>'
+        )
+
+    # bldLst: every animated shape listed — this is what tells PowerPoint
+    # to start each shape as hidden before its animation fires
+    bld_entries = ''.join(
+        f'<p:bldP xmlns:p="{NS_P}" spid="{spid}" grpId="0"/>' for spid in all_spids
+    )
+
+    timing_xml = (
+        f'<p:timing xmlns:p="{NS_P}">' +
+        f'<p:tnLst><p:par><p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot">' +
+        f'<p:childTnLst><p:seq concurrent="1" nextAc="seek">' +
+        f'<p:cTn id="2" dur="indefinite" nodeType="mainSeq"><p:childTnLst>' +
+        ''.join(click_pars) +
+        f'</p:childTnLst></p:cTn>' +
+        f'<p:prevCondLst><p:cond evt="onPrev" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>' +
+        f'<p:nextCondLst><p:cond evt="onNext" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>' +
+        f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>' +
+        f'<p:bldLst>{bld_entries}</p:bldLst>' +
+        f'</p:timing>'
+    )
+
+    existing = sld._element.find(f'{{{NS_P}}}timing')
+    if existing is not None:
+        sld._element.remove(existing)
+    sld._element.append(etree.fromstring(timing_xml))
+
+
+
+# ===========================================================================
+# SQUARED PAPER CALCULATOR
+# Draws a written calculation on squared-paper grid (0.597" cells).
+# Returns anim_groups for click-by-click reveal.
+# ===========================================================================
+CELL = 0.597  # inches — matches maths book squares
+DIGIT_SZ = 32  # pt — main digits
+CARRY_SZ = 14  # pt — carry / remainder superscripts
+GRID_BORDER = ('9DC3E6', 0.75)  # light blue cell borders
+LINE_COL = '156082'             # dark blue separator lines
+LINE_W = 2.0                    # pt
+
+def _cell_sp(spid, col, row, text, grid_x, grid_y, sz=DIGIT_SZ,
+             color='000000', bold=False, fill='FFFFFF', align='ctr',
+             border=GRID_BORDER):
+    """One squared-paper cell with centred text."""
+    x = grid_x + col * CELL
+    y = grid_y + row * CELL
+    return sp(spid, f'C{col}R{row}_{spid}', x, y, CELL, CELL,
+              text, font='Calibri', sz=sz, bold=bold,
+              color=color, align=align, fill=fill,
+              border=border)
+
+
+def _hline_xml(spid, grid_x, grid_y, row, num_cols):
+    """Horizontal separator line spanning num_cols cells."""
+    x = grid_x; y = grid_y + row * CELL
+    w = num_cols * CELL
+    return (
+        f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+        f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+        f'<p:nvSpPr><p:cNvPr id="{spid}" name="HL{spid}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+        f'<p:spPr><a:xfrm><a:off x="{emu(x)}" y="{emu(y)}"/>'
+        f'<a:ext cx="{emu(w)}" cy="0"/></a:xfrm>'
+        f'<a:prstGeom prst="line"><a:avLst/></a:prstGeom>'
+        f'<a:ln w="{int(LINE_W*12700)}"><a:solidFill><a:srgbClr val="{LINE_COL}"/></a:solidFill></a:ln>'
+        f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+    )
+
+
+def _vline_xml(spid, x, y, height):
+    """Vertical line (for division bus stop)."""
+    return (
+        f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+        f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+        f'<p:nvSpPr><p:cNvPr id="{spid}" name="VL{spid}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+        f'<p:spPr><a:xfrm><a:off x="{emu(x)}" y="{emu(y)}"/>'
+        f'<a:ext cx="0" cy="{emu(height)}"/></a:xfrm>'
+        f'<a:prstGeom prst="line"><a:avLst/></a:prstGeom>'
+        f'<a:ln w="{int(LINE_W*12700)}"><a:solidFill><a:srgbClr val="{LINE_COL}"/></a:solidFill></a:ln>'
+        f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+    )
+
+
+def _compute_compact_column(top_str, bottom_str):
+    """Return carries and answer for compact column multiplication."""
+    top_d = [int(c) for c in top_str]
+    bot = int(bottom_str)
+    carry = 0
+    result_d = []
+    carry_map = {}  # col index (0=rightmost) -> carry digit str
+    for i, d in enumerate(reversed(top_d)):
+        prod = d * bot + carry
+        result_d.insert(0, str(prod % 10))
+        carry = prod // 10
+        if carry and i < len(top_d) - 1:
+            carry_map[len(top_d) - 2 - i] = str(carry)
+    if carry:
+        result_d.insert(0, str(carry))
+    return ''.join(result_d), carry_map
+
+
+def _compute_short_div(dividend_str, divisor_str):
+    """Return quotient digits and remainder superscripts for short division."""
+    divisor = int(divisor_str)
+    rem = 0
+    q_digits = []
+    r_map = {}  # position in dividend (0-indexed) -> remainder to show before next digit
+    for i, ch in enumerate(dividend_str):
+        current = rem * 10 + int(ch)
+        q = current // divisor
+        rem = current % divisor
+        q_digits.append(str(q))
+        if rem and i < len(dividend_str) - 1:
+            r_map[i] = str(rem)
+    final_rem = rem
+    # Strip leading zeros from quotient
+    q_str = ''.join(q_digits).lstrip('0') or '0'
+    # Re-pad to same length as dividend
+    q_str = q_str.zfill(len(dividend_str))
+    return q_str, r_map, final_rem
+
+
+def _compute_column_add(top_str, bottom_str):
+    """Return answer and carry positions for column addition."""
+    t = int(top_str); b = int(bottom_str)
+    answer = str(t + b)
+    # Compute carry positions
+    td = top_str.zfill(max(len(top_str), len(bottom_str)))
+    bd = bottom_str.zfill(len(td))
+    carry = 0
+    carry_map = {}
+    for i in range(len(td) - 1, -1, -1):
+        s = int(td[i]) + int(bd[i]) + carry
+        carry = s // 10
+        if carry and i > 0:
+            carry_map[i - 1] = '1'
+    return answer, carry_map
+
+
+def draw_squared_paper(sld, calc_type, v, grid_x, grid_y):
+    """
+    Draw a full written-method calculation on squared paper.
+    Returns anim_groups (list of lists of shape IDs).
+    """
+    SID = [800]
+    def nid():
+        SID[0] += 1
+        return SID[0]
+
+    anim_groups = []
+
+    if calc_type == 'compact_column':
+        top = v['top']; bot = v['bottom']
+        answer, carry_map = _compute_compact_column(top, bot)
+        n_top = len(top); n_ans = len(answer)
+        n_cols = max(n_top, n_ans) + 1  # col 0 = operator col
+
+        # Layout (5 rows):
+        # Row 0: multiplicand
+        # Row 1: × + multiplier
+        # Row 2: carry digits (dedicated carry row, small text at top)
+        # Line at row 3 (separator)
+        # Row 3: answer
+        # Line at row 4 (underline)
+
+        for r in range(5):
+            for c in range(n_cols):
+                add_sp(sld, _cell_sp(nid(), c, r, '', grid_x, grid_y))
+
+        # Row 0: multiplicand right-aligned
+        ans_offset = n_cols - n_ans
+        top_offset = n_cols - n_top
+        group = []
+        for i, d in enumerate(top):
+            sid = nid()
+            add_sp(sld, _cell_sp(sid, top_offset + i, 0, d, grid_x, grid_y,
+                                 sz=DIGIT_SZ, color='000000', bold=True))
+            group.append(sid)
+        anim_groups.append(group)
+
+        # Row 1: × at col 0, multiplier right-aligned
+        group = []
+        sid = nid()
+        add_sp(sld, _cell_sp(sid, 0, 1, '×', grid_x, grid_y,
+                             sz=DIGIT_SZ, color='000000', bold=True))
+        group.append(sid)
+        n_bot = len(bot); bot_offset = n_cols - n_bot
+        for i, d in enumerate(bot):
+            sid = nid()
+            add_sp(sld, _cell_sp(sid, bot_offset + i, 1, d, grid_x, grid_y,
+                                 sz=DIGIT_SZ, color='000000', bold=True))
+            group.append(sid)
+        anim_groups.append(group)
+
+        # Row 2: carry digits — small text at top-right of each carry cell
+        # carry_map key = 0-indexed from left in top_str, so use top_offset as base
+        group = []
+        for col_from_left, carry_d in carry_map.items():
+            grid_col = top_offset + col_from_left
+            x = grid_x + grid_col * CELL + CELL * 0.52
+            y = grid_y + 2 * CELL + CELL * 0.04
+            sid = nid()
+            add_sp(sld, sp(sid, f'Carry{sid}', x, y, CELL * 0.42, CELL * 0.46,
+                           carry_d, font='Calibri', sz=CARRY_SZ, bold=False,
+                           color='C00000', align='ctr', fill=None, no_line=True))
+            group.append(sid)
+        if group:
+            anim_groups.append(group)
+
+        # Line at row 3 (separator above answer)
+        add_sp(sld, _hline_xml(nid(), grid_x, grid_y, 3, n_cols))
+
+        # Row 3: answer digits (green)
+        group = []
+        for i, d in enumerate(answer):
+            sid = nid()
+            add_sp(sld, _cell_sp(sid, ans_offset + i, 3, d, grid_x, grid_y,
+                                 sz=DIGIT_SZ, color='1A5C2A', bold=True))
+            group.append(sid)
+        anim_groups.append(group)
+
+        # Line at row 4 (underline)
+        add_sp(sld, _hline_xml(nid(), grid_x, grid_y, 4, n_cols))
+
+    elif calc_type == 'short_division':
+        dividend = v['top']; divisor = v['bottom']
+        q_str, r_map, final_rem = _compute_short_div(dividend, divisor)
+        n_div = len(dividend)
+        # Grid: col 0 = divisor, col 1..n_div = dividend, optional extra for remainder
+        extra = 2 if final_rem else 0
+        n_cols = n_div + 1 + extra
+        n_rows = 3  # quotient, dividend, blank
+
+        # Background cells
+        for r in range(n_rows):
+            for c in range(n_cols):
+                add_sp(sld, _cell_sp(nid(), c, r, '', grid_x, grid_y))
+
+        # Bus stop structure (always visible)
+        # Vertical line: right edge of col 0, full height of row 1
+        vx = grid_x + CELL
+        vy = grid_y + CELL
+        add_sp(sld, _vline_xml(nid(), vx, vy, CELL))
+        # Horizontal line: top of row 1, spanning dividend cols
+        hx = grid_x + CELL
+        hy = grid_y + CELL
+        add_sp(sld, f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+               f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+               f'<p:nvSpPr><p:cNvPr id="{nid()}" name="HL_div"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+               f'<p:spPr><a:xfrm><a:off x="{emu(hx)}" y="{emu(hy)}"/>'
+               f'<a:ext cx="{emu(n_div * CELL)}" cy="0"/></a:xfrm>'
+               f'<a:prstGeom prst="line"><a:avLst/></a:prstGeom>'
+               f'<a:ln w="{int(LINE_W*12700)}"><a:solidFill><a:srgbClr val="{LINE_COL}"/></a:solidFill></a:ln>'
+               f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>')
+
+        # Row 1: divisor in col 0 + dividend digits in cols 1..n_div
+        group = []
+        sid = nid()
+        add_sp(sld, _cell_sp(sid, 0, 1, divisor, grid_x, grid_y,
+                             sz=DIGIT_SZ, color='000000', bold=True))
+        group.append(sid)
+        for i, d in enumerate(dividend):
+            sid = nid()
+            add_sp(sld, _cell_sp(sid, 1 + i, 1, d, grid_x, grid_y,
+                                 sz=DIGIT_SZ, color='000000', bold=True))
+            group.append(sid)
+        # Remainder superscripts (small, top-right of dividend cell)
+        rem_group = []
+        for pos, r_d in r_map.items():
+            x = grid_x + (2 + pos) * CELL - CELL * 0.38
+            y = grid_y + CELL + CELL * 0.04
+            sid = nid()
+            add_sp(sld, sp(sid, f'Rem{sid}', x, y, CELL * 0.35, CELL * 0.45,
+                           r_d, font='Calibri', sz=CARRY_SZ, bold=False,
+                           color='C00000', align='l', fill=None, no_line=True))
+            rem_group.append(sid)
+        anim_groups.append(group)
+        if rem_group:
+            anim_groups.append(rem_group)
+
+        # Row 0: quotient digits above each dividend col
+        group = []
+        for i, q in enumerate(q_str):
+            if q == '0' and i == 0 and len(q_str) > 1:
+                continue  # skip leading zero
+            sid = nid()
+            add_sp(sld, _cell_sp(sid, 1 + i, 0, q, grid_x, grid_y,
+                                 sz=DIGIT_SZ, color='1A5C2A', bold=True))
+            group.append(sid)
+        # Remainder notation after last digit
+        if final_rem:
+            sid = nid()
+            add_sp(sld, _cell_sp(sid, n_div + 1, 0, f'r{final_rem}', grid_x, grid_y,
+                                 sz=DIGIT_SZ - 6, color='C00000', bold=False))
+            group.append(sid)
+        anim_groups.append(group)
+
+    elif calc_type in ('column_addition', 'column_subtraction'):
+        top = v['top']; bot = v['bottom']
+        op = '+' if calc_type == 'column_addition' else '−'
+        if calc_type == 'column_addition':
+            answer, carry_map = _compute_column_add(top, bot)
+        else:
+            answer = str(int(top) - int(bot))
+            carry_map = {}
+        n_top = len(top); n_bot = len(bot); n_ans = len(answer)
+        n_cols = max(n_top, n_bot, n_ans) + 1
+        n_rows = 5  # carry, top, operator+bot, line, answer, blank
+
+        # Background cells
+        for r in range(4):
+            for c in range(n_cols):
+                add_sp(sld, _cell_sp(nid(), c, r, '', grid_x, grid_y))
+
+        # Carry row (row 0, small) — always visible positions, digits animated
+        if carry_map:
+            carry_group = []
+            for col_from_right, c_d in carry_map.items():
+                grid_col = n_cols - 1 - col_from_right
+                x = grid_x + grid_col * CELL + CELL * 0.05
+                y = grid_y + CELL * 0.05
+                sid = nid()
+                add_sp(sld, sp(sid, f'Carry{sid}', x, y, CELL * 0.45, CELL * 0.5,
+                               c_d, font='Calibri', sz=CARRY_SZ, color='C00000',
+                               align='l', fill=None, no_line=True))
+                carry_group.append(sid)
+
+        # Row 1: top number
+        t_offset = n_cols - n_top
+        group = []
+        for i, d in enumerate(top):
+            sid = nid()
+            add_sp(sld, _cell_sp(sid, t_offset + i, 1, d, grid_x, grid_y,
+                                 sz=DIGIT_SZ, color='000000', bold=True))
+            group.append(sid)
+        anim_groups.append(group)
+
+        # Row 2: operator + bottom number
+        b_offset = n_cols - n_bot
+        group = []
+        sid = nid()
+        add_sp(sld, _cell_sp(sid, 0, 2, op, grid_x, grid_y,
+                             sz=DIGIT_SZ, color='000000', bold=True))
+        group.append(sid)
+        for i, d in enumerate(bot):
+            sid = nid()
+            add_sp(sld, _cell_sp(sid, b_offset + i, 2, d, grid_x, grid_y,
+                                 sz=DIGIT_SZ, color='000000', bold=True))
+            group.append(sid)
+        anim_groups.append(group)
+
+        # Line after row 2
+        add_sp(sld, _hline_xml(nid(), grid_x, grid_y, 3, n_cols))
+
+        # Carry digits (after operator row drawn)
+        if carry_map:
+            anim_groups.append(carry_group)
+
+        # Row 3: answer
+        a_offset = n_cols - n_ans
+        group = []
+        for i, d in enumerate(answer):
+            sid = nid()
+            add_sp(sld, _cell_sp(sid, a_offset + i, 3, d, grid_x, grid_y,
+                                 sz=DIGIT_SZ, color='1A5C2A', bold=True))
+            group.append(sid)
+        anim_groups.append(group)
+        add_sp(sld, _hline_xml(nid(), grid_x, grid_y, 4, n_cols))
+
+    return anim_groups
+
+
+
+
+
+
+
+
+
+# ===========================================================================
+# WORD PROBLEM SLIDE — L9 I Do
+# Visualise → Analyse → Attack, animated click-by-click
+# ===========================================================================
+def draw_word_problem_slide(sld, visual_key):
+    v = VISUALS[visual_key]
+    px, py, pw, ph = 0.40, 1.45, 7.00, 5.80
+    anim_groups = []
+    # Images 1038×304 → ratio ~3.42:1
+    BH = 0.90; BW = round(BH * 3.42, 3)
+    BX = px + 0.12
+    TX = BX + BW + 0.18
+    TW = pw - 0.24 - BW - 0.18
+
+    # Counter for manually-injected sp shapes.
+    # Start at 200; MUST be updated after each add_pic_id call to avoid
+    # collision with python-pptx's auto-assigned picture IDs.
+    SID = [200]
+    def nid():
+        SID[0] += 1
+        return SID[0]
+    def sync_past(pic_id):
+        if pic_id >= SID[0]:
+            SID[0] = pic_id  # next nid() = pic_id + 1
+
+    # White panel
+    add_sp(sld, f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><p:nvSpPr><p:cNvPr id="{nid()}" name="WPPanel"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="{emu(px)}" y="{emu(py)}"/><a:ext cx="{emu(pw)}" cy="{emu(ph)}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill><a:ln w="{int(1.5*12700)}"><a:solidFill><a:srgbClr val="BBBBBB"/></a:solidFill></a:ln></p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>')
+    lines = v.get('problem', '').split('\n')
+    add_sp(sld, sp(nid(), 'Problem', px+0.25, py+0.18, pw-0.50, 1.42,
+                   lines, font='Twinkl Cursive Looped Light', sz=24,
+                   bold=False, color='1F1F1F', align='l', fill=None, no_line=True, anchor='t'))
+
+    y = py + 1.72
+
+    # ── Click 1: Visualise banner ──────────────────────────────────────────────
+    _, vid = add_pic_id(sld, 'banner_visualise.png', BX, y, BW, BH)
+    sync_past(vid)
+    anim_groups.append([vid])
+    y += BH + 0.06
+
+    # ── Click 2: Analyse banner + content ─────────────────────────────────────
+    _, aid = add_pic_id(sld, 'banner_analyse.png', BX, y, BW, BH)
+    sync_past(aid)
+    i_know  = v.get('i_know', '')
+    finding = v.get('finding', '')
+    sid_ana = nid()
+    add_sp(sld, sp(sid_ana, 'AnaTxt', TX, y + 0.06, TW, BH - 0.10,
+                   ['I know:  ' + i_know, "I'm finding:  " + finding],
+                   font='Twinkl Cursive Looped Light', sz=14,
+                   bold=False, color='1F4E79', align='l', fill=None, no_line=True, anchor='ctr'))
+    anim_groups.append([aid, sid_ana])
+    y += BH + 0.06
+
+    # ── Click 3: Attack banner + reasoning ────────────────────────────────────
+    _, tkid = add_pic_id(sld, 'banner_attack.png', BX, y, BW, BH)
+    sync_past(tkid)
+    sid_atk = nid()
+    add_sp(sld, sp(sid_atk, 'AtkTxt', TX, y + 0.06, TW, BH - 0.10,
+                   v.get('attack', ''),
+                   font='Twinkl Cursive Looped Light', sz=15, bold=True,
+                   color='7B3000', align='l', fill=None, no_line=True, anchor='ctr'))
+    anim_groups.append([tkid, sid_atk])
+
+    _apply_animation(sld, anim_groups)
+    sld.notes_slide.notes_text_frame.text = v.get('notes', '')
+
+
+
+# ===========================================================================
+# IDENTIFY-CALCULATE SLIDE — L10 / L12 I Do
+# Analyse → Attack banners (natural ratio) left; content right; Step 2 below
+# ===========================================================================
+def draw_identify_calculate_slide(sld, visual_key):
+    v = VISUALS[visual_key]
+    px, py, pw, ph = 0.40, 1.45, 7.00, 5.80
+    SID = [300]; nid = lambda: (SID.__setitem__(0, SID[0]+1), SID[0])[1]
+    BH = 0.78; BW = round(BH * 3.43, 3)
+    BX = px + 0.12
+    TX = BX + BW + 0.18; TW = pw - 0.24 - BW - 0.18
+
+    # White panel
+    add_sp(sld, f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><p:nvSpPr><p:cNvPr id="{nid()}" name="ICPanel"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="{emu(px)}" y="{emu(py)}"/><a:ext cx="{emu(pw)}" cy="{emu(ph)}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill><a:ln w="{int(1.5*12700)}"><a:solidFill><a:srgbClr val="BBBBBB"/></a:solidFill></a:ln></p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>')
+
+    # Problem text
+    lines = v.get('problem', '').split('\n')
+    add_sp(sld, sp(nid(), 'Problem', px+0.25, py+0.15, pw-0.50, 1.28,
+                   lines, font='Twinkl Cursive Looped Light', sz=20,
+                   bold=False, color='1F1F1F', align='l', fill=None, no_line=True, anchor='t'))
+
+    y = py + 1.52
+
+    # Analyse banner + two-line content
+    add_pic(sld, 'banner_analyse.png', BX, y, BW, BH)
+    i_know  = v.get('i_know', '')
+    finding = v.get('finding', '')
+    add_sp(sld, sp(nid(), 'AnaTxt', TX, y + 0.04, TW, BH - 0.08,
+                   [f'I know:  {i_know}', f"I'm finding:  {finding}"],
+                   font='Twinkl Cursive Looped Light', sz=13,
+                   bold=False, color='1F4E79', align='l', fill=None, no_line=True, anchor='ctr'))
+    y += BH + 0.06
+
+    # Attack banner + reasoning
+    add_pic(sld, 'banner_attack.png', BX, y, BW, BH)
+    add_sp(sld, sp(nid(), 'AtkTxt', TX, y + 0.04, TW, BH - 0.08,
+                   v.get('attack', ''),
+                   font='Twinkl Cursive Looped Light', sz=14, bold=True,
+                   color='7B3000', align='l', fill=None, no_line=True, anchor='ctr'))
+    y += BH + 0.12
+
+    # Step 2
+    add_sp(sld, sp(nid(), 'Step2Lbl', px+0.25, y, 1.50, 0.30,
+                   'Step 2:', font='Twinkl Cursive Looped Light', sz=15,
+                   bold=True, color='1F4E79', align='l', fill=None, no_line=True))
+
+    calc_method = v.get('calc_method', 'mental')
+    answer = v.get('answer', '')
+
+    if calc_method == 'mental':
+        add_sp(sld, sp(nid(), 'CalcText', px+0.25, y+0.30, pw-0.50, 0.65,
+                       v.get('calculation', ''),
+                       font='Twinkl Cursive Looped Light', sz=28,
+                       bold=True, color='1A5C2A', align='l', fill=None, no_line=True))
+        add_sp(sld, sp(nid(), 'Answer', px+0.12, y+1.00, pw-0.24, 0.40,
+                       f'Answer:  {answer}',
+                       font='Twinkl Cursive Looped Light', sz=16,
+                       bold=True, color='1A5C2A', align='l',
+                       fill='E2EFDA', border=('538135', 1.5), anchor='ctr'))
+    else:
+        grid_x = px + 1.85; grid_y = y + 0.32
+        anim_groups = draw_squared_paper(sld, calc_method, v, grid_x, grid_y)
+        add_sp(sld, sp(nid(), 'Answer', px+0.12, py+4.85, pw-0.24, 0.40,
+                       f'Answer:  {answer}',
+                       font='Twinkl Cursive Looped Light', sz=16,
+                       bold=True, color='1A5C2A', align='l',
+                       fill='E2EFDA', border=('538135', 1.5), anchor='ctr'))
+        _apply_animation(sld, anim_groups)
+
+    sld.notes_slide.notes_text_frame.text = v.get('notes', '')
+
+
+
+# ===========================================================================
+# BAR MODEL SLIDE — L11 I Do
+# Problem text + two-part bar model + step calculations.
+# ===========================================================================
+def draw_bar_model_slide(sld, visual_key):
+    v = VISUALS[visual_key]
+    px, py, pw, ph = 0.40, 1.45, 7.00, 5.80
+    SID = [400]; nid = lambda: (SID.__setitem__(0, SID[0]+1), SID[0])[1]
+
+    # White panel
+    add_sp(sld, f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+           f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+           f'<p:nvSpPr><p:cNvPr id="{nid()}" name="BMPanel"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+           f'<p:spPr><a:xfrm><a:off x="{emu(px)}" y="{emu(py)}"/>'
+           f'<a:ext cx="{emu(pw)}" cy="{emu(ph)}"/></a:xfrm>'
+           f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+           f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
+           f'<a:ln w="{int(1.5*12700)}"><a:solidFill><a:srgbClr val="BBBBBB"/></a:solidFill></a:ln>'
+           f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>')
+
+    # Problem text
+    lines = v.get('problem', '').split('\n')
+    add_sp(sld, sp(nid(), 'Problem', px + 0.25, py + 0.15,
+                   pw - 0.50, 1.70,
+                   lines, font='Twinkl Cursive Looped Light', sz=18,
+                   bold=False, color='1F1F1F', align='l',
+                   fill=None, no_line=True, anchor='t'))
+
+    step1 = v.get('step1', {})
+    step2 = v.get('step2', {})
+    s1_res = step1.get('result', '?')
+    s2_res = step2.get('result', '?')
+    s1_lbl = step1.get('label', '')
+    s2_lbl = step2.get('label', '')
+    answer = v.get('answer', '')
+
+    # Bar model geometry
+    bar_x = px + 0.30
+    bar_w = pw - 0.60
+    bar_top_y = py + 2.00
+    bar_h = 0.48
+
+    # Top bar — total (result of step 1)
+    add_sp(sld, sp(nid(), 'BarTop', bar_x, bar_top_y, bar_w, bar_h,
+                   f'Total: {s1_res}',
+                   font='Twinkl Cursive Looped Light', sz=18,
+                   bold=True, color='FFFFFF', align='ctr',
+                   fill='1798d3', border=('0D6E9E', 1.5), anchor='ctr'))
+
+    # Bottom bar — split at ~75% (larger part = answer, smaller = what changed)
+    split = 0.72
+    bar_bot_y = bar_top_y + bar_h + 0.06
+    lw = bar_w * split; rw = bar_w - lw
+
+    add_sp(sld, sp(nid(), 'BarBotL', bar_x, bar_bot_y, lw, bar_h,
+                   s2_res,
+                   font='Twinkl Cursive Looped Light', sz=20,
+                   bold=True, color='FFFFFF', align='ctr',
+                   fill='2bae62', border=('1A7A41', 1.5), anchor='ctr'))
+    add_sp(sld, sp(nid(), 'BarBotR', bar_x + lw, bar_bot_y, rw, bar_h,
+                   step2.get('b', ''),
+                   font='Twinkl Cursive Looped Light', sz=18,
+                   bold=True, color='FFFFFF', align='ctr',
+                   fill='E8642A', border=('C04E00', 1.5), anchor='ctr'))
+
+    # Step labels outside bar
+    add_sp(sld, sp(nid(), 'S1Lbl', bar_x, bar_bot_y + bar_h + 0.08,
+                   bar_w * 0.5, 0.35,
+                   f'Step 1: {s1_lbl}',
+                   font='Twinkl Cursive Looped Light', sz=16,
+                   bold=False, color='1F4E79', align='l',
+                   fill=None, no_line=True))
+    add_sp(sld, sp(nid(), 'S2Lbl', bar_x + bar_w * 0.5, bar_bot_y + bar_h + 0.08,
+                   bar_w * 0.5, 0.35,
+                   f'Step 2: {s2_lbl}',
+                   font='Twinkl Cursive Looped Light', sz=16,
+                   bold=False, color='1F4E79', align='l',
+                   fill=None, no_line=True))
+
+    # Calculations
+    calc_y = py + 3.70
+    anim_groups = []
+
+    for step_i, step in enumerate([step1, step2]):
+        label = f'Step {step_i+1}:  {step.get("calculation","")}'
+        cm = step.get('calc_method', 'mental')
+        if cm == 'mental':
+            add_sp(sld, sp(nid(), f'Calc{step_i}', px + 0.25,
+                           calc_y + step_i * 0.70,
+                           pw - 0.50, 0.60,
+                           label,
+                           font='Twinkl Cursive Looped Light', sz=20,
+                           bold=True, color='1A5C2A', align='l',
+                           fill=None, no_line=True))
+        else:
+            # Show calc label then squared paper inline
+            add_sp(sld, sp(nid(), f'CalcLbl{step_i}', px + 0.25,
+                           calc_y + step_i * 0.70,
+                           1.80, 0.50,
+                           f'Step {step_i+1}:',
+                           font='Twinkl Cursive Looped Light', sz=18,
+                           bold=True, color='1A5C2A', align='l',
+                           fill=None, no_line=True))
+            gx = px + 2.10
+            gy = calc_y + step_i * 0.70 - 0.25
+            # Remap step keys for squared paper (uses 'top'/'bottom')
+            sp_data = dict(step)
+            if 'a' in sp_data and 'top' not in sp_data:
+                sp_data['top'] = sp_data['a']
+                sp_data['bottom'] = sp_data['b']
+            ag = draw_squared_paper(sld, cm, sp_data, gx, gy)
+            anim_groups.extend(ag)
+
+    # Answer
+    add_sp(sld, sp(nid(), 'Answer', px + 0.25, py + 5.05,
+                   pw - 0.50, 0.50,
+                   f'Answer:  {answer}',
+                   font='Twinkl Cursive Looped Light', sz=20,
+                   bold=True, color='1A5C2A', align='l',
+                   fill='E2EFDA', border=('538135', 1.5), anchor='ctr'))
+
+    if anim_groups:
+        _apply_animation(sld, anim_groups)
+
+    sld.notes_slide.notes_text_frame.text = v.get('notes', '')
+
+
+# ===========================================================================
+# STM WORD PROBLEM SLIDE — all lessons' c2_ido2
+# Word problem + wrong working in red + error explanation.
+# ===========================================================================
+def draw_stm_word_problem_slide(sld, visual_key):
+    v = VISUALS[visual_key]
+    px, py, pw, ph = 0.40, 1.45, 7.00, 5.80
+    SID = [500]; nid = lambda: (SID.__setitem__(0, SID[0]+1), SID[0])[1]
+
+    # White panel
+    add_sp(sld, f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+           f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+           f'<p:nvSpPr><p:cNvPr id="{nid()}" name="STMPanel"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+           f'<p:spPr><a:xfrm><a:off x="{emu(px)}" y="{emu(py)}"/>'
+           f'<a:ext cx="{emu(pw)}" cy="{emu(ph)}"/></a:xfrm>'
+           f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+           f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
+           f'<a:ln w="{int(1.5*12700)}"><a:solidFill><a:srgbClr val="BBBBBB"/></a:solidFill></a:ln>'
+           f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>')
+
+    # Problem text
+    lines = v.get('problem', '').split('\n')
+    add_sp(sld, sp(nid(), 'STMProblem', px + 0.25, py + 0.25,
+                   pw - 0.50, 1.80,
+                   lines, font='Twinkl Cursive Looped Light', sz=22,
+                   bold=False, color='1F1F1F', align='l',
+                   fill=None, no_line=True, anchor='t'))
+
+    # Wrong working — red box
+    wrong = v.get('wrong_working', '')
+    wlines = wrong.split('\n')
+    add_sp(sld, sp(nid(), 'WrongBox', px + 0.25, py + 2.20,
+                   pw - 0.50, max(0.65, 0.55 * len(wlines)),
+                   wlines, font='Twinkl Cursive Looped Light', sz=22,
+                   bold=True, color='FFFFFF', align='l',
+                   fill='C00000', border=('800000', 1.5), anchor='ctr'))
+
+    # Error explanation
+    error = v.get('error', '')
+    elines = error.split('\n')
+    add_sp(sld, sp(nid(), 'ErrorBox', px + 0.25, py + 3.20,
+                   pw - 0.50, max(0.75, 0.55 * len(elines)),
+                   elines, font='Twinkl Cursive Looped Light', sz=20,
+                   bold=False, color='1F4E79', align='l',
+                   fill='DEEAF1', border=('156082', 1.5), anchor='t'))
+
+    sld.notes_slide.notes_text_frame.text = v.get('notes', '')
+
+
+
+# ===========================================================================
+# COLUMN CALC SLIDE — word problem / operation identification
+# Left panel: large column calculation (× or ÷). Right panel: context/caption.
+# ===========================================================================
+def draw_column_calc(sld, visual_key):
+    v = VISUALS[visual_key]
+    calc_type  = v.get('calc_type', 'multiplication')
+    top        = str(v.get('top', ''))
+    bottom     = str(v.get('bottom', ''))
+    show_ans   = v.get('show_answer', False)
+    answer     = str(v.get('answer', '')) if show_ans else ''
+    caption    = v.get('caption', '')
+
+    panel_x, panel_y = 0.40, 1.45
+    panel_h = 5.80
+    calc_w  = 3.30   # left white panel for the calculation
+    ctx_x   = panel_x + calc_w + 0.12
+    ctx_w   = 7.00 - calc_w - 0.12
+
+    # ---- White calc panel ----
+    add_sp(sld, f'''<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
+                         xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  <p:nvSpPr><p:cNvPr id="50" name="CalcPanel"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
+  <p:spPr><a:xfrm><a:off x="{emu(panel_x)}" y="{emu(panel_y)}"/>
+    <a:ext cx="{emu(calc_w)}" cy="{emu(panel_h)}"/></a:xfrm>
+    <a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
+    <a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>
+    <a:ln w="{int(1.5*12700)}"><a:solidFill><a:srgbClr val="BBBBBB"/></a:solidFill></a:ln>
+  </p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>''')
+
+    # ---- Numbers centred in left panel ----
+    num_cx = panel_x + calc_w / 2
+    num_w  = 1.60
+    num_x  = num_cx - num_w / 2
+    num_sz = 54   # large enough to be clear
+
+    # For multiplication: top (right-aligned), × bottom (right-aligned), line, answer
+    # For division: top ÷ bottom (horizontal notation, centred)
+    if calc_type == 'multiplication':
+        row1_y = panel_y + 0.90
+        row2_y = row1_y + 1.20
+        line_y = row2_y + 1.15   # clears the 1.10" row2 box
+        row3_y = line_y + 0.15
+
+        add_sp(sld, sp(51, 'Top', num_x, row1_y, num_w, 1.10,
+                       top, font='Aptos', sz=num_sz, bold=True,
+                       color='1F4E79', align='r', fill=None, no_line=True))
+        # × sign (offset left)
+        add_sp(sld, sp(52, 'Op', num_x - 0.40, row2_y, 0.40, 1.10,
+                       '×', font='Aptos', sz=num_sz, bold=True,
+                       color='E8642A', align='r', fill=None, no_line=True))
+        add_sp(sld, sp(53, 'Bot', num_x, row2_y, num_w, 1.10,
+                       bottom, font='Aptos', sz=num_sz, bold=True,
+                       color='1F4E79', align='r', fill=None, no_line=True))
+        # Answer line
+        add_sp(sld, f'''<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
+                             xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  <p:nvSpPr><p:cNvPr id="54" name="AnsLine"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
+  <p:spPr><a:xfrm><a:off x="{emu(num_x-0.45)}" y="{emu(line_y)}"/>
+    <a:ext cx="{emu(num_w+0.45)}" cy="0"/></a:xfrm>
+    <a:prstGeom prst="line"><a:avLst/></a:prstGeom>
+    <a:ln w="{int(2.0*12700)}"><a:solidFill><a:srgbClr val="333333"/></a:solidFill></a:ln>
+  </p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>''')
+        if answer:
+            add_sp(sld, sp(55, 'Ans', num_x, row3_y, num_w, 1.10,
+                           answer, font='Aptos', sz=num_sz, bold=True,
+                           color='1A5C2A', align='r', fill=None, no_line=True))
+        else:
+            add_sp(sld, sp(55, 'AnsBlank', num_x - 0.45, row3_y, num_w + 0.45, 1.10,
+                           '?', font='Aptos', sz=num_sz, bold=True,
+                           color='AAAAAA', align='r', fill=None, no_line=True))
+
+    elif calc_type in ('addition', 'subtraction'):
+        op_sym = '+' if calc_type == 'addition' else '−'
+        row1_y = panel_y + 0.90
+        row2_y = row1_y + 1.20
+        line_y = row2_y + 1.15   # clears the 1.10" row2 box
+        row3_y = line_y + 0.15
+
+        add_sp(sld, sp(51, 'Top', num_x, row1_y, num_w, 1.10,
+                       top, font='Aptos', sz=num_sz, bold=True,
+                       color='1F4E79', align='r', fill=None, no_line=True))
+        add_sp(sld, sp(52, 'Op', num_x - 0.40, row2_y, 0.40, 1.10,
+                       op_sym, font='Aptos', sz=num_sz, bold=True,
+                       color='E8642A', align='r', fill=None, no_line=True))
+        add_sp(sld, sp(53, 'Bot', num_x, row2_y, num_w, 1.10,
+                       bottom, font='Aptos', sz=num_sz, bold=True,
+                       color='1F4E79', align='r', fill=None, no_line=True))
+        add_sp(sld, f'''<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
+                             xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  <p:nvSpPr><p:cNvPr id="54" name="AnsLine"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
+  <p:spPr><a:xfrm><a:off x="{emu(num_x-0.45)}" y="{emu(line_y)}"/>
+    <a:ext cx="{emu(num_w+0.45)}" cy="0"/></a:xfrm>
+    <a:prstGeom prst="line"><a:avLst/></a:prstGeom>
+    <a:ln w="{int(2.0*12700)}"><a:solidFill><a:srgbClr val="333333"/></a:solidFill></a:ln>
+  </p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>''')
+        if answer:
+            add_sp(sld, sp(55, 'Ans', num_x, row3_y, num_w, 1.10,
+                           answer, font='Aptos', sz=num_sz, bold=True,
+                           color='1A5C2A', align='r', fill=None, no_line=True))
+        else:
+            add_sp(sld, sp(55, 'AnsBlank', num_x - 0.45, row3_y, num_w + 0.45, 1.10,
+                           '?', font='Aptos', sz=num_sz, bold=True,
+                           color='AAAAAA', align='r', fill=None, no_line=True))
+
+    else:  # division — bus stop layout: bottom ) top
+        # Fixed-width layout centred in calc panel
+        divor_bw = 0.90   # divisor box
+        brack_w  = 0.48   # bracket )
+        divid_bw = 1.60   # dividend box (holds up to 3 digits at 54pt)
+        group_w  = divor_bw + brack_w + divid_bw
+        start_x  = panel_x + (calc_w - group_w) / 2
+        row_y    = panel_y + panel_h / 2 - 0.60
+
+        divor_x  = start_x
+        brack_x  = start_x + divor_bw
+        divid_x  = brack_x + brack_w
+
+        add_sp(sld, sp(51, 'Divisor', divor_x, row_y, divor_bw, 1.10,
+                       bottom, font='Aptos', sz=num_sz, bold=True,
+                       color='E8642A', align='r', fill=None, no_line=True))
+        add_sp(sld, sp(52, 'Bracket', brack_x, row_y, brack_w, 1.10,
+                       ')', font='Aptos', sz=num_sz, bold=True,
+                       color='333333', align='ctr', fill=None, no_line=True))
+        add_sp(sld, sp(53, 'Dividend', divid_x, row_y, divid_bw, 1.10,
+                       top, font='Aptos', sz=num_sz, bold=True,
+                       color='1F4E79', align='l', fill=None, no_line=True))
+        add_sp(sld, f'''<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
+                             xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  <p:nvSpPr><p:cNvPr id="54" name="Overline"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
+  <p:spPr><a:xfrm><a:off x="{emu(divid_x)}" y="{emu(row_y)}"/>
+    <a:ext cx="{emu(divid_bw)}" cy="0"/></a:xfrm>
+    <a:prstGeom prst="line"><a:avLst/></a:prstGeom>
+    <a:ln w="{int(2.0*12700)}"><a:solidFill><a:srgbClr val="333333"/></a:solidFill></a:ln>
+  </p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>''')
+        if answer:
+            add_sp(sld, sp(55, 'Ans', divid_x, row_y - 0.85, divid_bw, 1.10,
+                           answer, font='Aptos', sz=num_sz, bold=True,
+                           color='1A5C2A', align='l', fill=None, no_line=True))
+
+    # ---- Context panel (right) ----
+    add_sp(sld, f'''<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
+                         xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  <p:nvSpPr><p:cNvPr id="56" name="CtxPanel"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
+  <p:spPr><a:xfrm><a:off x="{emu(ctx_x)}" y="{emu(panel_y)}"/>
+    <a:ext cx="{emu(ctx_w)}" cy="{emu(panel_h)}"/></a:xfrm>
+    <a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
+    <a:solidFill><a:srgbClr val="DEECF8"/></a:solidFill>
+    <a:ln w="{int(1.5*12700)}"><a:solidFill><a:srgbClr val="156082"/></a:solidFill></a:ln>
+  </p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>''')
+
+    # Caption text inside context panel
+    lines = [l for l in caption.split('\n') if l.strip()]
+    add_sp(sld, sp(57, 'Caption', ctx_x + 0.12, panel_y + 0.25,
+                   ctx_w - 0.24, panel_h - 0.50,
+                   lines if lines else caption,
+                   font='Twinkl Cursive Looped Light', sz=18, bold=False,
+                   color='1F1F1F', align='l', fill=None, no_line=True, anchor='t'))
+
+    sld.notes_slide.notes_text_frame.text = v.get('notes', '')
 
 
 # ===========================================================================
@@ -1987,14 +2924,23 @@ if 'c2_ido1' in VISUALS:
 # C2 second I Do — authored visual takes priority over STM auto-generation
 if len(c2['slideTitles']['ido']) > 1:
     title_c2i2 = c2['slideTitles']['ido'][1]
-    if 'c2_ido2' in VISUALS and VISUALS['c2_ido2'].get('slide_type') != 'spot_the_mistake':
-        # Authored non-STM slide (e.g. lesson 17 special cases)
+    v2 = VISUALS.get('c2_ido2', {})
+    st2 = v2.get('slide_type', '')
+    if st2 == 'stm_word_problem':
+        # Authored word-problem STM: use visual's own title
+        build_teaching_slide(2, 'c2_ido2', v2.get('title', STM['slideTitle']), 'I DO')
+    elif st2 not in ('spot_the_mistake', ''):
+        # Other authored slide
         build_teaching_slide(2, 'c2_ido2', title_c2i2, 'I DO')
     else:
-        # Default: STM from JSON
+        # Default: grid-based STM from JSON
         build_spot_the_mistake_slide(2, 'c2_ido2', title_c2i2)
 else:
-    build_spot_the_mistake_slide(2, 'c2_ido2', STM['slideTitle'])
+    v2 = VISUALS.get('c2_ido2', {})
+    if v2.get('slide_type') == 'stm_word_problem':
+        build_teaching_slide(2, 'c2_ido2', v2.get('title', STM['slideTitle']), 'I DO')
+    else:
+        build_spot_the_mistake_slide(2, 'c2_ido2', STM['slideTitle'])
 
 if c2['slideTitles'].get('wedo'):
     if 'c2_wedo' in VISUALS:

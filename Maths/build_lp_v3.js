@@ -2001,21 +2001,19 @@ function _buildLP1WordProblems(slide, isMarkingStation) {
   const GF_RESERVE = hasGF ? 0.80 : 0;
   const usable     = PAGE_BOT - hdrY - GF_RESERVE;
 
-  // One strip = one question. No answer line — pupils work in their maths book.
-  const MIN_STRIP_H = 1.20;
-  let repsPerQ = Math.floor(usable / (nQ * MIN_STRIP_H));
-  repsPerQ = Math.max(1, Math.min(repsPerQ, 4));
+  // Layout: each STRIP contains ALL questions in order (Q1,Q2,Q3).
+  // 2 strips per A4 is standard (pupils cut in half). Loop: rep → qi.
+  const repsPerQ = 2;  // standard 2-strip A4 format
 
   const totalStrips = nQ * repsPerQ;
   const stripH      = usable / totalStrips;
   const fontSize    = Math.min(13, Math.max(10, Math.floor(stripH * 12)));
-  // Marking station: reserve bottom quarter of strip for the answer text.
   const ANS_RESERVE = isMarkingStation ? Math.min(stripH * 0.35, 0.55) : 0;
 
   let stripIdx = 0;
-  for (let qi = 0; qi < nQ; qi++) {
-    const q = questions[qi];
-    for (let rep = 0; rep < repsPerQ; rep++) {
+  for (let rep = 0; rep < repsPerQ; rep++) {
+    for (let qi = 0; qi < nQ; qi++) {
+      const q = questions[qi];
       const stripTop = hdrY + stripIdx * stripH;
       if (stripIdx > 0) _cutStrip(slide, MARGIN, stripTop - 0.04, contentW);
 
@@ -2163,9 +2161,9 @@ function _buildLP1WordProblemsAdapted(slide, questions) {
   const fontSize    = Math.min(13, Math.max(10, Math.floor(stripH * 12)));
 
   let stripIdx = 0;
-  for (let qi = 0; qi < nQ; qi++) {
-    const q = questions[qi];
-    for (let rep = 0; rep < repsPerQ; rep++) {
+  for (let rep = 0; rep < repsPerQ; rep++) {
+    for (let qi = 0; qi < nQ; qi++) {
+      const q = questions[qi];
       const stripTop = hdrY + stripIdx * stripH;
       if (stripIdx > 0) _cutStrip(slide, MARGIN, stripTop - 0.04, contentW);
 

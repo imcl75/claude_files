@@ -1143,7 +1143,7 @@
         ],
         "slideTitles": {
           "ido": [
-            "The two-step routine: identify then calculate",
+            "Identify then calculate",
             "Division: identify then calculate"
           ],
           "wedo": [
@@ -1174,8 +1174,8 @@
         ],
         "slideTitles": {
           "ido": [
-            "Same routine: addition and subtraction",
-            "Mixed operations \u2014 plan before you calculate"
+            "Addition and subtraction",
+            "Plan before you calculate"
           ],
           "wedo": [
             "Mixed problems together"
@@ -1420,7 +1420,7 @@
             "Mixed money and measurement"
           ],
           "trios": [
-            "Measurement problems: identify and solve"
+            "Measurement: identify and solve"
           ],
           "independent": [
             "Mixed context problems"
