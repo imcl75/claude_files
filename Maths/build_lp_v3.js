@@ -1975,12 +1975,19 @@ function _buildLP1Calculations(slide, isMarkingStation) {
 function _buildLP1WordProblems(slide, isMarkingStation) {
   const PAGE_TOP = MARGIN;
   const PAGE_BOT = SLIDE_H - MARGIN;
-  // Full width — no label column. Label is a separate printed sticker.
-  const contentW = SLIDE_W - 2 * MARGIN;
+  const isTypeA  = !!LP1_DATA.typeA;
+
+  // Type A: narrow content, right column for LL. Type B: full width, sticker sheet.
+  const lblX     = SLIDE_W - LL_W - MARGIN;
+  const contentW = isTypeA ? (lblX - GUTTER - MARGIN) : (SLIDE_W - 2 * MARGIN);
+
+  if (isTypeA && !isMarkingStation) {
+    injectLabel(slide, lblX, PAGE_TOP);
+  }
 
   let hdrY = PAGE_TOP;
   slide.addText(
-    isMarkingStation ? `Marking Station — ${LP1_DATA.title || "Problems"}`
+    isMarkingStation ? `Marking Station \u2014 ${LP1_DATA.title || "Problems"}`
                      : (LP1_DATA.title || "Problems"),
     { x: MARGIN, y: hdrY, w: contentW, h: 0.28,
       fontSize: 13, fontFace: FONT_M, bold: true,
@@ -1999,12 +2006,10 @@ function _buildLP1WordProblems(slide, isMarkingStation) {
   const nQ         = questions.length;
   const hasGF      = !isMarkingStation && !!LP1_DATA.goingFurther;
   const GF_RESERVE = hasGF ? 0.80 : 0;
+  const ANS_H      = isTypeA ? 0.26 : 0;   // answer line per strip for Type A
   const usable     = PAGE_BOT - hdrY - GF_RESERVE;
 
-  // Layout: each STRIP contains ALL questions in order (Q1,Q2,Q3).
-  // 2 strips per A4 is standard (pupils cut in half). Loop: rep → qi.
-  const repsPerQ = 2;  // standard 2-strip A4 format
-
+  const repsPerQ    = 2;
   const totalStrips = nQ * repsPerQ;
   const stripH      = usable / totalStrips;
   const fontSize    = Math.min(13, Math.max(10, Math.floor(stripH * 12)));
@@ -2017,13 +2022,22 @@ function _buildLP1WordProblems(slide, isMarkingStation) {
       const stripTop = hdrY + stripIdx * stripH;
       if (stripIdx > 0) _cutStrip(slide, MARGIN, stripTop - 0.04, contentW);
 
+      const qH = stripH - ANS_RESERVE - ANS_H - 0.04;
       slide.addText(`Q${qi + 1})   ${q.q}`, {
-        x: MARGIN, y: stripTop, w: contentW,
-        h: stripH - ANS_RESERVE - 0.04,
+        x: MARGIN, y: stripTop, w: contentW, h: qH,
         fontSize, fontFace: FONT_C,
         color: isMarkingStation ? BLACK : "1F4E79",
         valign: "top", margin: 0, wrap: true
       });
+
+      if (isTypeA && !isMarkingStation) {
+        const prompt = LP1_DATA.answerPrompt || "Operation: ________________________________";
+        slide.addText(prompt, {
+          x: MARGIN, y: stripTop + qH, w: contentW, h: ANS_H,
+          fontSize: 10, fontFace: FONT_C, color: "555555",
+          valign: "middle", margin: 0
+        });
+      }
 
       if (isMarkingStation && q.answer) {
         slide.addText(q.answer, {
@@ -2037,7 +2051,6 @@ function _buildLP1WordProblems(slide, isMarkingStation) {
     }
   }
 
-  // Going further — full-width box below strips
   if (hasGF) {
     const gfY = hdrY + usable + 0.06;
     slide.addText("Going further:  " + LP1_DATA.goingFurther, {
@@ -2053,13 +2066,20 @@ function _buildLP1WordProblems(slide, isMarkingStation) {
 function buildLP2Arithmetic(slide, isMarkingStation) {
   const PAGE_TOP = MARGIN;
   const PAGE_BOT = SLIDE_H - MARGIN;
-  // Full width — no label column.
-  const contentW = SLIDE_W - 2 * MARGIN;
+  const isTypeA  = !!LP2_DATA.typeA;
+
+  // Type A: narrow content, right column for LL. Type B: full width, sticker sheet.
+  const lblX     = SLIDE_W - LL_W - MARGIN;
+  const contentW = isTypeA ? (lblX - GUTTER - MARGIN) : (SLIDE_W - 2 * MARGIN);
+
+  if (isTypeA && !isMarkingStation) {
+    injectLabel(slide, lblX, PAGE_TOP);
+  }
 
   // Header
   let hdrY = PAGE_TOP;
   slide.addText(
-    isMarkingStation ? `Marking Station — ${LP2_DATA.title || "Problem Solving"}`
+    isMarkingStation ? `Marking Station \u2014 ${LP2_DATA.title || "Problem Solving"}`
                      : (LP2_DATA.title || "Problem Solving"),
     {
       x: MARGIN, y: hdrY, w: contentW, h: 0.28,
@@ -2079,12 +2099,12 @@ function buildLP2Arithmetic(slide, isMarkingStation) {
   const questions = LP2_DATA.questions;
   const nQ        = questions.length;
   const usable    = PAGE_BOT - hdrY;
+  const ANS_H     = isTypeA ? 0.26 : 0;   // answer line per strip for Type A
 
   const TARGET   = 3;
   const slotH    = usable / TARGET;
-  const QH_each  = slotH / nQ;  // no A: line reserved — pupils work in maths book
+  const QH_each  = (slotH / nQ) - ANS_H / nQ;
   const fontSize = Math.min(13, Math.max(10, Math.floor(QH_each * 30)));
-  // Marking station: reserve bottom strip fraction for answer text
   const ANS_RESERVE = isMarkingStation ? Math.min(QH_each * 0.30, 0.45) : 0;
 
   for (let rep = 0; rep < TARGET; rep++) {
@@ -2093,7 +2113,7 @@ function buildLP2Arithmetic(slide, isMarkingStation) {
     if (rep > 0) _cutStrip(slide, MARGIN, stripTop - 0.04, contentW);
 
     questions.forEach((q, i) => {
-      const qy = stripTop + i * QH_each;
+      const qy = stripTop + i * (QH_each + ANS_H);
 
       slide.addText(`Q${i + 1})   ${q.q}`, {
         x: MARGIN, y: qy, w: contentW, h: QH_each - ANS_RESERVE - 0.02,
@@ -2101,6 +2121,15 @@ function buildLP2Arithmetic(slide, isMarkingStation) {
         color: isMarkingStation ? BLACK : "1F4E79",
         valign: "top", margin: 0, wrap: true
       });
+
+      if (isTypeA && !isMarkingStation) {
+        const prompt = LP2_DATA.answerPrompt || "Operation: ________________________________";
+        slide.addText(prompt, {
+          x: MARGIN, y: qy + QH_each - ANS_RESERVE, w: contentW, h: ANS_H,
+          fontSize: 10, fontFace: FONT_C, color: "555555",
+          valign: "middle", margin: 0
+        });
+      }
 
       if (isMarkingStation && q.answer) {
         slide.addText(q.answer, {
@@ -2132,7 +2161,9 @@ function buildLP1ArithmeticAdapted(slide) {
 function _buildLP1WordProblemsAdapted(slide, questions) {
   const PAGE_TOP = MARGIN;
   const PAGE_BOT = SLIDE_H - MARGIN;
-  // Keep right column for hint boxes (no label image at top — sticker goes in book).
+  const isTypeA  = !!LP1_DATA.typeA;
+
+  // Right column always present (hint boxes). For Type A, LL sits above hints.
   const lblX     = SLIDE_W - LL_W - MARGIN;
   const contentW = lblX - GUTTER - MARGIN;
 
@@ -2151,6 +2182,7 @@ function _buildLP1WordProblemsAdapted(slide, questions) {
   }
 
   const nQ        = questions.length;
+  const ANS_H     = isTypeA ? 0.26 : 0;
   const usable    = PAGE_BOT - hdrY;
   const MIN_STRIP_H = 1.20;
   let repsPerQ = Math.floor(usable / (nQ * MIN_STRIP_H));
@@ -2167,19 +2199,32 @@ function _buildLP1WordProblemsAdapted(slide, questions) {
       const stripTop = hdrY + stripIdx * stripH;
       if (stripIdx > 0) _cutStrip(slide, MARGIN, stripTop - 0.04, contentW);
 
-      // Full strip height — no A: line, pupils work in maths book.
+      const qH = stripH - ANS_H - 0.04;
       slide.addText(`Q${qi + 1})   ${q.q}`, {
         x: MARGIN, y: stripTop, w: contentW,
-        h: stripH - 0.04,
+        h: qH,
         fontSize, fontFace: FONT_C, color: "1F4E79",
         valign: "top", margin: 0, wrap: true
       });
+
+      if (isTypeA) {
+        const prompt = LP1_DATA.answerPrompt || "Operation: ________________________________";
+        slide.addText(prompt, {
+          x: MARGIN, y: stripTop + qH, w: contentW, h: ANS_H,
+          fontSize: 10, fontFace: FONT_C, color: "555555",
+          valign: "middle", margin: 0
+        });
+      }
       stripIdx++;
     }
   }
 
-  // Right column: hint boxes starting from top (no label image)
+  // Right column: LL at top (Type A only), then hint boxes
   let rY = PAGE_TOP;
+  if (isTypeA) {
+    injectLabel(slide, lblX, rY);
+    rY += LL_H + 0.12;
+  }
   if (ADAPTED_SUPPORT.hint1) {
     slide.addText("Step-by-step:", {
       x: lblX, y: rY, w: LL_W, h: 0.20,
@@ -2210,7 +2255,6 @@ function _buildLP1WordProblemsAdapted(slide, questions) {
   }
 }
 
-// Adapted calculation strips — 10-strip single-column layout for short calculations.
 function _buildLP1CalcAdapted(slide, questions) {
   const PAGE_TOP = MARGIN;
   const PAGE_BOT = SLIDE_H - MARGIN;
@@ -2287,8 +2331,11 @@ function _buildLP1CalcAdapted(slide, questions) {
 function buildLP2ArithmeticAdapted(slide) {
   const PAGE_TOP = MARGIN;
   const PAGE_BOT = SLIDE_H - MARGIN;
-  // Full width — no label column. No A: line — pupils work in maths book.
-  const contentW = SLIDE_W - 2 * MARGIN;
+  const isTypeA  = !!LP2_DATA.typeA;
+
+  // Type A: narrow content, right column for LL + hints. Type B: full width, no LL.
+  const lblX     = SLIDE_W - LL_W - MARGIN;
+  const contentW = isTypeA ? (lblX - GUTTER - MARGIN) : (SLIDE_W - 2 * MARGIN);
 
   let hdrY = PAGE_TOP;
   slide.addText(LP2_DATA.title || "Problem Solving", {
@@ -2299,10 +2346,11 @@ function buildLP2ArithmeticAdapted(slide) {
 
   const questions = ADAPTED_SUPPORT.lp2Questions || LP2_DATA.questions.slice(0, 1);
   const nQ        = questions.length;
+  const ANS_H     = isTypeA ? 0.26 : 0;
   const usable    = PAGE_BOT - hdrY;
   const TARGET    = 3;
   const slotH     = usable / TARGET;
-  const QH_each   = slotH / nQ;  // full slot height per question, no A: reservation
+  const QH_each   = (slotH / nQ) - ANS_H / nQ;
   const fontSize  = Math.min(13, Math.max(10, Math.floor(QH_each * 30)));
 
   for (let rep = 0; rep < TARGET; rep++) {
@@ -2310,12 +2358,55 @@ function buildLP2ArithmeticAdapted(slide) {
     if (rep > 0) _cutStrip(slide, MARGIN, stripTop - 0.04, contentW);
 
     questions.forEach((q, i) => {
-      const qy = stripTop + i * QH_each;
+      const qy = stripTop + i * (QH_each + ANS_H);
       slide.addText(`Q${i + 1})   ${q.q}`, {
         x: MARGIN, y: qy, w: contentW, h: QH_each - 0.02,
         fontSize, fontFace: FONT_C, color: "1F4E79",
         valign: "top", margin: 0, wrap: true
       });
+      if (isTypeA) {
+        const prompt = LP2_DATA.answerPrompt || "Operation: ________________________________";
+        slide.addText(prompt, {
+          x: MARGIN, y: qy + QH_each - 0.02, w: contentW, h: ANS_H,
+          fontSize: 10, fontFace: FONT_C, color: "555555",
+          valign: "middle", margin: 0
+        });
+      }
     });
+  }
+
+  // Right column: LL at top (Type A only), then hint boxes
+  if (isTypeA) {
+    let rY = PAGE_TOP;
+    injectLabel(slide, lblX, rY);
+    rY += LL_H + 0.12;
+    if (ADAPTED_SUPPORT.hint1) {
+      slide.addText("Step-by-step:", {
+        x: lblX, y: rY, w: LL_W, h: 0.20,
+        fontSize: 9, fontFace: FONT_C, bold: true, color: "156082", margin: 0
+      });
+      rY += 0.22;
+      const h1 = Math.min((PAGE_BOT - rY - 0.10) * 0.48, 1.30);
+      slide.addText(ADAPTED_SUPPORT.hint1, {
+        x: lblX, y: rY, w: LL_W, h: h1,
+        fontSize: 9, fontFace: FONT_C, color: BLACK,
+        fill: { color: "EBF3FB" }, line: { color: "156082", width: 0.75 },
+        margin: 5, valign: "top"
+      });
+      rY += h1 + 0.10;
+    }
+    if (ADAPTED_SUPPORT.hint2 && rY < PAGE_BOT - 0.35) {
+      slide.addText("Remember:", {
+        x: lblX, y: rY, w: LL_W, h: 0.20,
+        fontSize: 9, fontFace: FONT_C, bold: true, color: "156082", margin: 0
+      });
+      rY += 0.22;
+      slide.addText(ADAPTED_SUPPORT.hint2, {
+        x: lblX, y: rY, w: LL_W, h: PAGE_BOT - rY - 0.05,
+        fontSize: 9, fontFace: FONT_C, color: BLACK,
+        fill: { color: "FFFFFF" }, line: { color: "156082", width: 0.75 },
+        margin: 5, valign: "top"
+      });
+    }
   }
 }

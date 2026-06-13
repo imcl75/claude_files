@@ -176,6 +176,8 @@ module.exports[9] = {
   lp1: {
     title: 'Identify the Operation',
     type: 'arithmetic',
+    typeA: true,
+    answerPrompt: 'Operation: ________________________________',
     instruction: 'For each problem, write the operation and explain why.',
     questions: [
       {
@@ -196,6 +198,8 @@ module.exports[9] = {
   lp2: {
     title: 'Find the Operation',
     type: 'arithmetic',
+    typeA: true,
+    answerPrompt: 'Operation: ________________________________',
     instruction: 'Identify the operation. Explain what tells you — no obvious signal word here.',
     questions: [
       {
