@@ -2942,7 +2942,7 @@ if len(c1['slideTitles']['ido']) > 1:
         if v2.get('slide_type') == 'spot_the_mistake':
             build_spot_the_mistake_slide(2, 'c1_ido2', title2)
         else:
-            build_teaching_slide(2, 'c1_ido2', title2, 'I DO')
+            build_teaching_slide(3, 'c1_ido2', title2, 'WE DO')
 
 if c1['slideTitles'].get('wedo') and 'c1_wedo' in VISUALS:
     build_teaching_slide(3, 'c1_wedo', c1['slideTitles']['wedo'][0], 'WE DO')
@@ -2965,17 +2965,17 @@ if len(c2['slideTitles']['ido']) > 1:
     st2 = v2.get('slide_type', '')
     if st2 == 'stm_word_problem':
         # Authored word-problem STM: use visual's own title
-        build_teaching_slide(2, 'c2_ido2', v2.get('title', STM['slideTitle']), 'I DO')
+        build_teaching_slide(3, 'c2_ido2', v2.get('title', STM['slideTitle']), 'WE DO')
     elif st2 not in ('spot_the_mistake', ''):
         # Other authored slide
-        build_teaching_slide(2, 'c2_ido2', title_c2i2, 'I DO')
+        build_teaching_slide(3, 'c2_ido2', title_c2i2, 'WE DO')
     else:
         # Default: grid-based STM from JSON
         build_spot_the_mistake_slide(2, 'c2_ido2', title_c2i2)
 else:
     v2 = VISUALS.get('c2_ido2', {})
     if v2.get('slide_type') == 'stm_word_problem':
-        build_teaching_slide(2, 'c2_ido2', v2.get('title', STM['slideTitle']), 'I DO')
+        build_teaching_slide(3, 'c2_ido2', v2.get('title', STM['slideTitle']), 'WE DO')
     else:
         build_spot_the_mistake_slide(2, 'c2_ido2', STM['slideTitle'])
 
