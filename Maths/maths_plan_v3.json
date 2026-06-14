@@ -1036,13 +1036,13 @@
           ]
         },
         "trios": {
-          "task": "Sort 8 problems into four groups (\u00d7, \u00f7, +, \u2212). For each problem, write the signal word or phrase that told you which operation to use.",
+          "task": "Sort 8 problems into four groups (\u00d7, \u00f7, +, \u2212). For each card, write the operation and the signal word or phrase that told you.",
           "challenge": "Find a problem in the set where the signal word is misleading or missing. Explain how you worked out the operation without it."
         },
         "independent": {
-          "standard": "Match 4 problems to their operations. For each, write one sentence: 'This needs ___ because ___.'",
-          "supported": "Match 4 problems to their operations using a word bank of signal words. For each, circle the signal word.",
-          "stretch": "Write your own problem for each of the four operations. Make sure each one has a clear signal word or phrase."
+          "standard": "Complete LP1 \u2014 for each word problem, write the operation you need and explain why, using the signal word.",
+          "supported": "Complete LP1 adapted \u2014 use the hint boxes to help you choose the right operation for each problem.",
+          "stretch": "Going further on LP1 \u2014 write your own word problem for an operation that wasn't in your three questions."
         }
       },
       "cycle2": {
@@ -1067,13 +1067,13 @@
           ]
         },
         "trios": {
-          "task": "Sort and justify 8 mixed problems. Every problem must have a written justification: 'This needs ___ because ___.' Keep these \u2014 you will use them in tomorrow's lesson.",
+          "task": "Use the same problem cards. For each one, write: 'This needs ___ because ___.' Find one card where the signal word is misleading \u2014 explain how you knew despite it.",
           "challenge": "Find two problems that could be confused for a different operation. Explain what makes them different."
         },
         "independent": {
-          "standard": "Write your own problem for an assigned operation. Swap with a partner and check they identified your operation correctly.",
-          "supported": "Choose from a list of sentence starters to write one problem for each operation. Check a partner's work.",
-          "stretch": "Write two problems that look similar but need different operations. Can your partner spot the difference?"
+          "standard": "Complete LP2 \u2014 identify the operation and explain your reasoning. No obvious signal words this time.",
+          "supported": "Complete LP2 adapted \u2014 use the hint boxes to decide which operation each problem needs.",
+          "stretch": "Going further on LP2 \u2014 write a problem where the signal word suggests the wrong operation. Swap with a partner."
         }
       },
       "vocabularyFocus": [
@@ -1158,13 +1158,13 @@
           ]
         },
         "trios": {
-          "task": "Work through Monday's sorted \u00d7 and \u00f7 problems using the two-step routine. For each: write the operation, write why, then calculate.",
+          "task": "Work through Monday's \u00d7 and \u00f7 cards using the two-step routine. For each: 1) write the operation and why, 2) calculate and show your method.",
           "challenge": "For each answer, write a checking statement: 'I can check this by...'"
         },
         "independent": {
-          "standard": "Solve a set of \u00d7 and \u00f7 problems. For each: circle the signal word, write the operation, show the method.",
-          "supported": "Solve 4 \u00d7 and \u00f7 problems with small numbers. An operation word bank is provided. Show each step.",
-          "stretch": "Solve \u00d7 and \u00f7 problems and write an estimate before each calculation. Explain whether your answer is reasonable."
+          "standard": "Complete LP1 \u2014 identify and calculate. For each problem: circle the signal word, write the operation, show your method.",
+          "supported": "Complete LP1 adapted \u2014 the hint boxes remind you what each signal word means. Show each step clearly.",
+          "stretch": "Going further on LP1 \u2014 write an estimate before each calculation. Were you close? Explain."
         }
       },
       "cycle2": {
@@ -1189,13 +1189,13 @@
           ]
         },
         "trios": {
-          "task": "Solve a mixed set of problems using all four operations. For each: state the operation, show the method, give the answer.",
+          "task": "Work through these four problems as a group:\n1) A box holds 24 chocolates. How many chocolates in 5 boxes?\n2) 63 children are split equally into 9 teams. How many in each team?\n3) A shop had 412 items. They sold 167. How many are left?\n4) 238 people visited on Monday, 195 on Tuesday. How many in total?\nFor each: state the operation, show the method, give the answer.",
           "challenge": "Write a word problem that would trick someone into using the wrong operation. Explain the trap."
         },
         "independent": {
-          "standard": "Six problems across all four operations. For each: state the operation, show the method, give the answer.",
-          "supported": "Four problems across all four operations with a prompt card showing the two-step routine.",
-          "stretch": "Six problems. For each, write an alternative problem that uses the same numbers but a different operation."
+          "standard": "Complete LP2 \u2014 six problems across all four operations. State the operation, show your method, give the answer.",
+          "supported": "Complete LP2 adapted \u2014 four problems with the two-step prompt in the hint box. Show each step.",
+          "stretch": "Going further on LP2 \u2014 for each problem, write an alternative version using the same numbers but a different operation."
         }
       },
       "vocabularyFocus": [
@@ -1277,13 +1277,13 @@
           ]
         },
         "trios": {
-          "task": "Plan and solve three two-step problems. Draw a bar model for each. Label each step's operation before calculating.",
+          "task": "Plan and solve these three two-step problems as a group. Draw a bar model for each before calculating:\n1) A baker makes 4 trays of 12 biscuits then gives away 18. How many are left?\n2) A bag has 5 apples and 3 oranges. Each piece of fruit costs 20p. How much for the whole bag?\n3) A school buys 6 boxes of 8 pencils. They share them equally between 4 classes. How many per class?",
           "challenge": "For one problem, draw two different bar models showing the same problem. Do both work?"
         },
         "independent": {
-          "standard": "Solve three two-step problems. Must show a bar model and label each step's operation.",
-          "supported": "Solve two two-step problems with a partially completed bar model provided. Label the operation for each step.",
-          "stretch": "Solve three two-step problems. For each, write a sentence explaining why the steps must happen in that order."
+          "standard": "Complete LP1 \u2014 three two-step problems. Show a bar model and label each step's operation.",
+          "supported": "Complete LP1 adapted \u2014 the bar models are partially drawn. Label the operation for each step and calculate.",
+          "stretch": "Going further on LP1 \u2014 for each problem, explain in a sentence why the steps must happen in that order."
         }
       },
       "cycle2": {
@@ -1308,13 +1308,13 @@
           ]
         },
         "trios": {
-          "task": "Solve three problems. For one of them, show both possible routes and explain which is more efficient.",
+          "task": "Solve these three problems. For one of them, show both possible routes and decide which is more efficient:\n1) A farmer has 48 eggs, packs them in boxes of 6 and sells each box for \u00a32. How much does she earn?\n2) A shop has 3 shelves, each with 12 cans. They sell 9 cans. How many cans are left?\n3) There are 5 bags with 8 marbles each. 15 marbles are given away. How many remain?",
           "challenge": "Write a two-step problem where the order of steps is fixed. Explain why it cannot be done in reverse."
         },
         "independent": {
-          "standard": "Solve three two-step problems. Explain the order you chose for each.",
-          "supported": "Solve two two-step problems with step labels provided. Explain one choice in a sentence.",
-          "stretch": "Solve three problems. For each, explain whether a different order would still give the correct answer and why."
+          "standard": "Complete LP2 \u2014 three two-step problems. Show the order you chose for each and explain why.",
+          "supported": "Complete LP2 adapted \u2014 step labels are provided. Explain one choice you made in a sentence.",
+          "stretch": "Going further on LP2 \u2014 for each problem, explain whether a different order would still give the correct answer."
         }
       },
       "vocabularyFocus": [
@@ -1397,13 +1397,13 @@
           ]
         },
         "trios": {
-          "task": "Solve four money problems. For each: state the operation(s), show the working, give the answer with the correct unit (p or \u00a3).",
+          "task": "Solve these four money problems as a group. State the operation(s), show working, give the answer with \u00a3 or p:\n1) Pencils cost 35p each. How much do 6 pencils cost?\n2) A child has \u00a35.00 and spends \u00a32.75 on a book. How much change?\n3) Three friends share a \u00a39.60 gift equally. How much each?\n4) 8 notebooks cost \u00a31.20 each. What is the total cost?",
           "challenge": "Write your own two-step money problem. Solve it and write the answer, then swap with a partner."
         },
         "independent": {
-          "standard": "Four money problems. Show operation identification and working for each.",
-          "supported": "Three money problems with the operation labelled. Show working and give the answer.",
-          "stretch": "Four money problems including one two-step. Write an estimate before each calculation."
+          "standard": "Complete LP1 \u2014 four money problems. Show how you identified the operation and all your working.",
+          "supported": "Complete LP1 adapted \u2014 three money problems with the operation already labelled. Show working and give the answer.",
+          "stretch": "Going further on LP1 \u2014 for each money problem, write an estimate before calculating. Were you within 10%?"
         }
       },
       "cycle2": {
@@ -1428,13 +1428,13 @@
           ]
         },
         "trios": {
-          "task": "Solve four measurement problems (mix of \u00d7, \u00f7, +, \u2212). Identify the operation for each and show working.",
+          "task": "Solve these four measurement problems. Identify the operation, show working, include the unit in your answer:\n1) A ribbon is 120cm long. Cut into 8 equal pieces. How long is each?\n2) A wall is 3m long and 2m high. What is its area?\n3) A jug holds 750ml. How many times can it fill a 250ml cup?\n4) A bag of sand weighs 4.5kg. How much do 3 bags weigh?",
           "challenge": "Sort four problems by whether they need one step or two. Solve the two-step ones and explain your planning."
         },
         "independent": {
-          "standard": "Mixed money and measurement problems. State the operation, show the method, include the unit in your answer.",
-          "supported": "Three measurement problems with units labelled. Show working and give the answer.",
-          "stretch": "Mixed context problems. For each, write what a wrong answer would look like if you chose the wrong operation \u2014 then give the correct answer."
+          "standard": "Complete LP2 \u2014 mixed money and measurement problems. State the operation, show your method, include the unit.",
+          "supported": "Complete LP2 adapted \u2014 three measurement problems with units labelled. Show working and give the answer.",
+          "stretch": "Going further on LP2 \u2014 for each problem, write what a wrong answer would look like if you chose the wrong operation."
         }
       },
       "vocabularyFocus": [
