@@ -2022,12 +2022,7 @@ function _buildLP1WordProblems(slide, isMarkingStation) {
   const repFrac = (hdrY + repH) / SLIDE_H;
   slide.addNotes(`INJECT_REPS:${repsPerQ}\nINJECT_REP_FRAC:${repFrac.toFixed(4)}`);
 
-  // Add LL at the start of each rep > 0 (rep 0 LL already added above)
-  if (isTypeA && !isMarkingStation && repsPerQ > 1) {
-    for (let rep = 1; rep < repsPerQ; rep++) {
-      injectLabel(slide, lblX, hdrY + rep * repH);
-    }
-  }
+  // Single LL per lesson — only on rep 0 (already added above at PAGE_TOP)
 
   for (let rep = 0; rep < repsPerQ; rep++) {
     const repTop = hdrY + rep * repH;
@@ -2254,9 +2249,10 @@ function _buildLP1WordProblemsAdapted(slide, questions) {
       });
     }
 
-    // RIGHT: LL + hints filling available height
+    // RIGHT: LL (rep 0 only, one per lesson) + hints filling available height
     let rY = repTop;
-    if (isTypeA) { injectLabel(slide, lblX, rY); rY += LL_GAP; }
+    if (isTypeA && rep === 0) { injectLabel(slide, lblX, rY); rY += LL_GAP; }
+    else if (isTypeA) { rY += LL_GAP; }  // reserve same vertical space for alignment
 
     if (ADAPTED_SUPPORT.hint1) {
       slide.addText("Step-by-step:", {
@@ -2492,12 +2488,7 @@ function buildLP2Arithmetic(slide, isMarkingStation) {
   const repFrac2 = (hdrY + repH) / SLIDE_H;
   slide.addNotes(`INJECT_REPS:${TARGET}\nINJECT_REP_FRAC:${repFrac2.toFixed(4)}`);
 
-  // LL on rep > 0 for typeA
-  if (isTypeA && !isMarkingStation && TARGET > 1) {
-    for (let rep = 1; rep < TARGET; rep++) {
-      injectLabel(slide, lblX, hdrY + rep * repH);
-    }
-  }
+  // Single LL per lesson — only on rep 0 (already added at PAGE_TOP)
 
   for (let rep = 0; rep < TARGET; rep++) {
     const repTop = hdrY + rep * repH;
