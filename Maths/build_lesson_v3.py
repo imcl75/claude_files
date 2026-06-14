@@ -2942,7 +2942,10 @@ if len(c1['slideTitles']['ido']) > 1:
         if v2.get('slide_type') == 'spot_the_mistake':
             build_spot_the_mistake_slide(2, 'c1_ido2', title2)
         else:
-            build_teaching_slide(3, 'c1_ido2', title2, 'WE DO')
+            # Phase is I Do by default — set 'c1_ido2_phase':'WE DO' in lesson data
+            # when slide 2 is a variation of slide 1 (children more involved)
+            _c1_p2 = L1.get('c1_ido2_phase', 'I DO')
+            build_teaching_slide(3 if _c1_p2=='WE DO' else 2, 'c1_ido2', title2, _c1_p2)
 
 if c1['slideTitles'].get('wedo') and 'c1_wedo' in VISUALS:
     build_teaching_slide(3, 'c1_wedo', c1['slideTitles']['wedo'][0], 'WE DO')
@@ -2965,17 +2968,17 @@ if len(c2['slideTitles']['ido']) > 1:
     st2 = v2.get('slide_type', '')
     if st2 == 'stm_word_problem':
         # Authored word-problem STM: use visual's own title
-        build_teaching_slide(3, 'c2_ido2', v2.get('title', STM['slideTitle']), 'WE DO')
+        build_teaching_slide(3 if L1.get('c2_ido2_phase','I DO')=='WE DO' else 2, 'c2_ido2', v2.get('title', STM['slideTitle']), L1.get('c2_ido2_phase','I DO'))
     elif st2 not in ('spot_the_mistake', ''):
         # Other authored slide
-        build_teaching_slide(3, 'c2_ido2', title_c2i2, 'WE DO')
+        build_teaching_slide(3 if L1.get('c2_ido2_phase','I DO')=='WE DO' else 2, 'c2_ido2', title_c2i2, L1.get('c2_ido2_phase','I DO'))
     else:
         # Default: grid-based STM from JSON
         build_spot_the_mistake_slide(2, 'c2_ido2', title_c2i2)
 else:
     v2 = VISUALS.get('c2_ido2', {})
     if v2.get('slide_type') == 'stm_word_problem':
-        build_teaching_slide(3, 'c2_ido2', v2.get('title', STM['slideTitle']), 'WE DO')
+        build_teaching_slide(3 if L1.get('c2_ido2_phase','I DO')=='WE DO' else 2, 'c2_ido2', v2.get('title', STM['slideTitle']), L1.get('c2_ido2_phase','I DO'))
     else:
         build_spot_the_mistake_slide(2, 'c2_ido2', STM['slideTitle'])
 
