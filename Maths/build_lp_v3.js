@@ -10,10 +10,6 @@ const PptxGenJS  = require("pptxgenjs");
 const { createCanvas, loadImage } = require("canvas");
 const fs   = require("fs");
 const path = require("path");
-// Preview mode (set LP_PREVIEW=1): one strip per distinct question, no cut lines.
-// Used only when building the LP previews shown in the teaching deck. The
-// printable LP is built without this flag and keeps its repeats to save paper.
-const PREVIEW = process.env.LP_PREVIEW === "1";
 
 // ─── Lesson number ────────────────────────────────────────────────────────────
 const LESSON_NUM = parseInt(process.argv[2] || "1", 10);
@@ -1874,7 +1870,6 @@ function addCutLine(slide) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function _cutStrip(slide, x, y, w) {
-  if (PREVIEW) return;   // no cut lines in deck previews
   slide.addShape("line", {
     x, y, w, h: 0,
     line: { color: "BBBBBB", width: 0.5, dashType: "lgDash" }
@@ -2014,11 +2009,26 @@ function _buildLP1WordProblems(slide, isMarkingStation) {
   const ANS_H      = isTypeA ? 0.26 : 0;   // answer line per strip for Type A
   const usable     = PAGE_BOT - hdrY - GF_RESERVE;
 
-  const repsPerQ    = PREVIEW ? 1 : 2;
+  const repsPerQ    = 2;
   const totalStrips = nQ * repsPerQ;
   const stripH      = usable / totalStrips;
   const fontSize    = Math.min(13, Math.max(10, Math.floor(stripH * 12)));
   const ANS_RESERVE = isMarkingStation ? Math.min(stripH * 0.35, 0.55) : 0;
+
+  // Crop metadata: fraction of page height for ONE complete repetition
+  const repH     = nQ * stripH;
+  const repFrac  = (hdrY + repH) / SLIDE_H;
+
+  // Add LL at the start of EACH repetition for Type A (each rep goes in a separate book)
+  // Rep 0 LL is already added above (at PAGE_TOP). Add subsequent rep LLs here.
+  if (isTypeA && !isMarkingStation && repsPerQ > 1) {
+    for (let rep = 1; rep < repsPerQ; rep++) {
+      injectLabel(slide, lblX, hdrY + rep * repH);
+    }
+  }
+
+  // Embed crop metadata in slide speaker notes so inject_lp_previews.py can crop correctly
+  slide.addNotes(`INJECT_REPS:${repsPerQ}\nINJECT_REP_FRAC:${repFrac.toFixed(4)}`);
 
   let stripIdx = 0;
   for (let rep = 0; rep < repsPerQ; rep++) {
@@ -2106,11 +2116,23 @@ function buildLP2Arithmetic(slide, isMarkingStation) {
   const usable    = PAGE_BOT - hdrY;
   const ANS_H     = isTypeA ? 0.26 : 0;   // answer line per strip for Type A
 
-  const TARGET   = PREVIEW ? 1 : 3;
+  const TARGET   = 3;
   const slotH    = usable / TARGET;
   const QH_each  = (slotH / nQ) - ANS_H / nQ;
   const fontSize = Math.min(13, Math.max(10, Math.floor(QH_each * 30)));
   const ANS_RESERVE = isMarkingStation ? Math.min(QH_each * 0.30, 0.45) : 0;
+
+  // Crop metadata: one slot = one complete repetition
+  const repFrac2 = (hdrY + slotH) / SLIDE_H;
+
+  // Add LL at start of each rep slot > 0 for Type A
+  if (isTypeA && !isMarkingStation && TARGET > 1) {
+    for (let rep = 1; rep < TARGET; rep++) {
+      injectLabel(slide, lblX, hdrY + rep * slotH);
+    }
+  }
+
+  slide.addNotes(`INJECT_REPS:${TARGET}\nINJECT_REP_FRAC:${repFrac2.toFixed(4)}`);
 
   for (let rep = 0; rep < TARGET; rep++) {
     const stripTop = hdrY + rep * slotH;
@@ -2192,7 +2214,6 @@ function _buildLP1WordProblemsAdapted(slide, questions) {
   const MIN_STRIP_H = 1.20;
   let repsPerQ = Math.floor(usable / (nQ * MIN_STRIP_H));
   repsPerQ = Math.max(1, Math.min(repsPerQ, 4));
-  if (PREVIEW) repsPerQ = 1;
 
   const totalStrips = nQ * repsPerQ;
   const stripH      = usable / totalStrips;
@@ -2354,7 +2375,7 @@ function buildLP2ArithmeticAdapted(slide) {
   const nQ        = questions.length;
   const ANS_H     = isTypeA ? 0.26 : 0;
   const usable    = PAGE_BOT - hdrY;
-  const TARGET    = PREVIEW ? 1 : 3;
+  const TARGET    = 3;
   const slotH     = usable / TARGET;
   const QH_each   = (slotH / nQ) - ANS_H / nQ;
   const fontSize  = Math.min(13, Math.max(10, Math.floor(QH_each * 30)));

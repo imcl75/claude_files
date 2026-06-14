@@ -35,37 +35,60 @@ SLIDE_LABELS = ['Learning Paper 1', 'Marking Station 1', 'Learning Paper 2', 'Ma
 
 def resolve_slide_map(n_lp_slides):
     """
-    Map teaching slide labels to (lp_slide_index, crop) based on LP format.
+    Map teaching slide labels to (lp_slide_index, crop_hint).
+    crop_hint is 'top', 'bottom', or 'full' — overridden by per-slide
+    INJECT_REPS / INJECT_REP_FRAC metadata when present.
 
-    3-slide LP (old half-page format):
-      slide 0 = combined LP (top half = strip 1, bottom = strip 2)
-      slide 1 = adapted LP
-      slide 2 = combined MS (top half = MS1, bottom = MS2)
+    3-slide LP (half-page, non-arithmetic):
+      slide 0 = pupil sheet (LP1 top / LP2 bottom)
+      slide 1 = adapted
+      slide 2 = marking station (MS1 top / MS2 bottom)
 
-    6-slide LP (arithmetic/full-page format):
-      slide 0 = LP1 standard
-      slide 1 = LP2 standard
-      slide 2 = adapted LP1
-      slide 3 = adapted LP2
-      slide 4 = marking station LP1
-      slide 5 = marking station LP2
+    6-slide LP (arithmetic, full-page):
+      slide 0 = LP1 pupil   slide 1 = LP2 pupil
+      slide 2 = LP1 adapted slide 3 = LP2 adapted
+      slide 4 = LP1 MS      slide 5 = LP2 MS
     """
     if n_lp_slides >= 6:
-        # Full-page arithmetic format — show whole slide, no crop needed
         return {
-            'Learning Paper 1':   (0, 'full'),
-            'Marking Station 1':  (4, 'full'),
-            'Learning Paper 2':   (1, 'full'),
-            'Marking Station 2':  (5, 'full'),
+            'Learning Paper 1':   (0, 'rep'),
+            'Marking Station 1':  (4, 'rep'),
+            'Learning Paper 2':   (1, 'rep'),
+            'Marking Station 2':  (5, 'rep'),
         }
     else:
-        # Original half-page format
         return {
             'Learning Paper 1':   (0, 'top'),
             'Marking Station 1':  (2, 'top'),
             'Learning Paper 2':   (0, 'bottom'),
             'Marking Station 2':  (2, 'bottom'),
         }
+
+
+def read_lp_crop_metadata(lp_pptx):
+    """
+    Open LP PPTX and read INJECT_REPS / INJECT_REP_FRAC from speaker notes.
+    Returns dict: slide_index -> (reps, rep_frac_or_None).
+    """
+    import re as _re
+    try:
+        from pptx import Presentation as _Prs
+        prs = _Prs(lp_pptx)
+    except Exception:
+        return {}
+    meta = {}
+    for i, slide in enumerate(prs.slides):
+        reps, frac = 1, None
+        if slide.has_notes_slide:
+            notes = slide.notes_slide.notes_text_frame.text
+            rm = _re.search(r'INJECT_REPS:(\d+)', notes)
+            fm = _re.search(r'INJECT_REP_FRAC:([\d.]+)', notes)
+            if rm:
+                reps = int(rm.group(1))
+            if fm:
+                frac = float(fm.group(1))
+        meta[i] = (reps, frac)
+    return meta
 
 # Image placement on teaching slide (inches)
 IMG_TOP   = 1.05
@@ -118,17 +141,39 @@ def convert_lp_to_images(lp_pptx, tmpdir, dpi=200):
     return images
 
 
-def crop_half(img_path, half):
-    """Crop image to top half, bottom half, or return full image."""
+def smart_crop(img_path, crop_hint, slide_meta):
+    """
+    Crop LP slide image based on crop_hint and per-slide metadata.
+
+    crop_hint:  'top' | 'bottom' | 'full' | 'rep'
+    slide_meta: (reps, rep_frac) from read_lp_crop_metadata
+
+    'rep' mode: crop to first repetition using rep_frac from speaker notes.
+         Falls back to 'full' if no metadata.
+    'top' / 'bottom': traditional half-page crop (non-arithmetic LPs).
+    'full': show entire slide.
+    """
     img = Image.open(img_path)
     w, h = img.size
+
+    if crop_hint == 'rep':
+        reps, frac = slide_meta if slide_meta else (1, None)
+        if reps > 1 and frac is not None:
+            crop_h = int(h * frac)
+            return img.crop((0, 0, w, crop_h))
+        return img  # single rep or no metadata → full slide
+
     mid = h // 2
-    if half == 'top':
+    if crop_hint == 'top':
         return img.crop((0, 0, w, mid))
-    elif half == 'bottom':
+    if crop_hint == 'bottom':
         return img.crop((0, mid, w, h))
-    else:  # 'full'
-        return img
+    return img  # 'full'
+
+
+# Keep old name for any legacy callers
+def crop_half(img_path, half):
+    return smart_crop(img_path, half, None)
 
 
 def clear_slide_content(slide):
@@ -189,20 +234,24 @@ def inject(teaching_pptx, lp_pptx):
         if len(lp_images) < 3:
             raise RuntimeError(f"Expected at least 3 LP slide images, got {len(lp_images)}")
 
-        slide_map = resolve_slide_map(len(lp_images))
-        injected = 0
+        slide_map    = resolve_slide_map(len(lp_images))
+        lp_crop_meta = read_lp_crop_metadata(lp_pptx)
+        injected     = 0
         for slide in prs.slides:
             title = get_slide_title(slide)
             if title not in slide_map:
                 continue
 
-            lp_idx, half = slide_map[title]
-            img = crop_half(lp_images[lp_idx], half)
+            lp_idx, crop_hint = slide_map[title]
+            slide_meta = lp_crop_meta.get(lp_idx)
+            img = smart_crop(lp_images[lp_idx], crop_hint, slide_meta)
 
             clear_slide_content(slide)
             add_image_to_slide(slide, img, slide_w, slide_h)
             injected += 1
-            print(f"  Injected '{title}' ← slide {lp_idx+1} {half} half")
+            reps = slide_meta[0] if slide_meta else 1
+            desc = f"1/{reps} crop" if reps > 1 else crop_hint
+            print(f"  Injected '{title}' ← LP slide {lp_idx+1} ({desc})")
 
     prs.save(teaching_pptx)
     print(f"\nInjected {injected} LP previews.")
