@@ -2766,20 +2766,39 @@ def build_trios_slide(layout_num, title, trios_data, notes):
     for ph in sld.placeholders:
         if ph.placeholder_format.idx == 0:
             ph.text = title
-            break
+        elif ph.placeholder_format.idx == 1:
+            # Left content placeholder — hide it when no roles are provided
+            # (suppressed by making it invisible via XML)
+            from pptx.oxml.ns import qn as _qn
+            sp_elem = ph._element
+            spPr = sp_elem.find(_qn('p:spPr'))
+            if spPr is None:
+                from lxml import etree as _et
+                spPr = _et.SubElement(sp_elem, _qn('p:spPr'))
+            # Set invisible fill + no line
+            from lxml import etree as _et
+            noFill = _et.SubElement(spPr, _qn('a:noFill'))
+            ln = _et.SubElement(spPr, _qn('a:ln'))
+            _et.SubElement(ln, _qn('a:noFill'))
 
-    roles_colors = [('1F4E79','DEEAF1'), ('7030A0','EAD1F0'), ('C00000','FCE4D6')]
-    role_w, role_h = 3.8, 1.0
-    role_x = 0.5
     roles = trios_data.get('roles', [])
-    for i, (role_text, (text_col, fill_col)) in enumerate(zip(roles, roles_colors)):
-        y_pos = 1.6 + i * 1.15
-        add_sp(sld, sp(20+i, f'Role{i+1}', role_x, y_pos, role_w, role_h,
-                       role_text, font='Twinkl Cursive Looped Light', sz=18,
-                       bold=True, color=text_col, align='l',
-                       fill=fill_col, border=(text_col, 1.5), anchor='ctr'))
+    has_roles = bool(roles)
 
-    add_sp(sld, sp(30, 'Task', 4.6, 1.6, 8.5, 1.4,
+    if has_roles:
+        roles_colors = [('1F4E79','DEEAF1'), ('7030A0','EAD1F0'), ('C00000','FCE4D6')]
+        role_w, role_h = 3.8, 1.0
+        for i, (role_text, (text_col, fill_col)) in enumerate(zip(roles, roles_colors)):
+            y_pos = 1.6 + i * 1.15
+            add_sp(sld, sp(20+i, f'Role{i+1}', 0.5, y_pos, role_w, role_h,
+                           role_text, font='Twinkl Cursive Looped Light', sz=18,
+                           bold=True, color=text_col, align='l',
+                           fill=fill_col, border=(text_col, 1.5), anchor='ctr'))
+        task_x, task_w = 4.6, 8.5
+    else:
+        # No roles — use full width for task and challenge
+        task_x, task_w = 0.5, 12.4
+
+    add_sp(sld, sp(30, 'Task', task_x, 1.6, task_w, 1.8,
                    trios_data.get('task',''),
                    font='Twinkl Cursive Looped Light', sz=18,
                    color='1F4E79', align='l', fill='DEECF8',
@@ -2787,7 +2806,7 @@ def build_trios_slide(layout_num, title, trios_data, notes):
 
     challenge = trios_data.get('challenge','')
     if challenge:
-        add_sp(sld, sp(31, 'Challenge', 4.6, 3.2, 8.5, 1.1,
+        add_sp(sld, sp(31, 'Challenge', task_x, 3.6, task_w, 1.3,
                        f'Challenge: {challenge}',
                        font='Twinkl Cursive Looped Light', sz=16,
                        color='7030A0', align='l', fill='F2E6F9',
