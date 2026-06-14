@@ -2119,11 +2119,15 @@ function buildLP2Arithmetic(slide, isMarkingStation) {
 
   const TARGET   = 3;
   const slotH    = usable / TARGET;
-  const QH_each  = (slotH / nQ) - ANS_H / nQ;
-  const fontSize = Math.min(13, Math.max(10, Math.floor(QH_each * 30)));
-  const ANS_RESERVE = isMarkingStation ? Math.min(QH_each * 0.30, 0.45) : 0;
 
-  // Crop metadata: one slot = one complete repetition
+  // For marking station: reserve space at the bottom of each strip for the answer.
+  // Calculate ANS_RESERVE first so the question height fits without overflow.
+  const STRIP_H    = slotH / nQ;
+  const ANS_RESERVE = isMarkingStation ? Math.min(STRIP_H * 0.38, 0.52) : 0;
+  const QH_each    = STRIP_H - ANS_RESERVE - (isMarkingStation ? 0 : ANS_H / nQ);
+  const fontSize = Math.min(13, Math.max(10, Math.floor(QH_each * 30)));
+
+  // Crop metadata: one slot = one complete repetition (answers now fit within slotH)
   const repFrac2 = (hdrY + slotH) / SLIDE_H;
 
   // Add LL at start of each rep slot > 0 for Type A
@@ -2439,4 +2443,109 @@ function buildLP2ArithmeticAdapted(slide) {
       });
     }
   }
+}// ── LP2 ARITHMETIC
+function buildLP2Arithmetic(slide, isMarkingStation) {
+  const PAGE_TOP = MARGIN;
+  const PAGE_BOT = SLIDE_H - MARGIN;
+  const isTypeA  = !!LP2_DATA.typeA;
+  const lblX     = SLIDE_W - LL_W - MARGIN;
+  const contentW = isTypeA ? (lblX - GUTTER - MARGIN) : (SLIDE_W - 2 * MARGIN);
+
+  // LL (if typeA, non-MS, rep 0)
+  if (isTypeA && !isMarkingStation) injectLabel(slide, lblX, PAGE_TOP);
+
+  let hdrY = PAGE_TOP;
+  const title = isMarkingStation
+    ? `Marking Station \u2014 ${LP2_DATA.title || 'Problems'}`
+    : (LP2_DATA.title || 'Problems');
+  slide.addText(title, {
+    x: MARGIN, y: hdrY, w: contentW, h: 0.28,
+    fontSize: 13, fontFace: FONT_M, bold: true,
+    color: isMarkingStation ? GREEN : BLACK, margin: 0
+  });
+  hdrY += 0.30;
+  if (!isMarkingStation && LP2_DATA.instruction) {
+    slide.addText(LP2_DATA.instruction, {
+      x: MARGIN, y: hdrY, w: contentW, h: 0.18,
+      fontSize: 9, fontFace: FONT_C, color: '555555', margin: 0
+    });
+    hdrY += 0.20;
+  }
+
+  const questions = LP2_DATA.questions;
+  const nQ        = questions.length;
+  const hasGF     = !isMarkingStation && !!LP2_DATA.goingFurther;
+  const GF_H      = hasGF ? 0.72 : 0;
+  const usable    = PAGE_BOT - hdrY;
+  const TARGET    = 3;
+  const repH      = usable / TARGET;
+  const qPerRep   = repH - GF_H;          // height for question strips per rep
+  const STRIP_H   = qPerRep / nQ;         // height per question strip
+
+  // Answer areas — sized to fit within STRIP_H
+  const MS_ANS_H  = isMarkingStation ? Math.min(STRIP_H * 0.42, 0.55) : 0;
+  const PROMPT_H  = (isTypeA && !isMarkingStation) ? 0.22 : 0;
+  const Q_TEXT_H  = STRIP_H - MS_ANS_H - PROMPT_H - 0.02;
+  const fontSize  = Math.min(14, Math.max(10, Math.floor(Q_TEXT_H * 18)));
+
+  // Crop metadata
+  const repFrac2 = (hdrY + repH) / SLIDE_H;
+  slide.addNotes(`INJECT_REPS:${TARGET}\nINJECT_REP_FRAC:${repFrac2.toFixed(4)}`);
+
+  // LL on rep > 0 for typeA
+  if (isTypeA && !isMarkingStation && TARGET > 1) {
+    for (let rep = 1; rep < TARGET; rep++) {
+      injectLabel(slide, lblX, hdrY + rep * repH);
+    }
+  }
+
+  for (let rep = 0; rep < TARGET; rep++) {
+    const repTop = hdrY + rep * repH;
+    if (rep > 0) _cutStrip(slide, MARGIN, repTop - 0.04, contentW);
+
+    for (let i = 0; i < nQ; i++) {
+      const q = questions[i];
+      const stripTop = repTop + i * STRIP_H;
+      if (i > 0) _cutStrip(slide, MARGIN, stripTop - 0.02, contentW);
+
+      // Question text
+      slide.addText(`Q${i + 1})   ${q.q}`, {
+        x: MARGIN, y: stripTop, w: contentW, h: Q_TEXT_H,
+        fontSize, fontFace: FONT_C,
+        color: isMarkingStation ? BLACK : '1F4E79',
+        valign: 'top', margin: 0, wrap: true
+      });
+
+      if (isMarkingStation && q.answer) {
+        // Answer below question text
+        slide.addText(q.answer, {
+          x: MARGIN, y: stripTop + Q_TEXT_H + 0.02,
+          w: contentW, h: MS_ANS_H,
+          fontSize: fontSize - 1, fontFace: FONT_C, bold: true, color: GREEN,
+          valign: 'top', margin: 0, wrap: true
+        });
+      } else if (isTypeA && PROMPT_H > 0) {
+        // Answer prompt line
+        const prompt = LP2_DATA.answerPrompt || 'A: _____________________________________';
+        slide.addText(prompt, {
+          x: MARGIN, y: stripTop + Q_TEXT_H + 0.02,
+          w: contentW, h: PROMPT_H,
+          fontSize: 10, fontFace: FONT_C, color: '555555',
+          valign: 'middle', margin: 0
+        });
+      }
+    }
+
+    // Going further at the bottom of this rep (every copy)
+    if (hasGF) {
+      const gfY = repTop + qPerRep + 0.03;
+      slide.addText('Going further:  ' + LP2_DATA.goingFurther, {
+        x: MARGIN, y: gfY, w: contentW, h: GF_H - 0.07,
+        fontSize: 9, fontFace: FONT_C, color: BLACK,
+        fill: { color: 'F2E6F9' }, line: { color: '7030A0', width: 0.75 },
+        margin: 5, valign: 'top'
+      });
+    }
+  }
 }
+
