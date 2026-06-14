@@ -2022,7 +2022,12 @@ function _buildLP1WordProblems(slide, isMarkingStation) {
   const repFrac = (hdrY + repH) / SLIDE_H;
   slide.addNotes(`INJECT_REPS:${repsPerQ}\nINJECT_REP_FRAC:${repFrac.toFixed(4)}`);
 
-  // Single LL per lesson — only on rep 0 (already added above at PAGE_TOP)
+  // LL on EVERY rep of LP1 — each rep is one child's printed copy stuck in their book
+  if (isTypeA && !isMarkingStation && repsPerQ > 1) {
+    for (let rep = 1; rep < repsPerQ; rep++) {
+      injectLabel(slide, lblX, hdrY + rep * repH);
+    }
+  }
 
   for (let rep = 0; rep < repsPerQ; rep++) {
     const repTop = hdrY + rep * repH;
@@ -2249,10 +2254,9 @@ function _buildLP1WordProblemsAdapted(slide, questions) {
       });
     }
 
-    // RIGHT: LL (rep 0 only, one per lesson) + hints filling available height
+    // RIGHT: LL on EVERY rep (each rep = one child's copy) + hints filling available height
     let rY = repTop;
-    if (isTypeA && rep === 0) { injectLabel(slide, lblX, rY); rY += LL_GAP; }
-    else if (isTypeA) { rY += LL_GAP; }  // reserve same vertical space for alignment
+    if (isTypeA) { injectLabel(slide, lblX, rY); rY += LL_GAP; }
 
     if (ADAPTED_SUPPORT.hint1) {
       slide.addText("Step-by-step:", {
@@ -2448,8 +2452,7 @@ function buildLP2Arithmetic(slide, isMarkingStation) {
   const contentW = isTypeA ? (lblX - GUTTER - MARGIN) : (SLIDE_W - 2 * MARGIN);
 
   // LL (if typeA, non-MS, rep 0)
-  if (isTypeA && !isMarkingStation) injectLabel(slide, lblX, PAGE_TOP);
-
+  // No LL on LP2 — lesson LL is on LP1 only
   let hdrY = PAGE_TOP;
   const title = isMarkingStation
     ? `Marking Station \u2014 ${LP2_DATA.title || 'Problems'}`
@@ -2488,7 +2491,7 @@ function buildLP2Arithmetic(slide, isMarkingStation) {
   const repFrac2 = (hdrY + repH) / SLIDE_H;
   slide.addNotes(`INJECT_REPS:${TARGET}\nINJECT_REP_FRAC:${repFrac2.toFixed(4)}`);
 
-  // Single LL per lesson — only on rep 0 (already added at PAGE_TOP)
+  // LP2 carries NO LL — LP1's LL covers the whole lesson. Never add injectLabel here.
 
   for (let rep = 0; rep < TARGET; rep++) {
     const repTop = hdrY + rep * repH;
