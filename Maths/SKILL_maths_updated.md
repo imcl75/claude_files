@@ -553,14 +553,57 @@ Checks: text overflow, box height, out-of-bounds shapes, WM type rule.
 
 ## File naming conventions
 
-| File | Pattern |
-|------|---------|
-| Teaching PPTX | `{TxWy}_L{N}_{day}_Teaching.pptx` |
-| LP PPTX | `{TxWy}_L{N}_{day}_LP.pptx` |
-| Label sticker sheet | `{TxWy}_L{N}_{day}_Labels.docx` |
+Internal build filenames use `_L{N}_` format. At delivery, ALL files are renamed:
+
+| File | Delivered name |
+|------|---------------|
+| Teaching PPTX | `{TxWy} - {N} - {DayName} - Teaching.pptx` |
+| LP PPTX | `{TxWy} - {N} - {DayName} - LP.pptx` |
+| Label sticker sheet | `{TxWy} - {N} - {DayName} - Labels.docx` |
+| Week zip | `{TxWy} - Maths Resources.zip` |
 | Rapid Maths | `Rapid_Maths_{TxWy}.pptx` |
 | Working Memory | `Working_Memory_{TxWy}.pptx` |
 | Term plan JSON | `maths_plan_v{N}.json` |
+
+`N` = lesson sequence within the week (1, 2, 3, 4 — resets each week, NOT the overall lesson number).
+
+### Zip structure
+
+```
+Teaching/
+  {TxWy} - 1 - Monday - Teaching.pptx
+  {TxWy} - 2 - Tuesday - Teaching.pptx
+  ...
+LPs and Resources/
+  {TxWy} - 1 - Monday - LP.pptx
+  {TxWy} - 2 - Tuesday - LP.pptx
+  ...
+Labels/
+  {TxWy} - 2 - Tuesday - Labels.docx
+  ...
+```
+
+Zip-only delivery — NO individual files alongside the zip.
+
+```python
+import zipfile, os
+
+week = "T6W3"
+lessons = [(1,"Monday"),(2,"Tuesday"),(3,"Wednesday"),(4,"Thursday")]
+zip_path = f"/mnt/user-data/outputs/{week} - Maths Resources.zip"
+
+with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
+    for n, day in lessons:
+        prefix = f"{week} - {n} - {day}"
+        for suffix, folder in [
+            ("Teaching.pptx", "Teaching"),
+            ("LP.pptx",       "LPs and Resources"),
+            ("Labels.docx",   "Labels"),
+        ]:
+            src = f"/home/claude/{prefix} - {suffix}"
+            if os.path.exists(src):
+                zf.write(src, f"{folder}/{prefix} - {suffix}")
+```
 
 ---
 
