@@ -1863,7 +1863,7 @@ def draw_squared_paper(sld, calc_type, v, grid_x, grid_y):
         has_rem = bool(final_rem)
         # Cols: 0=blank spacer, 1=divisor, 2..n_div+1=dividend,
         #       n_div+2='r', n_div+3=remainder  (matches reference exactly)
-        n_cols = n_div + 2 + (2 if has_rem else 0)
+        n_cols = n_div + 2 + (2 if has_rem else 1)
         n_rows = 4   # quotient, dividend, 2 blank rows (matches reference)
 
         # Background cells — always visible
