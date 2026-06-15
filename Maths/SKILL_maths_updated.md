@@ -164,12 +164,14 @@ cp $SKILL/build_lp_v3.js /home/claude/
 cp $SKILL/lesson_data.js /home/claude/
 cp $SKILL/inject_lp_previews.py /home/claude/
 cp $SKILL/generate_labels.py /home/claude/
+cp $SKILL/rapid_maths_generator.py /home/claude/
+cp $SKILL/working_memory_starters.py /home/claude/
 
 # Copy plan
 mkdir -p /home/claude/transfer_files
 cp $SKILL/maths_plan_v3.json /home/claude/transfer_files/
 
-# Set up template
+# Set up template (assets/ subdirectory in skill folder)
 cp $SKILL/assets/template_v3.pptx /home/claude/template.pptx
 mkdir -p /home/claude/unpacked/ppt/media
 cd /home/claude && unzip -o template.pptx -d unpacked > /dev/null 2>&1
@@ -194,13 +196,18 @@ cp ppt/media/image13.png /home/claude/unpacked/ppt/media/image17.png
 cp ppt/media/image14.jpg /home/claude/unpacked/ppt/media/image18.png
 cp ppt/media/image15.jpg /home/claude/unpacked/ppt/media/image19.png
 
-# LP assets (label icon + template)
+# Banner images into unpacked media
+cp $SKILL/assets/banner_visualise.png /home/claude/unpacked/ppt/media/
+cp $SKILL/assets/banner_analyse.png   /home/claude/unpacked/ppt/media/
+cp $SKILL/assets/banner_attack.png    /home/claude/unpacked/ppt/media/
+
+# LP assets
 mkdir -p /home/claude/lp_assets
-cp $SKILL/assets/mathematician_icon.png /home/claude/lp_assets/
+[ -f "$SKILL/assets/mathematician_icon.png" ] && cp $SKILL/assets/mathematician_icon.png /home/claude/lp_assets/
 cp $SKILL/WFA_Labels_template.docx /home/claude/
 
 # Install node dependencies
-npm install pptxgenjs 2>/dev/null
+npm install pptxgenjs canvas 2>/dev/null
 
 cd /home/claude
 ```
@@ -575,12 +582,19 @@ All in `/mnt/skills/user/maths-complete-planning-and-resources/`:
 
 ## Saving updates
 
-When data files are modified, copy back to skill folder before ending the session:
+When data files or builders are modified, copy back to skill folder AND push to GitHub before ending the session:
 
 ```bash
-cp /home/claude/lesson_data.py /mnt/skills/user/maths-complete-planning-and-resources/
-cp /home/claude/lesson_data.js /mnt/skills/user/maths-complete-planning-and-resources/
-cp /home/claude/build_lp_v3.js /mnt/skills/user/maths-complete-planning-and-resources/
-cp /home/claude/generate_labels.py /mnt/skills/user/maths-complete-planning-and-resources/
-cp /home/claude/transfer_files/maths_plan_v3.json /mnt/skills/user/maths-complete-planning-and-resources/
+SKILL=/mnt/skills/user/maths-complete-planning-and-resources
+
+# Scripts
+cp /home/claude/build_lesson_v3.py  $SKILL/
+cp /home/claude/build_lp_v3.js      $SKILL/
+cp /home/claude/lesson_data.py      $SKILL/
+cp /home/claude/lesson_data.js      $SKILL/
+cp /home/claude/inject_lp_previews.py $SKILL/
+cp /home/claude/generate_labels.py  $SKILL/
+cp /home/claude/transfer_files/maths_plan_v3.json $SKILL/
+
+# Then run github-sync skill (push mode) to sync to imcl75/claude_files
 ```
