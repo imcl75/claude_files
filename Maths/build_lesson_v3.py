@@ -1742,244 +1742,321 @@ def _compute_column_add(top_str, bottom_str):
     return answer, carry_map
 
 
+# Replacement for draw_squared_paper — matches reference layouts exactly
+# Key measurements from reference file (layouts_for_methods.pptx):
+#   CELL = 0.5972"  DIGIT_SZ = 32pt  CARRY_SZ = 20pt
+# All digit shapes returned in ONE animation group (single click reveal).
+# Background cells and bus-stop lines are always visible (not animated).
+
 def draw_squared_paper(sld, calc_type, v, grid_x, grid_y):
     """
-    Draw a full written-method calculation on squared paper.
-    Returns anim_groups (list of lists of shape IDs).
+    Draw a calculation grid.
+    grid_x, grid_y: top-left of the grid (NOT of a panel — just the grid itself).
+    Returns anim_groups: list of lists of shape IDs.
+    ONE group = all digit/carry shapes appear together on a single click.
+    Background cells and structural lines are always visible.
     """
-    SID = [800]
+    SID = [600]
     def nid():
         SID[0] += 1
         return SID[0]
 
-    anim_groups = []
+    anim_group = []   # ALL animated digit shapes go in here — one click
 
-    if calc_type == 'compact_column':
-        top = v['top']; bot = v['bottom']
-        answer, carry_map = _compute_compact_column(top, bot)
-        n_top = len(top); n_ans = len(answer)
-        n_cols = max(n_top, n_ans) + 1  # col 0 = operator col
+    # ── helpers ──────────────────────────────────────────────────────────────
+    def cell_x(col): return grid_x + col * CELL
+    def cell_y(row): return grid_y + row * CELL
 
-        # Layout (5 rows):
-        # Row 0: multiplicand
-        # Row 1: × + multiplier
-        # Row 2: carry digits (dedicated carry row, small text at top)
-        # Line at row 3 (separator)
-        # Row 3: answer
-        # Line at row 4 (underline)
+    def bg_cell(col, row):
+        """Always-visible white background cell with thin border."""
+        add_sp(sld, (
+            f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+            f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+            f'<p:nvSpPr><p:cNvPr id="{nid()}" name="BG{col}_{row}"/>'
+            f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+            f'<p:spPr><a:xfrm><a:off x="{emu(cell_x(col))}" y="{emu(cell_y(row))}"/>'
+            f'<a:ext cx="{emu(CELL)}" cy="{emu(CELL)}"/></a:xfrm>'
+            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+            f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
+            f'<a:ln w="{int(0.75*12700)}">'
+            f'<a:solidFill><a:srgbClr val="9DC3E6"/></a:solidFill></a:ln>'
+            f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+        ))
 
-        for r in range(5):
-            for c in range(n_cols):
-                add_sp(sld, _cell_sp(nid(), c, r, '', grid_x, grid_y))
-
-        # Row 0: multiplicand right-aligned
-        ans_offset = n_cols - n_ans
-        top_offset = n_cols - n_top
-        group = []
-        for i, d in enumerate(top):
-            sid = nid()
-            add_sp(sld, _cell_sp(sid, top_offset + i, 0, d, grid_x, grid_y,
-                                 sz=DIGIT_SZ, color='000000', bold=True))
-            group.append(sid)
-        anim_groups.append(group)
-
-        # Row 1: × at col 0, multiplier right-aligned
-        group = []
+    def digit_cell(col, row, text, color='1F1F1F', sz=None, bold=True, animate=True):
+        """Cell with digit text. Added to anim_group if animate=True."""
+        fsz = sz if sz else DIGIT_SZ
         sid = nid()
-        add_sp(sld, _cell_sp(sid, 0, 1, '×', grid_x, grid_y,
-                             sz=DIGIT_SZ, color='000000', bold=True))
-        group.append(sid)
-        n_bot = len(bot); bot_offset = n_cols - n_bot
-        for i, d in enumerate(bot):
-            sid = nid()
-            add_sp(sld, _cell_sp(sid, bot_offset + i, 1, d, grid_x, grid_y,
-                                 sz=DIGIT_SZ, color='000000', bold=True))
-            group.append(sid)
-        anim_groups.append(group)
+        add_sp(sld, sp(
+            sid, f'D{col}_{row}',
+            cell_x(col), cell_y(row), CELL, CELL,
+            text,
+            font='Twinkl Cursive Looped Light', sz=fsz,
+            bold=bold, color=color, align='ctr',
+            fill=None, no_line=True, anchor='ctr'
+        ))
+        if animate:
+            anim_group.append(sid)
 
-        # Row 2: carry digits — small text at top-right of each carry cell
-        # carry_map key = 0-indexed from left in top_str, so use top_offset as base
-        group = []
-        for col_from_left, carry_d in carry_map.items():
-            grid_col = top_offset + col_from_left
-            x = grid_x + grid_col * CELL + CELL * 0.52
-            y = grid_y + 2 * CELL + CELL * 0.04
-            sid = nid()
-            add_sp(sld, sp(sid, f'Carry{sid}', x, y, CELL * 0.42, CELL * 0.46,
-                           carry_d, font='Calibri', sz=CARRY_SZ, bold=False,
-                           color='C00000', align='ctr', fill=None, no_line=True))
-            group.append(sid)
-        if group:
-            anim_groups.append(group)
+    def hline(x, y, w, color='1F4E79', lw=2.25):
+        """Horizontal line, always visible."""
+        sid = nid()
+        add_sp(sld, (
+            f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+            f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+            f'<p:nvSpPr><p:cNvPr id="{sid}" name="HL{sid}"/>'
+            f'<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr><p:nvPr/></p:nvSpPr>'
+            f'<p:spPr><a:xfrm><a:off x="{emu(x)}" y="{emu(y)}"/>'
+            f'<a:ext cx="{emu(w)}" cy="0"/></a:xfrm>'
+            f'<a:prstGeom prst="line"><a:avLst/></a:prstGeom>'
+            f'<a:ln w="{int(lw*12700)}">'
+            f'<a:solidFill><a:srgbClr val="{color}"/></a:solidFill></a:ln>'
+            f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+        ))
 
-        # Line at row 3 (separator above answer)
-        add_sp(sld, _hline_xml(nid(), grid_x, grid_y, 3, n_cols))
+    def vline(x, y, h, color='1F4E79', lw=2.25):
+        """Vertical line, always visible."""
+        sid = nid()
+        add_sp(sld, (
+            f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+            f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+            f'<p:nvSpPr><p:cNvPr id="{sid}" name="VL{sid}"/>'
+            f'<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr><p:nvPr/></p:nvSpPr>'
+            f'<p:spPr><a:xfrm><a:off x="{emu(x)}" y="{emu(y)}"/>'
+            f'<a:ext cx="0" cy="{emu(h)}"/></a:xfrm>'
+            f'<a:prstGeom prst="line"><a:avLst/></a:prstGeom>'
+            f'<a:ln w="{int(lw*12700)}">'
+            f'<a:solidFill><a:srgbClr val="{color}"/></a:solidFill></a:ln>'
+            f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+        ))
 
-        # Row 3: answer digits (green)
-        group = []
-        for i, d in enumerate(answer):
-            sid = nid()
-            add_sp(sld, _cell_sp(sid, ans_offset + i, 3, d, grid_x, grid_y,
-                                 sz=DIGIT_SZ, color='1A5C2A', bold=True))
-            group.append(sid)
-        anim_groups.append(group)
+    def small_digit(x, y, text, color='C00000', sz=None):
+        """Small carry/borrow/remainder digit, always animated with main group."""
+        csz = sz if sz else CARRY_SZ
+        sid = nid()
+        add_sp(sld, sp(
+            sid, f'Carry{sid}', x, y,
+            CELL * 0.40, CELL * 0.50,
+            text,
+            font='Twinkl Cursive Looped Light', sz=csz,
+            bold=False, color=color, align='l',
+            fill=None, no_line=True, anchor='t'
+        ))
+        anim_group.append(sid)
 
-        # Line at row 4 (underline)
-        add_sp(sld, _hline_xml(nid(), grid_x, grid_y, 4, n_cols))
-
-    elif calc_type == 'short_division':
-        dividend = v['top']; divisor = v['bottom']
+    # =========================================================================
+    # SHORT DIVISION
+    # Reference layout (7293÷5 = 1458 r3):
+    #   Row 0: [blank][q0][q1][q2][q3][r][blank][rem]   ← quotient row
+    #   Row 1: [div ][ d0][ d1][ d2][ d3]               ← dividend row
+    #   Row 2: [    ][   ][   ][   ][   ]                ← blank
+    #   Row 3: [    ][   ][   ][   ][   ]                ← blank
+    # Bus-stop: vertical line at left of col 1, from row 1 top, height=CELL
+    #           horizontal line at top of row 1, from col 1, width=n_div*CELL
+    # =========================================================================
+    if calc_type == 'short_division':
+        dividend = str(v.get('top', ''))
+        divisor  = str(v.get('bottom', ''))
         q_str, r_map, final_rem = _compute_short_div(dividend, divisor)
-        n_div = len(dividend)
-        # Grid: col 0 = divisor, col 1..n_div = dividend, optional extra for remainder
-        extra = 2 if final_rem else 0
-        n_cols = n_div + 1 + extra
-        n_rows = 3  # quotient, dividend, blank
 
-        # Background cells
+        n_div  = len(dividend)
+        has_rem = bool(final_rem)
+        # Cols: 0=divisor, 1..n_div=dividend, n_div+1='r', n_div+2=remainder
+        n_cols = n_div + 1 + (2 if has_rem else 0)
+        n_rows = 4   # quotient, dividend, 2 blank rows (matches reference)
+
+        # Background cells — always visible
         for r in range(n_rows):
             for c in range(n_cols):
-                add_sp(sld, _cell_sp(nid(), c, r, '', grid_x, grid_y))
+                bg_cell(c, r)
 
-        # Bus stop structure (always visible)
-        # Vertical line: right edge of col 0, full height of row 1
-        vx = grid_x + CELL
-        vy = grid_y + CELL
-        add_sp(sld, _vline_xml(nid(), vx, vy, CELL))
-        # Horizontal line: top of row 1, spanning dividend cols
-        hx = grid_x + CELL
-        hy = grid_y + CELL
-        add_sp(sld, f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
-               f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
-               f'<p:nvSpPr><p:cNvPr id="{nid()}" name="HL_div"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
-               f'<p:spPr><a:xfrm><a:off x="{emu(hx)}" y="{emu(hy)}"/>'
-               f'<a:ext cx="{emu(n_div * CELL)}" cy="0"/></a:xfrm>'
-               f'<a:prstGeom prst="line"><a:avLst/></a:prstGeom>'
-               f'<a:ln w="{int(LINE_W*12700)}"><a:solidFill><a:srgbClr val="{LINE_COL}"/></a:solidFill></a:ln>'
-               f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>')
+        # Bus-stop structure — always visible
+        vline(cell_x(1), cell_y(1), CELL)               # vertical left of col 1
+        hline(cell_x(1), cell_y(1), n_div * CELL)       # horizontal above dividend
 
-        # Row 1: divisor in col 0 + dividend digits in cols 1..n_div
-        group = []
-        sid = nid()
-        add_sp(sld, _cell_sp(sid, 0, 1, divisor, grid_x, grid_y,
-                             sz=DIGIT_SZ, color='000000', bold=True))
-        group.append(sid)
+        # Row 1: divisor + dividend (animated — single group)
+        digit_cell(0, 1, divisor, color='1F1F1F')
         for i, d in enumerate(dividend):
-            sid = nid()
-            add_sp(sld, _cell_sp(sid, 1 + i, 1, d, grid_x, grid_y,
-                                 sz=DIGIT_SZ, color='000000', bold=True))
-            group.append(sid)
-        # Remainder superscripts (small, top-right of dividend cell)
-        rem_group = []
+            digit_cell(1 + i, 1, d, color='1F1F1F')
+
+        # Remainder superscripts (small red, top-left of next cell)
         for pos, r_d in r_map.items():
-            x = grid_x + (2 + pos) * CELL - CELL * 0.38
-            y = grid_y + CELL + CELL * 0.04
-            sid = nid()
-            add_sp(sld, sp(sid, f'Rem{sid}', x, y, CELL * 0.35, CELL * 0.45,
-                           r_d, font='Calibri', sz=CARRY_SZ, bold=False,
-                           color='C00000', align='l', fill=None, no_line=True))
-            rem_group.append(sid)
-        anim_groups.append(group)
-        if rem_group:
-            anim_groups.append(rem_group)
+            small_digit(
+                cell_x(2 + pos) + CELL * 0.04,
+                cell_y(1) - CELL * 0.05,
+                r_d, color='C00000', sz=CARRY_SZ
+            )
 
-        # Row 0: quotient digits above each dividend col
-        group = []
+        # Row 0: quotient digits (animated, green)
+        leading = True
         for i, q in enumerate(q_str):
-            if q == '0' and i == 0 and len(q_str) > 1:
-                continue  # skip leading zero
-            sid = nid()
-            add_sp(sld, _cell_sp(sid, 1 + i, 0, q, grid_x, grid_y,
-                                 sz=DIGIT_SZ, color='1A5C2A', bold=True))
-            group.append(sid)
-        # Remainder notation after last digit
-        if final_rem:
-            sid = nid()
-            add_sp(sld, _cell_sp(sid, n_div + 1, 0, f'r{final_rem}', grid_x, grid_y,
-                                 sz=DIGIT_SZ - 6, color='C00000', bold=False))
-            group.append(sid)
-        anim_groups.append(group)
+            if q == '0' and leading and len(q_str) > 1:
+                continue
+            leading = False
+            digit_cell(1 + i, 0, q, color='1A5C2A', bold=True)
 
-    elif calc_type in ('column_addition', 'column_subtraction'):
-        top = v['top']; bot = v['bottom']
-        op = '+' if calc_type == 'column_addition' else '−'
-        if calc_type == 'column_addition':
-            answer, carry_map = _compute_column_add(top, bot)
-        else:
-            answer = str(int(top) - int(bot))
-            carry_map = {}
-        n_top = len(top); n_bot = len(bot); n_ans = len(answer)
-        n_cols = max(n_top, n_bot, n_ans) + 1
-        n_rows = 5  # carry, top, operator+bot, line, answer, blank
+        # Remainder
+        if has_rem:
+            digit_cell(n_div + 1, 0, 'r', color='1F1F1F', bold=False)
+            digit_cell(n_div + 2, 0, str(final_rem), color='1A5C2A', bold=True)
 
-        # Background cells
-        for r in range(4):
+    # =========================================================================
+    # COLUMN ADDITION
+    # Reference layout (2746+8206=10952):
+    #   Row 0: [  ][  ][1 ][  ][  ]   ← carry row (small digits)
+    #   Row 1: [  ][ 2][ 7][ 4][ 6]   ← top number
+    #   Row 2: [+][ 8][ 2][ 0][ 6]    ← operator + bottom number
+    #   Row 3: [ 1][ 0][ 9][ 5][ 2]   ← answer (double line above)
+    #   Row 4: [  ][  ][  ][  ][  ]   ← blank
+    # Double line: at y=row3_top and y=row4_top
+    # =========================================================================
+    elif calc_type == 'column_addition':
+        top_raw    = str(v.get('top', ''))
+        bottom_raw = str(v.get('bottom', ''))
+        answer_str, carry_map = _compute_column_add(top_raw, bottom_raw)
+
+        # Pad everything right-aligned to answer width (answer may be wider)
+        n_digit_cols = len(answer_str)
+        top_pad    = top_raw.zfill(n_digit_cols)
+        bottom_pad = bottom_raw.zfill(n_digit_cols)
+
+        n_cols = 1 + n_digit_cols    # col 0 = operator, cols 1..n = digits
+        n_rows = 5                   # carry, top, op+bottom, answer, blank
+
+        # Background cells — always visible
+        for r in range(n_rows):
             for c in range(n_cols):
-                add_sp(sld, _cell_sp(nid(), c, r, '', grid_x, grid_y))
+                bg_cell(c, r)
 
-        # Carry row (row 0, small) — always visible positions, digits animated
-        if carry_map:
-            carry_group = []
-            for col_from_right, c_d in carry_map.items():
-                grid_col = n_cols - 1 - col_from_right
-                x = grid_x + grid_col * CELL + CELL * 0.05
-                y = grid_y + CELL * 0.05
-                sid = nid()
-                add_sp(sld, sp(sid, f'Carry{sid}', x, y, CELL * 0.45, CELL * 0.5,
-                               c_d, font='Calibri', sz=CARRY_SZ, color='C00000',
-                               align='l', fill=None, no_line=True))
-                carry_group.append(sid)
+        # Double line above answer (row 3) and below answer row (row 4)
+        hline(cell_x(0), cell_y(3), n_cols * CELL)
+        hline(cell_x(0), cell_y(4), n_cols * CELL)
 
-        # Row 1: top number
-        t_offset = n_cols - n_top
-        group = []
-        for i, d in enumerate(top):
-            sid = nid()
-            add_sp(sld, _cell_sp(sid, t_offset + i, 1, d, grid_x, grid_y,
-                                 sz=DIGIT_SZ, color='000000', bold=True))
-            group.append(sid)
-        anim_groups.append(group)
+        # Row 0: carry digits (small, red) — carry_map is {col_index: '1'}
+        # col_index is 0-based from LEFT of the n_digit_cols array
+        for col_idx, carry_val in carry_map.items():
+            col = 1 + col_idx   # +1 for operator col
+            small_digit(
+                cell_x(col) + CELL * 0.04,
+                cell_y(0) + CELL * 0.52,
+                carry_val, color='C00000', sz=CARRY_SZ
+            )
+
+        # Row 1: top number (leading zero cells left blank)
+        top_orig_len = len(top_raw)
+        for i, d in enumerate(top_pad):
+            show = i >= (n_digit_cols - top_orig_len)
+            digit_cell(1 + i, 1, d if show else '', color='1F1F1F')
 
         # Row 2: operator + bottom number
-        b_offset = n_cols - n_bot
-        group = []
-        sid = nid()
-        add_sp(sld, _cell_sp(sid, 0, 2, op, grid_x, grid_y,
-                             sz=DIGIT_SZ, color='000000', bold=True))
-        group.append(sid)
-        for i, d in enumerate(bot):
-            sid = nid()
-            add_sp(sld, _cell_sp(sid, b_offset + i, 2, d, grid_x, grid_y,
-                                 sz=DIGIT_SZ, color='000000', bold=True))
-            group.append(sid)
-        anim_groups.append(group)
-
-        # Line after row 2
-        add_sp(sld, _hline_xml(nid(), grid_x, grid_y, 3, n_cols))
-
-        # Carry digits (after operator row drawn)
-        if carry_map:
-            anim_groups.append(carry_group)
+        digit_cell(0, 2, '+', color='1F1F1F')
+        bottom_orig_len = len(bottom_raw)
+        for i, d in enumerate(bottom_pad):
+            show = i >= (n_digit_cols - bottom_orig_len)
+            digit_cell(1 + i, 2, d if show else '', color='1F1F1F')
 
         # Row 3: answer
-        a_offset = n_cols - n_ans
-        group = []
+        for i, d in enumerate(answer_str):
+            digit_cell(1 + i, 3, d, color='1A5C2A', bold=True)
+
+    # =========================================================================
+    # COLUMN SUBTRACTION
+    # Reference layout (5046-3274=1772):
+    #   Row 0: [  ][ 4][ 9][  ][  ]   ← modified top digits (borrow notation)
+    #   Row 1: [ ˅][ 5˅][ 0][ 4][ 6] ← top number (with borrow marks)
+    #   Row 2: [-][ 3][ 2][ 7][ 4]   ← operator + bottom number
+    #   Row 3: [  ][ 1][ 7][ 7][ 2]  ← answer (double line above)
+    #   Row 4: [  ][  ][  ][  ][  ]  ← blank
+    # =========================================================================
+    elif calc_type == 'column_subtraction':
+        top_raw    = str(v.get('top', ''))
+        bottom_raw = str(v.get('bottom', ''))
+        # Inline compute: top - bottom, tracking borrows
+        def _do_sub(t_str, b_str):
+            n = max(len(t_str), len(b_str))
+            t = list(t_str.zfill(n)); b = list(b_str.zfill(n))
+            borrow = 0
+            result = []; borrow_map = {}
+            for i in range(n-1, -1, -1):
+                td = int(t[i]); bd = int(b[i])
+                td -= borrow
+                if td < bd:
+                    td += 10; borrow = 1; borrow_map[i] = str(int(t[i])-1 if int(t[i])-1>=0 else 10+int(t[i])-1)
+                else:
+                    borrow = 0
+                result.insert(0, str(td - bd))
+            return ''.join(result), borrow_map
+
+        answer_str, borrow_map = _do_sub(top_raw, bottom_raw)
+        n_digit_cols = max(len(top_raw), len(bottom_raw))
+        answer_str = answer_str.zfill(n_digit_cols)
+        top_pad    = top_raw.zfill(n_digit_cols)
+        bottom_pad = bottom_raw.zfill(n_digit_cols)
+
+        n_cols = 1 + n_digit_cols
+        n_rows = 5
+
+        maxlen = max(len(top), len(bottom), len(answer))
+        top    = top.zfill(maxlen)
+        bottom = bottom.zfill(maxlen)
+        answer = answer.zfill(maxlen)
+
+        n_digit_cols = maxlen
+        n_cols = 1 + n_digit_cols
+        n_rows = 5
+
+        # Background
+        for r in range(n_rows):
+            for c in range(n_cols):
+                bg_cell(c, r)
+
+        # Double lines
+        hline(cell_x(0), cell_y(3), n_cols * CELL)
+        hline(cell_x(0), cell_y(4), n_cols * CELL)
+
+        # Row 1: top number (always visible)
+        for i, d in enumerate(top):
+            col = 1 + i
+            # Crossed out / modified digit shown with borrow mark
+            if modified and i < len(modified) and modified[i] != d:
+                # Show original (small, struck) above and modified below
+                small_digit(
+                    cell_x(col) + CELL * 0.08,
+                    cell_y(0) + CELL * 0.40,
+                    modified[i], color='1F1F1F', sz=CARRY_SZ
+                )
+                digit_cell(col, 1, d, color='888888', bold=False)  # greyed original
+            else:
+                digit_cell(col, 1, d, color='1F1F1F')
+
+        # Borrow marks (small superscripts): show borrowed values
+        if borrows:
+            for i, b in enumerate(borrows):
+                if b != '0':
+                    col = 1 + i
+                    small_digit(
+                        cell_x(col) + CELL * 0.55,
+                        cell_y(0) + CELL * 0.40,
+                        b, color='C00000', sz=CARRY_SZ
+                    )
+
+        # Row 2: operator + bottom
+        digit_cell(0, 2, '−', color='1F1F1F')
+        for i, d in enumerate(bottom):
+            digit_cell(1 + i, 2, d, color='1F1F1F')
+
+        # Row 3: answer
         for i, d in enumerate(answer):
-            sid = nid()
-            add_sp(sld, _cell_sp(sid, a_offset + i, 3, d, grid_x, grid_y,
-                                 sz=DIGIT_SZ, color='1A5C2A', bold=True))
-            group.append(sid)
-        anim_groups.append(group)
-        add_sp(sld, _hline_xml(nid(), grid_x, grid_y, 4, n_cols))
+            digit_cell(1 + i, 3, d, color='1A5C2A', bold=True)
 
-    return anim_groups
+    # =========================================================================
+    # OTHER METHODS: return empty (caller falls back to text)
+    # =========================================================================
+    else:
+        return []
 
-
-
-
-
-
-
+    # Return ONE animation group — all digits appear on one click
+    return [anim_group] if anim_group else []
 
 
 # ===========================================================================
@@ -2175,8 +2252,8 @@ def draw_identify_calculate_slide(sld, visual_key):
         # Use a larger cell size to fill the available right-area space properly.
         # The standard CELL (0.597") looks cramped in a 5"-wide column; scale up.
         ROWS_BY_METHOD = {
-            'short_division':       3,
-            'column_addition':      5,
+            'short_division':       4,   # quotient, dividend, 2 blank rows
+            'column_addition':      5,   # carry, top, op+bot, answer, blank
             'column_subtraction':   5,
             'column_multiplication':6,
         }
