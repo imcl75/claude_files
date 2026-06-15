@@ -16,6 +16,14 @@ description: >
 
 # Maths Complete Planning and Resources — v3 Pipeline
 
+## ⚠ SESSION START CHECKLIST — DO THIS BEFORE ANYTHING ELSE
+
+1. Run Step 1 (environment restore) — all files are in the skill folder assets/ and root
+2. Verify short division grid: blank spacer col 0, divisor col 1, dividend cols 2+, bus-stop at col 2. This was broken and fixed T6W3. Do NOT regress it.
+3. Zip output must be named `T6W3 - Maths Resources.zip` (space-hyphen-space format)
+4. End of session: copy scripts back to skill folder AND push to GitHub. Both. Every time.
+5. Never claim a layout matches the reference unless you have verified it visually against Innes's screenshot. "Copied exactly" is not acceptable without proof.
+
 ## ⚠ THIS IS THE ONLY MATHS SKILL — ALWAYS USE IT
 
 Any request involving maths lessons, maths planning, maths slides, learning papers,
