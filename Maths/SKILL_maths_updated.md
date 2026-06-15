@@ -258,6 +258,8 @@ Col n_div+3: remainder digit (only if remainder)
 
 ---
 
+## PHASE 1 — Term Planning
+
 ### What you need from Innes
 - Topic/objectives for the block
 - Number of weeks
