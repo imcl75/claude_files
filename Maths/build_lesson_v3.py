@@ -2051,21 +2051,43 @@ def draw_word_problem_slide(sld, visual_key):
 
 
 # ===========================================================================
-# IDENTIFY-CALCULATE SLIDE — L10 / L12 I Do
-# Analyse → Attack banners (natural ratio) left; content right; Step 2 below
+# IDENTIFY-CALCULATE SLIDE — fully animated VAA
+# Click 1: Visualise banner  Click 2: Analyse + content  Click 3: Attack + reasoning
+# Click 4: Step 2 + calculation  Click 5: Answer
 # ===========================================================================
 def draw_identify_calculate_slide(sld, visual_key):
     v = VISUALS[visual_key]
     px, py, pw, ph = 0.40, 1.45, 7.00, 5.80
-    SID = [300]; nid = lambda: (SID.__setitem__(0, SID[0]+1), SID[0])[1]
+
+    # ID counter — start at 300; sync after every add_pic_id call
+    SID = [300]
+    def nid():
+        SID[0] += 1
+        return SID[0]
+    def sync_past(pic_id):
+        if pic_id >= SID[0]:
+            SID[0] = pic_id
+
     BH = 0.78; BW = round(BH * 3.43, 3)
     BX = px + 0.12
     TX = BX + BW + 0.18; TW = pw - 0.24 - BW - 0.18
 
-    # White panel
-    add_sp(sld, f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><p:nvSpPr><p:cNvPr id="{nid()}" name="ICPanel"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="{emu(px)}" y="{emu(py)}"/><a:ext cx="{emu(pw)}" cy="{emu(ph)}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill><a:ln w="{int(1.5*12700)}"><a:solidFill><a:srgbClr val="BBBBBB"/></a:solidFill></a:ln></p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>')
+    anim_groups = []
 
-    # Problem text
+    # White panel (not animated — always visible)
+    add_sp(sld, (
+        f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+        f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+        f'<p:nvSpPr><p:cNvPr id="{nid()}" name="ICPanel"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+        f'<p:spPr><a:xfrm><a:off x="{emu(px)}" y="{emu(py)}"/>'
+        f'<a:ext cx="{emu(pw)}" cy="{emu(ph)}"/></a:xfrm>'
+        f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+        f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
+        f'<a:ln w="{int(1.5*12700)}"><a:solidFill><a:srgbClr val="BBBBBB"/></a:solidFill></a:ln>'
+        f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+    ))
+
+    # Problem text (always visible)
     lines = v.get('problem', '').split('\n')
     add_sp(sld, sp(nid(), 'Problem', px+0.25, py+0.15, pw-0.50, 1.28,
                    lines, font='Twinkl Cursive Looped Light', sz=20,
@@ -2073,55 +2095,94 @@ def draw_identify_calculate_slide(sld, visual_key):
 
     y = py + 1.52
 
-    # Analyse banner + two-line content
-    add_pic(sld, 'banner_analyse.png', BX, y, BW, BH)
+    # ── Click 1: Visualise banner (+ optional text) ───────────────────────────
+    _, vid = add_pic_id(sld, 'banner_visualise.png', BX, y, BW, BH)
+    sync_past(vid)
+    vis_text = v.get('visualise', '')
+    if vis_text:
+        sid_vis = nid()
+        add_sp(sld, sp(sid_vis, 'VisTxt', TX, y + 0.06, TW, BH - 0.10,
+                       vis_text,
+                       font='Twinkl Cursive Looped Light', sz=13,
+                       bold=False, color='5B2580', align='l', fill=None, no_line=True, anchor='ctr'))
+        anim_groups.append([vid, sid_vis])
+    else:
+        anim_groups.append([vid])
+    y += BH + 0.06
+
+    # ── Click 2: Analyse banner + content ─────────────────────────────────────
+    _, aid = add_pic_id(sld, 'banner_analyse.png', BX, y, BW, BH)
+    sync_past(aid)
     i_know  = v.get('i_know', '')
     finding = v.get('finding', '')
-    add_sp(sld, sp(nid(), 'AnaTxt', TX, y + 0.04, TW, BH - 0.08,
+    sid_ana = nid()
+    add_sp(sld, sp(sid_ana, 'AnaTxt', TX, y + 0.04, TW, BH - 0.08,
                    [f'I know:  {i_know}', f"I'm finding:  {finding}"],
                    font='Twinkl Cursive Looped Light', sz=13,
                    bold=False, color='1F4E79', align='l', fill=None, no_line=True, anchor='ctr'))
+    anim_groups.append([aid, sid_ana])
     y += BH + 0.06
 
-    # Attack banner + reasoning
-    add_pic(sld, 'banner_attack.png', BX, y, BW, BH)
-    add_sp(sld, sp(nid(), 'AtkTxt', TX, y + 0.04, TW, BH - 0.08,
+    # ── Click 3: Attack banner + reasoning ────────────────────────────────────
+    _, tkid = add_pic_id(sld, 'banner_attack.png', BX, y, BW, BH)
+    sync_past(tkid)
+    sid_atk = nid()
+    add_sp(sld, sp(sid_atk, 'AtkTxt', TX, y + 0.04, TW, BH - 0.08,
                    v.get('attack', ''),
                    font='Twinkl Cursive Looped Light', sz=14, bold=True,
                    color='7B3000', align='l', fill=None, no_line=True, anchor='ctr'))
+    anim_groups.append([tkid, sid_atk])
     y += BH + 0.12
 
-    # Step 2
-    add_sp(sld, sp(nid(), 'Step2Lbl', px+0.25, y, 1.50, 0.30,
+    # ── Click 4: Step 2 + calculation ─────────────────────────────────────────
+    sid_lbl = nid()
+    add_sp(sld, sp(sid_lbl, 'Step2Lbl', px+0.25, y, 1.50, 0.30,
                    'Step 2:', font='Twinkl Cursive Looped Light', sz=15,
                    bold=True, color='1F4E79', align='l', fill=None, no_line=True))
 
     calc_method = v.get('calc_method', 'mental')
-    answer = v.get('answer', '')
+    answer      = v.get('answer', '')
 
     if calc_method == 'mental':
-        add_sp(sld, sp(nid(), 'CalcText', px+0.25, y+0.30, pw-0.50, 0.65,
+        sid_calc = nid()
+        add_sp(sld, sp(sid_calc, 'CalcText', px+0.25, y+0.30, pw-0.50, 0.65,
                        v.get('calculation', ''),
                        font='Twinkl Cursive Looped Light', sz=28,
                        bold=True, color='1A5C2A', align='l', fill=None, no_line=True))
-        add_sp(sld, sp(nid(), 'Answer', px+0.12, y+1.00, pw-0.24, 0.40,
+        anim_groups.append([sid_lbl, sid_calc])
+
+        # ── Click 5: Answer ───────────────────────────────────────────────────
+        sid_ans = nid()
+        add_sp(sld, sp(sid_ans, 'Answer', px+0.12, y+1.00, pw-0.24, 0.40,
                        f'Answer:  {answer}',
                        font='Twinkl Cursive Looped Light', sz=16,
                        bold=True, color='1A5C2A', align='l',
                        fill='E2EFDA', border=('538135', 1.5), anchor='ctr'))
+        anim_groups.append([sid_ans])
+
     else:
+        # Grid-based calculation: click 4 reveals Step 2 label + grid animation
+        # Grid animation returns its own anim_groups; merge them
         grid_x = px + 1.85; grid_y = y + 0.32
-        anim_groups = draw_squared_paper(sld, calc_method, v, grid_x, grid_y)
-        add_sp(sld, sp(nid(), 'Answer', px+0.12, py+4.85, pw-0.24, 0.40,
+        grid_anim_groups = draw_squared_paper(sld, calc_method, v, grid_x, grid_y)
+        # Step 2 label with grid first click
+        if grid_anim_groups:
+            grid_anim_groups[0] = [sid_lbl] + grid_anim_groups[0]
+        else:
+            anim_groups.append([sid_lbl])
+        anim_groups.extend(grid_anim_groups)
+
+        # Answer (final click)
+        sid_ans = nid()
+        add_sp(sld, sp(sid_ans, 'Answer', px+0.12, py+4.85, pw-0.24, 0.40,
                        f'Answer:  {answer}',
                        font='Twinkl Cursive Looped Light', sz=16,
                        bold=True, color='1A5C2A', align='l',
                        fill='E2EFDA', border=('538135', 1.5), anchor='ctr'))
-        _apply_animation(sld, anim_groups)
+        anim_groups.append([sid_ans])
 
+    _apply_animation(sld, anim_groups)
     sld.notes_slide.notes_text_frame.text = v.get('notes', '')
-
-
 
 # ===========================================================================
 # BAR MODEL SLIDE — L11 I Do
@@ -2202,7 +2263,7 @@ def draw_bar_model_slide(sld, visual_key):
                    bold=False, color='1F4E79', align='l',
                    fill=None, no_line=True))
 
-    # Calculations
+    # Calculations — each step animates in separately, Answer on final click
     calc_y = py + 3.70
     anim_groups = []
 
@@ -2217,9 +2278,10 @@ def draw_bar_model_slide(sld, visual_key):
                            font='Twinkl Cursive Looped Light', sz=20,
                            bold=True, color='1A5C2A', align='l',
                            fill=None, no_line=True))
+            anim_groups.append([SID[0]])   # capture ID just assigned
         else:
-            # Show calc label then squared paper inline
-            add_sp(sld, sp(nid(), f'CalcLbl{step_i}', px + 0.25,
+            sid_lbl = nid()
+            add_sp(sld, sp(sid_lbl, f'CalcLbl{step_i}', px + 0.25,
                            calc_y + step_i * 0.70,
                            1.80, 0.50,
                            f'Step {step_i+1}:',
@@ -2228,24 +2290,27 @@ def draw_bar_model_slide(sld, visual_key):
                            fill=None, no_line=True))
             gx = px + 2.10
             gy = calc_y + step_i * 0.70 - 0.25
-            # Remap step keys for squared paper (uses 'top'/'bottom')
             sp_data = dict(step)
             if 'a' in sp_data and 'top' not in sp_data:
                 sp_data['top'] = sp_data['a']
                 sp_data['bottom'] = sp_data['b']
             ag = draw_squared_paper(sld, cm, sp_data, gx, gy)
+            if ag:
+                ag[0] = [sid_lbl] + ag[0]   # label reveals with first grid click
+            else:
+                anim_groups.append([sid_lbl])
             anim_groups.extend(ag)
 
-    # Answer
+    # Answer — always animated (hidden on load, revealed on final click)
     add_sp(sld, sp(nid(), 'Answer', px + 0.25, py + 5.05,
                    pw - 0.50, 0.50,
                    f'Answer:  {answer}',
                    font='Twinkl Cursive Looped Light', sz=20,
                    bold=True, color='1A5C2A', align='l',
                    fill='E2EFDA', border=('538135', 1.5), anchor='ctr'))
+    anim_groups.append([SID[0]])   # Answer always in anim_groups
 
-    if anim_groups:
-        _apply_animation(sld, anim_groups)
+    _apply_animation(sld, anim_groups)   # always called — never conditional
 
     sld.notes_slide.notes_text_frame.text = v.get('notes', '')
 
