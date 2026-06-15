@@ -16,6 +16,28 @@ description: >
 
 # Maths Complete Planning and Resources — v3 Pipeline
 
+## ⚠ MANDATORY VISUAL QA — before delivering any zip
+
+After building all teaching PPTXs, render the calculation slides to PNG and inspect them:
+
+```bash
+cd /home/claude
+mkdir -p qa_renders
+for pptx in T6W*_Teaching.pptx; do
+    libreoffice --headless --convert-to png "$pptx" --outdir qa_renders/ 2>/dev/null
+done
+```
+
+Then view each rendered PNG and check:
+- Short division: blank col 0, divisor col 1, bracket at col 2, digits visible, superscripts red, quotient green
+- Column addition/subtraction: double lines, carry digits red, answer green
+- VAA banners: visualise/analyse/attack images rendered (not broken placeholders)
+- No shapes extending outside slide boundary
+- Problem text visible (not animated away)
+
+Only deliver the zip if all checks pass. Fix and rebuild if anything looks wrong.
+Do NOT rely solely on the pre-flight text check — it does not catch visual layout errors.
+
 ## ⚠ SESSION START CHECKLIST — DO THIS BEFORE ANYTHING ELSE
 
 1. Run Step 1 (environment restore) — all files are in the skill folder assets/ and root
