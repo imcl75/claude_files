@@ -2161,20 +2161,40 @@ def draw_identify_calculate_slide(sld, visual_key):
         anim_groups.append([sid_ans])
 
     else:
-        # Grid-based calculation: click 4 reveals Step 2 label + grid animation
-        # Grid animation returns its own anim_groups; merge them
-        grid_x = px + 1.85; grid_y = y + 0.32
+        # Grid-based calculation: Step 2 + grid + Answer go in the RIGHT area of the slide,
+        # completely independent of the VAA banner vertical position.
+        # This prevents the grid from overflowing the left panel when 3 banners are present.
+        SLIDE_W_FULL = 13.33
+        GRID_AREA_X  = px + pw + 0.40          # start of right area (~7.80")
+        GRID_AREA_W  = SLIDE_W_FULL - GRID_AREA_X - 0.25  # available width
+
+        # Step 2 label — click 4 (with grid's first click)
+        grid_y = py + 0.70                      # top of grid in right area
+        grid_x = GRID_AREA_X + 0.10
+
         grid_anim_groups = draw_squared_paper(sld, calc_method, v, grid_x, grid_y)
-        # Step 2 label with grid first click
+
+        # Prepend Step 2 label into first grid click group
         if grid_anim_groups:
             grid_anim_groups[0] = [sid_lbl] + grid_anim_groups[0]
         else:
             anim_groups.append([sid_lbl])
         anim_groups.extend(grid_anim_groups)
 
-        # Answer (final click)
+        # Estimate grid height to position Answer below it
+        ROWS_BY_METHOD = {
+            'short_division':       3,
+            'column_addition':      5,
+            'column_subtraction':   5,
+            'column_multiplication':6,
+        }
+        est_rows   = ROWS_BY_METHOD.get(calc_method, 4)
+        grid_bot   = grid_y + CELL * est_rows
+        ans_y      = grid_bot + 0.18
+
+        # Answer (final click) — in right area below grid
         sid_ans = nid()
-        add_sp(sld, sp(sid_ans, 'Answer', px+0.12, py+4.85, pw-0.24, 0.40,
+        add_sp(sld, sp(sid_ans, 'Answer', GRID_AREA_X, ans_y, GRID_AREA_W, 0.42,
                        f'Answer:  {answer}',
                        font='Twinkl Cursive Looped Light', sz=16,
                        bold=True, color='1A5C2A', align='l',
