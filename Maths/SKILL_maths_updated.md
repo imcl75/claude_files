@@ -42,7 +42,7 @@ Do NOT rely solely on the pre-flight text check — it does not catch visual lay
 
 1. Run Step 1 (environment restore) — all files are in the skill folder assets/ and root
 2. Verify short division grid: blank spacer col 0, divisor col 1, dividend cols 2+, bus-stop at col 2. This was broken and fixed T6W3. Do NOT regress it.
-3. Zip output must be named `T6W3 - Maths Resources.zip` (space-hyphen-space format)
+3. Zip output must be named `{TxWy} - Maths Resources.zip` (space-hyphen-space format, e.g. `T6W3 - Maths Resources.zip`)
 4. End of session: copy scripts back to skill folder AND push to GitHub. Both. Every time.
 5. Never claim a layout matches the reference unless you have verified it visually against Innes's screenshot. "Copied exactly" is not acceptable without proof.
 
@@ -100,7 +100,163 @@ Decision shorthand:
 
 ---
 
-## PHASE 1 — Term Planning
+## Maths timetable
+
+Mon / Tue / Wed / Fri — **no Thursday lessons**. Never build a Thursday teaching PPTX unless Innes explicitly says so.
+
+---
+
+## STM gate — MUST CHECK before building any lesson
+
+Before building, confirm BOTH `c1_ido2` AND `c2_ido2` are present in `lesson_data.py` for every lesson in the week. If either is missing:
+1. Stop
+2. Author a contextual Spot the Mistake for that lesson
+3. Present it to Innes for approval
+4. Then proceed
+
+STM rules:
+- Title always: "Spot the mistake" (never reveals the answer)
+- Caption = prompting question only, never the answer
+- Full explanation in speaker notes only
+- Wrong attempt always uses `polygon_b_color: 'RED'`
+
+---
+
+## Language rules — maths content only
+
+- **NEVER use "carry", "carrying", "carried"** in any pupil-facing maths content (slides, LPs, labels, arithmetic papers, rapid maths, working memory). Use "regroup/regrouping". Fine in prose, reading extracts, non-maths contexts.
+- **Fractions**: always use `n/d` notation in data strings (e.g. `'1/4'`). The builder renders these as vinculum PNGs automatically. Never write `½` or similar unicode.
+- **2D shapes**: use "side" not "edge". Use "split digraph" not "magic-e".
+
+---
+
+## Visualise → Analyse → Attack (VAA) framework
+
+This is the primary framework for all word problem and operation-identification slides. Signal words alone are NOT sufficient — the same word can indicate different operations depending on problem structure.
+
+**Three steps:**
+1. **Visualise** — picture the situation (purple banner)
+2. **Analyse** — identify what you know and what you're finding (blue banner)
+3. **Attack** — decide the operation from the structure, not the words (orange banner)
+
+Banner images are in `assets/`: `banner_visualise.png`, `banner_analyse.png`, `banner_attack.png`.
+These are JPEG files despite the .png extension — do not convert them.
+
+---
+
+## Teaching slide types — word problem lessons
+
+Four slide types used in T6W3+. Replace any legacy `column_calc` usage with these:
+
+### `word_problem`
+Pure VAA — no calculation shown. Used for I Do 1 in cycle 1.
+```python
+{
+    'slide_type': 'word_problem',
+    'title': '...',
+    'problem': 'Multi-line\nproblem text',
+    'i_know': '...',
+    'finding': '...',
+    'attack': '...',
+    'notes': '...',
+}
+```
+
+### `identify_calculate`
+VAA + written or mental calculation. Used when pupils calculate after identifying operation.
+```python
+{
+    'slide_type': 'identify_calculate',
+    'title': '...',
+    'problem': '...',
+    'i_know': '...',
+    'finding': '...',
+    'attack': '...',
+    'calc_method': 'mental | short_division | column_addition | column_subtraction | compact_column',
+    'top': '84',       # dividend / top number
+    'bottom': '6',     # divisor / bottom number (or 'calculation' for mental)
+    'calculation': '6 × 4 = 24',  # for mental only
+    'answer': '14 stickers each',
+    'notes': '...',
+}
+```
+
+### `bar_model`
+Two-step problems. Each step has its own calc_method and calculation.
+```python
+{
+    'slide_type': 'bar_model',
+    'title': '...',
+    'problem': '...',
+    'step1': {
+        'label': '5 × 8',
+        'op': '×',
+        'a': '5', 'b': '8', 'result': '40',
+        'calc_method': 'mental',
+        'calculation': '5 × 8 = 40',
+    },
+    'step2': {
+        'label': '40 − 4',
+        'op': '−',
+        'a': '40', 'b': '4', 'result': '36',
+        'calc_method': 'mental',
+        'calculation': '40 − 4 = 36',
+    },
+    'answer': '36 good crayons',
+    'notes': '...',
+}
+```
+
+### `stm_word_problem`
+Spot the Mistake for word problems. Always used for c2_ido2.
+```python
+{
+    'slide_type': 'stm_word_problem',
+    'title': 'Spot the mistake',
+    'problem': '...',
+    'wrong_working': '5 + 8 = 13 toys',
+    'error': 'Visualise: ...\nAnalyse: ...\nAttack: ...',
+    'notes': '...',
+}
+```
+
+---
+
+## Calculation grid — short division layout (FIXED T6W3, do not regress)
+
+```
+Col 0: blank spacer
+Col 1: divisor
+Col 2+: dividend digits (bus-stop bracket starts at col 2)
+Col n_div+2: 'r'  (only if remainder)
+Col n_div+3: remainder digit (only if remainder)
+```
+
+- `n_cols = n_div + 2 + (2 if has_rem else 0)`
+- `vline` at `cell_x(2)`, `hline` from `cell_x(2)` width `n_div * CELL`
+- Quotient digits at cols 2..n_div+1 (green)
+- Remainder superscripts at `cell_x(3 + pos)` (red, small)
+- Divisor at col 1 (black)
+
+---
+
+## Animation rules — teaching slides
+
+- ALL word problem / identify_calculate / bar_model slides MUST have full VAA animations
+- `_apply_animation` called UNCONDITIONALLY — never skipped
+- Answer shape always in anim_groups (last click)
+- For grid-based calculations: Step2Lbl + ALL grid digits appear as ONE animation group (single click)
+- Nothing hides progressively within the calculation grid
+
+---
+
+## Trios / independent / sort cards rule
+
+- Physical sort activity → build separate sort cards PDF resource
+- Screen discussion → author problems into trios slide text
+- LP transition → independent slide matches LP content; LP preview slide follows
+
+---
 
 ### What you need from Innes
 - Topic/objectives for the block
@@ -477,20 +633,7 @@ N: {
 
 ### slide_type data structures
 
-**`slide_type: 'column_calc'`** (arithmetic teaching)
-```python
-{
-    'slide_type': 'column_calc',
-    'calc': '6 × 4 =',            # calculation displayed left
-    'context_lines': [             # context box right
-        'There are 6 bags.',
-        'Each bag holds 4 oranges.',
-        'Signal word: "each" → equal groups → ×',
-    ],
-    'caption': '...',
-    'notes': '...',
-}
-```
+See **Teaching slide types** section above for `word_problem`, `identify_calculate`, `bar_model`, `stm_word_problem`.
 
 **`slide_type: 'grid_translate'`** (coordinate/translation)
 ```python
@@ -636,20 +779,22 @@ All in `/mnt/skills/user/maths-complete-planning-and-resources/`:
 |------|------|
 | `build_lesson_v3.py` | Teaching PPTX builder |
 | `lesson_data.py` | Visual/WM/RM/vocab data |
-| `build_lp_v3.js` | LP builder — `injectLabel()` for Type A, no LL for Type B; writes `labels_data.json` |
+| `build_lp_v3.js` | LP builder |
 | `lesson_data.js` | LP question data |
 | `inject_lp_previews.py` | Injects LP previews into teaching slides |
 | `generate_labels.py` | Produces sticker DOCX for Type B lessons |
-| `maths_plan_v3.json` | Term plan JSON (includes `labelTopic` per lesson) |
+| `rapid_maths_generator.py` | Rapid maths builder |
+| `working_memory_starters.py` | Working memory builder |
+| `maths_plan_v3.json` | Term plan JSON |
 | `WFA_Labels_template.docx` | Reference sticker template (do not modify) |
 | `assets/template_v3.pptx` | WFA slide template |
 | `assets/key-question-new.pptx` | Key question cloud image source |
 | `assets/LR_slide.pptx` | Learning review character/icon image source |
-| `assets/mathematician_icon.png` | Icon for LP labels |
-| `Working_Memory_Template.pptx` | WM starter template |
-| `rapid_maths_TEMPLATE.pptx` | Rapid maths template |
-| `rapid_maths_generator.py` | Rapid maths builder |
-| `working_memory_starters.py` | Working memory builder |
+| `assets/banner_visualise.png` | VAA Visualise banner (JPEG despite .png extension) |
+| `assets/banner_analyse.png` | VAA Analyse banner (JPEG despite .png extension) |
+| `assets/banner_attack.png` | VAA Attack banner (JPEG despite .png extension) |
+| `assets/rapid_maths_TEMPLATE.pptx` | Rapid maths template |
+| `assets/Working_Memory_Template.pptx` | Working memory template |
 
 ---
 
