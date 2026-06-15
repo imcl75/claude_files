@@ -1861,8 +1861,9 @@ def draw_squared_paper(sld, calc_type, v, grid_x, grid_y):
 
         n_div  = len(dividend)
         has_rem = bool(final_rem)
-        # Cols: 0=divisor, 1..n_div=dividend, n_div+1='r', n_div+2=remainder
-        n_cols = n_div + 1 + (2 if has_rem else 0)
+        # Cols: 0=blank spacer, 1=divisor, 2..n_div+1=dividend,
+        #       n_div+2='r', n_div+3=remainder  (matches reference exactly)
+        n_cols = n_div + 2 + (2 if has_rem else 0)
         n_rows = 4   # quotient, dividend, 2 blank rows (matches reference)
 
         # Background cells — always visible
@@ -1871,34 +1872,36 @@ def draw_squared_paper(sld, calc_type, v, grid_x, grid_y):
                 bg_cell(c, r)
 
         # Bus-stop structure — always visible
-        vline(cell_x(1), cell_y(1), CELL)               # vertical left of col 1
-        hline(cell_x(1), cell_y(1), n_div * CELL)       # horizontal above dividend
+        # Vertical at left of col 2 (start of dividend); horizontal above cols 2..n_div+1
+        vline(cell_x(2), cell_y(1), CELL)
+        hline(cell_x(2), cell_y(1), n_div * CELL)
 
-        # Row 1: divisor + dividend (animated — single group)
-        digit_cell(0, 1, divisor, color='1F1F1F')
+        # Row 1: divisor at col 1, dividend at cols 2..n_div+1
+        digit_cell(1, 1, divisor, color='1F1F1F')
         for i, d in enumerate(dividend):
-            digit_cell(1 + i, 1, d, color='1F1F1F')
+            digit_cell(2 + i, 1, d, color='1F1F1F')
 
-        # Remainder superscripts (small red, top-left of next cell)
+        # Remainder superscripts (small red, top-left of the following dividend cell)
+        # r_map[pos] = remainder after dividend[pos] → shown at start of dividend[pos+1]
         for pos, r_d in r_map.items():
             small_digit(
-                cell_x(2 + pos) + CELL * 0.04,
+                cell_x(3 + pos) + CELL * 0.04,
                 cell_y(1) - CELL * 0.05,
                 r_d, color='C00000', sz=CARRY_SZ
             )
 
-        # Row 0: quotient digits (animated, green)
+        # Row 0: quotient digits at cols 2..n_div+1 (green)
         leading = True
         for i, q in enumerate(q_str):
             if q == '0' and leading and len(q_str) > 1:
                 continue
             leading = False
-            digit_cell(1 + i, 0, q, color='1A5C2A', bold=True)
+            digit_cell(2 + i, 0, q, color='1A5C2A', bold=True)
 
-        # Remainder
+        # Remainder: 'r' at col n_div+2, digit at col n_div+3
         if has_rem:
-            digit_cell(n_div + 1, 0, 'r', color='1F1F1F', bold=False)
-            digit_cell(n_div + 2, 0, str(final_rem), color='1A5C2A', bold=True)
+            digit_cell(n_div + 2, 0, 'r', color='1F1F1F', bold=False)
+            digit_cell(n_div + 3, 0, str(final_rem), color='1A5C2A', bold=True)
 
     # =========================================================================
     # COLUMN ADDITION
