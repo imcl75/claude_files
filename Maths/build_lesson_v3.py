@@ -2172,7 +2172,28 @@ def draw_identify_calculate_slide(sld, visual_key):
         grid_y = py + 0.70                      # top of grid in right area
         grid_x = GRID_AREA_X + 0.10
 
+        # Use a larger cell size to fill the available right-area space properly.
+        # The standard CELL (0.597") looks cramped in a 5"-wide column; scale up.
+        ROWS_BY_METHOD = {
+            'short_division':       3,
+            'column_addition':      5,
+            'column_subtraction':   5,
+            'column_multiplication':6,
+        }
+        est_rows = ROWS_BY_METHOD.get(calc_method, 4)
+        # Temporarily swap global constants so draw_squared_paper uses bigger cells
+        global CELL, DIGIT_SZ, CARRY_SZ
+        _c, _d, _cs = CELL, DIGIT_SZ, CARRY_SZ
+        # Scale cell to fill roughly 60% of available height, capped sensibly
+        avail_h   = (py + ph) - grid_y - 0.80   # leave room for Answer
+        CELL_BIG  = min(1.20, max(_c, avail_h / est_rows * 0.70))
+        DSIZ_BIG  = min(52, max(_d, int(CELL_BIG / _c * _d)))
+        CSIZ_BIG  = min(22, max(_cs, int(CELL_BIG / _c * _cs)))
+        CELL = CELL_BIG; DIGIT_SZ = DSIZ_BIG; CARRY_SZ = CSIZ_BIG
+
         grid_anim_groups = draw_squared_paper(sld, calc_method, v, grid_x, grid_y)
+
+        CELL = _c; DIGIT_SZ = _d; CARRY_SZ = _cs   # restore
 
         # Prepend Step 2 label into first grid click group
         if grid_anim_groups:
@@ -2181,16 +2202,8 @@ def draw_identify_calculate_slide(sld, visual_key):
             anim_groups.append([sid_lbl])
         anim_groups.extend(grid_anim_groups)
 
-        # Estimate grid height to position Answer below it
-        ROWS_BY_METHOD = {
-            'short_division':       3,
-            'column_addition':      5,
-            'column_subtraction':   5,
-            'column_multiplication':6,
-        }
-        est_rows   = ROWS_BY_METHOD.get(calc_method, 4)
-        grid_bot   = grid_y + CELL * est_rows
-        ans_y      = grid_bot + 0.18
+        grid_bot = grid_y + CELL_BIG * est_rows
+        ans_y    = grid_bot + 0.18
 
         # Answer (final click) — in right area below grid
         sid_ans = nid()
