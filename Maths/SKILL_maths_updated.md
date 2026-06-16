@@ -16,6 +16,17 @@ description: >
 
 # Maths Complete Planning and Resources — v3 Pipeline
 
+## ⚠ READ THIS FIRST — BEFORE ANY ACTION
+
+1. Read the transfer file in full before doing anything else.
+2. Ask Innes any questions you have about what is needed.
+3. Do not start building until you have a clear understanding of what is required.
+4. Run Step 1 (environment restore).
+5. Build ONE example teaching slide, render it to PNG and show it to Innes in the chat.
+6. Wait for explicit approval before building any other slides.
+
+Skipping step 5 or 6 is what caused days of wasted time in T6W3. Do not skip them.
+
 ## ⚠ MANDATORY VISUAL QA — before delivering any zip
 
 After building all teaching PPTXs, render the calculation slides to PNG and inspect them:
@@ -232,7 +243,7 @@ Col n_div+2: 'r'  (only if remainder)
 Col n_div+3: remainder digit (only if remainder)
 ```
 
-- `n_cols = n_div + 2 + (2 if has_rem else 0)`
+- `n_cols = n_div + 2 + (2 if has_rem else 1)`  ← always one blank col on the right
 - `vline` at `cell_x(2)`, `hline` from `cell_x(2)` width `n_div * CELL`
 - Quotient digits at cols 2..n_div+1 (green)
 - Remainder superscripts at `cell_x(3 + pos)` (red, small)
