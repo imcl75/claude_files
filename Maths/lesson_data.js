@@ -246,6 +246,7 @@ module.exports[10] = {
   lp1: {
     title: 'Multiply and Divide',
     type: 'arithmetic',
+    compact: true,
     instruction: 'Name the operation, then calculate.',
     questions: [
       {
@@ -266,6 +267,7 @@ module.exports[10] = {
   lp2: {
     title: 'Mixed Operations',
     type: 'arithmetic',
+    compact: true,
     instruction: 'For each problem: name the operation, then solve.',
     questions: [
       {
@@ -376,6 +378,7 @@ module.exports[12] = {
   lp1: {
     title: 'Money Problems',
     type: 'arithmetic',
+    compact: true,
     instruction: 'Identify the operation, show your working, include the unit (p or £).',
     questions: [
       {
@@ -396,6 +399,7 @@ module.exports[12] = {
   lp2: {
     title: 'Measurement Problems',
     type: 'arithmetic',
+    compact: true,
     instruction: 'Identify the operation, show working, include the unit.',
     questions: [
       {

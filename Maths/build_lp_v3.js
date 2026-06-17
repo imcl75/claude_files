@@ -328,12 +328,10 @@ function buildLP1(slide, isMarkingStation) {
 function buildLP2(slide, isMarkingStation) {
   if (LP2_DATA.type === 'arithmetic') {
     if (LP2_DATA.compact) {
-      // Compact layout: pupils record in books — use same _buildLP1Compact logic
-      // Temporarily swap LP1_DATA to LP2_DATA so _buildLP1Compact reads the right data
-      const saved = LP1_DATA;
-      LP1_DATA = LP2_DATA;
-      _buildLP1Compact(slide, isMarkingStation);
-      LP1_DATA = saved;
+      // Compact layout — pass LP2_DATA via a temporary local reference trick
+      const _saved = LP1_DATA;
+      // Can't reassign const, so call a wrapper that accepts data directly
+      _buildCompactWithData(slide, isMarkingStation, LP2_DATA);
       return;
     }
     return buildLP2Arithmetic(slide, isMarkingStation);
@@ -2001,96 +1999,77 @@ function estimateRightColH(text, labelH, fontSizePt) {
 // Used when pupils record in books — no working space, pack as tight as possible.
 // repsPerPage is calculated dynamically: measure content height, fit as many as possible.
 // Exact measurements from Innes's reference (EXAMPLE_LPs.pptx slide 2).
-function _buildLP1Compact(slide, isMarkingStation) {
-  const Q_X     = 0.23;    // left column x
-  const Q_W     = 4.363;   // left column width
-  const GF_X    = 4.894;   // going further box x
-  const GF_W    = 2.337;   // going further box width
-  const GF_H    = 0.81;    // going further box height (fixed)
+function _buildCompactWithData(slide, isMarkingStation, data) {
+  const Q_X     = 0.23;
+  const Q_W     = 4.363;
+  const RC_X    = 4.894;
+  const RC_W    = 2.337;
+  const RC_H    = 0.81;
   const TITLE_H = 0.28;
-  const INSTR_H = (!isMarkingStation && LP1_DATA.instruction) ? 0.18 : 0;
-  const INSTR_GAP = 0.14;  // gap between instruction bottom and Q1
-  const Q_GAP   = 0.12;    // gap between questions
-  const Q_END   = 0.10;    // pad after last question before cut
-  const CUT_GAP = 0.20;    // space around cut line (split either side)
-  const FS      = 10;      // question font size (pt)
+  const CUT_GAP = 0.20;
+  const FS      = 10;
 
-  const questions = LP1_DATA.questions;
-  const nQ = questions.length;
-  const hasGF = !isMarkingStation && !!LP1_DATA.goingFurther;
+  const questions = data.questions;
+  const nQ       = questions.length;
+  const hasGF    = !isMarkingStation && !!(data.goingFurther || '').trim();
+  const isLP2Mode     = !hasGF;
+  const INSTR_IN_STRIP = !isLP2Mode && !isMarkingStation && !!data.instruction;
+  const INSTR_H   = INSTR_IN_STRIP ? 0.18 : 0;
+  const INSTR_GAP = INSTR_IN_STRIP ? 0.14 : 0.10;
+  const Q_GAP     = isLP2Mode ? 0.02 : 0.10;
+  const Q_END     = 0.08;
 
-  // Estimate text height for a question string at FS pt in Q_W column
   function estimateQH(text) {
     const charsPerLine = Math.round(Q_W * 72 / (FS * 0.58));
-    const fullText = `Q?)   ${text}`;
+    const fullText = 'Q?)   ' + text;
     const lines = Math.max(1, Math.ceil(fullText.length / charsPerLine));
     return lines * (FS / 72 * 1.25) + 0.04;
   }
 
-  // Build array of question heights
-  const qHeights = questions.map(q => estimateQH(q.q));
-
-  // Rep content height (left column)
-  const hdrH = TITLE_H + (INSTR_H > 0 ? INSTR_H + 0.04 : 0) + INSTR_GAP;
-  const qTotalH = qHeights.reduce((s, h, i) => s + h + (i < nQ-1 ? Q_GAP : Q_END), 0);
-  const leftH = hdrH + qTotalH;
-
-  // Right column height
-  const rightH = hasGF ? GF_H + 0.10 : 0;
-
-  // Rep height: taller of left/right content, plus cut gap
-  const repH = Math.max(leftH, rightH) + CUT_GAP;
-
-  // How many fit?
-  const PAGE_TOP = MARGIN;
-  const PAGE_BOT = SLIDE_H - MARGIN;
-  const usable = PAGE_BOT - PAGE_TOP;
+  const qHeights    = questions.map(function(q) { return estimateQH(q.q); });
+  const hdrH        = TITLE_H + (INSTR_H > 0 ? INSTR_H + 0.04 : 0) + INSTR_GAP;
+  const qTotalH     = qHeights.reduce(function(s, h, i) { return s + h + (i < nQ-1 ? Q_GAP : Q_END); }, 0);
+  const leftH       = hdrH + qTotalH;
+  const rightH      = RC_H + 0.10;
+  const repH        = Math.max(leftH, rightH) + CUT_GAP;
+  const PAGE_TOP    = MARGIN;
+  const PAGE_BOT    = SLIDE_H - MARGIN;
+  const usable      = PAGE_BOT - PAGE_TOP;
   const repsPerPage = Math.max(1, Math.floor(usable / repH));
 
-  // Crop metadata for teaching slide preview
   const repFrac = (PAGE_TOP + repH - CUT_GAP / 2) / SLIDE_H;
-  slide.addNotes(`INJECT_REPS:${repsPerPage}\nINJECT_REP_FRAC:${repFrac.toFixed(4)}`);
+  slide.addNotes('INJECT_REPS:' + repsPerPage + '\nINJECT_REP_FRAC:' + repFrac.toFixed(4));
 
   for (let rep = 0; rep < repsPerPage; rep++) {
     const repTop     = PAGE_TOP + rep * repH;
     const contentTop = repTop + CUT_GAP / 2;
 
-    // Cut line (not before first rep)
-    if (rep > 0) {
-      _cutStrip(slide, Q_X, repTop, SLIDE_W - 2 * Q_X);
-    }
+    if (rep > 0) _cutStrip(slide, Q_X, repTop, SLIDE_W - 2 * Q_X);
 
     let y = contentTop;
 
-    // Title
     slide.addText(
-      isMarkingStation
-        ? `Marking Station \u2014 ${LP1_DATA.title || 'Problems'}`
-        : (LP1_DATA.title || 'Problems'),
-      { x: Q_X, y, w: Q_W, h: TITLE_H,
-        fontSize: 13, fontFace: FONT_M, bold: true,
+      isMarkingStation ? ('Marking Station \u2014 ' + (data.title || 'Problems')) : (data.title || 'Problems'),
+      { x: Q_X, y: y, w: Q_W, h: TITLE_H, fontSize: 13, fontFace: FONT_M, bold: true,
         color: isMarkingStation ? GREEN : BLACK, margin: 0 }
     );
     y += TITLE_H;
 
-    // Instruction
-    if (INSTR_H > 0) {
-      slide.addText(LP1_DATA.instruction, {
-        x: Q_X, y, w: Q_W, h: INSTR_H,
+    if (INSTR_IN_STRIP) {
+      slide.addText(data.instruction, {
+        x: Q_X, y: y, w: Q_W, h: INSTR_H,
         fontSize: 9, fontFace: FONT_C, color: '555555', margin: 0
       });
       y += INSTR_H + 0.04;
     }
     y += INSTR_GAP;
 
-    // Questions — packed tightly, no working space
     for (let qi = 0; qi < nQ; qi++) {
-      const q = questions[qi];
+      const q  = questions[qi];
       const qH = qHeights[qi];
 
-      slide.addText(`Q${qi + 1})   ${q.q}`, {
-        x: Q_X, y, w: Q_W, h: qH,
-        fontSize: FS, fontFace: FONT_C,
+      slide.addText('Q' + (qi + 1) + ')   ' + q.q, {
+        x: Q_X, y: y, w: Q_W, h: qH, fontSize: FS, fontFace: FONT_C,
         color: isMarkingStation ? BLACK : '1F4E79',
         valign: 'top', margin: 0, wrap: true
       });
@@ -2107,17 +2086,28 @@ function _buildLP1Compact(slide, isMarkingStation) {
       }
     }
 
-    // Going further — right column, fixed height
-    if (hasGF) {
-      slide.addText('Going further: ' + LP1_DATA.goingFurther, {
-        x: GF_X, y: contentTop + 0.05, w: GF_W, h: GF_H,
-        fontSize: 8, fontFace: FONT_C, color: BLACK,
-        fill: { color: 'F2E6F9' },
-        line: { color: '7030A0', width: 0.75 },
-        margin: 4, valign: 'top'
-      });
+    if (!isMarkingStation) {
+      if (hasGF) {
+        slide.addText('Going further: ' + data.goingFurther, {
+          x: RC_X, y: contentTop + 0.05, w: RC_W, h: RC_H,
+          fontSize: 8, fontFace: FONT_C, color: BLACK,
+          fill: { color: 'F2E6F9' }, line: { color: '7030A0', width: 0.75 },
+          margin: 4, valign: 'top'
+        });
+      } else if (data.instruction) {
+        slide.addText(data.instruction, {
+          x: RC_X, y: contentTop + 0.05, w: RC_W, h: RC_H,
+          fontSize: 8, fontFace: FONT_C, color: '555555',
+          fill: { color: 'FFFFFF' }, line: { color: 'AAAAAA', width: 0.75 },
+          margin: 4, valign: 'top'
+        });
+      }
     }
   }
+}
+
+function _buildLP1Compact(slide, isMarkingStation) {
+  _buildCompactWithData(slide, isMarkingStation, LP1_DATA);
 }
 
 function _buildLP1WordProblems(slide, isMarkingStation) {
