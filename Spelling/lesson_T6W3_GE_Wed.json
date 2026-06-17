@@ -1,0 +1,454 @@
+{
+  "code": "GE",
+  "rule": "Keeping e before -ous",
+  "stage": "T6W3",
+  "objective": "To understand when to keep or drop the e when adding -ous",
+  "lpDay": "Wed",
+  "lpSideBType": "vn_dm_sc",
+  "words": [
+    "courageous",
+    "outrageous",
+    "gorgeous",
+    "advantageous",
+    "adventurous",
+    "marvellous",
+    "famous",
+    "nervous",
+    "enormous",
+    "joyous"
+  ],
+  "clozeOrder": [
+    "outrageous",
+    "gorgeous",
+    "adventurous",
+    "famous",
+    "courageous",
+    "enormous",
+    "nervous",
+    "advantageous",
+    "joyous",
+    "marvellous"
+  ],
+  "defs": [
+    "very brave; willing to face danger",
+    "shocking and completely unacceptable",
+    "very beautiful and attractive",
+    "giving a useful benefit or advantage",
+    "willing to take risks and try new things",
+    "causing great wonder or admiration",
+    "known by very many people",
+    "worried or anxious",
+    "extremely large",
+    "very happy; full of joy"
+  ],
+  "sentences": {
+    "courageous": "The ____________________ firefighter ran into the burning building without a moment's hesitation.",
+    "outrageous": "It was ____________________ that someone had eaten the whole birthday cake before the party had even started.",
+    "gorgeous": "The view from the hilltop was ____________________, with golden fields stretching as far as the eye could see.",
+    "advantageous": "Arriving early was ____________________ because they chose the best seats before the doors opened.",
+    "adventurous": "The ____________________ explorer had already visited more than forty countries by the age of thirty.",
+    "marvellous": "The magician performed a ____________________ trick that left the entire audience completely speechless.",
+    "famous": "The ____________________ artist had painted in a small studio overlooking the sea for most of her life.",
+    "nervous": "The ____________________ pupil took a deep breath before walking out onto the stage.",
+    "enormous": "An ____________________ hot air balloon drifted slowly over the rooftops on a bright Saturday morning.",
+    "joyous": "The ____________________ celebration filled the streets with music, colour and dancing late into the evening."
+  },
+  "syllableCounts": {
+    "courageous": 3,
+    "outrageous": 3,
+    "gorgeous": 2,
+    "advantageous": 4,
+    "adventurous": 4,
+    "marvellous": 3,
+    "famous": 2,
+    "nervous": 2,
+    "enormous": 3,
+    "joyous": 2
+  },
+  "phonemes": {
+    "courageous": [
+      {
+        "t": "dot",
+        "l": "c"
+      },
+      {
+        "t": "line",
+        "l": "our"
+      },
+      {
+        "t": "dot",
+        "l": "a"
+      },
+      {
+        "t": "dot",
+        "l": "g"
+      },
+      {
+        "t": "dot",
+        "l": "e"
+      },
+      {
+        "t": "line",
+        "l": "ous"
+      }
+    ],
+    "outrageous": [
+      {
+        "t": "line",
+        "l": "ou"
+      },
+      {
+        "t": "dot",
+        "l": "t"
+      },
+      {
+        "t": "dot",
+        "l": "r"
+      },
+      {
+        "t": "dot",
+        "l": "a"
+      },
+      {
+        "t": "dot",
+        "l": "g"
+      },
+      {
+        "t": "dot",
+        "l": "e"
+      },
+      {
+        "t": "line",
+        "l": "ous"
+      }
+    ],
+    "gorgeous": [
+      {
+        "t": "dot",
+        "l": "g"
+      },
+      {
+        "t": "line",
+        "l": "or"
+      },
+      {
+        "t": "dot",
+        "l": "g"
+      },
+      {
+        "t": "dot",
+        "l": "e"
+      },
+      {
+        "t": "line",
+        "l": "ous"
+      }
+    ],
+    "adventurous": [
+      {
+        "t": "dot",
+        "l": "a"
+      },
+      {
+        "t": "dot",
+        "l": "d"
+      },
+      {
+        "t": "dot",
+        "l": "v"
+      },
+      {
+        "t": "dot",
+        "l": "e"
+      },
+      {
+        "t": "dot",
+        "l": "n"
+      },
+      {
+        "t": "dot",
+        "l": "t"
+      },
+      {
+        "t": "line",
+        "l": "ur"
+      },
+      {
+        "t": "line",
+        "l": "ous"
+      }
+    ],
+    "marvellous": [
+      {
+        "t": "dot",
+        "l": "m"
+      },
+      {
+        "t": "line",
+        "l": "ar"
+      },
+      {
+        "t": "dot",
+        "l": "v"
+      },
+      {
+        "t": "dot",
+        "l": "e"
+      },
+      {
+        "t": "line",
+        "l": "ll"
+      },
+      {
+        "t": "line",
+        "l": "ous"
+      }
+    ],
+    "famous": [
+      {
+        "t": "dot",
+        "l": "f"
+      },
+      {
+        "t": "dot",
+        "l": "a"
+      },
+      {
+        "t": "dot",
+        "l": "m"
+      },
+      {
+        "t": "line",
+        "l": "ous"
+      }
+    ]
+  },
+  "wordMaps": {
+    "words": [
+      "courageous",
+      "outrageous",
+      "gorgeous",
+      "adventurous",
+      "marvellous",
+      "famous"
+    ],
+    "syllables": {
+      "courageous": "cou|ra|geous",
+      "outrageous": "out|ra|geous",
+      "gorgeous": "gor|geous",
+      "adventurous": "ad|ven|tur|ous",
+      "marvellous": "mar|vel|lous",
+      "famous": "fa|mous"
+    }
+  },
+  "starter": {
+    "question": "Add -ous to each word. Do you keep or drop the e?",
+    "words": [
+      "courage",
+      "outrage",
+      "gorge",
+      "advantage",
+      "fame",
+      "nerve"
+    ],
+    "answers": [
+      "courageous",
+      "outrageous",
+      "gorgeous",
+      "advantageous",
+      "famous",
+      "nervous"
+    ],
+    "answerLabel": "Add -ous:",
+    "ruleBox": "After g or ge, keep the e to preserve the soft /j/ sound: courage → courageous. After most other endings, drop the e: fame → famous.",
+    "perPairNote": ""
+  },
+  "thisWeeksWordsQ": "What do you notice about today's words?",
+  "thisWeeksWordsPrompt": "Some words keep the e when -ous is added. Can you spot which ones and why?",
+  "thisWeeksWordsExplanation": "After g or ge, the e is kept to preserve the soft /j/ sound: courage → courageous. In other words the e is dropped: fame → famous, nerve → nervous. The word sort today will help you see this pattern clearly.",
+  "etymology": {
+    "word": "courageous",
+    "baseForm": "corage + -ous",
+    "clicks": [
+      {
+        "label": "Language",
+        "body": "Old French, from Latin cor (heart)"
+      },
+      {
+        "label": "Base word",
+        "body": "corage — heart or spirit"
+      },
+      {
+        "label": "Original meaning",
+        "body": "having heart; brave in the face of danger"
+      },
+      {
+        "label": "Then",
+        "body": "Entered English in the 1300s as courage; courageous formed by adding -ous."
+      },
+      {
+        "label": "Now",
+        "body": "We use courageous to mean very brave or willing to face difficulty."
+      },
+      {
+        "label": "In today's words",
+        "body": "The e stays in courageous because the g must stay soft: corage + ous = courageous."
+      }
+    ]
+  },
+  "wordSortQ": "Can you sort these words into two groups?",
+  "wordSort": {
+    "box1label": "E kept before -ous",
+    "box1sub": "The e stays to keep the soft /j/ sound",
+    "box2label": "E dropped before -ous",
+    "box2sub": "The e is removed when -ous is added",
+    "hint": "Look at the letter before -ous. Is there a g or ge? If so, the e stays.",
+    "answerNote": "E kept: courageous, outrageous, gorgeous, advantageous. E dropped: adventurous, marvellous, famous, nervous, enormous, joyous.",
+    "verbOnly": [
+      "courageous",
+      "outrageous",
+      "gorgeous",
+      "advantageous"
+    ],
+    "verbNoun": [
+      {
+        "word": "adventurous",
+        "eg": "adventure → ous"
+      },
+      {
+        "word": "marvellous",
+        "eg": "marvel + -ous"
+      },
+      {
+        "word": "famous",
+        "eg": "fame → famous"
+      },
+      {
+        "word": "nervous",
+        "eg": "nerve → nervous"
+      },
+      {
+        "word": "enormous",
+        "eg": "Latin: enormis"
+      },
+      {
+        "word": "joyous",
+        "eg": "joy + -ous"
+      }
+    ],
+    "exampleLine": "courage + ous = courageous (e kept) | fame + ous = famous (e dropped)"
+  },
+  "spellData": [
+    {
+      "opts": [
+        "couragious",
+        "courageous",
+        "courgeous"
+      ],
+      "correct": 1
+    },
+    {
+      "opts": [
+        "gorgeous",
+        "gorgeus",
+        "gorjous"
+      ],
+      "correct": 0
+    },
+    {
+      "opts": [
+        "adventurous",
+        "adventureous",
+        "adventrous"
+      ],
+      "correct": 0
+    },
+    {
+      "opts": [
+        "marvelous",
+        "marvellous",
+        "marvellus"
+      ],
+      "correct": 1
+    },
+    {
+      "opts": [
+        "outragious",
+        "outrageious",
+        "outrageous"
+      ],
+      "correct": 2
+    }
+  ],
+  "wordShed": {
+    "baseWord": "marvellous",
+    "def": "causing great wonder or admiration; extraordinary",
+    "sentence": "The marvellous acrobat spun three times in the air before landing perfectly on her feet.",
+    "rhymes": "fabulous, glamorous, perilous",
+    "morphology": "marvel (n/v) → marvellous (adj) → marvellously (adv) → marvelled (past v)"
+  },
+  "morphMatrix": {
+    "baseWord": "courage",
+    "def": "the ability to do something difficult despite being afraid",
+    "suffixes": [
+      "-ous",
+      "-ously",
+      "en-",
+      "dis-",
+      "en- + -ment",
+      "dis- + -ment"
+    ],
+    "answers": [
+      "courageous",
+      "courageously",
+      "encourage",
+      "discourage",
+      "encouragement",
+      "discouragement"
+    ]
+  },
+  "lpVerbNounName": "Find the Base",
+  "lpVerbNounInstr": "Remove -ous. Write the base word it came from.",
+  "lpVerbNoun": [
+    [
+      "courageous",
+      "courage"
+    ],
+    [
+      "outrageous",
+      "outrage"
+    ],
+    [
+      "gorgeous",
+      "gorge"
+    ],
+    [
+      "adventurous",
+      "adventure"
+    ],
+    [
+      "famous",
+      "fame"
+    ],
+    [
+      "nervous",
+      "nerve"
+    ]
+  ],
+  "lpDefMatchName": "Match the Meaning",
+  "lpDefMatchInstr": "Write the word that matches each meaning.",
+  "lpDefinitions": [
+    "having great bravery",
+    "very beautiful or pleasing",
+    "shocking or completely unacceptable",
+    "causing great wonder; extraordinary",
+    "very happy; full of joy"
+  ],
+  "lpDefMatchAnswers": [
+    "courageous",
+    "gorgeous",
+    "outrageous",
+    "marvellous",
+    "joyous"
+  ]
+}
