@@ -306,13 +306,14 @@ module.exports[10] = {
 
 module.exports[11] = {
   iCan: [
-    'I can use a bar model to plan a two-step problem.',
+    'I can plan the steps needed to solve a two-step problem.',
     'I can work through steps in the correct order.',
   ],
   lp1: {
     title: 'Two-Step Problems',
     type: 'arithmetic',
-    instruction: 'Draw a bar model. Label the operation for each step. Then solve.',
+    compact: true,
+    instruction: 'Show your working. Label the operation for each step.',
     questions: [
       {
         q: 'There are 5 bags of crayons. Each bag has 8 crayons. 4 crayons break. How many good crayons are there?',
@@ -328,7 +329,8 @@ module.exports[11] = {
   lp2: {
     title: 'Plan Your Steps',
     type: 'arithmetic',
-    instruction: 'Show your bar model. Label each step. Then solve.',
+    compact: true,
+    instruction: 'Show your working. Label the operation for each step.',
     questions: [
       {
         q: 'A footballer scores 6 goals in each of 4 matches. He scores 3 more in a fifth match. How many goals in total?',

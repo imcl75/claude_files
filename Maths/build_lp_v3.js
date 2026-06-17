@@ -1988,7 +1988,134 @@ function estimateRightColH(text, labelH, fontSizePt) {
   return (labelH || 0) + lines * lineH + 0.16;  // + internal padding
 }
 
+// ── COMPACT WORD PROBLEM LP ───────────────────────────────────────────────────
+// Used when pupils record in books — no working space, pack as tight as possible.
+// repsPerPage is calculated dynamically: measure content height, fit as many as possible.
+// Exact measurements from Innes's reference (EXAMPLE_LPs.pptx slide 2).
+function _buildLP1Compact(slide, isMarkingStation) {
+  const Q_X     = 0.23;    // left column x
+  const Q_W     = 4.363;   // left column width
+  const GF_X    = 4.894;   // going further box x
+  const GF_W    = 2.337;   // going further box width
+  const GF_H    = 0.81;    // going further box height (fixed)
+  const TITLE_H = 0.28;
+  const INSTR_H = (!isMarkingStation && LP1_DATA.instruction) ? 0.18 : 0;
+  const INSTR_GAP = 0.14;  // gap between instruction bottom and Q1
+  const Q_GAP   = 0.12;    // gap between questions
+  const Q_END   = 0.10;    // pad after last question before cut
+  const CUT_GAP = 0.20;    // space around cut line (split either side)
+  const FS      = 10;      // question font size (pt)
+
+  const questions = LP1_DATA.questions;
+  const nQ = questions.length;
+  const hasGF = !isMarkingStation && !!LP1_DATA.goingFurther;
+
+  // Estimate text height for a question string at FS pt in Q_W column
+  function estimateQH(text) {
+    const charsPerLine = Math.round(Q_W * 72 / (FS * 0.58));
+    const fullText = `Q?)   ${text}`;
+    const lines = Math.max(1, Math.ceil(fullText.length / charsPerLine));
+    return lines * (FS / 72 * 1.25) + 0.04;
+  }
+
+  // Build array of question heights
+  const qHeights = questions.map(q => estimateQH(q.q));
+
+  // Rep content height (left column)
+  const hdrH = TITLE_H + (INSTR_H > 0 ? INSTR_H + 0.04 : 0) + INSTR_GAP;
+  const qTotalH = qHeights.reduce((s, h, i) => s + h + (i < nQ-1 ? Q_GAP : Q_END), 0);
+  const leftH = hdrH + qTotalH;
+
+  // Right column height
+  const rightH = hasGF ? GF_H + 0.10 : 0;
+
+  // Rep height: taller of left/right content, plus cut gap
+  const repH = Math.max(leftH, rightH) + CUT_GAP;
+
+  // How many fit?
+  const PAGE_TOP = MARGIN;
+  const PAGE_BOT = SLIDE_H - MARGIN;
+  const usable = PAGE_BOT - PAGE_TOP;
+  const repsPerPage = Math.max(1, Math.floor(usable / repH));
+
+  // Crop metadata for teaching slide preview
+  const repFrac = (PAGE_TOP + repH - CUT_GAP / 2) / SLIDE_H;
+  slide.addNotes(`INJECT_REPS:${repsPerPage}\nINJECT_REP_FRAC:${repFrac.toFixed(4)}`);
+
+  for (let rep = 0; rep < repsPerPage; rep++) {
+    const repTop     = PAGE_TOP + rep * repH;
+    const contentTop = repTop + CUT_GAP / 2;
+
+    // Cut line (not before first rep)
+    if (rep > 0) {
+      _cutStrip(slide, Q_X, repTop, SLIDE_W - 2 * Q_X);
+    }
+
+    let y = contentTop;
+
+    // Title
+    slide.addText(
+      isMarkingStation
+        ? `Marking Station \u2014 ${LP1_DATA.title || 'Problems'}`
+        : (LP1_DATA.title || 'Problems'),
+      { x: Q_X, y, w: Q_W, h: TITLE_H,
+        fontSize: 13, fontFace: FONT_M, bold: true,
+        color: isMarkingStation ? GREEN : BLACK, margin: 0 }
+    );
+    y += TITLE_H;
+
+    // Instruction
+    if (INSTR_H > 0) {
+      slide.addText(LP1_DATA.instruction, {
+        x: Q_X, y, w: Q_W, h: INSTR_H,
+        fontSize: 9, fontFace: FONT_C, color: '555555', margin: 0
+      });
+      y += INSTR_H + 0.04;
+    }
+    y += INSTR_GAP;
+
+    // Questions — packed tightly, no working space
+    for (let qi = 0; qi < nQ; qi++) {
+      const q = questions[qi];
+      const qH = qHeights[qi];
+
+      slide.addText(`Q${qi + 1})   ${q.q}`, {
+        x: Q_X, y, w: Q_W, h: qH,
+        fontSize: FS, fontFace: FONT_C,
+        color: isMarkingStation ? BLACK : '1F4E79',
+        valign: 'top', margin: 0, wrap: true
+      });
+
+      if (isMarkingStation && q.answer) {
+        slide.addText(q.answer, {
+          x: Q_X, y: y + qH + 0.02, w: Q_W, h: 0.18,
+          fontSize: 9, fontFace: FONT_C, bold: true, color: GREEN,
+          valign: 'top', margin: 0, wrap: true
+        });
+        y += qH + 0.22 + (qi < nQ - 1 ? Q_GAP : Q_END);
+      } else {
+        y += qH + (qi < nQ - 1 ? Q_GAP : Q_END);
+      }
+    }
+
+    // Going further — right column, fixed height
+    if (hasGF) {
+      slide.addText('Going further: ' + LP1_DATA.goingFurther, {
+        x: GF_X, y: contentTop + 0.05, w: GF_W, h: GF_H,
+        fontSize: 8, fontFace: FONT_C, color: BLACK,
+        fill: { color: 'F2E6F9' },
+        line: { color: '7030A0', width: 0.75 },
+        margin: 4, valign: 'top'
+      });
+    }
+  }
+}
+
 function _buildLP1WordProblems(slide, isMarkingStation) {
+  if (LP1_DATA.compact) {
+    _buildLP1Compact(slide, isMarkingStation);
+    return;
+  }
   const PAGE_TOP = MARGIN;
   const PAGE_BOT = SLIDE_H - MARGIN;
   const isTypeA  = !!LP1_DATA.typeA;

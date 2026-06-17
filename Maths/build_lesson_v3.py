@@ -144,7 +144,7 @@ def add_sp(slide, xml_str):
 def sp(spid, name, x, y, w, h, text, font='Twinkl Cursive Looped Light',
        sz=18, bold=False, color='000000', align='l',
        fill=None, border=None, geom='rect', anchor='ctr',
-       no_line=False, underline=False):
+       no_line=False, underline=False, autofit=False):
     fill_xml = f'<a:solidFill><a:srgbClr val="{fill}"/></a:solidFill>' if fill else '<a:noFill/>'
     if no_line:
         line_xml = '<a:ln w="0"><a:noFill/></a:ln>'
@@ -174,7 +174,7 @@ def sp(spid, name, x, y, w, h, text, font='Twinkl Cursive Looped Light',
     <a:prstGeom prst="{geom}"><a:avLst/></a:prstGeom>
     {fill_xml}{line_xml}
   </p:spPr>
-  <p:txBody><a:bodyPr rtlCol="0" anchor="{anchor}"/>
+  <p:txBody><a:bodyPr rtlCol="0" anchor="{anchor}">{"<a:normAutofit/>" if autofit else ""}</a:bodyPr>
     <a:lstStyle/>{paras}</p:txBody>
 </p:sp>'''
 
@@ -2136,12 +2136,7 @@ def _vaa_txt(nid, text_lines, x, y, w, h, color='1F1F1F', sz=16, bold=False):
     )
 
 def draw_blank_problem_slide(sld, visual_key, is_two_step=False):
-    """
-    Standard blank problem-solving slide.
-    Left panel: problem + VAA banners (Visualise / Analyse / Attack) with blank labels.
-    Right: 11×10 blank squared paper for teacher to model working.
-    No calculations, no bar models — teacher does all working live.
-    """
+    """Blank problem slide: problem + VAA banners (animated) + blank squared paper."""
     v       = VISUALS[visual_key]
     problem = v.get('problem', '')
     px, py, pw, ph = 0.40, 1.45, 5.392, 5.80
@@ -2150,8 +2145,11 @@ def draw_blank_problem_slide(sld, visual_key, is_two_step=False):
     def nid():
         SID[0] += 1
         return SID[0]
+    def sync_past(pic_id):
+        if pic_id >= SID[0]:
+            SID[0] = pic_id
 
-    # ── White left panel ──────────────────────────────────────────────────────
+    # White left panel
     add_sp(sld, (
         f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
         f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
@@ -2164,44 +2162,40 @@ def draw_blank_problem_slide(sld, visual_key, is_two_step=False):
         f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
     ))
 
-    # ── Problem text (always visible) ─────────────────────────────────────────
-    add_sp(sld, sp(nid(), 'Problem', 0.65, 1.60, 4.70, 1.10,
+    # Problem text — height fills space up to Visualise banner with 0.10" gap
+    prob_h = BNR_Y_VIS - 1.60 - 0.10
+    add_sp(sld, sp(nid(), 'Problem', 0.65, 1.60, pw - 0.30, prob_h,
                    problem.split('\n'),
                    font='Twinkl Cursive Looped Light', sz=22,
-                   bold=False, color='1F1F1F', align='l', fill=None, no_line=True, anchor='t'))
+                   bold=False, color='1F1F1F', align='l', fill=None, no_line=True,
+                   anchor='t', autofit=True))
 
-    # ── Blank squared paper grid (always visible) ─────────────────────────────
-    _draw_blank_squared_paper(sld, nid())
-
-    # ── VAA banners — animated click by click ─────────────────────────────────
+    # VAA banners — animated, with sync_past to keep nid() ahead of pic IDs
     anim_groups = []
 
-    # Click 1: Visualise
     _, vis_id = add_pic_id(sld, 'banner_visualise.png', BNR_X, BNR_Y_VIS, BNR_W, BNR_H)
+    sync_past(vis_id)
     anim_groups.append([vis_id])
 
-    # Click 2: Analyse + labels
     _, ana_id = add_pic_id(sld, 'banner_analyse.png', BNR_X, BNR_Y_ANA, BNR_W, BNR_H)
+    sync_past(ana_id)
     ana_txt_id = nid()
-    add_sp(sld, _vaa_txt(ana_txt_id,
-                         ['I know:  ', '', "I'm finding:  "],
-                         TXT_X, BNR_Y_ANA + 0.01, TXT_W, TXT_H,
-                         color='1F4E79', sz=15))
+    add_sp(sld, _vaa_txt(ana_txt_id, ['I know:  ', '', "I'm finding:  "],
+                         TXT_X, BNR_Y_ANA + 0.01, TXT_W, TXT_H, color='1F4E79', sz=15))
     anim_groups.append([ana_id, ana_txt_id])
 
-    # Click 3: Attack + labels
     _, atk_id = add_pic_id(sld, 'banner_attack.png', BNR_X, BNR_Y_ATK, BNR_W, BNR_H)
+    sync_past(atk_id)
     atk_txt_id = nid()
-    if is_two_step:
-        atk_lines = ["First I'm going to  ", '', 'Then I will  ']
-    else:
-        atk_lines = ["I'm going to  "]
+    atk_lines = ["First I'm going to  ", '', 'Then I will  '] if is_two_step else ["I'm going to  "]
     add_sp(sld, _vaa_txt(atk_txt_id, atk_lines,
-                         TXT_X, BNR_Y_ATK + 0.01, TXT_W, TXT_H,
-                         color='843C0C', sz=15, bold=True))
+                         TXT_X, BNR_Y_ATK + 0.01, TXT_W, TXT_H, color='843C0C', sz=15, bold=True))
     anim_groups.append([atk_id, atk_txt_id])
 
     _apply_animation(sld, anim_groups)
+
+    # Grid last — so its raw-XML IDs never clash with animated shape IDs
+    _draw_blank_squared_paper(sld, nid())
 
 
 
