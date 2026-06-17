@@ -1,0 +1,447 @@
+{
+  "code": "OU",
+  "rule": "The -ous suffix",
+  "stage": "T6W3",
+  "objective": "To spell adjectives with the -ous suffix",
+  "lpDay": "Mon",
+  "lpSideBType": "vn_dm_sc",
+  "words": [
+    "poisonous",
+    "dangerous",
+    "enormous",
+    "jealous",
+    "mountainous",
+    "glamorous",
+    "humorous",
+    "vigorous",
+    "thunderous",
+    "treacherous"
+  ],
+  "clozeOrder": [
+    "dangerous",
+    "mountainous",
+    "glamorous",
+    "enormous",
+    "poisonous",
+    "treacherous",
+    "thunderous",
+    "jealous",
+    "vigorous",
+    "humorous"
+  ],
+  "defs": [
+    "causing harm or death if swallowed or touched",
+    "likely to cause harm or injury",
+    "extremely large",
+    "unhappy because someone else has what you want",
+    "covered in mountains; very large or hilly",
+    "attractive and exciting in a showy way",
+    "funny; likely to make people laugh",
+    "strong and full of energy",
+    "very loud, like thunder",
+    "not to be trusted; secretly dangerous"
+  ],
+  "sentences": {
+    "poisonous": "The brightly coloured frog was ____________________ and the rangers warned visitors not to touch it.",
+    "dangerous": "It is ____________________ to cross the road without looking both ways first.",
+    "enormous": "An ____________________ wave crashed against the rocks and sent water spraying into the air.",
+    "jealous": "She felt ____________________ when her classmate won the art prize she had hoped to win herself.",
+    "mountainous": "The ____________________ region was so cold that the highest peaks stayed covered in snow all year.",
+    "glamorous": "The ____________________ hotel had a marble entrance and golden chandeliers in every room.",
+    "humorous": "The teacher read a ____________________ poem that made the whole class giggle and groan.",
+    "vigorous": "The pupils took part in ____________________ exercise on the field, sprinting between the cones.",
+    "thunderous": "The crowd gave the winning team a ____________________ cheer as they lifted the trophy.",
+    "treacherous": "The mountain path was ____________________ after the rain, so the hikers moved with great care."
+  },
+  "syllableCounts": {
+    "poisonous": 3,
+    "dangerous": 3,
+    "enormous": 3,
+    "jealous": 2,
+    "mountainous": 3,
+    "glamorous": 3,
+    "humorous": 3,
+    "vigorous": 3,
+    "thunderous": 3,
+    "treacherous": 3
+  },
+  "phonemes": {
+    "poisonous": [
+      {
+        "t": "dot",
+        "l": "p"
+      },
+      {
+        "t": "line",
+        "l": "oi"
+      },
+      {
+        "t": "dot",
+        "l": "s"
+      },
+      {
+        "t": "dot",
+        "l": "o"
+      },
+      {
+        "t": "dot",
+        "l": "n"
+      },
+      {
+        "t": "line",
+        "l": "ous"
+      }
+    ],
+    "dangerous": [
+      {
+        "t": "dot",
+        "l": "d"
+      },
+      {
+        "t": "dot",
+        "l": "a"
+      },
+      {
+        "t": "dot",
+        "l": "n"
+      },
+      {
+        "t": "dot",
+        "l": "g"
+      },
+      {
+        "t": "line",
+        "l": "er"
+      },
+      {
+        "t": "line",
+        "l": "ous"
+      }
+    ],
+    "enormous": [
+      {
+        "t": "dot",
+        "l": "e"
+      },
+      {
+        "t": "dot",
+        "l": "n"
+      },
+      {
+        "t": "line",
+        "l": "or"
+      },
+      {
+        "t": "dot",
+        "l": "m"
+      },
+      {
+        "t": "line",
+        "l": "ous"
+      }
+    ],
+    "mountainous": [
+      {
+        "t": "dot",
+        "l": "m"
+      },
+      {
+        "t": "line",
+        "l": "ou"
+      },
+      {
+        "t": "dot",
+        "l": "n"
+      },
+      {
+        "t": "dot",
+        "l": "t"
+      },
+      {
+        "t": "line",
+        "l": "ai"
+      },
+      {
+        "t": "dot",
+        "l": "n"
+      },
+      {
+        "t": "line",
+        "l": "ous"
+      }
+    ],
+    "humorous": [
+      {
+        "t": "dot",
+        "l": "h"
+      },
+      {
+        "t": "dot",
+        "l": "u"
+      },
+      {
+        "t": "dot",
+        "l": "m"
+      },
+      {
+        "t": "line",
+        "l": "or"
+      },
+      {
+        "t": "line",
+        "l": "ous"
+      }
+    ],
+    "thunderous": [
+      {
+        "t": "line",
+        "l": "th"
+      },
+      {
+        "t": "dot",
+        "l": "u"
+      },
+      {
+        "t": "dot",
+        "l": "n"
+      },
+      {
+        "t": "dot",
+        "l": "d"
+      },
+      {
+        "t": "line",
+        "l": "er"
+      },
+      {
+        "t": "line",
+        "l": "ous"
+      }
+    ]
+  },
+  "wordMaps": {
+    "words": [
+      "poisonous",
+      "dangerous",
+      "enormous",
+      "mountainous",
+      "humorous",
+      "thunderous"
+    ],
+    "syllables": {
+      "poisonous": "poi|son|ous",
+      "dangerous": "dan|ger|ous",
+      "enormous": "e|nor|mous",
+      "mountainous": "moun|tain|ous",
+      "humorous": "hu|mor|ous",
+      "thunderous": "thun|der|ous"
+    }
+  },
+  "starter": {
+    "question": "Can you make these nouns into adjectives using -ous?",
+    "words": [
+      "danger",
+      "humour",
+      "vigour",
+      "glamour",
+      "thunder",
+      "mountain"
+    ],
+    "answers": [
+      "dangerous",
+      "humorous",
+      "vigorous",
+      "glamorous",
+      "thunderous",
+      "mountainous"
+    ],
+    "answerLabel": "Add -ous:",
+    "ruleBox": "Add -ous to a noun to make an adjective. Some bases change: humour → humorous, vigour → vigorous (u dropped).",
+    "perPairNote": ""
+  },
+  "thisWeeksWordsQ": "What do you notice about today's words?",
+  "thisWeeksWordsPrompt": "Look at the ending of each word. What do they all share?",
+  "thisWeeksWordsExplanation": "All today's words end in -ous. This suffix turns a noun or root into an adjective meaning 'full of' or 'having that quality'. Some base words change slightly: humour → humorous, vigour → vigorous — the u is dropped.",
+  "etymology": {
+    "word": "enormous",
+    "baseForm": "ē- + norma",
+    "clicks": [
+      {
+        "label": "Language",
+        "body": "Latin"
+      },
+      {
+        "label": "Base word",
+        "body": "enormis — out of the rule"
+      },
+      {
+        "label": "Original meaning",
+        "body": "out of the ordinary; irregular in size"
+      },
+      {
+        "label": "Then",
+        "body": "Came into English via Old French enormé in the 1500s."
+      },
+      {
+        "label": "Now",
+        "body": "We use enormous to mean extremely large or massive."
+      },
+      {
+        "label": "In today's words",
+        "body": "The Latin base enormis is hidden inside — the -ous suffix was added to the root in French before entering English."
+      }
+    ]
+  },
+  "wordSortQ": "Can you sort these words into two groups?",
+  "wordSort": {
+    "box1label": "Base word easy to see",
+    "box1sub": "You can spot a clear English noun inside",
+    "box2label": "Base word hidden or changed",
+    "box2sub": "The root changes spelling or has no English base",
+    "hint": "Try removing -ous. Is what is left a real English word?",
+    "answerNote": "Easy to see: dangerous, mountainous, thunderous, poisonous, humorous. Hidden or changed: vigorous, glamorous, treacherous, jealous, enormous.",
+    "verbOnly": [
+      "dangerous",
+      "mountainous",
+      "thunderous",
+      "poisonous",
+      "humorous"
+    ],
+    "verbNoun": [
+      {
+        "word": "vigorous",
+        "eg": "vigour → vigorous"
+      },
+      {
+        "word": "glamorous",
+        "eg": "glamour → glamorous"
+      },
+      {
+        "word": "treacherous",
+        "eg": "treachery → treacherous"
+      },
+      {
+        "word": "jealous",
+        "eg": "French: jalous"
+      },
+      {
+        "word": "enormous",
+        "eg": "Latin: enormis"
+      }
+    ],
+    "exampleLine": "dangerous → danger (clear base) | enormous → enormis (Latin root — hidden)"
+  },
+  "spellData": [
+    {
+      "opts": [
+        "dangerous",
+        "dangerus",
+        "dangrous"
+      ],
+      "correct": 0
+    },
+    {
+      "opts": [
+        "jellous",
+        "jealous",
+        "jealious"
+      ],
+      "correct": 1
+    },
+    {
+      "opts": [
+        "humourous",
+        "humerous",
+        "humorous"
+      ],
+      "correct": 2
+    },
+    {
+      "opts": [
+        "thunderous",
+        "thundrous",
+        "thunderus"
+      ],
+      "correct": 0
+    },
+    {
+      "opts": [
+        "trecherous",
+        "treacherous",
+        "treachorous"
+      ],
+      "correct": 1
+    }
+  ],
+  "wordShed": {
+    "baseWord": "glamorous",
+    "def": "attractive and exciting in a showy, impressive way",
+    "sentence": "The film star looked glamorous in her sparkling gown at the awards ceremony.",
+    "rhymes": "humorous, thunderous, clamorous",
+    "morphology": "glamour (n) → glamorous (adj) → glamorously (adv) → unglamorous (adj)"
+  },
+  "morphMatrix": {
+    "baseWord": "danger",
+    "def": "something that may cause harm or injury",
+    "suffixes": [
+      "-ous",
+      "-ously",
+      "en-",
+      "en-…-ment",
+      "en-…-ed",
+      "un-…-ous"
+    ],
+    "answers": [
+      "dangerous",
+      "dangerously",
+      "endanger",
+      "endangerment",
+      "endangered",
+      "✗ (not a word)"
+    ]
+  },
+  "lpVerbNounName": "Find the Base",
+  "lpVerbNounInstr": "Remove -ous. Write the noun or root it came from.",
+  "lpVerbNoun": [
+    [
+      "dangerous",
+      "danger"
+    ],
+    [
+      "mountainous",
+      "mountain"
+    ],
+    [
+      "thunderous",
+      "thunder"
+    ],
+    [
+      "poisonous",
+      "poison"
+    ],
+    [
+      "humorous",
+      "humour"
+    ],
+    [
+      "vigorous",
+      "vigour"
+    ]
+  ],
+  "lpDefMatchName": "Match the Meaning",
+  "lpDefMatchInstr": "Write the word that matches each meaning.",
+  "lpDefinitions": [
+    "extremely large",
+    "unhappy because someone has what you want",
+    "very funny or amusing",
+    "secretly unsafe; not to be trusted",
+    "covered in mountains; very large"
+  ],
+  "lpDefMatchAnswers": [
+    "enormous",
+    "jealous",
+    "humorous",
+    "treacherous",
+    "mountainous"
+  ]
+}
