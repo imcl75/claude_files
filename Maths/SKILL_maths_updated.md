@@ -269,7 +269,37 @@ Col n_div+3: remainder digit (only if remainder)
 
 ---
 
-## PHASE 1 — Term Planning
+## Compact LP layout — word problem LPs where pupils record in books
+
+Set `compact: true` on any LP where pupils record in their books (no working space needed). All T6W3+ word problem LPs use this.
+
+**Rules:**
+- `repsPerPage` is calculated dynamically: measure content height, then `floor(usable / repH)`. Never assume a fixed number.
+- Marking station: always 1 rep only (`repsPerPage = 1` when `isMarkingStation`).
+
+**LP1 compact** (has `goingFurther`):
+- Instruction line appears in the strip (below title)
+- Small gap between questions (~0.10")
+- Going-further text in purple box on right column
+- Multiple reps per page
+
+**LP2 compact** (no `goingFurther`, or empty string):
+- NO instruction line in the strip
+- Zero gap between questions (~0.02")
+- Instruction text in plain grey-border box on right column
+- More reps per page than LP1 (more compact)
+
+**LP2 dispatch:** `buildLP2` passes `LP2_DATA` directly to `_buildCompactWithData(slide, isMarkingStation, LP2_DATA)` — never reassign `LP1_DATA` const.
+
+**Column positions (from Innes's reference EXAMPLE_LPs.pptx):**
+- Left column: x=0.23", w=4.363"
+- Right column: x=4.894", w=2.337", h=0.81" (fixed)
+- Title: h=0.28", bold, 13pt
+- Instruction (LP1 only): h=0.18", 9pt grey
+- Question font: 10pt
+- Cut gap: 0.20" total (split either side of cut line)
+
+---
 
 ### What you need from Innes
 - Topic/objectives for the block

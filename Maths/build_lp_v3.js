@@ -2035,7 +2035,7 @@ function _buildCompactWithData(slide, isMarkingStation, data) {
   const PAGE_TOP    = MARGIN;
   const PAGE_BOT    = SLIDE_H - MARGIN;
   const usable      = PAGE_BOT - PAGE_TOP;
-  const repsPerPage = Math.max(1, Math.floor(usable / repH));
+  const repsPerPage = isMarkingStation ? 1 : Math.max(1, Math.floor(usable / repH));
 
   const repFrac = (PAGE_TOP + repH - CUT_GAP / 2) / SLIDE_H;
   slide.addNotes('INJECT_REPS:' + repsPerPage + '\nINJECT_REP_FRAC:' + repFrac.toFixed(4));
