@@ -126,7 +126,7 @@ const LESSON_DATA_JS = {
   8: {
     iCan: [
       "I can solve two-step problems using both multiplication and division.",
-      "I can plan my steps using a bar model and justify my answer."
+      "I can plan and justify the steps needed to solve a two-step problem."
     ],
     lp1: {
       title: "Mixed × and ÷ Problems",
@@ -157,7 +157,7 @@ const LESSON_DATA_JS = {
       lp2Questions: [
         { q: "There are 360 books to share equally between 9 shelves. Then 8 more books arrive. How many books are on the first shelf now?", answer: "360 ÷ 9 = 40. 40 + 8 = 48 books (if all extra books go to one shelf)." },
       ],
-      hint1: "Planning two steps:\n1. Draw a bar model — what do you know?\n2. What do you need to find first?\n3. Write step 1 and calculate it.\n4. Use that answer in step 2.",
+      hint1: "Planning two steps:\n1. What do you know? Write it down.\n2. What do you need to find first?\n3. Write step 1 and calculate it.\n4. Use that answer in step 2.",
       hint2: "For × and ÷ together:\n'How many in each group?' → ÷\n'How many altogether?' → ×\n\nAlways check: does my answer make sense?"
     }
   }
@@ -363,7 +363,7 @@ module.exports[11] = {
         answer: 'Step 1: 3 × 7 = 21. Step 2: 21 − 5 = 16 grapes.',
       },
     ],
-    hint1: 'Bar model steps:\n1. Draw a rectangle for what you know.\n2. Label Step 1 and calculate it.\n3. Use that answer for Step 2.',
+    hint1: 'Planning two steps:\n1. What do you know? Write it down.\n2. Solve Step 1 first.\n3. Use that answer for Step 2.',
     hint2: 'Can you do Step 2 without knowing the answer to Step 1?\nIf not — that tells you the correct order.\nAlways check: does my final answer make sense?',
   },
 };

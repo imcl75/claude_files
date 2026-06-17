@@ -327,6 +327,15 @@ function buildLP1(slide, isMarkingStation) {
 
 function buildLP2(slide, isMarkingStation) {
   if (LP2_DATA.type === 'arithmetic') {
+    if (LP2_DATA.compact) {
+      // Compact layout: pupils record in books — use same _buildLP1Compact logic
+      // Temporarily swap LP1_DATA to LP2_DATA so _buildLP1Compact reads the right data
+      const saved = LP1_DATA;
+      LP1_DATA = LP2_DATA;
+      _buildLP1Compact(slide, isMarkingStation);
+      LP1_DATA = saved;
+      return;
+    }
     return buildLP2Arithmetic(slide, isMarkingStation);
   }
   if (LP2_DATA.type === 'polygon_translation') {
