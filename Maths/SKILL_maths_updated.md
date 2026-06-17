@@ -18,14 +18,13 @@ description: >
 
 ## ⚠ READ THIS FIRST — BEFORE ANY ACTION
 
-1. Read the transfer file in full before doing anything else.
-2. Ask Innes any questions you have about what is needed.
-3. Do not start building until you have a clear understanding of what is required.
-4. Run Step 1 (environment restore).
-5. Build ONE example teaching slide, render it to PNG and show it to Innes in the chat.
-6. Wait for explicit approval before building any other slides.
+1. **If a transfer file has been provided:** read it in full before doing anything else. Ask any questions. Do not start building until you are certain you understand what is needed.
+2. **If no transfer file:** ask Innes what week/lessons are needed, confirm the day dates, and ask if there are any changes from the previous build before touching any files.
+3. In either case: run Step 1 (environment restore) before building anything.
+4. Build ONE example slide, render it to PNG and show it to Innes in the chat. Wait for explicit approval before building anything else.
+5. Do not start building until you have a clear understanding of what is required.
 
-Skipping step 5 or 6 is what caused days of wasted time in T6W3. Do not skip them.
+Skipping step 4 is what caused days of wasted time in T6W3. Do not skip it.
 
 ## ⚠ MANDATORY VISUAL QA — before delivering any zip
 
