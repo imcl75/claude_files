@@ -27,7 +27,7 @@ INK      = HexColor('#1a3a5c')   # model note colour
 INTRO_CONTENT = {
     "Rhetorical question":    "Have you ever imagined stepping\ninto the city for the first time?",
     "Framing sentence":       "The city is full of dangers a\nhouse cat has never faced.",
-    "Encouragement sentence": "Fortunately, the Way of Jalal\nteaches skills to help any cat.",
+    "Encouragement sentence": "Fortunately, the Way of Jalal\nteaches skills to help any cat.\nRead on to discover how each\nskill can keep you safe.",
 }
 SKILL_DATA = [
     {
