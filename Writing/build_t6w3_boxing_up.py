@@ -40,15 +40,13 @@ c.setFillColor(DGREY); c.setFont('Helvetica', 9)
 c.drawString(MARGIN, name_y, "Name:")
 c.setStrokeColor(MGREY); c.setLineWidth(0.5)
 c.line(MARGIN + 1.5*cm, name_y - 0.05*cm, MARGIN + 8*cm, name_y - 0.05*cm)
-c.drawString(MARGIN + 9*cm, name_y, "Class:")
-c.line(MARGIN + 10.5*cm, name_y - 0.05*cm, PAGE_W - MARGIN, name_y - 0.05*cm)
+
 
 # ── Instruction ─────────────────────────────────────────────────────
 note_y = name_y - 0.55*cm
 c.setFont('Helvetica', 8.2); c.setFillColor(HexColor('#555555'))
 c.drawString(MARGIN, note_y,
-    "Choose three skills from the Seven Skills. "
-    "Complete a row for each one. Write notes, not full sentences.")
+    "Choose three skills from the Seven Skills.")
 
 # ── Table dimensions ────────────────────────────────────────────────
 tbl_top    = note_y - 0.35*cm
@@ -136,26 +134,58 @@ for (row_lbl, _), rh in zip(rows, row_hs):
     c.drawCentredString(0, -0.10*cm, row_lbl)
     c.restoreState()
 
-    # Introduction / Conclusion: merged cols 1-3 with prompts
+    # Introduction / Conclusion: merged cols 1-3, subdivided
     if is_merged:
         merged_x = col_xs[1]
         merged_w = tbl_w - col0_w
-        c.setFillColor(HexColor('#888888'))
-        c.setFont('Helvetica', 7.5)
-        if row_lbl == "Introduction":
-            c.drawString(merged_x + 0.20*cm, cy - 0.36*cm,
-                         "Rhetorical question:                                        Framing sentence:")
-        else:
-            c.drawString(merged_x + 0.20*cm, cy - 0.36*cm,
-                         "Link the skills together:                                   Final message to the reader:")
-        # Ruled lines
-        c.setStrokeColor(MGREY); c.setLineWidth(0.3)
         lg = 0.46 * cm
-        n  = int((rh - 0.55*cm) / lg)
-        for li in range(n):
-            ly = cy - 0.55*cm - li * lg
-            if ly > row_bottom + 0.05*cm:
-                c.line(merged_x + 0.20*cm, ly, merged_x + merged_w - 0.20*cm, ly)
+
+        if row_lbl == "Introduction":
+            # 3 equal sub-boxes: Rhet Q / Framing sent / Encouragement sent
+            sub_labels = [
+                "Rhetorical question",
+                "Framing sentence",
+                "Encouragement sentence",
+            ]
+            n_subs  = 3
+            sub_w   = merged_w / n_subs
+            for si, lbl in enumerate(sub_labels):
+                sx = merged_x + si * sub_w
+                # thin divider (not before first)
+                if si > 0:
+                    c.setStrokeColor(MGREY); c.setLineWidth(0.4)
+                    c.line(sx, row_bottom, sx, cy)
+                # label
+                c.setFillColor(HexColor('#888888')); c.setFont('Helvetica', 7.2)
+                c.drawString(sx + 0.18*cm, cy - 0.34*cm, lbl)
+                # ruled lines
+                c.setStrokeColor(MGREY); c.setLineWidth(0.3)
+                n = int((rh - 0.52*cm) / lg)
+                for li in range(n):
+                    ly = cy - 0.52*cm - li * lg
+                    if ly > row_bottom + 0.05*cm:
+                        c.line(sx + 0.18*cm, ly, sx + sub_w - 0.18*cm, ly)
+
+        else:  # Conclusion — 2 equal sub-boxes
+            sub_labels = [
+                "Link the skills together",
+                "Final message to the reader",
+            ]
+            n_subs = 2
+            sub_w  = merged_w / n_subs
+            for si, lbl in enumerate(sub_labels):
+                sx = merged_x + si * sub_w
+                if si > 0:
+                    c.setStrokeColor(MGREY); c.setLineWidth(0.4)
+                    c.line(sx, row_bottom, sx, cy)
+                c.setFillColor(HexColor('#888888')); c.setFont('Helvetica', 7.2)
+                c.drawString(sx + 0.18*cm, cy - 0.34*cm, lbl)
+                c.setStrokeColor(MGREY); c.setLineWidth(0.3)
+                n = int((rh - 0.52*cm) / lg)
+                for li in range(n):
+                    ly = cy - 0.52*cm - li * lg
+                    if ly > row_bottom + 0.05*cm:
+                        c.line(sx + 0.18*cm, ly, sx + sub_w - 0.18*cm, ly)
 
     # Skill rows
     else:
