@@ -221,8 +221,12 @@ for (row_lbl, _), rh in zip(rows, row_hs):
     # Grid lines
     c.setStrokeColor(MGREY); c.setLineWidth(0.5)
     c.line(tbl_x, cy, tbl_x + tbl_w, cy)
-    for ci in range(1, 4):
-        c.line(col_xs[ci], row_bottom, col_xs[ci], cy)
+    if is_merged:
+        # Only the blue-band border; sub-dividers drawn inside is_merged block
+        c.line(col_xs[1], row_bottom, col_xs[1], cy)
+    else:
+        for ci in range(1, 4):
+            c.line(col_xs[ci], row_bottom, col_xs[ci], cy)
 
     cy = row_bottom
 
