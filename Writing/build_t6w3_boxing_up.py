@@ -128,7 +128,7 @@ for (row_lbl, _, _, fill), rh in zip(rows, row_hs):
     if row_lbl in ("Introduction", "Conclusion"):
         merged_x = col_xs[1]
         merged_w = sum(col_ws[1:])
-        c.setFillColor(fill)
+        c.setFillColor(white)
         c.rect(merged_x, row_bottom, merged_w, rh, fill=1, stroke=0)
         c.setFillColor(HexColor('#888888'))
         c.setFont('Helvetica', 7.5)
