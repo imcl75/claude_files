@@ -113,7 +113,7 @@ for i in range(1, 4):
 cy -= header_h
 
 # ── Data rows ───────────────────────────────────────────────────────
-SKILL_NAME_H = 0.52 * cm   # height reserved for skill name prompt in col 1
+SKILL_NAME_H = 0.80 * cm   # height reserved for skill name prompt in col 1
 
 for (row_lbl, _), rh in zip(rows, row_hs):
     row_bottom = cy - rh
@@ -200,9 +200,9 @@ for (row_lbl, _), rh in zip(rows, row_hs):
                 # Skill name prompt at top of col 1
                 c.setFillColor(LGREY)
                 c.setFont('Helvetica', 7.2)
-                c.drawString(cx2 + 0.16*cm, cy - 0.30*cm, "Skill name:")
+                c.drawString(cx2 + 0.16*cm, cy - 0.56*cm, "Skill name:")
                 c.setStrokeColor(MGREY); c.setLineWidth(0.4)
-                c.line(cx2 + 1.6*cm, cy - 0.32*cm, cx2 + cw2 - 0.16*cm, cy - 0.32*cm)
+                c.line(cx2 + 1.6*cm, cy - 0.60*cm, cx2 + cw2 - 0.16*cm, cy - 0.60*cm)
                 # Ruled lines below skill name prompt
                 n = int((rh - SKILL_NAME_H - 0.18*cm) / lg)
                 for li in range(n):
