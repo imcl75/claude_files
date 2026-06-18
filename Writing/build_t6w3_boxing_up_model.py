@@ -32,21 +32,21 @@ INTRO_CONTENT = {
 SKILL_DATA = [
     {
         "name":   "Open Mind",
-        "col1":   ["ready to change plan", "new place = unexpected", "think differently"],
-        "col2":   ["if one plan fails, try another", "look at problem from", "different angles"],
-        "col3":   ["find solutions", "avoid danger", "stay adaptable"],
+        "col1":   ["Thinking in different ways."],
+        "col2":   ["Stay calm and look for", "new solutions."],
+        "col3":   ["Helps solve problems and", "adapt to new situations."],
     },
     {
-        "name":   "Slow-Time",
-        "col1":   ["calm the mind", "focus completely", "danger moves fast"],
-        "col2":   ["slow breathing", "everything seems", "to move more slowly"],
-        "col3":   ["more time to dodge", "better decisions", "space to react"],
+        "name":   "Awareness",
+        "col1":   ["Noticing everything around you."],
+        "col2":   ["Use your senses to", "gather information."],
+        "col3":   ["Helps spot danger", "before it arrives."],
     },
     {
-        "name":   "Shadow-Walking",
-        "col1":   ["avoid being seen", "sometimes fighting", "is not the answer"],
-        "col2":   ["stay silent", "move through dark", "places unnoticed"],
-        "col3":   ["escape trouble", "no one knows", "you were there"],
+        "name":   "Hunting",
+        "col1":   ["Catching food and", "defending yourself."],
+        "col2":   ["Move quietly and strike", "at the right moment."],
+        "col3":   ["Helps find food", "and stay safe."],
     },
 ]
 CONC_CONTENT = {
