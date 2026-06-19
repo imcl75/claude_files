@@ -286,7 +286,7 @@ else:
 
 ### CRITICAL: Do NOT build from scratch with pptxgenjs
 
-**Always clone the previous week's PPTX via XML replacement.** This preserves all animations, images, fonts, and formatting exactly.
+**CRITICAL — replace_reading_pptx.py calibration:** The script searches for specific text from the *previous week's* PPTX to do word/definition/extract replacement. At the start of each session, the `T5W1_VOCAB`, `T5W1_FOCUS`, `t1_hints`, `T5W1_DAYS` and `T5W1_PQ` constants must match whatever is in the source PPTX. Survey slides 4, 11, 18 (vocab tables), slides 5, 12, 19 (focus words), slides 6, 13, 20 (extract first line) and slides 8, 15, 22 (PQ first line) before running — then patch accordingly. For Y5, the T6W1 (Varjak Paw) patch is already applied to the script in the base64 block.
 
 **Template sources (GitHub `imcl75/claude_files/Reading/`):**
 - Y4: `BeingAReader_Template.pptx` — updated after each Y4 build (this is the current week → next week flow)
@@ -524,7 +524,10 @@ Copy all 5 to `/mnt/user-data/outputs/` and use `present_files`.
 
 ### Y5 words used
 
-*(to be populated as Y5 weeks are built — add entries here in the format TxWy: word1, word2, ...)*
+**T1W1 (Kensuke's Kingdom — Tension and atmosphere):**
+- Vocabulary: voyage, horizon, despair, provisions, resist
+- Retrieval: stern, current, consciousness, thrash, afloat
+- Inference: enclosed, dread, peer, content, uneasy
 
 ---
 
