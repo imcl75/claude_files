@@ -52,6 +52,7 @@ Before generating anything, collect from Innes:
 | Input | Example |
 |-------|---------|
 | Year group | Y4 / Y5 |
+| Term (Y5 only) | T1–T6 — drives calibration from progression table |
 | Text / book | I Want My Hat Back (Jon Klassen) |
 | Key question | "How do writers use dialogue?" |
 | Week reference | T5W2 |
@@ -75,7 +76,7 @@ Generate all content (extracts, questions, answers, vocabulary) yourself unless 
 ### Vocabulary (5 words per lesson, 15 total)
 
 - **Y4:** Tier 2 words, accessible for age 8–9. Child-friendly definition: one clear sentence.
-- **Y5:** Tier 2 words at slightly higher register (age 9–10); standard version may include one Tier 3 word per lesson where it serves the text. Definition: one precise sentence — no dumbing down.
+- **Y5:** Tier 2 words — complexity increases progressively through the year (see Y5 progression table below). Definition: one precise sentence.
 - Focus word (Write it 5 times slide) = the most commonly encountered Tier 2 word
 - Never repeat words across weeks on the same topic
 
@@ -85,10 +86,25 @@ Generate all content (extracts, questions, answers, vocabulary) yourself unless 
 - Questions progress Q1 (easiest) → Q7 (hardest)
 - **Q7 is always first to drop** if the page doesn't fit on a single A4
 - **Y4 calibration:** answerable in 1–3 sentences by an 8–9 year old; inference questions focus on unstated meaning from clues
-- **Y5 calibration:** Q4–Q7 expect extended responses (2–4 sentences); inference questions should address bias, purpose, effect on reader and ambiguity; at least one question per set should require pupils to weigh two possible interpretations
+- **Y5 calibration:** see progression table below — pupils enter Y5 as Y4 readers; complexity builds gradually across the year
 - Use at least 3 different question formats per lesson
 - Fluency target (both year groups): **90 wpm** (texts become more challenging; rate stays constant)
 - See `references/question-types.md` for all format specifications
+
+### Y5 Progression Table (use TERM to select the right row)
+
+Pupils start Y5 at broadly Y4 standard. Do not jump calibration — step up only at the term boundaries below.
+
+| Term | Extract length (std) | Extract length (sup) | Vocabulary | Question demand |
+|------|---------------------|---------------------|------------|-----------------|
+| T1 | 200–220 words | 130–145 words | Tier 2, Y4-level; familiar register | Q1–Q5 as Y4; Q6–Q7 begin to ask for a reason or short justification |
+| T2 | 210–240 words | 135–150 words | Tier 2, slightly less familiar words | Q6–Q7 require a full sentence with evidence |
+| T3 | 230–260 words | 145–160 words | Tier 2; one word per lesson that stretches | Q4–Q7 expect 2 sentences; first inference question about author purpose |
+| T4 | 250–270 words | 155–165 words | Tier 2 mix, higher register overall | Q5–Q7 need 2–3 sentences; inference includes effect on reader |
+| T5 | 260–280 words | 160–175 words | Tier 2 with occasional Tier 3 for standard | Q6–Q7 require extended response; at least one question weighs two interpretations |
+| T6 | 270–300 words | 165–180 words | Tier 2/3 mix for standard | Full Y5 demand — bias, purpose, ambiguity expected at Q5–Q7 |
+
+**How to apply:** at Step 1, collect `TERM` (T1–T6) alongside `YEAR_GROUP`. For Y4, ignore this table.
 
 ### We Do Questions (PPTX Practice Q slide)
 
