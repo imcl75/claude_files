@@ -437,3 +437,182 @@ module.exports[12] = {
     hint2: 'For measurement:\nAlways include the unit in your answer (g, kg, cm, m).\nCheck: does the size of your answer make sense?\n(50 g for one apple sounds right — 5,000 g would not!)',
   },
 };
+
+// ── T6W4 — Fractions (L13–L16) ────────────────────────────────────────────────
+
+module.exports[13] = {
+  iCan: [
+    'I can convert a mixed number to an improper fraction.',
+    'I can convert an improper fraction back to a mixed number.',
+  ],
+  lp1: {
+    title: 'Mixed Numbers to Improper Fractions',
+    type: 'arithmetic',
+    compact: true,
+    instruction: 'Convert each mixed number to an improper fraction. Show your working.',
+    questions: [
+      { q: 'Convert 1 3/4 to an improper fraction.',  answer: '1 × 4 + 3 = 7. Answer: 7/4' },
+      { q: 'Convert 2 2/3 to an improper fraction.',  answer: '2 × 3 + 2 = 8. Answer: 8/3' },
+      { q: 'Convert 3 1/5 to an improper fraction.',  answer: '3 × 5 + 1 = 16. Answer: 16/5' },
+      { q: 'Convert 4 3/8 to an improper fraction.',  answer: '4 × 8 + 3 = 35. Answer: 35/8' },
+    ],
+    goingFurther: 'Write three different mixed numbers that all have a denominator of 6. Convert each to an improper fraction. What do you notice about the numerators?',
+  },
+  lp2: {
+    title: 'Improper Fractions to Mixed Numbers',
+    type: 'arithmetic',
+    compact: true,
+    instruction: 'Convert each improper fraction to a mixed number. Use division.',
+    questions: [
+      { q: 'Convert 9/4 to a mixed number.',   answer: '9 ÷ 4 = 2 remainder 1. Answer: 2 1/4' },
+      { q: 'Convert 13/3 to a mixed number.',  answer: '13 ÷ 3 = 4 remainder 1. Answer: 4 1/3' },
+      { q: 'Convert 22/5 to a mixed number.',  answer: '22 ÷ 5 = 4 remainder 2. Answer: 4 2/5' },
+      { q: 'Convert 41/8 to a mixed number.',  answer: '41 ÷ 8 = 5 remainder 1. Answer: 5 1/8' },
+    ],
+  },
+  adaptedSupport: {
+    lp1Questions: [
+      { q: 'Convert 1 1/2 to an improper fraction.',  answer: '1 × 2 + 1 = 3. Answer: 3/2' },
+      { q: 'Convert 2 3/4 to an improper fraction.',  answer: '2 × 4 + 3 = 11. Answer: 11/4' },
+    ],
+    lp2Questions: [
+      { q: 'Convert 5/2 to a mixed number.',  answer: '5 ÷ 2 = 2 remainder 1. Answer: 2 1/2' },
+      { q: 'Convert 7/4 to a mixed number.',  answer: '7 ÷ 4 = 1 remainder 3. Answer: 1 3/4' },
+    ],
+    hint1: 'Mixed number → improper fraction:\n1. Multiply the whole number by the denominator.\n2. Add the numerator.\n3. Write the total over the same denominator.\nExample: 2 3/4 → 2 × 4 = 8, + 3 = 11 → 11/4',
+    hint2: 'Improper fraction → mixed number:\n1. Divide the numerator by the denominator.\n2. The answer is the whole number.\n3. The remainder is the new numerator.\nExample: 9/4 → 9 ÷ 4 = 2 remainder 1 → 2 1/4',
+  },
+};
+
+module.exports[14] = {
+  iCan: [
+    'I can add fractions with the same denominator.',
+    'I can add fractions that cross the whole and write the answer as a mixed number.',
+  ],
+  lp1: {
+    title: 'Adding Fractions',
+    type: 'arithmetic',
+    compact: true,
+    instruction: 'Add the fractions. Remember — only the numerators add.',
+    questions: [
+      { q: '2/9 + 5/9 = ?',    answer: '7/9' },
+      { q: '1/8 + 4/8 = ?',    answer: '5/8' },
+      { q: '3/7 + 2/7 = ?',    answer: '5/7' },
+      { q: '4/10 + 3/10 = ?',  answer: '7/10' },
+    ],
+    goingFurther: 'Can you find two fractions, both with denominator 8, that add to make exactly 1 whole? How many different pairs can you find?',
+  },
+  lp2: {
+    title: 'Adding Fractions — Crossing the Whole',
+    type: 'arithmetic',
+    compact: true,
+    instruction: 'Add the fractions. Convert your answer to a mixed number.',
+    questions: [
+      { q: '5/6 + 4/6 = ?',    answer: '9/6 = 1 3/6' },
+      { q: '7/8 + 5/8 = ?',    answer: '12/8 = 1 4/8' },
+      { q: '3/4 + 3/4 = ?',    answer: '6/4 = 1 2/4' },
+      { q: '8/10 + 7/10 = ?',  answer: '15/10 = 1 5/10' },
+    ],
+  },
+  adaptedSupport: {
+    lp1Questions: [
+      { q: '1/4 + 2/4 = ?',  answer: '3/4' },
+      { q: '2/5 + 2/5 = ?',  answer: '4/5' },
+    ],
+    lp2Questions: [
+      { q: '3/4 + 3/4 = ?',  answer: '6/4 = 1 2/4' },
+    ],
+    hint1: 'Adding fractions — same denominator:\n1. Check the denominators match.\n2. Add only the numerators.\n3. The denominator stays the same.\nExample: 2/7 + 3/7 = 5/7',
+    hint2: 'Crossing the whole:\nIf your numerator is bigger than the denominator, convert.\nExample: 11/8 → 11 ÷ 8 = 1 remainder 3 → 1 3/8',
+  },
+};
+
+module.exports[15] = {
+  iCan: [
+    'I can subtract fractions with the same denominator.',
+    'I can subtract fractions from a mixed number by exchanging one whole.',
+  ],
+  lp1: {
+    title: 'Subtracting Fractions',
+    type: 'arithmetic',
+    compact: true,
+    instruction: 'Subtract the fractions. Show your working.',
+    questions: [
+      { q: '5/7 − 2/7 = ?',       answer: '3/7' },
+      { q: '7/9 − 3/9 = ?',       answer: '4/9' },
+      { q: '8/10 − 5/10 = ?',     answer: '3/10' },
+      { q: '2 5/6 − 3/6 = ?',     answer: '2 2/6' },
+      { q: '3 7/8 − 4/8 = ?',     answer: '3 3/8' },
+      { q: '5 6/9 − 4/9 = ?',     answer: '5 2/9' },
+    ],
+    goingFurther: "Zara says 6/7 − 3/7 = 3. Explain what mistake she made and write the correct answer.",
+  },
+  lp2: {
+    title: 'Subtracting — Crossing the Whole',
+    type: 'arithmetic',
+    compact: true,
+    instruction: 'You will need to exchange one whole. Show each step.',
+    questions: [
+      { q: '2 1/5 − 3/5 = ?',     answer: 'Exchange: 7/5 − 3/5 = 4/5. Answer: 1 4/5' },
+      { q: '3 2/8 − 5/8 = ?',     answer: 'Exchange: 10/8 − 5/8 = 5/8. Answer: 2 5/8' },
+      { q: '1 3/10 − 7/10 = ?',   answer: 'Exchange: 13/10 − 7/10 = 6/10. Answer: 6/10' },
+      { q: '4 1/6 − 4/6 = ?',     answer: 'Exchange: 7/6 − 4/6 = 3/6. Answer: 3 3/6' },
+    ],
+  },
+  adaptedSupport: {
+    lp1Questions: [
+      { q: '5/6 − 2/6 = ?',  answer: '3/6' },
+      { q: '7/8 − 3/8 = ?',  answer: '4/8' },
+    ],
+    lp2Questions: [
+      { q: '2 1/4 − 3/4 = ?',  answer: 'Exchange: 5/4 − 3/4 = 2/4. Answer: 1 2/4' },
+    ],
+    hint1: 'Subtracting fractions:\n1. Check denominators match.\n2. Subtract numerators only.\n3. Denominator stays the same.\nExample: 6/9 − 2/9 = 4/9',
+    hint2: 'Exchanging a whole:\nIf the top numerator is too small, exchange.\n1 whole = denominator/denominator (e.g. 1 = 8/8)\nAdd that to your fraction, then subtract.\nExample: 2 3/8 − 7/8: exchange → 11/8 − 7/8 = 4/8. Answer: 1 4/8',
+  },
+};
+
+module.exports[16] = {
+  iCan: [
+    'I can find a fraction of an amount by dividing and multiplying.',
+    'I can use fractions of amounts to solve word problems.',
+  ],
+  lp1: {
+    title: 'Fractions of Amounts',
+    type: 'arithmetic',
+    compact: true,
+    instruction: 'Find each fraction of the amount. Show your working.',
+    questions: [
+      { q: 'Find 1/4 of 240.',   answer: '240 ÷ 4 = 60' },
+      { q: 'Find 3/4 of 240.',   answer: '240 ÷ 4 = 60, then × 3 = 180' },
+      { q: 'Find 1/5 of 3,500.', answer: '3,500 ÷ 5 = 700' },
+      { q: 'Find 2/5 of 3,500.', answer: '3,500 ÷ 5 = 700, then × 2 = 1,400' },
+      { q: 'Find 2/3 of 720.',   answer: '720 ÷ 3 = 240, then × 2 = 480' },
+      { q: 'Find 3/8 of 1,600.', answer: '1,600 ÷ 8 = 200, then × 3 = 600' },
+    ],
+    goingFurther: 'Which is greater — 3/4 of 480 or 5/6 of 360? Show your working to prove your answer.',
+  },
+  lp2: {
+    title: 'Fraction Word Problems',
+    type: 'arithmetic',
+    compact: true,
+    instruction: 'Solve each problem. Show all your working.',
+    questions: [
+      { q: 'A baker has 840 g of flour. He uses 2/3 of it to make bread. How much flour does he use?', answer: '840 ÷ 3 = 280, then × 2 = 560 g' },
+      { q: 'After spending 1/4 of her savings, Maya has £180 left. How much did she start with?', answer: '£180 is 3/4. So 1/4 = £60. Total = 4 × £60 = £240.' },
+      { q: '3/5 of the children in a school of 650 travel by bus. How many travel by bus? How many do not?', answer: '650 ÷ 5 = 130, × 3 = 390 by bus. 650 − 390 = 260 do not.' },
+    ],
+  },
+  adaptedSupport: {
+    lp1Questions: [
+      { q: 'Find 1/2 of 360.',  answer: '360 ÷ 2 = 180' },
+      { q: 'Find 1/4 of 120.',  answer: '120 ÷ 4 = 30' },
+      { q: 'Find 3/4 of 120.',  answer: '120 ÷ 4 = 30, then × 3 = 90' },
+    ],
+    lp2Questions: [
+      { q: 'A box has 60 chocolates. 1/3 are milk chocolate. How many are milk chocolate?', answer: '60 ÷ 3 = 20 milk chocolate.' },
+    ],
+    hint1: 'Fractions of amounts:\nStep 1 — Divide by the DENOMINATOR to find 1 part.\nStep 2 — Multiply by the NUMERATOR to find your fraction.\nExample: 3/4 of 80: 80 ÷ 4 = 20, then × 3 = 60',
+    hint2: 'Working backwards:\nIf you know the fraction that is LEFT, find the whole part first.\nExample: 3/4 left = £180. So 1/4 = £60. Whole = 4 × £60 = £240.',
+  },
+};

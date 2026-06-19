@@ -693,3 +693,401 @@ LESSON_DATA = { 5: { 'visuals': { 'c1_ido1': { 'title': 'Short multiplication �
                    ['total', 'The complete amount after adding everything together.'],
                    ['mass', 'How heavy something is, measured in grams or kilograms.'],
                    ['unit', 'The standard measurement for an answer: cm, g, p, etc.']]}}
+
+# ── T6W4 — Fractions (L13–L16) ────────────────────────────────────────────────
+
+LESSON_DATA[13] = {
+    'visuals': {
+        'c1_ido1': {
+            'slide_type': 'fraction_demo',
+            'title': 'Mixed numbers → improper fractions',
+            'problem': 'Convert 2 3/4 to an improper fraction.',
+            'steps': [
+                '2 wholes × 4 = 8 quarters',
+                '8 + 3 = 11 quarters',
+                'Answer: 11/4',
+            ],
+            'notes': (
+                'I DO C1 — Build the method from the image. Show 2 whole circles each split into 4.\n'
+                'Click 1: "2 wholes — how many quarters is that? 2 × 4 = 8."\n'
+                'Click 2: "Now add the 3 extra quarters: 8 + 3 = 11."\n'
+                'Click 3: "11 quarters — written as 11/4."'
+            ),
+        },
+        'c1_ido2': {
+            'slide_type': 'fraction_demo',
+            'title': 'The rule and why it works',
+            'problem': 'Convert 4 2/5 to an improper fraction.',
+            'steps': [
+                'The denominator tells us how many parts fit in 1 whole',
+                '4 wholes × 5 = 20 fifths  (converting wholes into fifths)',
+                '20 fifths + 2 fifths = 22/5',
+            ],
+            'notes': (
+                'I DO C1 I2 — Explain WHY the rule works, not just how.\n'
+                'Click 1: "The denominator is 5. That means 1 whole = 5/5. The denominator always tells you how many of those parts make one whole."\n'
+                '         Draw 1 whole circle split into 5 fifths on the board.\n'
+                'Click 2: "If 1 whole = 5 fifths, then 4 wholes = 4 × 5 = 20 fifths."\n'
+                '         "We are not just following a rule — we are converting 4 wholes into the same unit (fifths) so we can add."\n'
+                'Click 3: "Now everything is in fifths. 20 fifths already, plus 2 more fifths = 22 fifths = 22/5."\n'
+                'Stress: The rule whole × denominator + numerator works because it converts wholes into the fraction unit, then adds the remaining parts.'
+            ),
+        },
+        'c2_ido1': {
+            'slide_type': 'fraction_demo',
+            'title': 'Improper fractions → mixed numbers',
+            'problem': 'Convert 17/5 to a mixed number.',
+            'steps': [
+                '17 ÷ 5 = 3 r 2',
+                '3 complete groups — 2 fifths left over',
+                'Answer: 3 2/5',
+            ],
+            'notes': (
+                'I DO C2 — Reverse direction: division is the tool.\n'
+                'Click 1: "How many complete groups of 5 fit into 17? 17 ÷ 5 = 3 remainder 2."\n'
+                'Click 2: "3 whole groups — that is our whole number. 2 left over — those are our fraction."\n'
+                'Click 3: "3 2/5. Connect back: 3 × 5 + 2 = 17. Same value."'
+            ),
+        },
+        'c2_ido2': {
+            'slide_type': 'stm_word_problem',
+            'title': 'Spot the mistake',
+            'problem': 'Convert 3 1/2 to an improper fraction.',
+            'wrong_working': '3 + 1 = 4, so the answer is 4/2',
+            'error': (
+                'Don\'t add — multiply.\n'
+                '3 × 2 = 6, then + 1 = 7.\n'
+                'Answer: 7/2, not 4/2.\n'
+                'Rule: whole × denominator FIRST, then add the numerator.'
+            ),
+            'notes': (
+                'STM — added whole + numerator instead of multiplying whole × denominator.\n'
+                'Correct: 3 × 2 = 6, + 1 = 7 → 7/2.'
+            ),
+        },
+    },
+    'wm': {
+        'items': [8, 3, 12, 5, 20, 4, 16],
+        'qa': [
+            {'q': 'What was the 3rd number?',       'a': '12'},
+            {'q': 'What was the first number?',     'a': '8'},
+            {'q': 'Which number came after 12?',    'a': '5'},
+            {'q': 'What was the 5th number?',       'a': '20'},
+            {'q': 'How many numbers were shown?',   'a': '7'},
+        ],
+    },
+    'rm': {
+        'day': 1,
+        'questions': [
+            {'num': 1, 'topic': 'Place Value',    'q': 'What is 30,000 + 7,000 + 400 + 60 + 5?', 'a': '37,465'},
+            {'num': 2, 'topic': 'Multiplication', 'q': '8 × 7 = ?', 'a': '56'},
+            {'num': 3, 'topic': 'Addition',       'q': '4,567 + 2,384 = ?', 'a': '6,951'},
+            {'num': 4, 'topic': 'Geometry',       'q': 'How many sides does a pentagon have?', 'a': '5'},
+            {'num': 5, 'topic': 'Measurement',    'q': 'How many mm in 3.5 cm?', 'a': '35 mm'},
+        ],
+    },
+    'vocab': [
+        ['mixed number',      'A number with a whole part and a fraction part, e.g. 2 3/4.'],
+        ['improper fraction', 'A fraction where the numerator is greater than the denominator, e.g. 11/4.'],
+        ['numerator',         'The top number in a fraction — how many parts we have.'],
+        ['denominator',       'The bottom number in a fraction — how many equal parts the whole is split into.'],
+        ['convert',           'Change from one form to another, keeping the same value.'],
+        ['whole',             'A complete unit with no parts missing.'],
+    ],
+}
+
+LESSON_DATA[14] = {
+    'visuals': {
+        'c1_ido1': {
+            'slide_type': 'fraction_demo',
+            'title': 'Adding fractions — same denominator',
+            'problem': 'What is 2/7 + 3/7?',
+            'steps': [
+                'Denominator stays the same — sevenths stay sevenths',
+                'Add the numerators only: 2 + 3 = 5',
+                'Answer: 5/7',
+            ],
+            'notes': (
+                'I DO C1 — Stress that the denominator is the unit; only the numerators add.\n'
+                'Click 1: "Both are sevenths — same-sized pieces. The denominator does not change."\n'
+                'Click 2: "Count up: 2 sevenths and 3 more sevenths = 5 sevenths."\n'
+                'Click 3: "5/7. Draw fraction bar on board to confirm."'
+            ),
+        },
+        'c1_ido2': {
+            'slide_type': 'fraction_demo',
+            'title': "Don't add the denominators!",
+            'problem': 'What is 3/8 + 4/8?\nDo the denominators change?',
+            'steps': [
+                'Denominator stays the same — eighths stay eighths',
+                'Add numerators only: 3 + 4 = 7',
+                'Answer: 7/8',
+            ],
+            'notes': (
+                'I DO C1 I2 — Address the most common error directly.\n'
+                'Click 1: "Eighths are eighths. The size of each piece has not changed."\n'
+                'Click 2: "3 pieces and 4 more pieces — 7 pieces."\n'
+                'Click 3: "7/8. Ask: if you have 3 apples and add 4 apples, do you get 7 oranges? No."'
+            ),
+        },
+        'c2_ido1': {
+            'slide_type': 'fraction_demo',
+            'title': 'Crossing the whole',
+            'problem': 'What is 5/8 + 6/8?',
+            'steps': [
+                'Add numerators: 5 + 6 = 11 eighths',
+                '11/8 — numerator > denominator: crosses the whole',
+                '11 ÷ 8 = 1 r 3   →   Answer: 1 3/8',
+            ],
+            'notes': (
+                'I DO C2 — Result exceeds 1 whole; link directly to L13 conversion skill.\n'
+                'Click 1: "5 + 6 = 11. We have 11 eighths."\n'
+                'Click 2: "11 is bigger than 8 — more than one whole. We need to convert."\n'
+                'Click 3: "11 ÷ 8 = 1 remainder 3, so 1 3/8. Same skill as Monday."'
+            ),
+        },
+        'c2_ido2': {
+            'slide_type': 'stm_word_problem',
+            'title': 'Spot the mistake',
+            'problem': 'Work out 3/5 + 4/5.',
+            'wrong_working': '3/5 + 4/5 = 7/10',
+            'error': (
+                'Denominators stay the same — only numerators add.\n'
+                '3 + 4 = 7, denominator is still 5.\n'
+                'Answer: 7/5 = 1 2/5.\n'
+                'Adding denominators would change the size of each part — that makes no sense.'
+            ),
+            'notes': (
+                'STM — added both numerators and denominators.\n'
+                'Correct: numerators only. 3 + 4 = 7, denominator stays 5. 7/5 = 1 2/5.'
+            ),
+        },
+    },
+    'wm': {
+        'items': ['numerator', 'denominator', 'fraction', 'improper', 'convert', 'equivalent', 'simplify'],
+        'qa': [
+            {'q': 'What was the 2nd word?',             'a': 'denominator'},
+            {'q': 'Which word came before "convert"?',  'a': 'improper'},
+            {'q': 'What was the first word?',           'a': 'numerator'},
+            {'q': 'What was the 5th word?',             'a': 'convert'},
+            {'q': 'How many words were shown?',         'a': '7'},
+        ],
+    },
+    'rm': {
+        'day': 2,
+        'questions': [
+            {'num': 1, 'topic': 'Division',       'q': '5,040 ÷ 6 = ?', 'a': '840'},
+            {'num': 2, 'topic': 'Subtraction',    'q': '7,003 − 4,567 = ?', 'a': '2,436'},
+            {'num': 3, 'topic': 'Multiplication', 'q': '9 × 6 = ?', 'a': '54'},
+            {'num': 4, 'topic': 'Geometry',       'q': 'How many right angles in a rectangle?', 'a': '4'},
+            {'num': 5, 'topic': 'Measurement',    'q': 'How many metres in 2.5 km?', 'a': '2,500 m'},
+        ],
+    },
+    'vocab': [
+        ['numerator',          'The top number in a fraction — how many parts we have.'],
+        ['denominator',        'The bottom number in a fraction — how many equal parts the whole is split into.'],
+        ['same denominator',   'Two fractions with matching bottom numbers — they show parts of the same size.'],
+        ['crossing the whole', 'When the total of two fractions adds up to more than one whole.'],
+        ['simplify',           'Write a fraction in its smallest equivalent form.'],
+        ['equivalent',         'Equal in value — different numbers that represent the same amount.'],
+    ],
+}
+
+LESSON_DATA[15] = {
+    'visuals': {
+        'c1_ido1': {
+            'slide_type': 'fraction_demo',
+            'title': 'Subtracting fractions — same denominator',
+            'problem': 'What is 6/9 − 2/9?',
+            'steps': [
+                'Same denominator — ninths stay ninths',
+                'Subtract numerators only: 6 − 2 = 4',
+                'Answer: 4/9',
+            ],
+            'notes': (
+                'I DO C1 — Mirror the addition lesson structure.\n'
+                'Click 1: "Both are ninths. Same-sized pieces throughout."\n'
+                'Click 2: "Start with 6 ninths, take away 2 ninths. 6 − 2 = 4."\n'
+                'Click 3: "4/9. The denominator never changed."'
+            ),
+        },
+        'c1_ido2': {
+            'slide_type': 'fraction_demo',
+            'title': 'Number line method',
+            'problem': 'What is 7/10 − 3/10?\nShow the jump on a number line.',
+            'steps': [
+                'Mark 7/10 on the number line',
+                'Jump back 3 tenths',
+                'Answer: 4/10',
+            ],
+            'notes': (
+                'I DO C1 I2 — Draw the number line on the board live.\n'
+                'Click 1: "Find 7/10 — count 7 steps from 0."\n'
+                'Click 2: "Jump back 3 steps. Where do we land?"\n'
+                'Click 3: "4/10. Check: 4 + 3 = 7. ✓"'
+            ),
+        },
+        'c2_ido1': {
+            'slide_type': 'fraction_demo',
+            'title': 'Subtracting — crossing the whole',
+            'problem': 'What is 2 3/8 − 7/8?',
+            'steps': [
+                '3/8 − 7/8: not enough — exchange 1 whole',
+                '1 whole = 8/8.  Now 8/8 + 3/8 = 11/8',
+                '11/8 − 7/8 = 4/8   →   Answer: 1 4/8',
+            ],
+            'notes': (
+                'I DO C2 — Exchange is the key step; link to column subtraction.\n'
+                'Click 1: "3 eighths take away 7 eighths — not possible. We need to exchange."\n'
+                'Click 2: "Borrow one whole from the 2. 1 whole = 8/8. Add to 3/8 → 11/8."\n'
+                'Click 3: "Now 11/8 − 7/8 = 4/8. We still have 1 whole remaining. Answer: 1 4/8."'
+            ),
+        },
+        'c2_ido2': {
+            'slide_type': 'stm_word_problem',
+            'title': 'Spot the mistake',
+            'problem': 'Work out 1 2/7 − 5/7.',
+            'wrong_working': '1 3/7',
+            'error': (
+                'Can\'t do 2/7 − 5/7 without exchanging.\n'
+                'Exchange 1 whole for 7/7 → now have 9/7.\n'
+                '9/7 − 5/7 = 4/7.   Answer: 4/7.\n'
+                'The mistake: subtracted 5 − 2 = 3 instead of exchanging.'
+            ),
+            'notes': (
+                'STM — subtracted smaller from larger (5 − 2) instead of exchanging.\n'
+                'Correct: exchange → 9/7 − 5/7 = 4/7.'
+            ),
+        },
+    },
+    'wm': {
+        'items': ['🍕', '🎂', '🌙', '⭐', '🎈', '🍀', '🦋'],
+        'qa': [
+            {'q': 'What was the 3rd emoji?',      'a': '🌙'},
+            {'q': 'Which emoji came after ⭐?',    'a': '🎈'},
+            {'q': 'What was the 5th emoji?',      'a': '🎈'},
+            {'q': 'What was the 1st emoji?',      'a': '🍕'},
+            {'q': 'How many emojis were shown?',  'a': '7'},
+        ],
+    },
+    'rm': {
+        'day': 3,
+        'questions': [
+            {'num': 1, 'topic': 'Multiplication', 'q': '12 × 7 = ?', 'a': '84'},
+            {'num': 2, 'topic': 'Division',       'q': '3,600 ÷ 9 = ?', 'a': '400'},
+            {'num': 3, 'topic': 'Place Value',    'q': 'Round 47,836 to the nearest 1,000.', 'a': '48,000'},
+            {'num': 4, 'topic': 'Time',           'q': 'How many minutes in 2 and a half hours?', 'a': '150 minutes'},
+            {'num': 5, 'topic': 'Geometry',       'q': 'A rectangle is 8 cm long and 3 cm wide. What is its perimeter?', 'a': '22 cm'},
+        ],
+    },
+    'vocab': [
+        ['exchange',           'Swap one whole for an equivalent number of fraction parts, e.g. 1 = 8/8.'],
+        ['decompose',          'Break a number apart — here, splitting a whole into its fraction parts.'],
+        ['difference',         'The result of a subtraction — how far apart two numbers are.'],
+        ['crossing the whole', 'When a subtraction requires going back over a whole number.'],
+        ['same denominator',   'Fractions with matching bottom numbers — showing equal-sized parts.'],
+        ['mixed number',       'A number with a whole part and a fraction part, e.g. 2 3/8.'],
+    ],
+}
+
+LESSON_DATA[16] = {
+    'visuals': {
+        'c1_ido1': {
+            'slide_type': 'fraction_demo',
+            'title': 'Fractions of amounts — find the unit fraction first',
+            'problem': 'Find 1/4 of 3,600.',
+            'steps': [
+                'To find 1/4: divide by the denominator (4)',
+                '3,600 ÷ 4 = 900',
+                'Answer: 900',
+            ],
+            'notes': (
+                'I DO C1 — Unit fraction: divide by denominator.\n'
+                'Click 1: "To find 1/4 we split into 4 equal groups. Divide by 4."\n'
+                'Click 2: "3,600 ÷ 4 = 900."\n'
+                'Click 3: "900 is 1/4 of 3,600. We will need this for the next step."'
+            ),
+        },
+        'c1_ido2': {
+            'slide_type': 'fraction_demo',
+            'title': 'Non-unit fractions of amounts',
+            'problem': 'Now find 3/4 of 3,600.',
+            'steps': [
+                'Find 1/4 first: 3,600 ÷ 4 = 900',
+                'Multiply by the numerator: 900 × 3',
+                'Answer: 2,700',
+            ],
+            'notes': (
+                'I DO C1 I2 — Scale up from unit fraction.\n'
+                'Click 1: "We already know 1/4 = 900. That is our building block."\n'
+                'Click 2: "3/4 = three lots of 1/4. 900 × 3 = 2,700."\n'
+                'Click 3: "2,700. Method: divide by denominator, multiply by numerator."'
+            ),
+        },
+        'c2_ido1': {
+            'slide_type': 'word_problem',
+            'title': 'Fractions in context',
+            'problem': '3/5 of a school\'s 1,250 pupils\nwalk to school.\nHow many pupils walk?',
+            'notes': (
+                'I DO C2 — Word problem: pupils need to extract the fraction and the whole.\n'
+                'Visualise: 1,250 pupils split into 5 equal groups. Take 3 groups.\n'
+                'Analyse: I know the total (1,250) and the fraction (3/5).\n'
+                'Finding: the number who walk — 3 out of every 5.\n'
+                'Attack: ÷ 5 first (find 1/5), then × 3 (scale to 3/5).\n'
+                '1,250 ÷ 5 = 250.  250 × 3 = 750.  Answer: 750 pupils.'
+            ),
+        },
+        'c2_ido2': {
+            'slide_type': 'stm_word_problem',
+            'title': 'Spot the mistake',
+            'problem': 'Find 2/5 of 360.',
+            'wrong_working': '360 ÷ 2 = 180',
+            'error': (
+                'Divide by the DENOMINATOR (5), not the numerator (2).\n'
+                '360 ÷ 5 = 72     (that is 1/5)\n'
+                '72 × 2 = 144     (that is 2/5)\n'
+                'Answer: 144, not 180.'
+            ),
+            'notes': (
+                'STM — divided by numerator instead of denominator.\n'
+                'Correct: 360 ÷ 5 = 72, × 2 = 144.'
+            ),
+        },
+    },
+    'wm': {
+        'items': [
+            'The 🍕 was cut into 8 equal slices.',
+            'She ate 3/8 of the 🎂 at the party.',
+            'He split the 🍫 into 4 equal pieces.',
+            'They had 5/6 of the 🎈 left after the fair.',
+            'The 🌟 team scored 3/5 of all the goals.',
+            'A 🦋 settled on exactly half the petals.',
+            'The 🍀 was divided into 3 equal parts.',
+        ],
+        'qa': [
+            {'q': 'What was cut into 8 equal slices?',      'a': 'A pizza 🍕'},
+            {'q': 'What fraction of the cake did she eat?', 'a': '3/8'},
+            {'q': 'What fraction of balloons were left?',   'a': '5/6'},
+            {'q': 'What fraction did the star team score?', 'a': '3/5 of all goals'},
+            {'q': 'What was divided into 3 equal parts?',   'a': 'A four-leaf clover 🍀'},
+        ],
+    },
+    'rm': {
+        'day': 4,
+        'questions': [
+            {'num': 1, 'topic': 'Division',       'q': '4,200 ÷ 7 = ?', 'a': '600'},
+            {'num': 2, 'topic': 'Multiplication', 'q': '7 × 8 = ?', 'a': '56'},
+            {'num': 3, 'topic': 'Place Value',    'q': 'What is the value of the 6 in 36,428?', 'a': '6,000'},
+            {'num': 4, 'topic': 'Addition',       'q': '5,678 + 3,456 = ?', 'a': '9,134'},
+            {'num': 5, 'topic': 'Measurement',    'q': 'How many cm in 4.2 m?', 'a': '420 cm'},
+        ],
+    },
+    'vocab': [
+        ['unit fraction',     'A fraction with a numerator of 1, e.g. 1/4 or 1/5.'],
+        ['non-unit fraction', 'A fraction with a numerator greater than 1, e.g. 3/4 or 2/5.'],
+        ['denominator',       'The bottom number in a fraction — how many equal parts the whole is split into.'],
+        ['numerator',         'The top number in a fraction — how many parts we have.'],
+        ['proportion',        'A part of a whole, described as a fraction.'],
+        ['"of" means ×',      'When finding a fraction of an amount, "of" means we divide then multiply.'],
+    ],
+}

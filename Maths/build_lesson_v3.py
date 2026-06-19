@@ -1128,6 +1128,8 @@ def build_teaching_slide(layout_num, visual_key, title_text, phase):
         draw_number_line_slide(sld, visual_key)
     elif slide_type == 'column_calc':
         draw_column_calc(sld, visual_key)
+    elif slide_type == 'fraction_demo':
+        draw_fraction_demo_slide(sld, visual_key)
     else:
         draw_grid_slide(sld, visual_key, layout_num)
     print(f"  Teaching slide ({title_text[:40]}) ✓")
@@ -2207,6 +2209,156 @@ def draw_identify_calculate_slide(sld, visual_key):
 
 def draw_bar_model_slide(sld, visual_key):
     draw_blank_problem_slide(sld, visual_key, is_two_step=True)
+
+# ===========================================================================
+# FRACTION DEMO SLIDE
+# Problem text at top of a full-width white panel.
+# Working steps revealed below, one per click (animated).
+# Last step styled green (the answer). No VAA, no squared paper.
+# Fractions written as n/d in data are rendered with a proper vinculum via
+# matplotlib (same pattern as RM slides) — PNG overlay on text box.
+# Data keys: problem (str), steps (list[str]), notes (str)
+# ===========================================================================
+
+def _fd_render(text, w_in, h_in, fontsize, txt_color, bg_hex):
+    """Render text (with n/d → vinculum) as PNG. bg_hex is a 6-char hex string."""
+    import io as _io3
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as _plt3
+    mt = _RM_FRAC_RE.sub(lambda m: f'$\\frac{{{m.group(1)}}}{{{m.group(2)}}}$', text)
+    # Replace literal newline with matplotlib multiline newline
+    bg_rgb = tuple(int(bg_hex[i:i+2], 16) / 255 for i in (0, 2, 4))
+    fig = _plt3.figure(figsize=(w_in, h_in), dpi=150)
+    fig.patch.set_facecolor(bg_rgb)
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis('off')
+    ax.set_facecolor(bg_rgb)
+    ax.text(0.025, 0.5, mt, fontsize=fontsize, ha='left', va='center',
+            color=txt_color, transform=ax.transAxes, fontfamily='DejaVu Sans',
+            wrap=False)
+    buf = _io3.BytesIO()
+    fig.savefig(buf, format='png', dpi=150, bbox_inches=None,
+                facecolor=bg_rgb, edgecolor='none')
+    _plt3.close(fig)
+    buf.seek(0)
+    return buf.read()
+
+
+def draw_fraction_demo_slide(sld, visual_key):
+    v     = VISUALS[visual_key]
+    prob  = v.get('problem', '')
+    steps = v.get('steps', [])
+
+    # Layout constants
+    px       = 0.40
+    py       = 1.55       # start below title
+    pw       = 5.392
+    top_pad  = 0.22
+    prob_h   = 0.70
+    div_sp   = 0.20       # space occupied by divider + gap before first step
+    step_h   = 0.85
+    step_gap = 0.14       # breathing room between steps
+    bot_pad  = 0.32
+    n_steps  = len(steps)
+
+    # Panel height sized exactly to content — no excess space
+    ph = top_pad + prob_h + div_sp + n_steps * step_h + (n_steps - 1) * step_gap + bot_pad
+
+    SID = [700]
+    def nid():
+        SID[0] += 1
+        return SID[0]
+
+    # White left panel — sized to content
+    add_sp(sld, (
+        f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+        f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+        f'<p:nvSpPr><p:cNvPr id="{nid()}" name="FDPanel"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+        f'<p:spPr><a:xfrm><a:off x="{emu(px)}" y="{emu(py)}"/>'
+        f'<a:ext cx="{emu(pw)}" cy="{emu(ph)}"/></a:xfrm>'
+        f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+        f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
+        f'<a:ln w="{int(1.5*12700)}"><a:solidFill><a:srgbClr val="BBBBBB"/></a:solidFill></a:ln>'
+        f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+    ))
+
+    # Problem text
+    prob_x = px + 0.22
+    prob_y = py + top_pad
+    prob_w = pw - 0.44
+
+    add_sp(sld, sp(nid(), 'FDProblem', prob_x, prob_y, prob_w, prob_h,
+                   prob.split('\n'),
+                   font='Twinkl Cursive Looped Light', sz=18,
+                   bold=False, color='1F1F1F', align='l',
+                   fill=None, no_line=True, anchor='t', autofit=True))
+    if _rm_has_frac(prob):
+        prob_png = _fd_render(prob, prob_w, prob_h, fontsize=16,
+                              txt_color='#1F1F1F', bg_hex='FFFFFF')
+        sld.shapes.add_picture(_io.BytesIO(prob_png), emu(prob_x), emu(prob_y),
+                               emu(prob_w), emu(prob_h))
+
+    # Thin divider
+    div_y = prob_y + prob_h + 0.06
+    add_sp(sld, (
+        f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+        f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+        f'<p:nvSpPr><p:cNvPr id="{nid()}" name="FDDiv"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+        f'<p:spPr><a:xfrm><a:off x="{emu(prob_x)}" y="{emu(div_y)}"/>'
+        f'<a:ext cx="{emu(prob_w)}" cy="0"/></a:xfrm>'
+        f'<a:prstGeom prst="line"><a:avLst/></a:prstGeom>'
+        f'<a:ln w="{int(0.75*12700)}"><a:solidFill><a:srgbClr val="CCCCCC"/></a:solidFill></a:ln>'
+        f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+    ))
+
+    # Steps — animated, one per click, with room to breathe
+    step_x = prob_x
+    step_w = prob_w
+    step_y = div_y + 0.14
+
+    anim_groups = []
+    for i, step_text in enumerate(steps):
+        is_answer  = (i == n_steps - 1)
+        fill_hex   = 'E8F5E9' if is_answer else 'DEEAF1'
+        txt_hex    = '1A5C2A' if is_answer else '1F4E79'
+        border_col = '1A5C2A' if is_answer else '156082'
+        prefix     = '✓  '    if is_answer else '→  '
+        bold       = is_answer
+        full_step  = prefix + step_text
+
+        sid = nid()
+        add_sp(sld, sp(sid, f'FDStep{i}', step_x, step_y, step_w, step_h,
+                       full_step,
+                       font='Twinkl Cursive Looped Light', sz=16,
+                       bold=bold, color=txt_hex, align='l',
+                       fill=fill_hex, border=(border_col, 1.5), anchor='ctr'))
+        anim_groups.append([sid])
+
+        if _rm_has_frac(full_step):
+            step_png = _fd_render(full_step, step_w, step_h, fontsize=14,
+                                  txt_color=f'#{txt_hex}', bg_hex=fill_hex)
+            sld.shapes.add_picture(_io.BytesIO(step_png),
+                                   emu(step_x), emu(step_y),
+                                   emu(step_w), emu(step_h))
+
+        step_y += step_h + step_gap
+
+    _apply_animation(sld, anim_groups)
+
+    # Squared paper — clear of title, 8 rows, drawn last
+    _fd_grid_y    = 1.60
+    _fd_grid_rows = 8
+    _fd_sid = nid()
+    for _col in range(GRID_COLS):
+        for _row in range(_fd_grid_rows):
+            add_sp(sld, _blank_problem_cell_xml(_fd_sid,
+                   GRID_X + _col * CELL_GRID,
+                   _fd_grid_y + _row * CELL_GRID,
+                   CELL_GRID))
+            _fd_sid += 1
+
+    sld.notes_slide.notes_text_frame.text = v.get('notes', '')
 
 def draw_stm_word_problem_slide(sld, visual_key):
     v = VISUALS[visual_key]
