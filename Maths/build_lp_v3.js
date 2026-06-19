@@ -1903,6 +1903,13 @@ function _calcText(n, raw) {
 // ── LP1 ARITHMETIC — FULL PAGE ───────────────────────────────────────────────
 // Auto-detects short calculations vs word problems by question length.
 function buildLP1Arithmetic(slide, isMarkingStation) {
+  // compact flag takes priority — short fraction/calculation questions
+  // are ≤50 chars and would otherwise fall through to the 10-strip grid
+  // layout which ignores compact entirely.
+  if (LP1_DATA.compact) {
+    _buildCompactWithData(slide, isMarkingStation, LP1_DATA);
+    return;
+  }
   const questions  = LP1_DATA.questions;
   const maxQLen    = Math.max(...questions.map(q => q.q.length));
   const isWordProb = maxQLen > 50;   // word problems need vertical layout
