@@ -87,7 +87,27 @@ Generate all content (extracts, questions, answers, vocabulary) yourself unless 
 - **Q7 is always first to drop** if the page doesn't fit on a single A4
 - **Y4 calibration:** answerable in 1–3 sentences by an 8–9 year old; inference questions focus on unstated meaning from clues
 - **Y5 calibration:** see progression table below — pupils enter Y5 as Y4 readers; complexity builds gradually across the year
-- Use at least 3 different question formats per lesson
+- Use at least 4 different question formats per lesson, and vary the mix across all three lessons so no two lessons in the same week use the same dominant type
+
+### Question type distribution — aim for this variety each week
+
+The goal is that across the three lessons pupils encounter the full range of question formats — preparing them for assessment variety rather than pattern-matching a single style. No type should appear in all three lessons in the same week unless unavoidable.
+
+**Vocabulary lesson** — focus on word meaning, context, and language choices:
+Best types: `quote` (find the word), `tick_v` (which meaning fits), `fill` (complete with vocab word), `true_false` (does this definition fit), `mc`, `short`, `short2`, `written` (how does the word choice affect the reader)
+
+**Retrieval lesson** — focus on locating specific detail and sequencing:
+Best types: `short` (what/when/where/who), `evidence2` / `evidence3` (write two/three things), `order` (sequence events), `attrib_table` (who did what), `quote` (find and copy), `tick_v`, `short2`
+
+**Inference lesson** — focus on deduction, author intent, and extended response:
+Best types: `written` (extended reasoning), `evidence2_ext` (two detailed inferences), `select` (tick all emotions/effects), `tf_table` (valid inference or not), `short2` (what does X suggest), `quote` (find evidence that), `impr_evidence` (Y6 only)
+
+**Across-week checklist before authoring questions:**
+- Q1 should be accessible (retrieval or literal comprehension, never extended writing)
+- Q7 (standard) / Q5 (supported) should be the hardest — inference, author purpose, or extended response
+- No more than 2 `written` (3-line) questions per page — use `short2` for mid-range responses
+- `tick_v` and `true_false` should not both appear in the same lesson (overlap in format)
+- Each week should include at least one `quote`, one `evidence2` or `evidence3`, and one `select` or `tf_table` spread across the three lessons
 - Fluency target (both year groups): **90 wpm** (texts become more challenging; rate stays constant)
 
 ### Question types
