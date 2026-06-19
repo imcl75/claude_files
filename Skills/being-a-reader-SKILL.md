@@ -97,12 +97,14 @@ Pupils start Y5 at broadly Y4 standard. Do not jump calibration — step up only
 
 | Term | Extract length (std) | Extract length (sup) | Vocabulary | Question demand |
 |------|---------------------|---------------------|------------|-----------------|
-| T1 | 200–220 words | 130–145 words | Tier 2, Y4-level; familiar register | Q1–Q5 as Y4; Q6–Q7 begin to ask for a reason or short justification |
-| T2 | 210–240 words | 135–150 words | Tier 2, slightly less familiar words | Q6–Q7 require a full sentence with evidence |
-| T3 | 230–260 words | 145–160 words | Tier 2; one word per lesson that stretches | Q4–Q7 expect 2 sentences; first inference question about author purpose |
-| T4 | 250–270 words | 155–165 words | Tier 2 mix, higher register overall | Q5–Q7 need 2–3 sentences; inference includes effect on reader |
-| T5 | 260–280 words | 160–175 words | Tier 2 with occasional Tier 3 for standard | Q6–Q7 require extended response; at least one question weighs two interpretations |
-| T6 | 270–300 words | 165–180 words | Tier 2/3 mix for standard | Full Y5 demand — bias, purpose, ambiguity expected at Q5–Q7 |
+| T1 | 220–245 words | 145–160 words | Tier 2, Y4-level; familiar register | Q1–Q5 as Y4; Q6–Q7 begin to ask for a reason or short justification |
+| T2 | 235–260 words | 150–165 words | Tier 2, slightly less familiar words | Q6–Q7 require a full sentence with evidence |
+| T3 | 250–275 words | 160–175 words | Tier 2; one word per lesson that stretches | Q4–Q7 expect 2 sentences; first inference question about author purpose |
+| T4 | 265–290 words | 168–182 words | Tier 2 mix, higher register overall | Q5–Q7 need 2–3 sentences; inference includes effect on reader |
+| T5 | 278–305 words | 175–190 words | Tier 2 with occasional Tier 3 for standard | Q6–Q7 require extended response; at least one question weighs two interpretations |
+| T6 | 290–320 words | 180–200 words | Tier 2/3 mix for standard | Full Y5 demand — bias, purpose, ambiguity expected at Q5–Q7 |
+
+Note: Y5 extract lengths run ~15–20 words longer than Y4 equivalents at each tier. This is possible because the tighter question layout (question label grouped with its answer, first writing line flush to question text) recovers enough vertical space on the page to accommodate the longer extract box without losing questions.
 
 **How to apply:** at Step 1, collect `TERM` (T1–T6) alongside `YEAR_GROUP`. For Y4, ignore this table.
 
