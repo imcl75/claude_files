@@ -9,7 +9,7 @@ description: "Create a full week of Being a Reader reading comprehension resourc
 
 Being a Reader is Innes's weekly reading comprehension system. Each week produces **5 files** from a single set of content:
 
-1. **XLSX** — master data file (all content in structured table)
+1. ~~**XLSX** — master data file (all content in structured table)~~ **Not built by default — omit from the build loop unless Innes specifically asks for it. Code and column structure are preserved in Step 3 for when it is needed.**
 2. **PPTX** — teaching slides for smartboard delivery (21 slides, 7 per lesson)
 3. **Standard Pupil PDF** — 3 pages (Voc, Ret, Inf), 7 questions each
 4. **Supported Pupil PDF** — 3 pages (Voc, Ret, Inf), 5 questions each
@@ -41,7 +41,7 @@ for name, b64_block in re.findall(pattern, skill):
 
 Scripts will be at `/home/claude/build_reading_pdfs.py`, `/home/claude/replace_reading_pptx.py`, and `/home/claude/slide_finishing_fixes.py`.
 
-The previous week's PPTX must be supplied by Innes (project file or upload) — it cannot be embedded here due to size. Ask for it if not provided.
+The previous week's PPTX is stored in GitHub at `imcl75/claude_files/Reading/BeingAReader_Template.pptx`. Fetch it silently at session start using the github-sync fetch pattern if not already in the session. Only ask Innes if the GitHub fetch fails.
 
 ---
 
@@ -160,7 +160,9 @@ Note: Y5 extract lengths run ~15–20 words longer than Y4 equivalents at each t
 
 ### We Do Questions (PPTX Practice Q slide)
 
-Two questions per lesson shown with answers on the PPTX Practice Questions slide. These are representative questions (usually conceptually similar to Q1 and Q2) crafted specifically for whole-class modelling, not necessarily identical to the worksheet questions.
+Two questions per lesson shown with answers on the PPTX Practice Questions slide.
+
+**HARD RULE — We Do questions must NEVER appear in the LP question list.** Write the LP questions first, then write the We Do questions afterwards as simpler whole-class modelling versions of a similar skill. They should test the same lesson type (vocabulary/retrieval/inference) but use different wording, a different angle, or a simpler demand than any LP question. If a We Do question is accidentally identical or near-identical to an LP question, rewrite it before proceeding.
 
 ---
 
