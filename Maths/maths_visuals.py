@@ -1952,7 +1952,7 @@ def _polygon(spec, path, dpi):
     ymin, ymax = pts[:,1].min(), pts[:,1].max()
     cx = (xmin + xmax) / 2
     cy = (ymin + ymax) / 2
-    pad = 0.9
+    pad = 1.1   # extra room for exterior labels and tick marks
     fig_w = max((xmax - xmin) + 2*pad, 3.0)
     fig_h = max((ymax - ymin) + 2*pad + (0.5 if show_name else 0), 2.5)
 
@@ -1970,18 +1970,18 @@ def _polygon(spec, path, dpi):
 
     n = len(pts)
 
-    # Side labels
+    # Side labels — placed OUTSIDE the shape so they never clash with tick marks
     for i, slbl in enumerate(side_labels):
         p1 = pts[i]
         p2 = pts[(i + 1) % n]
         mid = (p1 + p2) / 2
-        # Offset perpendicular to side, toward centre
         perp = np.array([-(p2[1]-p1[1]), p2[0]-p1[0]])
         perp = perp / max(np.linalg.norm(perp), 1e-9)
         toward_c = np.array([cx, cy]) - mid
-        if np.dot(perp, toward_c) < 0:
+        # Flip to point AWAY from centre (exterior)
+        if np.dot(perp, toward_c) > 0:
             perp = -perp
-        offset = 0.22
+        offset = 0.32
         ax.text(mid[0] + perp[0]*offset, mid[1] + perp[1]*offset,
                 slbl, ha='center', va='center', fontsize=9.5, color=DARK)
 
@@ -2083,39 +2083,38 @@ def _generate_polygon_vertices(name):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def _shape_3d_iso(spec, path, dpi):
-    """
-    Spec:
-        shape:  'cube'|'cuboid'|'cylinder'|'cone'|'sphere'|
-                'triangular_prism'|'square_pyramid'
-        color:  hex (default SHAPE_A)
-        label:  str — shape name label below
-        dimensions: dict — e.g. {w:2, h:3, d:1} (relative proportions)
-    """
     shape = spec.get('shape', 'cube').lower().replace(' ', '_')
     color = spec.get('color', '#4A90D9')
     lbl   = spec.get('label', '')
     dims  = spec.get('dimensions', {})
 
     fig, ax = plt.subplots(figsize=(3.5, 3.5))
-    ax.set_xlim(-2.0, 2.0)
-    ax.set_ylim(-2.0, 2.0)
     ax.set_aspect('equal')
     ax.axis('off')
 
     draw_fn = {
-        'cube':              _iso_cube,
-        'cuboid':            _iso_cuboid,
-        'cylinder':          _iso_cylinder,
-        'cone':              _iso_cone,
-        'sphere':            _iso_sphere,
-        'triangular_prism':  _iso_triangular_prism,
-        'square_pyramid':    _iso_square_pyramid,
+        'cube':             _iso_cube,
+        'cuboid':           _iso_cuboid,
+        'cylinder':         _iso_cylinder,
+        'cone':             _iso_cone,
+        'sphere':           _iso_sphere,
+        'triangular_prism': _iso_triangular_prism,
+        'square_pyramid':   _iso_square_pyramid,
     }.get(shape, _iso_cube)
 
     draw_fn(ax, color, dims)
 
+    # Auto-fit after drawing — with small label margin
+    ax.autoscale_view()
+    xl = ax.get_xlim(); yl = ax.get_ylim()
+    xpad = (xl[1]-xl[0]) * 0.12
+    ypad = (yl[1]-yl[0]) * 0.12
+    ax.set_xlim(xl[0]-xpad, xl[1]+xpad)
+    ax.set_ylim(yl[0]-ypad, yl[1] + ypad + (0.18 if lbl else 0))
+
     if lbl:
-        ax.text(0, -1.85, lbl, ha='center', va='top',
+        ax.text((xl[0]+xl[1])/2, yl[0] - ypad * 0.5, lbl,
+                ha='center', va='top',
                 fontsize=11, color=DARK, style='italic')
 
     fig.patch.set_facecolor(WHITE)
@@ -2135,65 +2134,68 @@ def _lighten(hex_color, factor=1.4):
     return (min(1, r*factor), min(1, g*factor), min(1, b*factor))
 
 def _iso_cube(ax, color, dims):
-    w = dims.get('w', 1.2)
-    # Isometric cube faces
-    # Front face
-    front = np.array([[-w,-w],[w,-w],[w,w],[-w,w]])
-    # Use simple 2.5D projection
-    dx, dy = 0.5, 0.3  # isometric offsets per unit depth
-    d = dims.get('d', w)
-    front = np.array([[-w, 0],[0, -w*0.6],[w, 0],[0, w*0.6]])  # diamond front
-    # Simpler: draw three visible faces of a cube
-    s = w
-    o = s * 0.5  # offset for depth
-    oy = s * 0.3
+    """Proper isometric cube using 30° projection."""
+    s = dims.get('w', 1.0)
+    c30 = math.cos(math.radians(30))   # √3/2 ≈ 0.866
+    s30 = math.sin(math.radians(30))   # 0.5
 
-    # Bottom face (top of figure — "roof")
-    top_face = np.array([
-        [-s, s*0.6 + oy], [0, s*1.2 + oy], [s, s*0.6 + oy], [0, 0 + oy]
-    ])
-    ax.add_patch(plt.Polygon(top_face, facecolor=_lighten(color, 1.3),
-                             edgecolor='#222', lw=1.5))
+    # 7 vertices of the visible isometric cube
+    # BF = bottom-front (lowest visible point, viewer-facing)
+    BF = np.array([ 0.0,          0.0         ])
+    BL = np.array([-s * c30,      s * s30     ])
+    BR = np.array([ s * c30,      s * s30     ])
+    TF = np.array([ 0.0,          s           ])   # inner top vertex
+    TL = np.array([-s * c30,      s + s * s30 ])
+    TR = np.array([ s * c30,      s + s * s30 ])
+    TB = np.array([ 0.0,          s + 2*s*s30 ])   # top-back (highest point)
 
-    # Left face
-    left_face = np.array([
-        [-s, -s*0.6], [-s, s*0.6 + oy], [0, oy], [0, -s*0.6 - oy*0.5]
-    ])
-    ax.add_patch(plt.Polygon(left_face, facecolor=color,
-                             edgecolor='#222', lw=1.5))
+    # Three visible faces
+    # Front-left face
+    ax.add_patch(plt.Polygon([BF, BL, TL, TF],
+        facecolor=color,
+        edgecolor='#1A1A1A', linewidth=2.0, zorder=2))
+    # Front-right face (darker)
+    ax.add_patch(plt.Polygon([BF, BR, TR, TF],
+        facecolor=_darken(color, 0.73),
+        edgecolor='#1A1A1A', linewidth=2.0, zorder=2))
+    # Top face (lightest)
+    ax.add_patch(plt.Polygon([TF, TL, TB, TR],
+        facecolor=_lighten(color, 1.35),
+        edgecolor='#1A1A1A', linewidth=2.0, zorder=3))
 
-    # Right face
-    right_face = np.array([
-        [0, -s*0.6 - oy*0.5], [0, oy], [s, s*0.6 + oy], [s, -s*0.6]
-    ])
-    ax.add_patch(plt.Polygon(right_face, facecolor=_darken(color, 0.75),
-                             edgecolor='#222', lw=1.5))
+    # Axes bounds
+    pad = s * 0.15
+    ax.set_xlim(-s*c30 - pad, s*c30 + pad)
+    ax.set_ylim(-pad, s + 2*s*s30 + pad)
 
 
 def _iso_cuboid(ax, color, dims):
+    """Isometric cuboid using same 30° projection as cube."""
     w = dims.get('w', 1.4)
-    h = dims.get('h', 0.9)
-    d = dims.get('d', 0.7)
-    oy = d * 0.3
-    ox = d * 0.5
+    h = dims.get('h', 1.0)
+    d = dims.get('d', 0.8)
+    c30 = math.cos(math.radians(30))
+    s30 = math.sin(math.radians(30))
 
-    top_face = np.array([
-        [-w, h + oy], [-w + ox, h + oy + d*0.6],
-        [w + ox, h + oy + d*0.6], [w, h + oy]
-    ])
-    left_face = np.array([
-        [-w, -h], [-w, h + oy], [-w + ox, h + oy + d*0.6], [-w + ox, -h + d*0.6]
-    ])
-    right_face = np.array([
-        [-w, -h], [w, -h], [w + ox, -h + d*0.6],
-        [w + ox, h + oy + d*0.6], [-w + ox, h + oy + d*0.6], [-w + ox, -h + d*0.6]
-    ])
-    ax.add_patch(plt.Polygon(top_face, facecolor=_lighten(color, 1.3),
-                             edgecolor='#222', lw=1.5))
-    ax.add_patch(plt.Polygon(left_face, facecolor=color,
-                             edgecolor='#222', lw=1.5))
-    ax.add_patch(plt.Polygon(right_face, facecolor=_darken(color, 0.75),
-                             edgecolor='#222', lw=1.5))
+    def proj(x, y, z):
+        return np.array([(x - z) * c30, (x + z) * s30 * 0.5 + y])
+
+    BFL = proj(0, 0, 0); BFR = proj(w, 0, 0)
+    BBR = proj(w, 0, d)
+    TFL = proj(0, h, 0); TFR = proj(w, h, 0)
+    TBL = proj(0, h, d); TBR = proj(w, h, d)
+
+    # Shift so figure is centred on x=0
+    cx = (BFR[0] + BFL[0]) / 2
+    for v in [BFL, BFR, BBR, TFL, TFR, TBL, TBR]:
+        v[0] -= cx
+
+    ax.add_patch(plt.Polygon([BFL, BFR, TFR, TFL],
+        facecolor=color, edgecolor='#1A1A1A', lw=1.8, zorder=2))
+    ax.add_patch(plt.Polygon([BFR, BBR, TBR, TFR],
+        facecolor=_darken(color, 0.73), edgecolor='#1A1A1A', lw=1.8, zorder=2))
+    ax.add_patch(plt.Polygon([TFL, TFR, TBR, TBL],
+        facecolor=_lighten(color, 1.35), edgecolor='#1A1A1A', lw=1.8, zorder=3))
 
 
 def _iso_cylinder(ax, color, dims):
@@ -2338,17 +2340,18 @@ def _shape_3d_net(spec, path, dpi):
 def _net_cube(ax, color):
     s = 1.0
     # Cross net: 4 in a column + 1 left + 1 right of second from top
+    # Column positions: (col_offset, row_from_bottom)
     faces = [
-        (0, 3), (0, 2), (0, 1), (0, 0),  # vertical strip
-        (-1, 2), (1, 2),                  # left and right of second row
+        (0, 3), (0, 2), (0, 1), (0, 0),   # vertical strip (bottom→top)
+        (-1, 2), (1, 2),                    # left and right of third row
     ]
     for (col, row) in faces:
         x, y = col * s, row * s
         rect = plt.Rectangle((x, y), s, s, facecolor=color,
-                              edgecolor=DARK, lw=1.5)
+                              edgecolor=DARK, lw=1.8)
         ax.add_patch(rect)
-    ax.set_xlim(-1.5, 1.5)
-    ax.set_ylim(-0.3, 4.3)
+    ax.set_xlim(-1.3, 2.3)
+    ax.set_ylim(-0.3, 4.5)   # extra headroom so top face isn't clipped
 
 
 def _net_cuboid(ax, color):
@@ -2448,45 +2451,48 @@ def _venn_diagram(spec, path, dpi):
     placed     = spec.get('placed', {})
     title      = spec.get('title', '')
 
-    fig_h = 5.5 + (0.7 if items_above else 0) + (0.5 if title else 0)
-    fig, ax = plt.subplots(figsize=(8.5, fig_h))
-    ax.set_xlim(-4.5, 4.5)
-    ax.set_ylim(-2.8, fig_h - 2.8)
+    # Layout
+    ew, eh   = 3.8, 2.6
+    offset   = 1.5
+    item_gap = 0.42   # gap between items row bottom and circle top
+
+    items_y  = eh / 2 + item_gap if items_above else 0
+    ylim_top = max(eh / 2 + 0.25, items_y + 0.38)
+
+    fig, ax = plt.subplots(figsize=(8.5, 4.8))
+    ax.set_xlim(-4.8, 4.8)
+    ax.set_ylim(-eh / 2 - 0.5, ylim_top)
     ax.set_aspect('equal')
     ax.axis('off')
 
     if n_circles == 2:
-        # Two overlapping ellipses
         from matplotlib.patches import Ellipse
-        ew, eh = 3.8, 2.6
-        offset = 1.4
         for i in range(2):
             cx = (-offset if i == 0 else offset)
             col = colors[i] if i < len(colors) else SHAPE_A
             ellipse = Ellipse((cx, 0), ew, eh, facecolor='none',
-                              edgecolor=col, lw=2.2, alpha=0.9)
+                              edgecolor=col, lw=2.4)
             ax.add_patch(ellipse)
-            # Label at top of each exclusive region — well clear of item area
-            lbl_x = cx + (-1.0 if i == 0 else 1.0)
-            lbl_y = eh / 2 * 0.7   # near top of ellipse
+            # Label inside top of each exclusive region
+            lbl_x = cx + (-0.9 if i == 0 else 0.9)
+            lbl_y = eh / 2 * 0.62
             ax.text(lbl_x, lbl_y, labels[i] if i < len(labels) else '',
                     ha='center', va='bottom', fontsize=10.5,
                     fontweight='bold', color=col)
 
-        # Place items if provided — centred in each region, below label
+        # Placed items — vertically centred in each region
         regions = {
-            'left':         (-2.6,  -0.1),
-            'intersection': ( 0.0,  -0.1),
-            'right':        ( 2.6,  -0.1),
+            'left':         (-2.0, 0.0),
+            'intersection': ( 0.0, 0.0),
+            'right':        ( 2.0, 0.0),
         }
         for region, (rx, ry) in regions.items():
             region_items = placed.get(region, [])
             n = len(region_items)
             for j, item in enumerate(region_items):
-                # Stack vertically, centred
-                iy = ry - (n - 1) * 0.28 + j * 0.56
+                iy = ry + (j - (n - 1) / 2) * 0.52
                 ax.text(rx, iy, str(item), ha='center', va='center',
-                        fontsize=12, color=DARK, fontweight='bold')
+                        fontsize=13, color=DARK, fontweight='bold')
 
     elif n_circles == 3:
         from matplotlib.patches import Ellipse
@@ -2503,19 +2509,20 @@ def _venn_diagram(spec, path, dpi):
                     ha='center', va='center', fontsize=10,
                     fontweight='bold', color=col)
 
-    # Items to sort above
+    # Items to sort — just above the circles, evenly spaced across circle width
     if items_above:
         n_items = len(items_above)
-        y_top = ax.get_ylim()[1] - 0.4
-        x_step = 8.0 / max(n_items + 1, 2)
+        x_left  = -(offset + ew / 2 - 0.4)
+        x_right =   offset + ew / 2 - 0.4
+        x_step  = (x_right - x_left) / max(n_items - 1, 1)
         for j, item in enumerate(items_above):
-            x_pos = -4 + x_step * (j + 1)
-            ax.text(x_pos, y_top, str(item),
-                    ha='center', va='center', fontsize=13,
+            x_pos = x_left + x_step * j if n_items > 1 else 0.0
+            ax.text(x_pos, items_y, str(item),
+                    ha='center', va='bottom', fontsize=13,
                     fontweight='bold', color=DARK)
 
     if title:
-        ax.text(0, ax.get_ylim()[1] - 0.1, title,
+        ax.text(0, ylim_top - 0.05, title,
                 ha='center', va='top', fontsize=11, color=DARK)
 
     fig.patch.set_facecolor(WHITE)
