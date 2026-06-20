@@ -11,6 +11,16 @@ from lxml import etree
 from pptx import Presentation
 from pptx.util import Emu, Pt
 
+# ── maths_visuals.py integration ─────────────────────────────────────────────
+import os as _os, tempfile as _tempfile, struct as _struct
+sys.path.insert(0, '/home/claude')
+try:
+    from maths_visuals import render_visual as _render_visual
+    _VISUALS_AVAILABLE = True
+except ImportError:
+    _VISUALS_AVAILABLE = False
+    print("⚠ maths_visuals.py not found — visual_teach slides will use fallback")
+
 EMU = 914400
 def emu(inches): return int(inches * EMU)
 
@@ -1112,7 +1122,176 @@ def build_teaching_slide(layout_num, visual_key, title_text, phase):
             break
     v = VISUALS[visual_key]
     slide_type = v.get('slide_type', 'grid')
-    if slide_type == 'word_problem':
+# ═══════════════════════════════════════════════════════════════════════════════
+# VISUAL TEACH SLIDE
+# ─────────────────────────────────────────────────────────────────────────────
+# Renders any maths_visuals.py representation as the primary teaching visual.
+#
+# lesson_data.py spec keys:
+#   visual   dict  — passed verbatim to render_visual() — any of the 50 types
+#   layout   str   — 'centre' | 'full'  (default 'centre')
+#              centre: image fills teaching panel (7"×5.8") with padding;
+#                      caption optional below; prompts + We Do in right panel
+#              full:   image fills entire teaching panel edge-to-edge; best for
+#                      coordinate grids, timetables, large bar/line charts
+#   caption  str   — optional text below the image (left panel)
+#   talk     list  — teacher prompts in right panel (bullet list)
+#   we_do    str   — We Do question (right panel, animated reveal on click)
+#   notes    str   — speaker notes
+#
+# Example:
+#   'c1_ido1': {
+#     'slide_type': 'visual_teach',
+#     'title': 'Equivalence — simplifying fractions',
+#     'visual': {
+#         'type': 'equivalence_arrows',
+#         'fraction1': [8, 12], 'fraction2': [2, 3],
+#         'operation': '÷', 'factor': 4,
+#     },
+#     'caption': 'What do you notice about the arrows?',
+#     'talk': ['What links 8 and 2?', 'What links 12 and 3?'],
+#     'we_do': 'Simplify 6/9. What do you divide by?',
+#     'notes': 'Establish that dividing top and bottom by the same number...',
+#   }
+#
+# Adding new visual types: just add a new spec to the 'visual' dict with
+# the correct 'type' key. No changes to this function needed.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def _png_dims(path):
+    """Read PNG width/height from file header — no PIL dependency."""
+    with open(path, 'rb') as f:
+        f.read(8)               # PNG signature
+        f.read(4)               # IHDR chunk length
+        f.read(4)               # 'IHDR'
+        w = _struct.unpack('>I', f.read(4))[0]
+        h = _struct.unpack('>I', f.read(4))[0]
+    return w, h
+
+
+def _fit_in_box(img_w_px, img_h_px, box_w, box_h, dpi=200):
+    """Scale image to fit inside box_w × box_h inches preserving aspect ratio.
+    Returns (fit_w, fit_h, x_offset, y_offset) in inches, centred in the box."""
+    img_w_in = img_w_px / dpi
+    img_h_in = img_h_px / dpi
+    scale    = min(box_w / img_w_in, box_h / img_h_in, 1.0)
+    fw, fh   = img_w_in * scale, img_h_in * scale
+    ox       = (box_w - fw) / 2
+    oy       = (box_h - fh) / 2
+    return fw, fh, ox, oy
+
+
+def draw_visual_teach_slide(sld, visual_key):
+    v           = VISUALS[visual_key]
+    visual_spec = v.get('visual', {})
+    layout      = v.get('layout',  'centre')
+    caption     = v.get('caption', '')
+    talk        = v.get('talk',    [])
+    we_do       = v.get('we_do',   '')
+    notes_txt   = v.get('notes',   '')
+
+    # ── Panel constants ──────────────────────────────────────────────────────
+    px, py  = 0.40, 1.45
+    pw, ph  = 7.00, 5.80
+    right_x = px + pw + 0.25
+    right_w = 13.333 - right_x - 0.20
+
+    SID = [500]
+    def nid():
+        SID[0] += 1
+        return SID[0]
+
+    # ── Render maths visual → temp PNG → embed in slide ─────────────────────
+    if not _VISUALS_AVAILABLE or not visual_spec:
+        # Graceful degradation: placeholder box
+        add_sp(sld, sp(nid(), 'VTFallback',
+            px + 0.30, py + 1.20, pw - 0.60, 3.40,
+            '[Visual — maths_visuals.py not found or no spec given]',
+            font='Aptos', sz=16, bold=False, color='888888',
+            fill='F8F8F8', border=('CCCCCC', 1.0), align='c', anchor='ctr'))
+    else:
+        tmp_path = None
+        try:
+            with _tempfile.NamedTemporaryFile(suffix='.png', delete=False,
+                                              dir='/tmp') as f:
+                tmp_path = f.name
+            _render_visual(visual_spec, tmp_path, dpi=200)
+
+            img_w_px, img_h_px = _png_dims(tmp_path)
+
+            # ── Allocate image box ────────────────────────────────────────
+            cap_h = 0.52 if caption else 0.0
+
+            if layout == 'full':
+                # Edge-to-edge in teaching panel
+                bx, by = px + 0.06, py + 0.06
+                bw, bh = pw - 0.12, ph - 0.12
+            else:  # 'centre' (default) — padding + optional caption strip
+                bx, by = px + 0.25, py + 0.22
+                bw, bh = pw - 0.50, ph - 0.44 - cap_h
+
+            fw, fh, ox, oy = _fit_in_box(img_w_px, img_h_px, bw, bh)
+            sld.shapes.add_picture(
+                tmp_path,
+                emu(bx + ox), emu(by + oy),
+                emu(fw), emu(fh))
+
+        except Exception as _e:
+            print(f"  ⚠ visual_teach render failed: {_e}")
+            import traceback; traceback.print_exc()
+        finally:
+            if tmp_path and _os.path.exists(tmp_path):
+                _os.unlink(tmp_path)
+
+    # ── Caption (left panel, below image) ───────────────────────────────────
+    if caption:
+        add_sp(sld, sp(nid(), 'VTCaption',
+            px + 0.20, py + ph - cap_h - 0.02, pw - 0.40, cap_h,
+            caption,
+            font='Twinkl Cursive Looped Light', sz=15, bold=False,
+            color='156082', fill=None, no_line=True,
+            align='c', anchor='ctr'))
+
+    # ── Right panel: teacher prompts ─────────────────────────────────────────
+    right_y = py + 0.15
+    anim_groups = []
+
+    if talk:
+        talk_list  = talk if isinstance(talk, list) else [talk]
+        talk_h     = min(len(talk_list) * 0.60 + 0.30, 3.20)
+        add_sp(sld, sp(nid(), 'VTTalk',
+            right_x, right_y, right_w, talk_h,
+            '\n'.join(f'→  {t}' for t in talk_list),
+            font='Twinkl Cursive Looped Light', sz=16, bold=False,
+            color='1F4E79', fill='DEECF8',
+            border=('156082', 1.5), align='l', anchor='t', autofit=True))
+        right_y += talk_h + 0.22
+
+    # ── Right panel: We Do (animated on click) ───────────────────────────────
+    if we_do:
+        we_text = we_do if isinstance(we_do, str) else str(we_do)
+        we_id   = nid()
+        avail_h = (py + ph) - right_y - 0.10
+        we_h    = max(1.30, min(avail_h, 2.60))
+        add_sp(sld, sp(we_id, 'VTWeDo',
+            right_x, right_y, right_w, we_h,
+            we_text,
+            font='Twinkl Cursive Looped Light', sz=17, bold=True,
+            color='7F3F00', fill='FFF2CC',
+            border=('E8B825', 2.0), align='l', anchor='ctr', autofit=True))
+        anim_groups.append([we_id])
+
+    if anim_groups:
+        _apply_animation(sld, anim_groups)
+
+    # ── Speaker notes ────────────────────────────────────────────────────────
+    if notes_txt:
+        sld.notes_slide.notes_text_frame.text = notes_txt
+
+
+    if slide_type == 'visual_teach':
+        draw_visual_teach_slide(sld, visual_key)
+    elif slide_type == 'word_problem':
         draw_word_problem_slide(sld, visual_key)
     elif slide_type == 'identify_calculate':
         draw_identify_calculate_slide(sld, visual_key)
