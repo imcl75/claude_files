@@ -2049,7 +2049,7 @@ def _polygon(spec, path, dpi):
 
     n = len(pts)
 
-    # Side labels — placed OUTSIDE the shape so they never clash with tick marks
+    # Side labels — placed OUTSIDE the shape, with white background to clear tick marks
     for i, slbl in enumerate(side_labels):
         p1 = pts[i]
         p2 = pts[(i + 1) % n]
@@ -2057,12 +2057,14 @@ def _polygon(spec, path, dpi):
         perp = np.array([-(p2[1]-p1[1]), p2[0]-p1[0]])
         perp = perp / max(np.linalg.norm(perp), 1e-9)
         toward_c = np.array([cx, cy]) - mid
-        # Flip to point AWAY from centre (exterior)
+        # Point AWAY from centre (exterior)
         if np.dot(perp, toward_c) > 0:
             perp = -perp
-        offset = 0.32
+        offset = 0.42
         ax.text(mid[0] + perp[0]*offset, mid[1] + perp[1]*offset,
-                slbl, ha='center', va='center', fontsize=9.5, color=DARK)
+                slbl, ha='center', va='center', fontsize=9.5, color=DARK,
+                bbox=dict(facecolor='white', edgecolor='none', pad=1.5,
+                          boxstyle='round,pad=0.15'))
 
     # Tick marks (equal sides)
     tick_styles = ['|', '||', '|||']
@@ -2324,27 +2326,48 @@ def _iso_sphere(ax, color, dims):
 
 
 def _iso_triangular_prism(ax, color, dims):
-    w = dims.get('w', 1.0)
-    h = dims.get('h', 1.4)
-    d = dims.get('d', 0.8)
-    oy, ox = d*0.3, d*0.5
+    """Triangular prism using same 30° isometric projection as cube.
+    The triangular face points toward the viewer; prism extends into depth."""
+    w = dims.get('w', 1.0)    # half-width of triangle base
+    h = dims.get('h', 1.5)    # height of triangle
+    d = dims.get('d', 0.9)    # length of prism (depth)
 
-    # Front triangle
-    front = np.array([[-w, -h*0.5], [w, -h*0.5], [0, h*0.5]])
-    front = np.array([[-w, -h*0.5], [w, -h*0.5], [0, h*0.5]])
-    # Back triangle (offset)
-    back_pts = front + np.array([ox, oy])
-    # Top face
-    top_face = np.array([front[2], back_pts[2], back_pts[0], front[0]])
-    # Right face
-    right_face = np.array([front[1], back_pts[1], back_pts[2], front[2]])
-    # Bottom face (floor)
-    bot_face = np.array([front[0], back_pts[0], back_pts[1], front[1]])
+    c30 = math.cos(math.radians(30))
+    s30 = math.sin(math.radians(30))
 
-    ax.add_patch(plt.Polygon(bot_face, facecolor=_darken(color,0.75), edgecolor='#222', lw=1.5))
-    ax.add_patch(plt.Polygon(right_face, facecolor=_darken(color,0.85), edgecolor='#222', lw=1.5))
-    ax.add_patch(plt.Polygon(top_face, facecolor=_lighten(color,1.25), edgecolor='#222', lw=1.5))
-    ax.add_patch(plt.Polygon(front, facecolor=color, edgecolor='#222', lw=1.5, zorder=4))
+    # Depth vector: same direction as cube's depth (right-back)
+    dv = np.array([c30 * d, s30 * d])
+
+    # Front triangle vertices (in 2D, facing viewer)
+    FBL = np.array([-w,  0.0])    # front bottom-left
+    FBR = np.array([ w,  0.0])    # front bottom-right
+    FA  = np.array([ 0.0, h  ])   # front apex
+
+    # Back triangle (front + depth vector)
+    BBL = FBL + dv
+    BBR = FBR + dv
+    BA  = FA  + dv
+
+    # Draw order: back elements first, front last
+    # Bottom face (FBL→FBR→BBR→BBL) — darkest, viewed from below
+    ax.add_patch(plt.Polygon([FBL, FBR, BBR, BBL],
+        facecolor=_darken(color, 0.55),
+        edgecolor='#1A1A1A', lw=1.8, zorder=1))
+
+    # Back triangle — visible through the right face gap
+    ax.add_patch(plt.Polygon([BBL, BBR, BA],
+        facecolor=_darken(color, 0.68),
+        edgecolor='#1A1A1A', lw=1.8, zorder=1))
+
+    # Right rectangular face (FBR→BBR→BA→FA)
+    ax.add_patch(plt.Polygon([FBR, BBR, BA, FA],
+        facecolor=_darken(color, 0.78),
+        edgecolor='#1A1A1A', lw=1.8, zorder=2))
+
+    # Front triangle — main colour, drawn on top
+    ax.add_patch(plt.Polygon([FBL, FBR, FA],
+        facecolor=color,
+        edgecolor='#1A1A1A', lw=1.8, zorder=3))
 
 
 def _iso_square_pyramid(ax, color, dims):
@@ -2409,8 +2432,10 @@ def _shape_3d_net(spec, path, dpi):
 
     if lbl:
         ymin = ax.get_ylim()[0]
-        ax.text(np.mean(ax.get_xlim()), ymin + 0.1, lbl,
-                ha='center', va='bottom', fontsize=11, style='italic')
+        # Place label centred in the space below the net (net bottom at y=0)
+        label_y = ymin / 2   # halfway between bottom of axes and y=0
+        ax.text(np.mean(ax.get_xlim()), label_y, lbl,
+                ha='center', va='center', fontsize=11, style='italic')
 
     fig.patch.set_facecolor(WHITE)
     return _save(fig, path, dpi)
@@ -2454,17 +2479,17 @@ def _net_cuboid(ax, color):
 def _net_triangular_prism(ax, color):
     w, h, d = 1.2, 1.0, 0.8
     # Three rectangles + two triangles
-    rects = [(0,0,w,d), (0,d,w,h), (0,d+h,w,d)]
-    for (x,y,rw,rh) in rects:
-        ax.add_patch(plt.Rectangle((x,y), rw, rh, facecolor=color,
-                                   edgecolor=DARK, lw=1.5))
+    rects = [(0, 0, w, d), (0, d, w, h), (0, d+h, w, d)]
+    for (x, y, rw, rh) in rects:
+        ax.add_patch(plt.Rectangle((x, y), rw, rh, facecolor=color,
+                                   edgecolor=DARK, lw=1.8))
     # Triangles on left and right of middle rectangle
     for tx in [-d, w]:
         pts = np.array([[tx, d], [tx + d, d], [tx + d/2, d + h]])
         ax.add_patch(plt.Polygon(pts, facecolor=color,
-                                 edgecolor=DARK, lw=1.5))
-    ax.set_xlim(-d-0.2, w+d+0.2)
-    ax.set_ylim(-0.2, d+h+d+0.3)
+                                 edgecolor=DARK, lw=1.8))
+    ax.set_xlim(-d - 0.3, w + d + 0.3)
+    ax.set_ylim(-0.85, d + h + d + 0.35)   # extra space below for label
 
 
 def _net_square_pyramid(ax, color):
@@ -2536,7 +2561,8 @@ def _venn_diagram(spec, path, dpi):
     item_gap = 0.42   # gap between items row bottom and circle top
 
     items_y  = eh / 2 + item_gap if items_above else 0
-    ylim_top = max(eh / 2 + 0.25, items_y + 0.38)
+    # Extra headroom: labels are now ABOVE the circles
+    ylim_top = max(eh / 2 + 0.75, items_y + 0.38)
 
     fig, ax = plt.subplots(figsize=(8.5, 4.8))
     ax.set_xlim(-4.8, 4.8)
@@ -2552,11 +2578,10 @@ def _venn_diagram(spec, path, dpi):
             ellipse = Ellipse((cx, 0), ew, eh, facecolor='none',
                               edgecolor=col, lw=2.4)
             ax.add_patch(ellipse)
-            # Label inside top of each exclusive region
-            lbl_x = cx + (-0.9 if i == 0 else 0.9)
-            lbl_y = eh / 2 * 0.62
-            ax.text(lbl_x, lbl_y, labels[i] if i < len(labels) else '',
-                    ha='center', va='bottom', fontsize=10.5,
+            # Label OUTSIDE — centred on circle, just above the top arc
+            ax.text(cx, eh / 2 + 0.14,
+                    labels[i] if i < len(labels) else '',
+                    ha='center', va='bottom', fontsize=11,
                     fontweight='bold', color=col)
 
         # Placed items — vertically centred in each region
