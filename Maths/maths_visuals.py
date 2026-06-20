@@ -458,9 +458,15 @@ def _number_line(spec, path, dpi):
         if step is None:
             step = rng / 8
 
-    fig, ax = plt.subplots(figsize=(8, 1.8))
+    fig, ax = plt.subplots(figsize=(8, 1.8 + (0.6 if jumps else 0)))
     ax.set_xlim(start - (end - start) * 0.06, end + (end - start) * 0.06)
-    ax.set_ylim(-0.5, 1.4 + (0.8 if jumps else 0))
+    # ylim needs headroom for arcs
+    _max_arc = 0.0
+    if jumps:
+        _span = max(end - start, 1)
+        _max_arc = max(min((j['end']-j['start']) / _span * 1.2 + 0.18, 0.72)
+                       for j in jumps)
+    ax.set_ylim(-0.55, 0.6 + _max_arc + 0.25)
     ax.axis('off')
 
     y_line = 0
@@ -508,24 +514,51 @@ def _number_line(spec, path, dpi):
                 ha='center', va='bottom', fontsize=10,
                 fontweight='bold', color=col)
 
-    # Jumps (arcs above line)
+    # Jumps — proper quadratic bezier arcs, labels at arc peak
+    x_span = max(end - start, 1)
+    # Work out max arc height so we can set ylim correctly
+    max_arc_h = 0.0
+    for j in jumps:
+        jd = j['end'] - j['start']
+        ah = min(jd / x_span * 1.2 + 0.18, 0.72)
+        max_arc_h = max(max_arc_h, ah)
+
     for j in jumps:
         jstart = j['start']
         jend   = j['end']
         jlbl   = j.get('label', '')
         jcol   = j.get('color', SHAPE_B)
-        mid    = (jstart + jend) / 2
-        height = (jend - jstart) * 0.35 + 0.3
-        # Bezier arc
-        ax.annotate('', xy=(jend, y_line + 0.12),
-                    xytext=(jstart, y_line + 0.12),
-                    arrowprops=dict(
-                        arrowstyle='->', color=jcol, lw=1.8,
-                        connectionstyle=f'arc3,rad=-0.4'))
+        mid_x  = (jstart + jend) / 2
+        jd     = jend - jstart
+        arc_h  = min(jd / x_span * 1.2 + 0.18, 0.72)
+
+        # Quadratic bezier: P0 = start, P1 = apex control, P2 = end
+        t  = np.linspace(0, 1, 120)
+        p0 = np.array([jstart, y_line + 0.12])
+        p1 = np.array([mid_x,  y_line + 0.12 + arc_h])
+        p2 = np.array([jend,   y_line + 0.12])
+        pts = (((1-t)**2)[:,None]*p0
+               + (2*t*(1-t))[:,None]*p1
+               + (t**2)[:,None]*p2)
+
+        # Draw arc body (stop a few pts before end to leave room for arrow)
+        cut = 10
+        ax.plot(pts[:-cut, 0], pts[:-cut, 1],
+                color=jcol, lw=2.0, solid_capstyle='round', zorder=4)
+
+        # Arrow head at landing point
+        ax.annotate('',
+                    xy=(pts[-1, 0], pts[-1, 1]),
+                    xytext=(pts[-cut-2, 0], pts[-cut-2, 1]),
+                    arrowprops=dict(arrowstyle='->', color=jcol,
+                                   lw=2.0, mutation_scale=14),
+                    zorder=5)
+
+        # Label exactly at arc peak
         if jlbl:
-            ax.text(mid, y_line + height + 0.15, jlbl,
+            ax.text(mid_x, y_line + 0.12 + arc_h + 0.06, jlbl,
                     ha='center', va='bottom', fontsize=10,
-                    color=jcol, fontweight='bold')
+                    color=jcol, fontweight='bold', zorder=6)
 
     fig.patch.set_facecolor(WHITE)
     return _save(fig, path, dpi)
@@ -879,22 +912,25 @@ def _array(spec, path, dpi):
 
     y = fig_h - 0.2
     for ri in range(n_rows):
-        row_top = y
-        row_bottom = y - 2*r - gap_r - (r * 0.5 if show_rb else 0)
+        row_top    = y
+        rb_pad     = r * 0.45
+        row_bottom = y - 2*r - gap_r - (rb_pad if show_rb else 0)
+        row_h_vis  = row_top - row_bottom
 
         if show_rb:
-            rb_pad = r * 0.4
             rect = mpatches.FancyBboxPatch(
-                (0.1, row_bottom - rb_pad * 0.5),
-                row_w - 0.1,
-                2*r + gap_r + rb_pad,
-                boxstyle='round,pad=0.05',
+                (0.12, row_bottom),
+                row_w - 0.12,
+                row_h_vis,
+                boxstyle='round,pad=0.04',
                 linewidth=1.8, edgecolor='#C83030',
                 facecolor='#FFF0F0')
             ax.add_patch(rect)
 
+        # Circle centre: vertically centred in the row
+        cy = row_bottom + row_h_vis / 2
+
         x = pad
-        cy = y - r - (r * 0.25 if show_rb else 0)
         for g in groups:
             n_cols = g.get('cols', 1)
             col    = g.get('color', ARRAY_COLS[0])
@@ -906,7 +942,7 @@ def _array(spec, path, dpi):
                 ax.add_patch(circle)
             x += n_cols * (2*r + gap_c)
 
-        y = row_bottom - (0.05 if show_rb else gap_r * 0.5)
+        y = row_bottom - gap_r * 0.4
 
     fig.patch.set_facecolor(WHITE)
     return _save(fig, path, dpi)
@@ -2231,23 +2267,40 @@ def _iso_triangular_prism(ax, color, dims):
 
 
 def _iso_square_pyramid(ax, color, dims):
-    b = dims.get('b', 1.2)  # half-base
-    h = dims.get('h', 1.8)
-    oy = b * 0.25
+    b = dims.get('b', 1.0)
+    h = dims.get('h', 1.6)
 
-    apex = np.array([0, h * 0.7])
-    bl   = np.array([-b, -h * 0.3])
-    br   = np.array([b, -h * 0.3])
-    bb   = np.array([0, -h * 0.3 - oy])
-    bf   = np.array([0, -h * 0.3 + oy * 0.5])
+    # Key 2D positions in isometric-style projection
+    apex  = np.array([0.0,   h * 0.62])
+    # Base: diamond shape — front bottom, right, back top, left
+    b_front = np.array([ 0.0,  -h * 0.28])
+    b_right = np.array([ b * 1.15, -h * 0.08])
+    b_back  = np.array([ 0.0,   h * 0.12])
+    b_left  = np.array([-b * 1.15, -h * 0.08])
 
-    # Left face
-    ax.add_patch(plt.Polygon([apex, bl, bf], facecolor=color, edgecolor='#222', lw=1.5))
-    # Right face
-    ax.add_patch(plt.Polygon([apex, br, bf], facecolor=_darken(color,0.75), edgecolor='#222', lw=1.5))
-    # Base (simple parallelogram)
-    base = np.array([bl, br, bb, np.array([-b, -h*0.3 - oy])])
-    ax.add_patch(plt.Polygon(base, facecolor=_darken(color,0.6), edgecolor='#222', lw=1.5, zorder=1))
+    # Draw base diamond (darkest, at back/bottom so drawn first)
+    ax.add_patch(plt.Polygon(
+        [b_front, b_right, b_back, b_left],
+        facecolor=_darken(color, 0.52),
+        edgecolor='#1A1A1A', lw=1.5, zorder=1))
+
+    # Left-front triangular face (medium — faces viewer)
+    ax.add_patch(plt.Polygon(
+        [apex, b_left, b_front],
+        facecolor=color,
+        edgecolor='#1A1A1A', lw=1.5, zorder=2))
+
+    # Right-front triangular face (darker — side-on)
+    ax.add_patch(plt.Polygon(
+        [apex, b_front, b_right],
+        facecolor=_darken(color, 0.76),
+        edgecolor='#1A1A1A', lw=1.5, zorder=2))
+
+    # Back-left face hint (very dark, just visible)
+    ax.add_patch(plt.Polygon(
+        [apex, b_left, b_back],
+        facecolor=_darken(color, 0.60),
+        edgecolor='#1A1A1A', lw=1.0, zorder=1))
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -2323,10 +2376,10 @@ def _net_triangular_prism(ax, color):
     for (x,y,rw,rh) in rects:
         ax.add_patch(plt.Rectangle((x,y), rw, rh, facecolor=color,
                                    edgecolor=DARK, lw=1.5))
-    # Triangles on left and right
+    # Triangles on left and right of middle rectangle
     for tx in [-d, w]:
         pts = np.array([[tx, d], [tx + d, d], [tx + d/2, d + h]])
-        ax.add_patch(plt.Polygon(pts, facecolor=_lighten(color, 1.2),
+        ax.add_patch(plt.Polygon(pts, facecolor=color,
                                  edgecolor=DARK, lw=1.5))
     ax.set_xlim(-d-0.2, w+d+0.2)
     ax.set_ylim(-0.2, d+h+d+0.3)
@@ -2411,27 +2464,29 @@ def _venn_diagram(spec, path, dpi):
             cx = (-offset if i == 0 else offset)
             col = colors[i] if i < len(colors) else SHAPE_A
             ellipse = Ellipse((cx, 0), ew, eh, facecolor='none',
-                              edgecolor=col, lw=2.0, alpha=0.9)
+                              edgecolor=col, lw=2.2, alpha=0.9)
             ax.add_patch(ellipse)
-            # Label: inside each circle, away from overlap zone
-            lbl_x = cx - 1.0 if i == 0 else cx + 1.0
-            lbl_y = 0.0
+            # Label at top of each exclusive region — well clear of item area
+            lbl_x = cx + (-1.0 if i == 0 else 1.0)
+            lbl_y = eh / 2 * 0.7   # near top of ellipse
             ax.text(lbl_x, lbl_y, labels[i] if i < len(labels) else '',
-                    ha='center', va='center', fontsize=11,
+                    ha='center', va='bottom', fontsize=10.5,
                     fontweight='bold', color=col)
 
-        # Place items if provided
+        # Place items if provided — centred in each region, below label
         regions = {
-            'left':         (-2.8, -0.2),
-            'intersection': (0, -0.2),
-            'right':        (2.8, -0.2),
+            'left':         (-2.6,  -0.1),
+            'intersection': ( 0.0,  -0.1),
+            'right':        ( 2.6,  -0.1),
         }
         for region, (rx, ry) in regions.items():
             region_items = placed.get(region, [])
+            n = len(region_items)
             for j, item in enumerate(region_items):
-                iy = ry + j * 0.45 - (len(region_items)-1) * 0.22
+                # Stack vertically, centred
+                iy = ry - (n - 1) * 0.28 + j * 0.56
                 ax.text(rx, iy, str(item), ha='center', va='center',
-                        fontsize=11, color=DARK)
+                        fontsize=12, color=DARK, fontweight='bold')
 
     elif n_circles == 3:
         from matplotlib.patches import Ellipse
