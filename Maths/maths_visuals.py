@@ -142,64 +142,100 @@ def _pv_counter_chart(spec, path, dpi):
     cols   = spec.get('columns', ['TH', 'H', 'T', 'O'])
     rows   = spec.get('rows', [{'TH': 1, 'H': 2, 'T': 3, 'O': 4}])
     show_d = spec.get('show_digit_row', True)
-    n_cols = len(cols)
     n_rows = len(rows)
 
-    # Cell sizing
-    cell_w, cell_h = 1.4, 1.5
+    # Decimal point column is a narrow separator, not a place value
+    CELL_W  = 1.4
+    DOT_W   = 0.42   # much narrower
+    cell_h  = 1.5
     header_h = 0.55
     digit_h  = 0.60
-    total_h  = header_h + n_rows * cell_h + (digit_h if show_d else 0)
-    total_w  = n_cols * cell_w
-    fig, ax  = plt.subplots(figsize=(total_w, total_h))
+
+    def _cw(col): return DOT_W if col == '.' else CELL_W
+
+    col_widths = [_cw(c) for c in cols]
+    total_w = sum(col_widths)
+    total_h = header_h + n_rows * cell_h + (digit_h if show_d else 0)
+
+    fig, ax = plt.subplots(figsize=(total_w, total_h))
     ax.set_xlim(0, total_w)
     ax.set_ylim(0, total_h)
     ax.axis('off')
 
     # ── Header row
-    for ci, col in enumerate(cols):
-        x0 = ci * cell_w
-        rect = mpatches.FancyBboxPatch(
-            (x0, total_h - header_h), cell_w, header_h,
-            boxstyle='square,pad=0', linewidth=1.5,
-            edgecolor='#444444', facecolor=PV[col])
-        ax.add_patch(rect)
-        ax.text(x0 + cell_w/2, total_h - header_h/2,
-                PV_LONG.get(col, col),
-                ha='center', va='center', color=PV_TEXT[col],
-                fontsize=11, fontweight='bold', linespacing=1.2)
+    x = 0.0
+    for col in cols:
+        cw = _cw(col)
+        if col == '.':
+            rect = mpatches.FancyBboxPatch(
+                (x, total_h - header_h), cw, header_h,
+                boxstyle='square,pad=0', linewidth=1.5,
+                edgecolor='#444', facecolor=PV['.'])
+            ax.add_patch(rect)
+            ax.text(x + cw/2, total_h - header_h/2, '.',
+                    ha='center', va='center', color='white',
+                    fontsize=22, fontweight='bold')
+        else:
+            rect = mpatches.FancyBboxPatch(
+                (x, total_h - header_h), cw, header_h,
+                boxstyle='square,pad=0', linewidth=1.5,
+                edgecolor='#444', facecolor=PV[col])
+            ax.add_patch(rect)
+            ax.text(x + cw/2, total_h - header_h/2,
+                    PV_LONG.get(col, col),
+                    ha='center', va='center', color=PV_TEXT[col],
+                    fontsize=11, fontweight='bold', linespacing=1.2)
+        x += cw
 
     # ── Counter rows
     for ri, row_data in enumerate(rows):
         y_bottom = total_h - header_h - (ri + 1) * cell_h
-        for ci, col in enumerate(cols):
-            x0 = ci * cell_w
-            rect = mpatches.FancyBboxPatch(
-                (x0, y_bottom), cell_w, cell_h,
-                boxstyle='square,pad=0', linewidth=1.2,
-                edgecolor='#888888', facecolor='#D8EAF8')
-            ax.add_patch(rect)
-            count = row_data.get(col, 0)
-            _draw_counters(ax, x0, y_bottom, cell_w, cell_h, count, col)
-
-    # ── Digit summary row
-    if show_d:
-        digit_values = {}
+        x = 0.0
         for col in cols:
-            total_in_col = sum(r.get(col, 0) for r in rows)
-            digit_values[col] = total_in_col
-        y_bottom = 0
-        for ci, col in enumerate(cols):
-            x0 = ci * cell_w
+            cw = _cw(col)
+            if col == '.':
+                # Thin grey separator column — just a dot, no counters
+                rect = mpatches.FancyBboxPatch(
+                    (x, y_bottom), cw, cell_h,
+                    boxstyle='square,pad=0', linewidth=0.8,
+                    edgecolor='#AAA', facecolor='#EBEBEB')
+                ax.add_patch(rect)
+                ax.text(x + cw/2, y_bottom + cell_h/2, '.',
+                        ha='center', va='center', color='#777',
+                        fontsize=18, fontweight='bold')
+            else:
+                rect = mpatches.FancyBboxPatch(
+                    (x, y_bottom), cw, cell_h,
+                    boxstyle='square,pad=0', linewidth=1.2,
+                    edgecolor='#888', facecolor='#D8EAF8')
+                ax.add_patch(rect)
+                count = row_data.get(col, 0)
+                _draw_counters(ax, x, y_bottom, cw, cell_h, count, col)
+            x += cw
+
+    # ── Digit summary row — no digit for '.' column
+    if show_d:
+        digit_values = {col: sum(r.get(col, 0) for r in rows)
+                        for col in cols if col != '.'}
+        y_bottom = 0.0
+        x = 0.0
+        for col in cols:
+            cw = _cw(col)
             rect = mpatches.FancyBboxPatch(
-                (x0, y_bottom), cell_w, digit_h,
+                (x, y_bottom), cw, digit_h,
                 boxstyle='square,pad=0', linewidth=1.5,
-                edgecolor='#444444', facecolor=WHITE)
+                edgecolor='#444', facecolor=WHITE)
             ax.add_patch(rect)
-            ax.text(x0 + cell_w/2, y_bottom + digit_h/2,
-                    str(digit_values.get(col, 0)),
-                    ha='center', va='center', color=DARK,
-                    fontsize=22, fontweight='bold')
+            if col == '.':
+                ax.text(x + cw/2, y_bottom + digit_h/2, '.',
+                        ha='center', va='center', color='#777',
+                        fontsize=22, fontweight='bold')
+            else:
+                ax.text(x + cw/2, y_bottom + digit_h/2,
+                        str(digit_values.get(col, 0)),
+                        ha='center', va='center', color=DARK,
+                        fontsize=22, fontweight='bold')
+            x += cw
 
     fig.patch.set_facecolor(WHITE)
     return _save(fig, path, dpi)
@@ -380,7 +416,7 @@ def _dienes(spec, path, dpi):
 
 
 def _dienes_thousand(ax, x, y, size):
-    """Draw a thousands cube as large 10×10 block."""
+    """Draw a thousands cube as large 10×10 block with 1,000 label."""
     c = PV['TH']
     rect = plt.Rectangle((x, y), size, size,
                           facecolor=c, edgecolor='#1A3A5A', linewidth=1.2)
@@ -390,6 +426,10 @@ def _dienes_thousand(ax, x, y, size):
     for i in range(1, n):
         ax.plot([x + i*s, x + i*s], [y, y + size], color='#1A3A5A', lw=0.4)
         ax.plot([x, x + size], [y + i*s, y + i*s], color='#1A3A5A', lw=0.4)
+    # Label in centre — makes clear this is 1,000 not a 10×10 array
+    ax.text(x + size/2, y + size/2, '1,000',
+            ha='center', va='center', color='white',
+            fontsize=max(7, size * 6), fontweight='bold')
 
 
 def _dienes_hundred(ax, x, y, size):
@@ -717,16 +757,19 @@ def _bar_model_part_whole(spec, path, dpi):
 
     # Part bars (bottom)
     y_parts = 1.2
-    # Calculate proportional widths
-    numeric = [p.get('value') for p in parts]
-    try:
-        nums = [float(str(n).replace('?', '0')) for n in numeric]
-        total = sum(nums) or len(parts)
-        widths = [bar_w * n / total for n in nums]
-        if any(str(n) == '?' for n in numeric):
-            widths = [bar_w / len(parts)] * len(parts)
-    except:
-        widths = [bar_w / len(parts)] * len(parts)
+    # Calculate proportional widths using 'proportion' key if present, else 'value'
+    # This lets '?' parts still render at the correct width
+    def _size_val(p):
+        if 'proportion' in p:
+            return float(p['proportion'])
+        try:
+            return float(str(p.get('value', 0)).replace('?', '0'))
+        except:
+            return 0.0
+
+    nums = [_size_val(p) for p in parts]
+    total = sum(nums) or len(parts)
+    widths = [bar_w * n / total for n in nums]
 
     x = 0
     for i, (p, w) in enumerate(zip(parts, widths)):
@@ -735,7 +778,8 @@ def _bar_model_part_whole(spec, path, dpi):
             boxstyle='square,pad=0.02', linewidth=1.5,
             edgecolor='#333', facecolor=col)
         ax.add_patch(rect)
-        pv = p.get('value', '?')
+        # 'display' overrides 'value' for what is shown inside the bar
+        pv = p.get('display', p.get('value', '?'))
         ax.text(x + w/2, y_parts + bar_h/2, str(pv),
                 ha='center', va='center', fontsize=13, fontweight='bold', color='white')
         pl = p.get('label', '')
@@ -1188,43 +1232,71 @@ def _equivalence_arrows(spec, path, dpi):
     n2, d2 = f2
     op_label = f'{op}{fac}'
 
-    fig, ax = plt.subplots(figsize=(5.5, 3.0))
+    fig, ax = plt.subplots(figsize=(5.5, 4.0))
     ax.set_xlim(0, 5.5)
-    ax.set_ylim(0, 3.0)
+    ax.set_ylim(0.3, 4.0)
     ax.axis('off')
 
     # Fraction 1
     cx1 = 1.2
-    ax.text(cx1, 2.4, str(n1), ha='center', va='bottom', fontsize=26, fontweight='bold', color=DARK)
-    ax.plot([cx1 - 0.35, cx1 + 0.35], [2.2, 2.2], color=DARK, lw=2.5)  # vinculum
-    ax.text(cx1, 1.9, str(d1), ha='center', va='top', fontsize=26, fontweight='bold', color=DARK)
+    n1_y, d1_y = 2.7, 1.9
+    ax.text(cx1, n1_y, str(n1), ha='center', va='bottom',
+            fontsize=26, fontweight='bold', color=DARK)
+    ax.plot([cx1-0.38, cx1+0.38], [n1_y-0.05, n1_y-0.05], color=DARK, lw=2.5)
+    ax.text(cx1, d1_y, str(d1), ha='center', va='top',
+            fontsize=26, fontweight='bold', color=DARK)
 
     # = sign
-    ax.text(2.75, 2.15, '=', ha='center', va='center', fontsize=22, color=DARK)
+    ax.text(2.75, 2.3, '=', ha='center', va='center', fontsize=22, color=DARK)
 
     # Fraction 2
     cx2 = 4.3
-    ax.text(cx2, 2.4, str(n2), ha='center', va='bottom', fontsize=26, fontweight='bold', color=DARK)
-    ax.plot([cx2 - 0.35, cx2 + 0.35], [2.2, 2.2], color=DARK, lw=2.5)
-    ax.text(cx2, 1.9, str(d2), ha='center', va='top', fontsize=26, fontweight='bold', color=DARK)
+    n2_y, d2_y = 2.7, 1.9
+    ax.text(cx2, n2_y, str(n2), ha='center', va='bottom',
+            fontsize=26, fontweight='bold', color=DARK)
+    ax.plot([cx2-0.38, cx2+0.38], [n2_y-0.05, n2_y-0.05], color=DARK, lw=2.5)
+    ax.text(cx2, d2_y, str(d2), ha='center', va='top',
+            fontsize=26, fontweight='bold', color=DARK)
 
-    # Curved arrows
     arrow_col = SHAPE_B
-    # Top arrow (numerator)
-    ax.annotate('', xy=(cx2 - 0.3, 2.55), xytext=(cx1 + 0.3, 2.55),
-                arrowprops=dict(arrowstyle='->', color=arrow_col, lw=2.0,
-                                connectionstyle='arc3,rad=-0.35'))
-    ax.text(2.75, 2.85, op_label,
-            ha='center', va='center', fontsize=12,
-            fontweight='bold', color=arrow_col)
+    mid_x = (cx1 + cx2) / 2   # 2.75
+    bow   = 0.55               # arc bow height
 
-    # Bottom arrow (denominator)
-    ax.annotate('', xy=(cx2 - 0.3, 1.65), xytext=(cx1 + 0.3, 1.65),
-                arrowprops=dict(arrowstyle='->', color=arrow_col, lw=2.0,
-                                connectionstyle='arc3,rad=0.35'))
-    ax.text(2.75, 1.2, op_label,
-            ha='center', va='center', fontsize=12,
-            fontweight='bold', color=arrow_col)
+    def _bezier_arc_with_label(ax, x0, y0, x1, y1, bow_y, label,
+                                label_above, col):
+        """Quadratic bezier arc. Control point: (mid_x, (y0+y1)/2 + bow_y)."""
+        t    = np.linspace(0, 1, 100)
+        mid_y = (y0 + y1) / 2 + bow_y
+        px   = (1-t)**2 * x0 + 2*t*(1-t) * ((x0+x1)/2) + t**2 * x1
+        py   = (1-t)**2 * y0 + 2*t*(1-t) * mid_y + t**2 * y1
+        cut  = 10
+        ax.plot(px[:-cut], py[:-cut], color=col, lw=2.2, solid_capstyle='round')
+        ax.annotate('',
+                    xy=(px[-1], py[-1]),
+                    xytext=(px[-cut-2], py[-cut-2]),
+                    arrowprops=dict(arrowstyle='->', color=col, lw=2.2,
+                                   mutation_scale=14))
+        # Label sits at the peak of the arc
+        apex_y = mid_y   # for equal start/end y, peak = control point y
+        gap = 0.18
+        label_y = apex_y + gap if label_above else apex_y - gap
+        ax.text(mid_x, label_y, label,
+                ha='center', va='bottom' if label_above else 'top',
+                fontsize=13, fontweight='bold', color=col)
+
+    # Top arc: just above the numerator, bows UPWARD
+    top_y = n1_y + 0.08
+    _bezier_arc_with_label(ax,
+        cx1 + 0.35, top_y,
+        cx2 - 0.35, top_y,
+        bow, op_label, label_above=True, col=arrow_col)
+
+    # Bottom arc: just below the denominator, bows DOWNWARD
+    bot_y = d1_y - 0.22
+    _bezier_arc_with_label(ax,
+        cx1 + 0.35, bot_y,
+        cx2 - 0.35, bot_y,
+        -bow, op_label, label_above=False, col=arrow_col)
 
     fig.patch.set_facecolor(WHITE)
     return _save(fig, path, dpi)
@@ -1247,16 +1319,19 @@ def _hundred_square(spec, path, dpi):
     by      = spec.get('shade_by', 'columns')
     label   = spec.get('label', None)
 
-    cell = 0.45
+    cell = 0.52   # slightly larger cells for clarity
     n    = 10
-    pad  = 0.1
+    pad  = 0.12
+    lbl_h = 0.5 if label else 0
     fig_w = n * cell + 2 * pad
-    fig_h = n * cell + 2 * pad + (0.4 if label else 0)
+    fig_h = n * cell + 2 * pad + lbl_h
 
     fig, ax = plt.subplots(figsize=(fig_w, fig_h))
     ax.set_xlim(0, fig_w)
     ax.set_ylim(0, fig_h)
     ax.axis('off')
+
+    grid_y0 = lbl_h + pad   # grid starts above label area
 
     def is_shaded(row, col):
         if by == 'columns':
@@ -1274,15 +1349,15 @@ def _hundred_square(spec, path, dpi):
     for row in range(n):
         for col in range(n):
             x = pad + col * cell
-            y = pad + (n - 1 - row) * cell
+            y = grid_y0 + (n - 1 - row) * cell
             fc = color if is_shaded(row, col) else WHITE
             rect = plt.Rectangle((x, y), cell, cell,
-                                  facecolor=fc, edgecolor='#888', linewidth=0.6)
+                                  facecolor=fc, edgecolor='#999', linewidth=0.7)
             ax.add_patch(rect)
 
     if label:
-        ax.text(fig_w/2, 0.05, label,
-                ha='center', va='bottom', fontsize=12,
+        ax.text(fig_w/2, lbl_h / 2, label,
+                ha='center', va='center', fontsize=14,
                 fontweight='bold', color=color)
 
     fig.patch.set_facecolor(WHITE)
@@ -1620,16 +1695,20 @@ def _coordinate_grid(spec, path, dpi):
     ax.annotate('', xy=(0, y_max + 0.35), xytext=(0, y_max + 0.05),
                 arrowprops=dict(arrowstyle='->', color='#333', lw=1.5))
 
-    # Tick labels
+    # Tick labels — always adjacent to the axes (y=0, x=0), not at grid edges
+    tick_offset = (x_max - x_min) * 0.028
+
     for x in range(int(x_min), int(x_max) + 1):
         if x != 0:
-            ax.text(x, y_min - 0.3, str(x), ha='center', va='top',
-                    fontsize=9, color=DARK)
+            ax.text(x, -tick_offset, str(x),
+                    ha='center', va='top', fontsize=9, color=DARK)
     for y in range(int(y_min), int(y_max) + 1):
         if y != 0:
-            ax.text(x_min - 0.25, y, str(y), ha='right', va='center',
-                    fontsize=9, color=DARK)
-    ax.text(x_min - 0.25, 0, '0', ha='right', va='center', fontsize=9, color=DARK)
+            ax.text(-tick_offset, y, str(y),
+                    ha='right', va='center', fontsize=9, color=DARK)
+    # Origin
+    ax.text(-tick_offset * 0.8, -tick_offset * 0.8, '0',
+            ha='right', va='top', fontsize=9, color=DARK)
 
     # Axis labels
     if show_ax:
