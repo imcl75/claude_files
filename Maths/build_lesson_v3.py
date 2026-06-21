@@ -1167,7 +1167,7 @@ def _fit_in_box(img_w_px, img_h_px, box_w, box_h, dpi=200):
     Returns (fit_w, fit_h, x_offset, y_offset) in inches, centred in the box."""
     img_w_in = img_w_px / dpi
     img_h_in = img_h_px / dpi
-    scale    = min(box_w / img_w_in, box_h / img_h_in, 1.0)
+    scale    = min(box_w / img_w_in, box_h / img_h_in)   # fill the box — scales up or down
     fw, fh   = img_w_in * scale, img_h_in * scale
     ox       = (box_w - fw) / 2
     oy       = (box_h - fh) / 2
