@@ -11,16 +11,6 @@ from lxml import etree
 from pptx import Presentation
 from pptx.util import Emu, Pt
 
-# ── maths_visuals.py integration ─────────────────────────────────────────────
-import os as _os, tempfile as _tempfile, struct as _struct
-sys.path.insert(0, '/home/claude')
-try:
-    from maths_visuals import render_visual as _render_visual
-    _VISUALS_AVAILABLE = True
-except ImportError:
-    _VISUALS_AVAILABLE = False
-    print("⚠ maths_visuals.py not found — visual_teach slides will use fallback")
-
 EMU = 914400
 def emu(inches): return int(inches * EMU)
 
@@ -1114,396 +1104,6 @@ def draw_grid_slide(sld, visual_key, layout_num_was):
     sld.notes_slide.notes_text_frame.text = v['notes']
 
 
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# VISUAL TEACH SLIDE
-# ─────────────────────────────────────────────────────────────────────────────
-# Renders any maths_visuals.py representation as the primary teaching visual.
-#
-# lesson_data.py spec keys:
-#   visual   dict  — passed verbatim to render_visual() — any of the 50 types
-#   layout   str   — 'centre' | 'full'  (default 'centre')
-#              centre: image fills teaching panel (7"×5.8") with padding;
-#                      caption optional below; prompts + We Do in right panel
-#              full:   image fills entire teaching panel edge-to-edge; best for
-#                      coordinate grids, timetables, large bar/line charts
-#   caption  str   — optional text below the image (left panel)
-#   talk     list  — teacher prompts in right panel (bullet list)
-#   we_do    str   — We Do question (right panel, animated reveal on click)
-#   notes    str   — speaker notes
-#
-# Example:
-#   'c1_ido1': {
-#     'slide_type': 'visual_teach',
-#     'title': 'Equivalence — simplifying fractions',
-#     'visual': {
-#         'type': 'equivalence_arrows',
-#         'fraction1': [8, 12], 'fraction2': [2, 3],
-#         'operation': '÷', 'factor': 4,
-#     },
-#     'caption': 'What do you notice about the arrows?',
-#     'talk': ['What links 8 and 2?', 'What links 12 and 3?'],
-#     'we_do': 'Simplify 6/9. What do you divide by?',
-#     'notes': 'Establish that dividing top and bottom by the same number...',
-#   }
-#
-# Adding new visual types: just add a new spec to the 'visual' dict with
-# the correct 'type' key. No changes to this function needed.
-# ═══════════════════════════════════════════════════════════════════════════════
-
-def _png_dims(path):
-    """Read PNG width/height from file header — no PIL dependency."""
-    with open(path, 'rb') as f:
-        f.read(8)               # PNG signature
-        f.read(4)               # IHDR chunk length
-        f.read(4)               # 'IHDR'
-        w = _struct.unpack('>I', f.read(4))[0]
-        h = _struct.unpack('>I', f.read(4))[0]
-    return w, h
-
-
-def _fit_in_box(img_w_px, img_h_px, box_w, box_h, dpi=200):
-    """Scale image to fit inside box_w × box_h inches preserving aspect ratio.
-    Returns (fit_w, fit_h, x_offset, y_offset) in inches, centred in the box."""
-    img_w_in = img_w_px / dpi
-    img_h_in = img_h_px / dpi
-    scale    = min(box_w / img_w_in, box_h / img_h_in)   # fill the box — scales up or down
-    fw, fh   = img_w_in * scale, img_h_in * scale
-    ox       = (box_w - fw) / 2
-    oy       = (box_h - fh) / 2
-    return fw, fh, ox, oy
-
-
-def draw_visual_teach_slide(sld, visual_key):
-    v           = VISUALS[visual_key]
-    visual_spec = v.get('visual', {})
-    layout      = v.get('layout',  'centre')
-    caption     = v.get('caption', '')
-    talk        = v.get('talk',    [])
-    we_do       = v.get('we_do',   '')
-    notes_txt   = v.get('notes',   '')
-
-    # ── Panel constants ──────────────────────────────────────────────────────
-    px, py  = 0.40, 1.45
-    pw, ph  = 7.00, 5.80
-    right_x = px + pw + 0.25
-    right_w = 13.333 - right_x - 0.20
-
-    SID = [500]
-    def nid():
-        SID[0] += 1
-        return SID[0]
-
-    # ── Render maths visual → temp PNG → embed in slide ─────────────────────
-    if not _VISUALS_AVAILABLE or not visual_spec:
-        # Graceful degradation: placeholder box
-        add_sp(sld, sp(nid(), 'VTFallback',
-            px + 0.30, py + 1.20, pw - 0.60, 3.40,
-            '[Visual — maths_visuals.py not found or no spec given]',
-            font='Aptos', sz=16, bold=False, color='888888',
-            fill='F8F8F8', border=('CCCCCC', 1.0), align='c', anchor='ctr'))
-    else:
-        tmp_path = None
-        try:
-            with _tempfile.NamedTemporaryFile(suffix='.png', delete=False,
-                                              dir='/tmp') as f:
-                tmp_path = f.name
-            _render_visual(visual_spec, tmp_path, dpi=200)
-
-            img_w_px, img_h_px = _png_dims(tmp_path)
-
-            # ── Allocate image box ────────────────────────────────────────
-            cap_h = 0.52 if caption else 0.0
-
-            if layout == 'full':
-                # Edge-to-edge in teaching panel
-                bx, by = px + 0.06, py + 0.06
-                bw, bh = pw - 0.12, ph - 0.12
-            else:  # 'centre' (default) — padding + optional caption strip
-                bx, by = px + 0.25, py + 0.22
-                bw, bh = pw - 0.50, ph - 0.44 - cap_h
-
-            fw, fh, ox, oy = _fit_in_box(img_w_px, img_h_px, bw, bh)
-            sld.shapes.add_picture(
-                tmp_path,
-                emu(bx + ox), emu(by + oy),
-                emu(fw), emu(fh))
-
-        except Exception as _e:
-            print(f"  ⚠ visual_teach render failed: {_e}")
-            import traceback; traceback.print_exc()
-        finally:
-            if tmp_path and _os.path.exists(tmp_path):
-                _os.unlink(tmp_path)
-
-    # ── Caption (left panel, below image) ───────────────────────────────────
-    if caption:
-        add_sp(sld, sp(nid(), 'VTCaption',
-            px + 0.20, py + ph - cap_h - 0.02, pw - 0.40, cap_h,
-            caption,
-            font='Twinkl Cursive Looped Light', sz=15, bold=False,
-            color='156082', fill=None, no_line=True,
-            align='c', anchor='ctr'))
-
-    # ── Right panel: teacher prompts — each on its own click ─────────────────
-    # Sequence: talk[0] → click → talk[1] → click → ... → We Do → click
-    right_y = py + 0.15
-    anim_groups = []
-
-    if talk:
-        talk_list = talk if isinstance(talk, list) else [talk]
-        # Height per prompt (single line) — generous enough to read clearly
-        prompt_h = 0.62
-        for ti, t in enumerate(talk_list):
-            pid = nid()
-            # Each prompt: same blue box style, stacked vertically
-            add_sp(sld, sp(pid, f'VTTalk{ti}',
-                right_x, right_y, right_w, prompt_h,
-                f'→  {t}',
-                font='Twinkl Cursive Looped Light', sz=16, bold=False,
-                color='1F4E79', fill='DEECF8',
-                border=('156082', 1.5), align='l', anchor='ctr', autofit=True))
-            anim_groups.append([pid])   # one click per prompt
-            right_y += prompt_h + 0.10
-
-    # ── Right panel: We Do (animated on click) ───────────────────────────────
-    # we_do accepts: str  →  text only (backward-compatible)
-    #                dict →  any combination of 'visual' spec and 'text'
-    #   e.g.  'we_do': {'visual': {'type': 'fraction_shape', ...}, 'text': 'Write this fraction.'}
-    if we_do:
-        we_text   = we_do if isinstance(we_do, str) else we_do.get('text', '')
-        we_vis    = None if isinstance(we_do, str) else we_do.get('visual')
-        avail_h   = (py + ph) - right_y - 0.10
-        we_h      = max(1.40, min(avail_h, 3.20 if we_vis else 2.60))
-        we_ids    = []
-
-        # Yellow background panel (always — provides border and fill)
-        bg_id = nid()
-        add_sp(sld, sp(bg_id, 'VTWeDoBg',
-            right_x, right_y, right_w, we_h,
-            '',
-            fill='FFF2CC', border=('E8B825', 2.0),
-            no_line=False, align='l', anchor='t', autofit=False))
-        we_ids.append(bg_id)
-
-        inner_y = right_y + 0.12
-        if we_vis and _VISUALS_AVAILABLE:
-            tmp_we = None
-            try:
-                import tempfile as _tf2
-                with _tf2.NamedTemporaryFile(suffix='.png', delete=False, dir='/tmp') as _f2:
-                    tmp_we = _f2.name
-                _render_visual(we_vis, tmp_we, dpi=200)
-                iw2, ih2 = _png_dims(tmp_we)
-                vis_h2   = we_h * (0.62 if we_text else 0.88)
-                fw2, fh2, ox2, oy2 = _fit_in_box(iw2, ih2, right_w - 0.26, vis_h2)
-                sld.shapes.add_picture(
-                    tmp_we,
-                    emu(right_x + 0.13 + ox2), emu(inner_y + oy2),
-                    emu(fw2), emu(fh2))
-                we_ids.append(sld.shapes[-1].shape_id)
-                inner_y += vis_h2 + 0.06
-            except Exception as _e2:
-                print(f'  ⚠ We Do visual failed: {_e2}')
-            finally:
-                if tmp_we and _os.path.exists(tmp_we):
-                    _os.unlink(tmp_we)
-
-        if we_text:
-            txt_h2  = (right_y + we_h) - inner_y - 0.08
-            txt_id2 = nid()
-            add_sp(sld, sp(txt_id2, 'VTWeDoText',
-                right_x + 0.12, inner_y, right_w - 0.24, max(txt_h2, 0.36),
-                we_text,
-                font='Twinkl Cursive Looped Light', sz=16, bold=True,
-                color='7F3F00', fill=None, no_line=True,
-                align='l', anchor='t', autofit=True))
-            we_ids.append(txt_id2)
-
-        anim_groups.append(we_ids)
-
-    if anim_groups:
-        _apply_animation(sld, anim_groups)
-
-    # ── Speaker notes ────────────────────────────────────────────────────────
-    if notes_txt:
-        sld.notes_slide.notes_text_frame.text = notes_txt
-
-
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# VISUAL STM SLIDE (Spot the Mistake with maths_visuals.py representation)
-# ─────────────────────────────────────────────────────────────────────────────
-# The error is authored directly into the visual spec — the teacher writes a
-# spec that IS wrong, then specifies the correction separately.
-# No rigid error types — any representation can be wrong in any way.
-#
-# Spec keys:
-#   visual            dict  — the representation WITH the mistake in it
-#   layout            str   — 'centre' | 'full'  (default 'centre')
-#   error_instruction str   — prompt to pupils, always visible
-#                             e.g. 'What mistake has been made here?'
-#   error_correction  str   — explanation revealed on click (text only)
-#               OR    dict  — {'text': '...', 'visual': corrected_spec}
-#                             use the dict form to show the corrected visual
-#                             alongside the explanation
-#   talk              list  — optional teacher prompts (above error_instruction)
-#   notes             str   — speaker notes
-#
-# Example:
-#   'c1_ido2': {
-#     'slide_type': 'visual_stm',
-#     'title': 'Spot the mistake',
-#     'visual': {                    # ← this is the WRONG version
-#         'type': 'equivalence_arrows',
-#         'fraction1': [8, 12], 'fraction2': [2, 6],  # ← denominator wrong
-#         'operation': '÷', 'factor': 4,
-#     },
-#     'error_instruction': 'What mistake has been made?',
-#     'error_correction': {
-#         'text': '12 ÷ 4 = 3, not 6. The denominator should be 3.',
-#         'visual': {                # ← corrected version (optional)
-#             'type': 'equivalence_arrows',
-#             'fraction1': [8, 12], 'fraction2': [2, 3],
-#             'operation': '÷', 'factor': 4,
-#         },
-#     },
-#   }
-# ═══════════════════════════════════════════════════════════════════════════════
-
-def draw_visual_stm_slide(sld, visual_key):
-    v            = VISUALS[visual_key]
-    visual_spec  = v.get('visual', {})
-    layout       = v.get('layout', 'centre')
-    err_instr    = v.get('error_instruction', 'What mistake has been made?')
-    err_corr     = v.get('error_correction', '')
-    talk         = v.get('talk', [])
-    notes_txt    = v.get('notes', '')
-
-    px, py  = 0.40, 1.45
-    pw, ph  = 7.00, 5.80
-    right_x = px + pw + 0.25
-    right_w = 13.333 - right_x - 0.20
-
-    SID = [600]
-    def nid():
-        SID[0] += 1
-        return SID[0]
-
-    # ── Left panel: visual with the mistake ──────────────────────────────────
-    if _VISUALS_AVAILABLE and visual_spec:
-        tmp_path = None
-        try:
-            import tempfile as _tf3
-            with _tf3.NamedTemporaryFile(suffix='.png', delete=False, dir='/tmp') as f3:
-                tmp_path = f3.name
-            _render_visual(visual_spec, tmp_path, dpi=200)
-            iw, ih = _png_dims(tmp_path)
-            if layout == 'full':
-                bx, by = px + 0.06, py + 0.06
-                bw, bh = pw - 0.12, ph - 0.12
-            else:
-                bx, by = px + 0.25, py + 0.22
-                bw, bh = pw - 0.50, ph - 0.44
-            fw, fh, ox, oy = _fit_in_box(iw, ih, bw, bh)
-            sld.shapes.add_picture(
-                tmp_path,
-                emu(bx + ox), emu(by + oy),
-                emu(fw), emu(fh))
-        except Exception as _e:
-            print(f'  ⚠ visual_stm render failed: {_e}')
-        finally:
-            if tmp_path and _os.path.exists(tmp_path):
-                _os.unlink(tmp_path)
-
-    # ── Right panel: teacher talk (optional, always visible) ─────────────────
-    right_y = py + 0.15
-    anim_groups = []
-
-    if talk:
-        talk_list = talk if isinstance(talk, list) else [talk]
-        talk_h    = min(len(talk_list) * 0.60 + 0.30, 2.00)
-        add_sp(sld, sp(nid(), 'VSTMTalk',
-            right_x, right_y, right_w, talk_h,
-            '\n'.join(f'→  {t}' for t in talk_list),
-            font='Twinkl Cursive Looped Light', sz=16, bold=False,
-            color='1F4E79', fill='DEECF8',
-            border=('156082', 1.5), align='l', anchor='t', autofit=True))
-        right_y += talk_h + 0.18
-
-    # ── Error instruction — always visible ───────────────────────────────────
-    instr_h = 0.90
-    add_sp(sld, sp(nid(), 'VSTMInstr',
-        right_x, right_y, right_w, instr_h,
-        err_instr,
-        font='Twinkl Cursive Looped Light', sz=17, bold=True,
-        color='C00000', fill='FCE4D6',
-        border=('C00000', 2.0), align='l', anchor='ctr', autofit=True))
-    right_y += instr_h + 0.18
-
-    # ── Error correction — click reveal ──────────────────────────────────────
-    # Accepts str  →  text only
-    #         dict →  {'text': '...', 'visual': corrected_spec}  (either key optional)
-    corr_text  = err_corr if isinstance(err_corr, str) else err_corr.get('text', '')
-    corr_vis   = None if isinstance(err_corr, str) else err_corr.get('visual')
-
-    avail_h  = (py + ph) - right_y - 0.10
-    corr_h   = max(1.40, min(avail_h, 3.60 if corr_vis else 2.20))
-    corr_ids = []
-
-    # Green background panel
-    bg_id = nid()
-    add_sp(sld, sp(bg_id, 'VSTMCorrBg',
-        right_x, right_y, right_w, corr_h,
-        '',
-        fill='E2EFDA', border=('375623', 2.0),
-        no_line=False, align='l', anchor='t', autofit=False))
-    corr_ids.append(bg_id)
-
-    inner_cy = right_y + 0.12
-    if corr_vis and _VISUALS_AVAILABLE:
-        tmp_cv = None
-        try:
-            import tempfile as _tf4
-            with _tf4.NamedTemporaryFile(suffix='.png', delete=False, dir='/tmp') as f4:
-                tmp_cv = f4.name
-            _render_visual(corr_vis, tmp_cv, dpi=200)
-            icw, ich = _png_dims(tmp_cv)
-            vis_ch   = corr_h * (0.60 if corr_text else 0.88)
-            fcw, fch, ocx, ocy = _fit_in_box(icw, ich, right_w - 0.26, vis_ch)
-            sld.shapes.add_picture(
-                tmp_cv,
-                emu(right_x + 0.13 + ocx), emu(inner_cy + ocy),
-                emu(fcw), emu(fch))
-            corr_ids.append(sld.shapes[-1].shape_id)
-            inner_cy += vis_ch + 0.06
-        except Exception as _e:
-            print(f'  ⚠ visual_stm correction visual failed: {_e}')
-        finally:
-            if tmp_cv and _os.path.exists(tmp_cv):
-                _os.unlink(tmp_cv)
-
-    if corr_text:
-        ctxt_h  = (right_y + corr_h) - inner_cy - 0.08
-        ctxt_id = nid()
-        add_sp(sld, sp(ctxt_id, 'VSTMCorrText',
-            right_x + 0.12, inner_cy, right_w - 0.24, max(ctxt_h, 0.36),
-            corr_text,
-            font='Twinkl Cursive Looped Light', sz=16, bold=True,
-            color='375623', fill=None, no_line=True,
-            align='l', anchor='t', autofit=True))
-        corr_ids.append(ctxt_id)
-
-    anim_groups.append(corr_ids)
-
-    if anim_groups:
-        _apply_animation(sld, anim_groups)
-
-    if notes_txt:
-        sld.notes_slide.notes_text_frame.text = notes_txt
-
-
-
 def build_teaching_slide(layout_num, visual_key, title_text, phase):
     sld = new_slide(layout_num)
     for ph in sld.placeholders:
@@ -1512,11 +1112,7 @@ def build_teaching_slide(layout_num, visual_key, title_text, phase):
             break
     v = VISUALS[visual_key]
     slide_type = v.get('slide_type', 'grid')
-    if slide_type == 'visual_teach':
-        draw_visual_teach_slide(sld, visual_key)
-    elif slide_type == 'visual_stm':
-        draw_visual_stm_slide(sld, visual_key)
-    elif slide_type == 'word_problem':
+    if slide_type == 'word_problem':
         draw_word_problem_slide(sld, visual_key)
     elif slide_type == 'identify_calculate':
         draw_identify_calculate_slide(sld, visual_key)
@@ -2575,6 +2171,8 @@ def draw_blank_problem_slide(sld, visual_key, is_two_step=False):
                    font='Twinkl Cursive Looped Light', sz=22,
                    bold=False, color='1F1F1F', align='l', fill=None, no_line=True,
                    anchor='t', autofit=True))
+    _frac_overlay(sld, problem, 0.65, 1.60, pw - 0.30, prob_h,
+                  fontsize=20, txt_color='#1F1F1F', bg_hex='F0F5FA')
 
     # VAA banners — animated, with sync_past to keep nid() ahead of pic IDs
     anim_groups = []
@@ -2624,14 +2222,26 @@ def draw_bar_model_slide(sld, visual_key):
 # Data keys: problem (str), steps (list[str]), notes (str)
 # ===========================================================================
 
-def _fd_render(text, w_in, h_in, fontsize, txt_color, bg_hex):
-    """Render text (with n/d → vinculum) as PNG. bg_hex is a 6-char hex string."""
+
+def _frac_overlay(sld, text, x, y, w, h, fontsize, txt_color, bg_hex):
+    """If text contains n/d fractions, render a vinculum PNG and place it over the text box.
+    For static (non-animated) shapes only. Returns True if overlay was added."""
+    if not _rm_has_frac(text):
+        return False
+    png = _fd_render(text, w, h, fontsize, txt_color, bg_hex)
+    sld.shapes.add_picture(_io.BytesIO(png), emu(x), emu(y), emu(w), emu(h))
+    return True
+
+
+def _fd_render(text, w_in, h_in, fontsize, txt_color, bg_hex, border_hex=None):
+    """Render text (with n/d → vinculum) as PNG. bg_hex is a 6-char hex string.
+    If border_hex is provided, draws a coloured rectangle border around the image."""
     import io as _io3
     import matplotlib
+    import matplotlib.patches as _mpatches
     matplotlib.use('Agg')
     import matplotlib.pyplot as _plt3
     mt = _RM_FRAC_RE.sub(lambda m: f'$\\frac{{{m.group(1)}}}{{{m.group(2)}}}$', text)
-    # Replace literal newline with matplotlib multiline newline
     bg_rgb = tuple(int(bg_hex[i:i+2], 16) / 255 for i in (0, 2, 4))
     fig = _plt3.figure(figsize=(w_in, h_in), dpi=150)
     fig.patch.set_facecolor(bg_rgb)
@@ -2641,6 +2251,15 @@ def _fd_render(text, w_in, h_in, fontsize, txt_color, bg_hex):
     ax.text(0.025, 0.5, mt, fontsize=fontsize, ha='left', va='center',
             color=txt_color, transform=ax.transAxes, fontfamily='DejaVu Sans',
             wrap=False)
+    if border_hex:
+        brgb = tuple(int(border_hex[i:i+2], 16) / 255 for i in (0, 2, 4))
+        rect = _mpatches.FancyBboxPatch(
+            (0.005, 0.04), 0.990, 0.92,
+            boxstyle="square,pad=0",
+            linewidth=2.5, edgecolor=brgb, facecolor='none',
+            transform=ax.transAxes, clip_on=False
+        )
+        ax.add_patch(rect)
     buf = _io3.BytesIO()
     fig.savefig(buf, format='png', dpi=150, bbox_inches=None,
                 facecolor=bg_rgb, edgecolor='none')
@@ -2650,31 +2269,32 @@ def _fd_render(text, w_in, h_in, fontsize, txt_color, bg_hex):
 
 
 def draw_fraction_demo_slide(sld, visual_key):
-    v     = VISUALS[visual_key]
-    prob  = v.get('problem', '')
-    steps = v.get('steps', [])
+    v      = VISUALS[visual_key]
+    prob   = v.get('problem', '')
+    steps  = v.get('steps', [])
 
-    # Layout constants
     px       = 0.40
-    py       = 1.55       # start below title
+    py       = 1.55
     pw       = 5.392
     top_pad  = 0.22
     prob_h   = 0.70
-    div_sp   = 0.20       # space occupied by divider + gap before first step
+    div_sp   = 0.20
     step_h   = 0.85
-    step_gap = 0.14       # breathing room between steps
+    step_gap = 0.14
     bot_pad  = 0.32
     n_steps  = len(steps)
 
-    # Panel height sized exactly to content — no excess space
     ph = top_pad + prob_h + div_sp + n_steps * step_h + (n_steps - 1) * step_gap + bot_pad
 
     SID = [700]
     def nid():
         SID[0] += 1
         return SID[0]
+    def sync_past_local(pic_id):
+        while SID[0] <= pic_id:
+            SID[0] += 1
 
-    # White left panel — sized to content
+    # White left panel
     add_sp(sld, (
         f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
         f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
@@ -2700,8 +2320,10 @@ def draw_fraction_demo_slide(sld, visual_key):
     if _rm_has_frac(prob):
         prob_png = _fd_render(prob, prob_w, prob_h, fontsize=16,
                               txt_color='#1F1F1F', bg_hex='FFFFFF')
-        sld.shapes.add_picture(_io.BytesIO(prob_png), emu(prob_x), emu(prob_y),
-                               emu(prob_w), emu(prob_h))
+        pic = sld.shapes.add_picture(_io.BytesIO(prob_png),
+                                     emu(prob_x), emu(prob_y),
+                                     emu(prob_w), emu(prob_h))
+        sync_past_local(pic.shape_id)
 
     # Thin divider
     div_y = prob_y + prob_h + 0.06
@@ -2716,7 +2338,8 @@ def draw_fraction_demo_slide(sld, visual_key):
         f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
     ))
 
-    # Steps — animated, one per click, with room to breathe
+    # Steps — built fully (shapes + PNGs) BEFORE _apply_animation so every
+    # shape that needs to be in an animation group is already in the XML.
     step_x = prob_x
     step_w = prob_w
     step_y = div_y + 0.14
@@ -2730,24 +2353,46 @@ def draw_fraction_demo_slide(sld, visual_key):
         prefix     = '✓  '    if is_answer else '→  '
         bold       = is_answer
         full_step  = prefix + step_text
+        has_frac   = _rm_has_frac(full_step)
 
-        sid = nid()
-        add_sp(sld, sp(sid, f'FDStep{i}', step_x, step_y, step_w, step_h,
-                       full_step,
-                       font='Twinkl Cursive Looped Light', sz=16,
-                       bold=bold, color=txt_hex, align='l',
-                       fill=fill_hex, border=(border_col, 1.5), anchor='ctr'))
-        anim_groups.append([sid])
-
-        if _rm_has_frac(full_step):
+        if has_frac:
+            # For fraction steps: PNG only — no text box underneath.
+            # PNG is added to the slide and its shape_id goes in the anim group.
             step_png = _fd_render(full_step, step_w, step_h, fontsize=14,
                                   txt_color=f'#{txt_hex}', bg_hex=fill_hex)
-            sld.shapes.add_picture(_io.BytesIO(step_png),
-                                   emu(step_x), emu(step_y),
-                                   emu(step_w), emu(step_h))
+            # Draw the coloured box border separately (panel XML, not animated)
+            box_sid = nid()
+            add_sp(sld, (
+                f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+                f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+                f'<p:nvSpPr><p:cNvPr id="{box_sid}" name="FDBox{i}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+                f'<p:spPr><a:xfrm><a:off x="{emu(step_x)}" y="{emu(step_y)}"/>'
+                f'<a:ext cx="{emu(step_w)}" cy="{emu(step_h)}"/></a:xfrm>'
+                f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+                f'<a:solidFill><a:srgbClr val="{fill_hex}"/></a:solidFill>'
+                f'<a:ln w="{int(1.5*12700)}"><a:solidFill><a:srgbClr val="{border_col}"/></a:solidFill></a:ln>'
+                f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+            ))
+            # PNG on top of box
+            pic = sld.shapes.add_picture(_io.BytesIO(step_png),
+                                         emu(step_x), emu(step_y),
+                                         emu(step_w), emu(step_h))
+            sync_past_local(pic.shape_id)
+            # Both box and PNG animate together on the same click
+            anim_groups.append([box_sid, pic.shape_id])
+        else:
+            # No fraction: Twinkl Cursive text box only
+            sid = nid()
+            add_sp(sld, sp(sid, f'FDStep{i}', step_x, step_y, step_w, step_h,
+                           full_step,
+                           font='Twinkl Cursive Looped Light', sz=16,
+                           bold=bold, color=txt_hex, align='l',
+                           fill=fill_hex, border=(border_col, 1.5), anchor='ctr'))
+            anim_groups.append([sid])
 
         step_y += step_h + step_gap
 
+    # Now ALL shapes are in the slide XML — safe to apply animation
     _apply_animation(sld, anim_groups)
 
     # Squared paper — clear of title, 8 rows, drawn last
@@ -2800,11 +2445,20 @@ def draw_stm_word_problem_slide(sld, visual_key):
     # Error explanation
     error = v.get('error', '')
     elines = error.split('\n')
+    err_h  = max(0.75, 0.55 * len(elines))
     add_sp(sld, sp(nid(), 'ErrorBox', px + 0.25, py + 3.20,
-                   pw - 0.50, max(0.75, 0.55 * len(elines)),
+                   pw - 0.50, err_h,
                    elines, font='Twinkl Cursive Looped Light', sz=20,
                    bold=False, color='1F4E79', align='l',
                    fill='DEEAF1', border=('156082', 1.5), anchor='t'))
+
+    # Vinculum PNG overlays for any fraction notation in this slide
+    _frac_overlay(sld, v.get('problem',''), px+0.25, py+0.25, pw-0.50, 1.80,
+                  fontsize=20, txt_color='#1F1F1F', bg_hex='FFFFFF')
+    _frac_overlay(sld, wrong, px+0.25, py+2.20, pw-0.50, max(0.65, 0.55*len(wlines)),
+                  fontsize=20, txt_color='#FFFFFF', bg_hex='C00000')
+    _frac_overlay(sld, error, px+0.25, py+3.20, pw-0.50, err_h,
+                  fontsize=18, txt_color='#1F4E79', bg_hex='DEEAF1')
 
     sld.notes_slide.notes_text_frame.text = v.get('notes', '')
 
@@ -3499,15 +3153,14 @@ if len(c2['slideTitles']['ido']) > 1:
         # Authored word-problem STM: use visual's own title
         build_teaching_slide(3 if L1.get('c2_ido2_phase','I DO')=='WE DO' else 2, 'c2_ido2', v2.get('title', STM['slideTitle']), L1.get('c2_ido2_phase','I DO'))
     elif st2 not in ('spot_the_mistake', ''):
-        # visual_stm, visual_teach, or any other authored type
+        # Other authored slide
         build_teaching_slide(3 if L1.get('c2_ido2_phase','I DO')=='WE DO' else 2, 'c2_ido2', title_c2i2, L1.get('c2_ido2_phase','I DO'))
     else:
         # Default: grid-based STM from JSON
         build_spot_the_mistake_slide(2, 'c2_ido2', title_c2i2)
 else:
     v2 = VISUALS.get('c2_ido2', {})
-    st2_alt = v2.get('slide_type', '')
-    if st2_alt in ('stm_word_problem', 'visual_stm', 'visual_teach'):
+    if v2.get('slide_type') == 'stm_word_problem':
         build_teaching_slide(3 if L1.get('c2_ido2_phase','I DO')=='WE DO' else 2, 'c2_ido2', v2.get('title', STM['slideTitle']), L1.get('c2_ido2_phase','I DO'))
     else:
         build_spot_the_mistake_slide(2, 'c2_ido2', STM['slideTitle'])
