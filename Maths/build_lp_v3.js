@@ -2475,17 +2475,21 @@ function _buildLP1WordProblemsAdapted(slide, questions) {
   const maxQLen  = Math.max(...questions.map(q => q.q.length));
   if (maxQLen > 120 || questions.some(q => q.visual)) repsPerQ = 1;
 
-  // Distribute evenly; any remaining space sits at page bottom as blank
-  const repH = rightContentH + CUT_GAP;   // each rep is exactly content height + gap
+  // Each rep fills its share of usable space — NOT just the hint box height
+  const repH = usable / repsPerQ;
+
+  // Allow taller strips when questions have visuals
+  const hasAdaptedVisuals = questions.some(q => !!q.visual);
 
   // ── Left column: compact question strips ─────────────────────────────────
   const TITLE_H   = 0.22;
   const INSTR_H   = LP1_DATA.instruction ? 0.15 : 0;
   const hdrH      = TITLE_H + (INSTR_H > 0 ? INSTR_H + 0.05 : 0) + 0.06;
   const qAreaH    = repH - CUT_GAP - hdrH;
-  const MAX_STRIP = 1.10;
+  // Allow taller strips when questions carry visuals
+  const MAX_STRIP = hasAdaptedVisuals ? 2.20 : 1.10;
   const stripH    = Math.min(MAX_STRIP, Math.max(0.50, qAreaH / nQ));
-  const fontSize  = Math.min(13, Math.max(10, Math.floor(stripH * 14)));
+  const fontSize  = Math.min(13, Math.max(10, Math.floor(stripH * 12)));
 
   // Crop metadata
   const repFrac = (PAGE_TOP + repH - PAD) / SLIDE_H;
@@ -2521,9 +2525,23 @@ function _buildLP1WordProblemsAdapted(slide, questions) {
 
     // ── QUESTIONS — no cut marks between individual questions ─────────────
     for (let qi = 0; qi < nQ; qi++) {
+      const q        = questions[qi];
       const stripTop = hY + qi * stripH;
-      slide.addText(`Q${qi + 1})   ${questions[qi].q}`, {
-        x: MARGIN, y: stripTop, w: contentW, h: stripH - 0.04,
+
+      // ── Visual above question text (if authored) ──────────────────────
+      let qTextY = stripTop;
+      if (q.visual) {
+        const visH    = q.visual_height || 0.75;
+        const tmpPath = _renderVisual(q.visual);
+        if (tmpPath) {
+          slide.addImage({ path: tmpPath, x: MARGIN, y: stripTop, w: contentW, h: visH });
+          qTextY = stripTop + visH + 0.05;
+        }
+      }
+
+      const textH = Math.max(0.22, stripH - (qTextY - stripTop) - 0.04);
+      slide.addText(`Q${qi + 1})   ${q.q}`, {
+        x: MARGIN, y: qTextY, w: contentW, h: textH,
         fontSize, fontFace: FONT_C, color: '1F4E79',
         valign: 'top', margin: 0, wrap: true
       });

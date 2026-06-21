@@ -1245,20 +1245,26 @@ def draw_visual_teach_slide(sld, visual_key):
             color='156082', fill=None, no_line=True,
             align='c', anchor='ctr'))
 
-    # ── Right panel: teacher prompts ─────────────────────────────────────────
+    # ── Right panel: teacher prompts — each on its own click ─────────────────
+    # Sequence: talk[0] → click → talk[1] → click → ... → We Do → click
     right_y = py + 0.15
     anim_groups = []
 
     if talk:
-        talk_list  = talk if isinstance(talk, list) else [talk]
-        talk_h     = min(len(talk_list) * 0.60 + 0.30, 3.20)
-        add_sp(sld, sp(nid(), 'VTTalk',
-            right_x, right_y, right_w, talk_h,
-            '\n'.join(f'→  {t}' for t in talk_list),
-            font='Twinkl Cursive Looped Light', sz=16, bold=False,
-            color='1F4E79', fill='DEECF8',
-            border=('156082', 1.5), align='l', anchor='t', autofit=True))
-        right_y += talk_h + 0.22
+        talk_list = talk if isinstance(talk, list) else [talk]
+        # Height per prompt (single line) — generous enough to read clearly
+        prompt_h = 0.62
+        for ti, t in enumerate(talk_list):
+            pid = nid()
+            # Each prompt: same blue box style, stacked vertically
+            add_sp(sld, sp(pid, f'VTTalk{ti}',
+                right_x, right_y, right_w, prompt_h,
+                f'→  {t}',
+                font='Twinkl Cursive Looped Light', sz=16, bold=False,
+                color='1F4E79', fill='DEECF8',
+                border=('156082', 1.5), align='l', anchor='ctr', autofit=True))
+            anim_groups.append([pid])   # one click per prompt
+            right_y += prompt_h + 0.10
 
     # ── Right panel: We Do (animated on click) ───────────────────────────────
     # we_do accepts: str  →  text only (backward-compatible)

@@ -48,14 +48,14 @@ module.exports = {
           q: 'Write 2 and 3/4 as an improper fraction.\n2 × 4 + 3 = ___',
           visual: { type: 'fraction_circles', denominator: 4, total: 11,
                     color: '#2565AE', show_labels: true, total_label: '' },
-          visual_height: 0.90,
+          visual_height: 0.70,
           answer: '11/4',
         },
         {
           q: 'Write 1 and 4/5 as an improper fraction.\n1 × 5 + 4 = ___',
           visual: { type: 'fraction_circles', denominator: 5, total: 9,
                     color: '#C83030', show_labels: true, total_label: '' },
-          visual_height: 0.90,
+          visual_height: 0.70,
           answer: '9/5',
         },
         {
@@ -72,14 +72,14 @@ module.exports = {
           q: 'Write 7/2 as a mixed number.\n7 ÷ 2 = ___ remainder ___',
           visual: { type: 'fraction_circles', denominator: 2, total: 7,
                     color: '#2E8B3A', show_labels: true, total_label: '' },
-          visual_height: 0.75,
+          visual_height: 0.65,
           answer: '3 and 1/2',
         },
         {
           q: 'Write 14/3 as a mixed number.\n14 ÷ 3 = ___ remainder ___',
           visual: { type: 'fraction_circles', denominator: 3, total: 14,
                     color: '#D4A800', show_labels: true, total_label: '' },
-          visual_height: 0.75,
+          visual_height: 0.65,
           answer: '4 and 2/3',
         },
         {
