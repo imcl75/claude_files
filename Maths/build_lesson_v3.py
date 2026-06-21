@@ -1114,14 +1114,7 @@ def draw_grid_slide(sld, visual_key, layout_num_was):
     sld.notes_slide.notes_text_frame.text = v['notes']
 
 
-def build_teaching_slide(layout_num, visual_key, title_text, phase):
-    sld = new_slide(layout_num)
-    for ph in sld.placeholders:
-        if ph.placeholder_format.idx == 0:
-            ph.text = title_text
-            break
-    v = VISUALS[visual_key]
-    slide_type = v.get('slide_type', 'grid')
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # VISUAL TEACH SLIDE
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1289,6 +1282,15 @@ def draw_visual_teach_slide(sld, visual_key):
         sld.notes_slide.notes_text_frame.text = notes_txt
 
 
+
+def build_teaching_slide(layout_num, visual_key, title_text, phase):
+    sld = new_slide(layout_num)
+    for ph in sld.placeholders:
+        if ph.placeholder_format.idx == 0:
+            ph.text = title_text
+            break
+    v = VISUALS[visual_key]
+    slide_type = v.get('slide_type', 'grid')
     if slide_type == 'visual_teach':
         draw_visual_teach_slide(sld, visual_key)
     elif slide_type == 'word_problem':
