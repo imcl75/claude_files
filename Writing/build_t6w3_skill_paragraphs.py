@@ -30,61 +30,61 @@ SKILLS = [
         "head": "Awareness",
         "body": (
             "The skill of Awareness helps a cat to notice everything that is happening around it. "
-            "This essential skill gives a cat in the city the ability to use its senses to gather "
-            "vital information about its surroundings at all times. "
-            "Due to this, a cat can spot danger before it arrives and stay one step ahead of any threat."
+            "In a city full of hidden dangers, this skill allows a cat to use all of its senses "
+            "to gather information about what is lurking nearby. "
+            "Due to this, a cat can spot danger before it arrives and stay one step ahead "
+            "of any threat."
         ),
     },
     {
         "head": "Hunting",
         "body": (
-            "The skill of Hunting helps a cat to catch food and defend itself from danger. "
-            "This essential skill gives a cat in the city the ability to move quietly and wait "
-            "patiently for exactly the right moment to strike. "
-            "It never rushes towards its prey, which means it can find the food it needs to survive "
+            "The skill of Hunting helps a cat to catch food and protect itself from danger. "
+            "For a cat in the city, this skill provides the means to move quietly and to strike "
+            "at exactly the right moment. "
+            "It never rushes towards its prey, which means it can find the food it needs "
             "and keep itself safe from harm."
         ),
     },
     {
         "head": "Slow-Time",
         "body": (
-            "The skill of Slow-Time helps a cat to focus its mind completely in moments of danger. "
-            "This essential skill gives a cat in the city the ability to slow its thoughts so that "
-            "everything around it seems to move more slowly. "
-            "When this happens, a cat has far more time to dodge attacks and avoid the many dangers "
-            "of city life."
+            "The skill of Slow-Time helps a cat to focus its mind completely when danger is near. "
+            "Using this skill, a cat in the city can slow its thoughts until everything around it "
+            "seems to move more slowly. "
+            "When this happens, it has far more time to react and dodge even the quickest attacks."
         ),
     },
     {
         "head": "Moving Circles",
         "body": (
-            "The skill of Moving Circles helps a cat to fight back while keeping itself in constant "
-            "motion. "
-            "This essential skill gives a cat in the city the ability to keep moving around its "
-            "enemies so that they cannot predict where it will be next. "
-            "A cat in constant motion is far harder to surround, so enemies struggle to land a "
-            "successful attack."
+            "The skill of Moving Circles helps a cat to keep fighting while staying in "
+            "constant motion. "
+            "This skill gives a cat in the city the ability to circle its enemies continuously, "
+            "making it almost impossible to predict where it will move next. "
+            "A cat that never stands still is far harder to surround, so even several enemies "
+            "at once can be dealt with."
         ),
     },
     {
         "head": "Shadow-Walking",
         "body": (
-            "The skill of Shadow-Walking helps a cat to travel through the city without being seen. "
-            "This essential skill gives a cat in the city the ability to stay completely silent and "
-            "use the darkness of shadows as cover. "
-            "By moving in this way, a cat can avoid enemies entirely and pass through even the most "
-            "dangerous parts of the city undetected."
+            "The skill of Shadow-Walking helps a cat to move through the city without being seen. "
+            "This skill teaches a cat in the city to stay completely silent and use the cover "
+            "of shadows to travel undetected. "
+            "By moving in this way, it can avoid confrontation entirely and pass through even "
+            "the most dangerous streets safely."
         ),
     },
     {
         "head": "Trust Yourself",
         "body": (
-            "The skill of Trust Yourself helps a cat to believe in its own abilities, even when "
-            "fear takes hold. "
-            "This essential skill gives a cat in the city the ability to rely on its instincts and "
-            "the training it has received from Jalal. "
-            "It is the most difficult skill to master, which is why a cat that truly trusts itself "
-            "can face any danger and make the decisions that will keep it alive."
+            "The skill of Trust Yourself helps a cat to believe in its own abilities, "
+            "even when fear takes hold. "
+            "This skill gives a cat in the city the confidence to rely on its instincts "
+            "and trust the training it has received. "
+            "It is the most challenging skill of all, which is why a cat that has truly "
+            "found it can face any danger and make the right decisions."
         ),
     },
 ]
