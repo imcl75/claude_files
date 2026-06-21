@@ -106,6 +106,7 @@ def render_visual(spec, output_path, dpi=150):
         'fraction_number_line': _fraction_number_line,
         'fraction_shape':       _fraction_shape,
         'fraction_set':         _fraction_set,
+        'fraction_circles':     _fraction_circles,
         'coordinate_grid':      _coordinate_grid,
         'angle_figure':         _angle_figure,
         'angle_figure_set':     _angle_figure_set,
@@ -1576,6 +1577,96 @@ def _fraction_triangle(denom, numer, color, show_l, path, dpi):
 # ═══════════════════════════════════════════════════════════════════════════════
 # 15. FRACTION OF A SET
 # ═══════════════════════════════════════════════════════════════════════════════
+
+def _draw_fraction_circle(ax, cx, cy, r, d, shaded, color):
+    """Circle divided into d equal sectors, 'shaded' sectors filled."""
+    from matplotlib.patches import Wedge as _Wedge
+    sector = 360.0 / d
+    for i in range(d):
+        t2 = 90.0 - i * sector
+        t1 = t2 - sector
+        fc = color if i < shaded else '#F0F0F0'
+        ax.add_patch(_Wedge((cx, cy), r, t1, t2,
+                             facecolor=fc, edgecolor='#2A2A2A', lw=1.4, zorder=2))
+    # Bold outer ring
+    ax.add_patch(plt.Circle((cx, cy), r, fill=False,
+                             edgecolor='#2A2A2A', lw=2.0, zorder=3))
+
+
+def _fraction_circles(spec, path, dpi):
+    """
+    Show a quantity n/d as a row of circles — each circle divided into d
+    equal sectors. The first whole_count circles are fully shaded; the last
+    circle (if there is a remainder) is partially shaded. Ideal for teaching
+    mixed numbers ↔ improper fractions.
+
+    Spec:
+        denominator   int        parts per circle (d)
+        total         int        total parts (numerator of improper fraction)
+        color         str        hex fill colour for shaded sectors
+        show_labels   bool       label each circle below (e.g. '4/4', '3/4') — default True
+        total_label   str        text after the circles (e.g. '= 11 quarters') — optional
+        max_per_row   int        wrap into rows if more circles than this — default 6
+
+    Example — 2¾ = 11 quarters:
+        {'type': 'fraction_circles', 'denominator': 4, 'total': 11, 'color': '#2565AE',
+         'total_label': '= 11 quarters'}
+    """
+    d           = spec.get('denominator', 4)
+    total       = spec.get('total', d)
+    color       = spec.get('color', SHAPE_A)
+    show_labels = spec.get('show_labels', True)
+    total_label = spec.get('total_label', '')
+    max_per_row = spec.get('max_per_row', 6)
+
+    wholes    = total // d
+    remainder = total % d
+    n_circles = wholes + (1 if remainder > 0 else 0)
+
+    # Layout
+    r      = 0.55
+    gap    = 0.32
+    row_h  = 2 * r + (0.38 if show_labels else 0.1) + gap
+    n_rows = max(1, -(-n_circles // max_per_row))  # ceil division
+    per_row = min(n_circles, max_per_row)
+
+    extra_w = 1.4 if total_label else 0.3
+    fig_w   = per_row * (2*r + gap) + extra_w
+    fig_h   = n_rows * row_h + 0.2
+
+    fig, ax = plt.subplots(figsize=(fig_w, fig_h))
+    ax.set_xlim(0, fig_w)
+    ax.set_ylim(0, fig_h)
+    ax.set_aspect('equal')
+    ax.axis('off')
+    fig.patch.set_facecolor(WHITE)
+
+    for ci in range(n_circles):
+        row = ci // max_per_row
+        col = ci % max_per_row
+        cx  = (gap/2 + r) + col * (2*r + gap)
+        cy  = fig_h - (gap/2 + r) - row * row_h
+
+        shaded = d if ci < wholes else remainder
+        _draw_fraction_circle(ax, cx, cy, r, d, shaded, color)
+
+        if show_labels:
+            lbl = f'{shaded}/{d}'
+            ax.text(cx, cy - r - 0.10, lbl,
+                    ha='center', va='top', fontsize=10, color=DARK)
+
+    # Total label after last circle in last row
+    if total_label:
+        last_col   = (n_circles - 1) % max_per_row
+        last_cx    = (gap/2 + r) + last_col * (2*r + gap)
+        last_row   = (n_circles - 1) // max_per_row
+        label_cy   = fig_h - (gap/2 + r) - last_row * row_h
+        ax.text(last_cx + r + 0.20, label_cy, total_label,
+                ha='left', va='center', fontsize=12,
+                fontweight='bold', color=DARK)
+
+    return _save(fig, path, dpi)
+
 
 def _fraction_set(spec, path, dpi):
     """

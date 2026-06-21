@@ -360,15 +360,16 @@ function buildLP1(slide, isMarkingStation) {
   if (LP1_DATA.type === 'polygon_translation') {
     return buildLP1Polygon(slide, isMarkingStation);
   }
+  if (LP1_DATA.type === 'word_problems') {
+    return buildLP1Arithmetic(slide, isMarkingStation);  // routes to _buildLP1WordProblems via maxQLen
+  }
   buildLP1Directions(slide, isMarkingStation);
 }
 
 function buildLP2(slide, isMarkingStation) {
   if (LP2_DATA.type === 'arithmetic') {
     if (LP2_DATA.compact) {
-      // Compact layout — pass LP2_DATA via a temporary local reference trick
       const _saved = LP1_DATA;
-      // Can't reassign const, so call a wrapper that accepts data directly
       _buildCompactWithData(slide, isMarkingStation, LP2_DATA);
       return;
     }
@@ -376,6 +377,9 @@ function buildLP2(slide, isMarkingStation) {
   }
   if (LP2_DATA.type === 'polygon_translation') {
     return buildLP2Polygon(slide, isMarkingStation);
+  }
+  if (LP2_DATA.type === 'word_problems') {
+    return buildLP2Arithmetic(slide, isMarkingStation);
   }
   buildLP2Journeys(slide, isMarkingStation);
 }
@@ -770,7 +774,7 @@ function drawCompass(slide, boxX, boxY, boxW, boxH) {
 // support: { hint: "..." } — hint text for the right column box
 // ─────────────────────────────────────────────────────────────────────────────
 function buildLP1Adapted(slide) {
-  if (LP1_DATA.type === 'arithmetic') {
+  if (LP1_DATA.type === 'arithmetic' || LP1_DATA.type === 'word_problems') {
     return buildLP1ArithmeticAdapted(slide);
   }
   if (LP1_DATA.type === 'polygon_translation') {
@@ -780,7 +784,7 @@ function buildLP1Adapted(slide) {
 }
 
 function buildLP2Adapted(slide) {
-  if (LP2_DATA.type === 'arithmetic') {
+  if (LP2_DATA.type === 'arithmetic' || LP2_DATA.type === 'word_problems') {
     return buildLP2ArithmeticAdapted(slide);
   }
   if (LP2_DATA.type === 'polygon_translation') {
@@ -2200,7 +2204,8 @@ function _buildLP1WordProblems(slide, isMarkingStation) {
   // Auto-reduce reps for long questions or questions with visuals
   const maxQLen  = Math.max(...questions.map(q => q.q.length));
   const hasVisuals = questions.some(q => !!q.visual);
-  const repsPerQ = (maxQLen > 120 || hasVisuals) ? 1 : 2;
+  // arithmetic type = full-page separate slide → always 1 rep
+  const repsPerQ = (LP1_DATA.type === 'arithmetic' || maxQLen > 120 || hasVisuals) ? 1 : 2;
 
   // Each rep occupies repH of page height; content sits within PAD margins
   const usable = PAGE_BOT - PAGE_TOP;
@@ -2464,9 +2469,11 @@ function _buildLP1WordProblemsAdapted(slide, questions) {
   const usable   = PAGE_BOT - PAGE_TOP;
   const repH_min = rightContentH + CUT_GAP;
   let repsPerQ   = Math.max(1, Math.min(4, Math.floor(usable / repH_min)));
-  // Also cap by question length
+  // Cap at 1 for arithmetic/word_problems type (full-page single slide per pupil)
+  if (LP1_DATA.type === 'arithmetic' || LP1_DATA.type === 'word_problems') repsPerQ = 1;
+  // Also cap by question length or visuals
   const maxQLen  = Math.max(...questions.map(q => q.q.length));
-  if (maxQLen > 120) repsPerQ = 1;
+  if (maxQLen > 120 || questions.some(q => q.visual)) repsPerQ = 1;
 
   // Distribute evenly; any remaining space sits at page bottom as blank
   const repH = rightContentH + CUT_GAP;   // each rep is exactly content height + gap
