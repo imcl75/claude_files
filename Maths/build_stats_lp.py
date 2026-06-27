@@ -302,6 +302,34 @@ def draw_lp_half(slide, data, y_offset, week, day, topic, li, lp_num):
 
 # ── Main build ────────────────────────────────────────────────────────────────
 
+def _draw_ms_half(slide, data, y_offset, week, day, label):
+    """Marking station slide half — answers only."""
+    iw = 7.5
+    # Blue label bar
+    add_rect(slide, 0, y_offset, iw, 1.021, fill=WFA_BLUE)
+    add_text(slide, f'{label}  ·  {week}  ·  {day}',
+             0.30, y_offset + 0.10, 6.8, 0.36,
+             font_name='Aptos', size=10, bold=True, color=WHITE)
+    add_text(slide, data.get('intro', ''),
+             0.30, y_offset + 0.52, 6.8, 0.40,
+             font_name='Aptos', size=9, color=WHITE)
+
+    content_top = y_offset + 1.021 + 0.12
+    for i, (q, ans) in enumerate(data['questions']):
+        qy = content_top + i * 0.95
+        if qy + 0.85 > y_offset + 5.4165:
+            break
+        add_rect(slide, 0.28, qy, 6.94, 0.82,
+                 fill=MARK_BG, line_color=MARK_TEXT, line_w=Pt(0.5))
+        add_text(slide, f'{i+1}.  {q}',
+                 0.38, qy + 0.04, 3.0, 0.34,
+                 font_name='Aptos', size=8, bold=False, color=DARK)
+        add_text(slide, f'✓  {ans}',
+                 3.50, qy + 0.04, 3.62, 0.70,
+                 font_name='Aptos', size=8, bold=True, color=MARK_TEXT, wrap=True)
+
+
+
 def build_stats_lp(lesson_num):
     data   = LP_DATA[lesson_num]
     meta   = LESSON_META[lesson_num]
@@ -325,6 +353,18 @@ def build_stats_lp(lesson_num):
 
     draw_lp_half(slide, data['lp1'], 0,       week, day, topic, li, lp_num=1)
     draw_lp_half(slide, data['lp2'], 5.4165,  week, day, topic, li, lp_num=2)
+
+    # Slide 1 — Adapted LP (same layout, adapted label for inject_lp_previews)
+    sld2 = prs.slides.add_slide(blank_layout)
+    sld2.background.fill.solid(); sld2.background.fill.fore_color.rgb = WHITE
+    draw_lp_half(sld2, data['lp1'], 0,       week, day, topic + ' (Adapted)', li, lp_num=1)
+    draw_lp_half(sld2, data['lp2'], 5.4165,  week, day, topic + ' (Adapted)', li, lp_num=2)
+
+    # Slide 2 — Marking Station (inject_lp_previews crops top/bottom halves)
+    sld3 = prs.slides.add_slide(blank_layout)
+    sld3.background.fill.solid(); sld3.background.fill.fore_color.rgb = WHITE
+    _draw_ms_half(sld3, data['lp1'], 0,       week, day, 'Marking Station 1')
+    _draw_ms_half(sld3, data['lp2'], 5.4165,  week, day, 'Marking Station 2')
 
     out = f'T6W5_{day}_L{lesson_num}_LP.pptx'
     prs.save(out)
