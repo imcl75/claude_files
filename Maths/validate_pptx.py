@@ -153,6 +153,16 @@ def validate(path):
                 f'SHARED_NOTES_REF: {target} is referenced by multiple slides: '
                 f'{sorted(slides)} — PowerPoint will repair this')
 
+    # ── 9. sldIdLst entries referencing rIds absent from presentation.xml.rels ─
+    # e.g. rId11 deleted from rels but left in sldIdLst — PowerPoint repairs this.
+    prs_rels_rids = set(re.findall(r'<Relationship Id="([^"]+)"', prs_rels))
+    sldid_rids = re.findall(r'<p:sldId\b[^>]+\br:id="([^"]+)"', prs_str)
+    for rid in sldid_rids:
+        if rid not in prs_rels_rids:
+            violations.append(
+                f'ORPHANED_SLDID: sldIdLst references r:id="{rid}" '
+                f'which has no entry in presentation.xml.rels')
+
     # ── Report ────────────────────────────────────────────────────────────────
     print(f'\n{"="*60}')
     print(f'Validating: {path}')
