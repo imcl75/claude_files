@@ -194,7 +194,7 @@ def new_slide(layout_num):
 # Called as a post-process step after prs.save().
 # ===========================================================================
 KQ_TEMPLATE    = '/home/claude/assets/KQ_Slide_template.pptx'
-KQ_PLACEHOLDER = 'Replace this text'
+KQ_PLACEHOLDER = 'Xxxxxxxxxx xxxxxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxx xxxxxxxxxx xxxxxxxxxxxx'
 
 def build_slide1():
     pass   # KQ slide injected post-save — see inject_kq_slide()
@@ -217,25 +217,6 @@ def inject_kq_slide(teaching_pptx_path):
 
     # Replace placeholder text (same operation the user confirmed worked)
     kq_slide_xml = kq_slide_xml.decode('utf-8').replace(KQ_PLACEHOLDER, kq_text).encode('utf-8')
-
-    # Bake light-blue background directly into slide XML so it doesn't depend on layout
-    from lxml import etree as _etree
-    _NSP = 'http://schemas.openxmlformats.org/presentationml/2006/main'
-    _NSA = 'http://schemas.openxmlformats.org/drawingml/2006/main'
-    _root = _etree.fromstring(kq_slide_xml)
-    _cSld = _root.find(f'{{{_NSP}}}cSld')
-    if _cSld is not None:
-        _existing_bg = _cSld.find(f'{{{_NSP}}}bg')
-        if _existing_bg is not None:
-            _cSld.remove(_existing_bg)
-        _bg = _etree.Element(f'{{{_NSP}}}bg')
-        _bgPr = _etree.SubElement(_bg, f'{{{_NSP}}}bgPr')
-        _sf = _etree.SubElement(_bgPr, f'{{{_NSA}}}solidFill')
-        _sc = _etree.SubElement(_sf, f'{{{_NSA}}}srgbClr')
-        _sc.set('val', 'DEECF8')
-        _etree.SubElement(_bgPr, f'{{{_NSA}}}effectLst')
-        _cSld.insert(0, _bg)
-    kq_slide_xml = _etree.tostring(_root, xml_declaration=True, encoding='UTF-8', standalone=True)
 
     # ── Read teaching PPTX ────────────────────────────────────────────────────
     with zipfile.ZipFile(teaching_pptx_path) as tz:
@@ -273,44 +254,34 @@ def inject_kq_slide(teaching_pptx_path):
     kq_path = f'ppt/slides/slide{kq_num}.xml'
     kq_rpath= f'ppt/slides/_rels/slide{kq_num}.xml.rels'
 
-    # ── Prepend KQ slide in presentation.xml ──────────────────────────────────
-    from lxml import etree
-    NSP = 'http://schemas.openxmlformats.org/presentationml/2006/main'
-    NR  = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
+    # ── Prepend KQ slide in presentation.xml (string manipulation — no etree) ──
+    import re as _re
+    new_rId = 'rIdKQ'
+    prs_str = t_files['ppt/presentation.xml'].decode('utf-8')
+    existing_ids = [int(m) for m in _re.findall(r'<p:sldId\b[^>]*\bid="(\d+)"', prs_str)]
+    new_id = max(existing_ids) + 1
+    new_sld_el = f'<p:sldId id="{new_id}" r:id="{new_rId}"/>'
+    # Insert as FIRST entry in sldIdLst
+    prs_str = prs_str.replace('<p:sldIdLst>', '<p:sldIdLst>' + new_sld_el, 1)
+    t_files['ppt/presentation.xml'] = prs_str.encode('utf-8')
 
-    prs_root = etree.fromstring(t_files['ppt/presentation.xml'])
-    sldIdLst = prs_root.find(f'{{{NSP}}}sldIdLst')
-    new_id   = max(int(e.get('id')) for e in sldIdLst) + 1
-    new_rId  = 'rIdKQ'
-    el = etree.Element(f'{{{NSP}}}sldId')
-    el.set('id', str(new_id)); el.set(f'{{{NR}}}id', new_rId)
-    sldIdLst.insert(0, el)
-    t_files['ppt/presentation.xml'] = etree.tostring(
-        prs_root, xml_declaration=True, encoding='UTF-8', standalone=True)
+    # ── Add slide relationship (string manipulation) ───────────────────────────
+    SLIDE_REL = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide'
+    new_rel = f'<Relationship Id="{new_rId}" Type="{SLIDE_REL}" Target="slides/slide{kq_num}.xml"/>'
+    rels_str = t_files['ppt/_rels/presentation.xml.rels'].decode('utf-8')
+    rels_str = rels_str.replace('</Relationships>', new_rel + '</Relationships>')
+    t_files['ppt/_rels/presentation.xml.rels'] = rels_str.encode('utf-8')
 
-    # ── Add slide relationship in ppt/_rels/presentation.xml.rels ────────────
-    NC = 'http://schemas.openxmlformats.org/package/2006/relationships'
-    rels_root = etree.fromstring(t_files['ppt/_rels/presentation.xml.rels'])
-    el2 = etree.SubElement(rels_root, 'Relationship')
-    el2.set('Id', new_rId)
-    el2.set('Type', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide')
-    el2.set('Target', f'slides/slide{kq_num}.xml')
-    t_files['ppt/_rels/presentation.xml.rels'] = etree.tostring(
-        rels_root, xml_declaration=True, encoding='UTF-8', standalone=True)
-
-    # ── Add content type entry ────────────────────────────────────────────────
-    ct_root = etree.fromstring(t_files['[Content_Types].xml'])
-    # Ensure .wdp (HD Photo) has a Default entry
-    existing_defaults = {e.get('Extension') for e in ct_root.findall('Default')}
-    if 'wdp' not in existing_defaults:
-        d = etree.SubElement(ct_root, 'Default')
-        d.set('Extension', 'wdp'); d.set('ContentType', 'image/vnd.ms-photo')
-    ov = etree.SubElement(ct_root, 'Override')
-    ov.set('PartName', f'/ppt/slides/slide{kq_num}.xml')
-    ov.set('ContentType',
-           'application/vnd.openxmlformats-officedocument.presentationml.slide+xml')
-    t_files['[Content_Types].xml'] = etree.tostring(
-        ct_root, xml_declaration=True, encoding='UTF-8', standalone=True)
+    # ── Add content type entry (string manipulation) ───────────────────────────
+    ct_str = t_files['[Content_Types].xml'].decode('utf-8')
+    if 'Extension="wdp"' not in ct_str:
+        ct_str = ct_str.replace('</Types>',
+            '<Default Extension="wdp" ContentType="image/vnd.ms-photo"/></Types>')
+    ct_str = ct_str.replace('</Types>',
+        f'<Override PartName="/ppt/slides/slide{kq_num}.xml" '
+        f'ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>'
+        f'</Types>')
+    t_files['[Content_Types].xml'] = ct_str.encode('utf-8')
 
     # ── Write output ──────────────────────────────────────────────────────────
     tmp = teaching_pptx_path + '.tmp'
@@ -623,6 +594,164 @@ def _rm_render_frac(text, w_in, h_in, fontsize=24, color='#1a1a1a'):
     _plt2.close(fig)
     buf.seek(0)
     return buf.read()
+
+# ===========================================================================
+# FRACTIONS RECAP — replaces RM for weeks with no Rapid Maths
+# 2 slides per lesson: (A) Mixed→Improper  (B) Improper→Mixed
+# Uses cover-box exit animation identical to build_slide4().
+# ===========================================================================
+def build_fractions_slides():
+    import matplotlib.pyplot as _plt
+    import tempfile as _tmp, os as _os, math as _math
+
+    _day = L1['day']
+    _TMPDIR = _tmp.mkdtemp(prefix='wfa_fr_')
+
+    _FRAC = {
+        'Monday':    {'m2i': {'ido': (2,3,5),  'youdo': [(3,1,4),(4,2,5)]},
+                      'i2m': {'ido': (11,3),   'youdo': [(17,4),(13,5)]}},
+        'Tuesday':   {'m2i': {'ido': (2,5,7),  'youdo': [(3,3,8)]},
+                      'i2m': {'ido': (19,6),   'youdo': [(23,5),(27,8)]}},
+        'Wednesday': {'m2i': {'ido': (5,1,3),  'youdo': [(4,3,7)]},
+                      'i2m': {'ido': (31,8),   'youdo': [(22,5),(16,3)]}},
+    }
+    fd = _FRAC.get(_day)
+    if not fd:
+        return
+
+    def _fimg(num, den, tag, col='#1798d3', sz=30, fw=0.65, fh=0.92):
+        p = _os.path.join(_TMPDIR, f'{tag}.png')
+        fig, ax = _plt.subplots(figsize=(fw, fh))
+        fig.patch.set_facecolor('none'); ax.set_facecolor('none'); ax.axis('off')
+        ax.set_xlim(0,1); ax.set_ylim(0,1)
+        ax.text(0.5,0.78,str(num),ha='center',va='center',fontsize=sz,color=col,fontweight='bold')
+        ax.plot([0.05,0.95],[0.50,0.50],color=col,lw=2.2)
+        ax.text(0.5,0.16,str(den),ha='center',va='center',fontsize=sz,color=col,fontweight='bold')
+        _plt.savefig(p,dpi=180,bbox_inches='tight',transparent=True); _plt.close(fig)
+        return p
+
+    def _mimg(W, num, den, tag, col='#1798d3', sz=26, fw=1.10, fh=0.92):
+        p = _os.path.join(_TMPDIR, f'{tag}.png')
+        fig, ax = _plt.subplots(figsize=(fw, fh))
+        fig.patch.set_facecolor('none'); ax.set_facecolor('none'); ax.axis('off')
+        ax.set_xlim(0,1); ax.set_ylim(0,1)
+        ax.text(0.20,0.50,str(W),ha='center',va='center',fontsize=sz+6,color=col,fontweight='bold')
+        ax.text(0.66,0.78,str(num),ha='center',va='center',fontsize=sz,color=col,fontweight='bold')
+        ax.plot([0.40,0.93],[0.50,0.50],color=col,lw=2.0)
+        ax.text(0.66,0.16,str(den),ha='center',va='center',fontsize=sz,color=col,fontweight='bold')
+        _plt.savefig(p,dpi=180,bbox_inches='tight',transparent=True); _plt.close(fig)
+        return p
+
+    def _pic(sld, fpath, x, y, w, h):
+        with open(fpath,'rb') as f: data = f.read()
+        sld.shapes.add_picture(_io.BytesIO(data), emu(x), emu(y), emu(w), emu(h))
+
+    def _cover_anim(sld, cid):
+        P = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+        A = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+        timing_xml = (
+            f'<p:timing xmlns:p="{P}" xmlns:a="{A}">'
+            f'<p:tnLst><p:par><p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot">'
+            f'<p:childTnLst><p:seq concurrent="1" nextAc="seek">'
+            f'<p:cTn id="2" dur="indefinite" nodeType="mainSeq"><p:childTnLst>'
+            f'<p:par><p:cTn id="3" fill="hold"><p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
+            f'<p:childTnLst><p:par><p:cTn id="4" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:par>'
+            f'<p:cTn id="5" presetID="1" presetClass="exit" presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:set><p:cBhvr>'
+            f'<p:cTn id="6" dur="1" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
+            f'<p:tgtEl><p:spTgt spid="{cid}"/></p:tgtEl>'
+            f'<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst>'
+            f'</p:cBhvr><p:to><p:strVal val="hidden"/></p:to></p:set></p:childTnLst>'
+            f'</p:cTn></p:par></p:childTnLst></p:cTn></p:par>'
+            f'</p:childTnLst></p:cTn></p:par>'
+            f'</p:childTnLst></p:cTn>'
+            f'<p:nextCondLst><p:cond evt="onNext" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
+            f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
+            f'<p:bldLst><p:bldP spid="{cid}" grpId="0" animBg="1"/></p:bldLst>'
+            f'</p:timing>'
+        )
+        sld._element.append(etree.fromstring(timing_xml.encode()))
+
+    # ── Slide A: Mixed → Improper ─────────────────────────────────────────────
+    m2i = fd['m2i']
+    W, N, D = m2i['ido']
+    ans = W * D + N
+    sld = new_slide(13)
+    add_sp(sld, sp(2,'Title', 0.50,0.05,12.00,0.55,
+                   'Fractions Recap:  Mixed  →  Improper',
+                   font='Twinkl Cursive Looped',sz=26,bold=True,
+                   color='000000',align='l',fill=None,no_line=True))
+    # I Do badge + panel
+    add_sp(sld, sp(3,'IDoLbl',0.35,0.72,1.20,0.36,
+                   'I Do',font='Aptos',sz=16,bold=True,
+                   color='FFFFFF',align='ctr',fill='1798D3',no_line=True))
+    add_sp(sld, sp(4,'Steps',0.35,1.16,5.90,1.30,
+                   f'Step 1:  {W} × {D} = {W*D}\nStep 2:  {W*D} + {N} = {ans}',
+                   font='Aptos',sz=19,bold=False,
+                   color='1A1A1A',align='l',fill='DEECF8',no_line=True))
+    _pic(sld, _mimg(W,N,D,'ia_q'),  0.40,2.70,1.15,0.90)
+    add_sp(sld, sp(5,'Arr',1.65,2.92,0.48,0.40,
+                   '→',font='Aptos',sz=24,bold=True,
+                   color='1798D3',align='ctr',fill=None,no_line=True))
+    _pic(sld, _fimg(ans,D,'ia_ans'), 2.20,2.60,0.72,1.00)
+    # You Do badge + questions
+    add_sp(sld, sp(6,'YDLbl',7.00,0.72,1.40,0.36,
+                   'You Do',font='Aptos',sz=16,bold=True,
+                   color='FFFFFF',align='ctr',fill='E57D24',no_line=True))
+    yy = 1.16
+    for qi,(qW,qN,qD) in enumerate(m2i['youdo']):
+        qa = qW*qD+qN
+        _pic(sld, _mimg(qW,qN,qD,f'ya{qi}q',col='#E57D24'), 7.00,yy,1.15,0.90)
+        add_sp(sld, sp(20+qi,f'YArr{qi}',8.25,yy+0.22,0.44,0.38,
+                       '→',font='Aptos',sz=22,bold=True,
+                       color='E57D24',align='ctr',fill=None,no_line=True))
+        _pic(sld, _fimg(qa,qD,f'ya{qi}a',col='#E57D24'), 8.78,yy-0.08,0.72,1.00)
+        yy += 1.30
+    # Cover over answers — click to reveal
+    add_sp(sld, sp(99,'CoverA',8.62,1.05,1.10,yy-0.90,
+                   '',fill='FFFFFF',no_line=True))
+    _cover_anim(sld, 99)
+    print(f"  Fractions A ({_day}: mixed→improper) ✓")
+
+    # ── Slide B: Improper → Mixed ─────────────────────────────────────────────
+    i2m = fd['i2m']
+    iN, iD = i2m['ido']
+    whole = iN // iD;  rem = iN % iD
+    sld = new_slide(13)
+    add_sp(sld, sp(2,'Title',0.50,0.05,12.00,0.55,
+                   'Fractions Recap:  Improper  →  Mixed',
+                   font='Twinkl Cursive Looped',sz=26,bold=True,
+                   color='000000',align='l',fill=None,no_line=True))
+    add_sp(sld, sp(3,'IDoLbl',0.35,0.72,1.20,0.36,
+                   'I Do',font='Aptos',sz=16,bold=True,
+                   color='FFFFFF',align='ctr',fill='1798D3',no_line=True))
+    add_sp(sld, sp(4,'Steps',0.35,1.16,5.90,1.30,
+                   f'Step 1:  {iN} ÷ {iD} = {whole} remainder {rem}\nStep 2:  Answer = {whole} {rem}/{iD}',
+                   font='Aptos',sz=19,bold=False,
+                   color='1A1A1A',align='l',fill='DEECF8',no_line=True))
+    _pic(sld, _fimg(iN,iD,'ib_q'),  0.40,2.60,0.72,1.00)
+    add_sp(sld, sp(5,'Arr',1.22,2.92,0.48,0.40,
+                   '→',font='Aptos',sz=24,bold=True,
+                   color='1798D3',align='ctr',fill=None,no_line=True))
+    _pic(sld, _mimg(whole,rem,iD,'ib_ans'), 1.78,2.70,1.15,0.90)
+    add_sp(sld, sp(6,'YDLbl',7.00,0.72,1.40,0.36,
+                   'You Do',font='Aptos',sz=16,bold=True,
+                   color='FFFFFF',align='ctr',fill='E57D24',no_line=True))
+    yy = 1.16
+    for qi,(qiN,qiD) in enumerate(i2m['youdo']):
+        qw = qiN//qiD;  qr = qiN%qiD
+        _pic(sld, _fimg(qiN,qiD,f'yb{qi}q',col='#E57D24'), 7.00,yy-0.08,0.72,1.00)
+        add_sp(sld, sp(20+qi,f'YArr{qi}',7.82,yy+0.22,0.44,0.38,
+                       '→',font='Aptos',sz=22,bold=True,
+                       color='E57D24',align='ctr',fill=None,no_line=True))
+        _pic(sld, _mimg(qw,qr,qiD,f'yb{qi}a',col='#E57D24'), 8.35,yy,1.15,0.90)
+        yy += 1.30
+    add_sp(sld, sp(99,'CoverB',8.20,1.05,1.35,yy-0.90,
+                   '',fill='FFFFFF',no_line=True))
+    _cover_anim(sld, 99)
+    print(f"  Fractions B ({_day}: improper→mixed) ✓")
 
 # ===========================================================================
 # SLIDE 6 & 7 — RAPID MATHS (unchanged from v1 — working correctly)
@@ -1245,12 +1374,19 @@ def build_teaching_slide(layout_num, visual_key, title_text, phase):
             if _xfrm is None:
                 from lxml import etree as _et
                 _xfrm = _et.SubElement(_spPr, f'{{{_A_NS}}}xfrm')
+            # Always ensure off is set — without it PowerPoint defaults to (0,0)
+            # which places the title over the maths icon in the top-left corner.
+            _off = _xfrm.find(f'{{{_A_NS}}}off')
+            if _off is None:
+                from lxml import etree as _et
+                _off = _et.SubElement(_xfrm, f'{{{_A_NS}}}off')
+            if not _off.get('x'): _off.set('x', str(int(0.917 * _EMU)))
+            if not _off.get('y'): _off.set('y', str(int(0.399 * _EMU)))
             _ext = _xfrm.find(f'{{{_A_NS}}}ext')
             if _ext is None:
                 from lxml import etree as _et
                 _ext = _et.SubElement(_xfrm, f'{{{_A_NS}}}ext')
             _ext.set('cx', str(int(10.5 * _EMU)))
-            # Preserve cy (height) if already set, else leave for layout default
             if not _ext.get('cy'):
                 _ext.set('cy', str(int(1.45 * _EMU)))
 
