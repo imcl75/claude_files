@@ -2131,7 +2131,8 @@
         "The scale told me…",
         "I read between grid lines by…",
         "A pattern I noticed in the data was…"
-      ]
+      ],
+      "keyQuestion": "What can a graph or chart tell us that a list of numbers cannot?"
     },
     {
       "lesson": 18,
@@ -2261,7 +2262,8 @@
         "I know this is a difference question because…",
         "To find the total I…",
         "The most interesting comparison I found was…"
-      ]
+      ],
+      "keyQuestion": "How do we decide whether to add or subtract values from a chart?"
     },
     {
       "lesson": 19,
@@ -2392,7 +2394,8 @@
         "Line graphs show continuous data because…",
         "I estimated a value between points by…",
         "The trend in this graph shows…"
-      ]
+      ],
+      "keyQuestion": "What can a line graph tell us that a bar chart cannot?"
     },
     {
       "lesson": 20,
