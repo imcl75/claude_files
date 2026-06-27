@@ -813,48 +813,6 @@ with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
 
 ---
 
----
-
-## KEY QUESTION SLIDE — RULES (DO NOT DEVIATE)
-
-The KQ slide is always slide 1 of every teaching PPTX.
-
-**Template:** `assets/KQ_Slide_template.pptx`
-This file contains the confirmed working slide layout with all images, cloud shape,
-children group, maths icon and "Being a Mathematician" text in place.
-The only element that changes per lesson is the question text.
-
-**Placeholder text in template:** `Replace this text`
-This is the exact string in TextBox 28 inside Group 20. Replace it and nothing else.
-
-**Question text source:** `PLAN['keyQuestions'][lesson['topic']]`
-The plan JSON has a `keyQuestions` dict keyed by topic string. Use it directly.
-
-**How it is built:**
-- `inject_kq_slide(out)` is called in `build_lesson_v3.py` immediately after `prs.save(out)`
-- It opens the template as a zip, replaces the placeholder text via lxml `<a:t>` iteration,
-  bakes the DEECF8 background directly into the slide XML, then prepends the slide
-  into the teaching PPTX via zip/XML manipulation
-- The background is baked because the slide layout reference in the template does not
-  exist in the teaching deck — baking it makes the slide self-contained
-
-**What must never happen:**
-- Do NOT rebuild the KQ slide from scratch
-- Do NOT add new shapes, images or groups
-- Do NOT try to copy the cloud autoshape — it is already in the template
-- Do NOT change KQ_PLACEHOLDER — it must remain `'Replace this text'`
-- Do NOT skip calling `inject_kq_slide` after `prs.save()`
-
-**Named assets in `assets/` (for reference only — not used by the builder):**
-- `KQ_Slide_template.pptx` — the confirmed working template
-- `4 children KQ slide.png` — the four pupil images as one combined PNG
-- `cloud KQ slide.png` — the cloud shape as PNG
-- `KQ key icon.png` — the key + question mark icon
-- `maths-icon.png` — the Being a Mathematician icon
-- `i do icon.png`, `we do icon.png`, `you do icon.png`, `you do trio icon.png` — lesson phase icons
-
----
-
 ## Dependency files
 
 All in `/mnt/skills/user/maths-complete-planning-and-resources/`:
@@ -899,4 +857,187 @@ cp /home/claude/generate_labels.py  $SKILL/
 cp /home/claude/transfer_files/maths_plan_v3.json $SKILL/
 
 # Then run github-sync skill (push mode) to sync to imcl75/claude_files
+```
+
+
+---
+
+## Statistics lessons — `stats_chart` slide type (T6W5)
+
+For statistics topics, teaching slides use `slide_type: 'stats_chart'` in lesson_data.py.
+Charts are rendered as matplotlib PNGs and embedded in the slide.
+
+```python
+'c1_ido1': {
+    'slide_type': 'stats_chart',
+    'title': 'Pictograms — reading the key',
+    'chart_type': 'pictogram',   # pictogram | bar_chart | table | double_bar_chart | line_graph
+    'chart_data': { ... },       # varies by chart_type — see maths_visuals.py
+    'questions': ['Q1...', 'Q2...', 'Q3...'],
+    'answers': ['A1...', 'A2...', 'A3...'],
+    'notes': 'Speaker notes...',
+},
+```
+
+Trios slides for stats lessons carry charts embedded in the slide (no separate instruction).
+Chart keys from cycle's I Do slides are referenced via `trios_charts` in maths_plan_v3.json.
+
+### Trios slide layout rules (enforced in build_lesson_v3.py)
+
+- **Challenge box removed permanently** — no on-slide challenge. Challenge text goes in speaker notes only.
+- **task_y must be ≥ 1.45"** — anything lower overlaps the slide title placeholder. Do not change this.
+- With challenge removed: task box at y=1.45, h=1.10; charts from y=2.70, h=4.55.
+
+### Statistics LP
+
+Stats lessons use `build_stats_lp_pdf.py` (Python/ReportLab), NOT `build_lp_v3.js`.
+Produces a 3-page PDF (Standard, Adapted, Marking Station) + a 3-slide PPTX wrapper for LP preview injection.
+
+```bash
+python3 build_stats_lp_pdf.py [lesson_number]
+# Outputs: /home/claude/T6W5_{Day}_L{N}_LP.pdf + _LP.pptx
+```
+
+**Dates in stats LPs**: the date field is inside `build_stats_lp_pdf.py` in the `LP` dict — NOT read from labels_data.json. Verify both sources are correct. They are independent.
+
+After building stats LPs:
+```bash
+python3 inject_lp_previews.py /home/claude/T6W5_L{N}_Teaching.pptx /home/claude/T6W5_{Day}_L{N}_LP.pptx
+```
+
+---
+
+## RM Replacement — general pattern
+
+Rapid Maths can be replaced with any 2-slide recap content (fractions, column methods, times tables, topic revisit, etc.). This is a general mechanism.
+
+### Core principle — NEVER generate PPTX animation XML from scratch
+
+Animation XML in PowerPoint is complex and fragile. Every attempt to generate it programmatically from scratch has broken. The ONLY reliable approach:
+
+1. **Innes creates the Monday slides in PowerPoint** — correct layout, correct animations
+2. **Claude clones those slides** for subsequent days, replacing ONLY text and images
+3. **The animation XML block is copied byte-for-byte** — never touched, never regenerated
+
+Attempting to write `<p:timing>`, `<p:bldLst>`, `clickEffect`/`withEffect` XML from scratch will break the animations. Even if the XML structure validates, PowerPoint will not behave correctly. Do not do it.
+
+### When RM is replaced
+
+`RM_DATA` in lesson_data.py will be `{}` (empty — no `rm` key). The `build_lesson_v3.py` main sequence checks `if RM_DATA.get('questions')` — when empty, RM slides are simply not built. The RM replacement slides are injected post-build via `inject_rm_replacement.py`.
+
+The lesson plan JSON (`maths_plan_v3.json`) records the replacement type:
+```json
+{
+  "lesson": 17,
+  "rm_replacement": {
+    "type": "teacher_pptx",
+    "source_pptx": "assets/RM_Recap_Template.pptx",
+    "slide_indices": [1, 2]
+  }
+}
+```
+
+### Build pipeline for RM replacement
+
+**Step A — Innes provides Monday's slides**
+
+Innes creates or uploads a PPTX with 2 working slides for Monday (correct content, correct animations). Save to GitHub as `Maths/assets/RM_Recap_Template.pptx` (or a descriptive name like `Fractions_Recap_Mon.pptx`).
+
+**Step B — Build multi-day source PPTX**
+
+Write `build_rm_source.py` (one-off, specific to the content type). This script:
+- Opens Innes's Monday PPTX as template
+- For each subsequent day: clones the Monday slides, replaces text strings and images only
+- Outputs a 6-slide (or 4-slide etc.) source PPTX
+
+Rules for cloning:
+- Identify which text strings change per day (e.g., day name, step calculation)
+- Identify which image rIds are day-specific vs shared (inspect rels XML)
+- Generate replacement images using matplotlib (fraction PNGs, diagrams etc.) with same dimensions as originals
+- Use `re.sub()` to remap rIds in rels to new image filenames — never use python-pptx for this
+- Animation XML (`<p:timing>`, `<p:bldLst>`) stays completely untouched in the cloned XML
+
+If structure differs between days (e.g., 1 question vs 2 questions), Innes must provide separate slides for those days. Do not try to add/remove shapes to change structure — clone only where structure matches.
+
+**Step C — Inject into teaching decks**
+
+```python
+# inject_rm_replacement.py  (generalised from inject_fractions.py)
+# Inserts 2 slides from source PPTX into teaching PPTX after slide 5 (WM Q&A)
+# Source PPTX: lesson_map = {17: [1,2], 18: [3,4], 19: [5,6]}
+```
+
+The injection point is always after slide 5 in the final teaching PPTX (WM Q&A = slide 5, Vocab = slide 6). The injector:
+- Copies slide XML verbatim
+- Renames media files to avoid conflicts with teaching PPTX media
+- Inserts `<p:sldId>` entries after the 5th entry in `prs_str` (string manipulation, not lxml)
+- Adds rels and content type entries
+
+Run after `build_lesson_v3.py` but before `inject_lp_previews.py`:
+```bash
+python3 inject_rm_replacement.py /home/claude/T6W5_L17_Teaching.pptx 17
+python3 inject_rm_replacement.py /home/claude/T6W5_L18_Teaching.pptx 18
+python3 inject_rm_replacement.py /home/claude/T6W5_L19_Teaching.pptx 19
+```
+
+### Verifying RM injection
+
+After injection, check the slide count and verify animation XML is not corrupted:
+```python
+import zipfile, re
+with zipfile.ZipFile(teaching_pptx) as z:
+    for sn in [6, 7]:  # injected at positions 6 and 7
+        xml = z.read(f'ppt/slides/slide{sn}.xml').decode()
+        assert 'prevCondLst' in xml, f"slide {sn}: prevCondLst missing"
+        assert 'nextCondLst' in xml, f"slide {sn}: nextCondLst missing"
+        assert 'navAttr' not in xml, f"slide {sn}: navAttr present (wrong!)"
+        assert 'bldLst' in xml, f"slide {sn}: bldLst missing"
+        assert 'hidden="1"' not in xml, f"slide {sn}: hidden=1 on cNvPr (wrong!)"
+```
+
+### What NOT to do
+
+- Do not call `build_fractions_slides()` or any function that generates animation XML inside build_lesson_v3.py — that approach cannot reliably produce working animations
+- Do not try to generate `<p:timing>`, bldLst, clickEffect, withEffect XML from scratch — see core principle above
+- Do not reuse Innes's uploaded Monday slides for content-type that changes structure (e.g., different number of questions) — get Innes to provide those days' slides separately
+
+---
+
+## Date verification checklist
+
+There are TWO separate sources for dates on lesson outputs — both must be correct:
+
+| Output | Date source | Where to fix |
+|--------|-------------|--------------|
+| Label DOCX (sticker sheet) | `labels_data.json` → `date` field | Edit labels_data.json |
+| LP PDF (build_stats_lp_pdf.py) | Hardcoded in `LP` dict inside the script | Edit build_stats_lp_pdf.py |
+| LP PPTX (build_lp_v3.js) | `lesson_data.js` → `date` field | Edit lesson_data.js |
+
+**After generating any LP or label, always extract and print the date** from the actual output file before packaging:
+```python
+import subprocess, re
+r = subprocess.run(['pdftotext', pdf_path, '-'], capture_output=True, text=True)
+dates = list(dict.fromkeys(re.findall(r'\d{2}/\d{2}/\d{4}', r.stdout)))
+print(f"LP dates: {dates}")
+```
+
+---
+
+## T6W5 Statistics — dependency files
+
+Additional files used for stats build (not needed for standard arithmetic/geometry lessons):
+
+| File | Role |
+|------|------|
+| `build_stats_lp_pdf.py` | Stats LP builder (ReportLab PDF + PPTX wrapper) |
+| `maths_visuals.py` | matplotlib chart renderer (51 chart types) |
+| `inject_rm_replacement.py` | Injects RM-replacement slides post-build |
+| `assets/RM_Recap_Template.pptx` | Teacher-provided Monday recap slides (varies by term) |
+
+These must be copied during environment restore when building statistics lessons:
+```bash
+cp $SKILL/build_stats_lp_pdf.py /home/claude/
+cp $SKILL/maths_visuals.py /home/claude/
+cp $SKILL/inject_rm_replacement.py /home/claude/
+# RM template: get from GitHub if Innes has uploaded it
 ```

@@ -48,5 +48,35 @@
     "lf": "LF: To solve problems in money and measurement contexts by choosing the right operation.",
     "ican1": "I can solve money and measurement problems.",
     "ican2": "I can include the correct unit in every answer."
+  },
+  {
+    "lesson": 17,
+    "week": "T6W5",
+    "day": "Monday",
+    "date": "29/06/2026",
+    "topic": "Statistics",
+    "lf": "LF: To interpret data presented in pictograms, bar charts and tables.",
+    "ican1": "I can read values from pictograms and bar charts using the scale.",
+    "ican2": "I can read data accurately from rows and columns of a table."
+  },
+  {
+    "lesson": 18,
+    "week": "T6W5",
+    "day": "Tuesday",
+    "date": "30/06/2026",
+    "topic": "Statistics",
+    "lf": "LF: To compare data sets and calculate the sum and difference between values.",
+    "ican1": "I can identify whether a question asks for a sum or a difference.",
+    "ican2": "I can calculate accurately from data shown in charts or tables."
+  },
+  {
+    "lesson": 19,
+    "week": "T6W5",
+    "day": "Wednesday",
+    "date": "01/07/2026",
+    "topic": "Statistics",
+    "lf": "LF: To read and interpret line graphs, including estimating between labelled points.",
+    "ican1": "I can read values at labelled points and estimate between labels.",
+    "ican2": "I can describe the trend shown by a line graph."
   }
 ]

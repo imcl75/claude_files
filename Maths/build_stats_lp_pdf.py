@@ -282,7 +282,7 @@ def draw_cut_line(c):
 # ── LP data ───────────────────────────────────────────────────────────────────
 LP = {
 17: {
-    'date': '30/06/2026', 'topic': 'Statistics',
+    'date': '29/06/2026', 'topic': 'Statistics',
     'lf':   'LF: To read and interpret data from pictograms, bar charts and tables.',
     'ican': ['I can read values from a pictogram using the key.',
              'I can read values from a bar chart and a two-way table.'],
@@ -316,7 +316,7 @@ LP = {
     },
 },
 18: {
-    'date': '01/07/2026', 'topic': 'Statistics',
+    'date': '30/06/2026', 'topic': 'Statistics',
     'lf':   'LF: To calculate sums and differences from charts and compare two data sets.',
     'ican': ['I can add and subtract values read from a bar chart.',
              'I can compare two data sets and describe differences.'],
@@ -350,7 +350,7 @@ LP = {
     },
 },
 19: {
-    'date': '02/07/2026', 'topic': 'Statistics',
+    'date': '01/07/2026', 'topic': 'Statistics',
     'lf':   'LF: To read and interpret line graphs, including estimating between points.',
     'ican': ['I can read values from a line graph at labelled points.',
              'I can estimate values between two labelled points on a line graph.'],

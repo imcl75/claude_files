@@ -3329,13 +3329,12 @@ def build_trios_slide(layout_num, title, trios_data, notes, chart_keys=None):
     has_charts = bool(chart_keys)
     n_charts = len(chart_keys) if chart_keys else 0
 
-    # ── Layout: if charts present, text sits in top portion; charts below ─
+    # ── Layout: challenge removed throughout — charts get full remaining height ─
     if has_charts:
         task_x, task_w = 0.5, 12.4
-        task_y, task_h = 1.50, 1.55
-        chal_y, chal_h = 3.12, 1.20
-        chart_y = 4.40
-        chart_h = 2.70
+        task_y, task_h = 1.45, 1.10
+        chart_y = 2.70
+        chart_h = 4.55
         if n_charts == 1:
             chart_x, chart_w = 2.17, 9.00   # centred
         else:
@@ -3351,12 +3350,10 @@ def build_trios_slide(layout_num, title, trios_data, notes, chart_keys=None):
                            bold=True, color=text_col, align='l',
                            fill=fill_col, border=(text_col, 1.5), anchor='ctr'))
         task_x, task_w = 4.6, 8.5
-        task_y, task_h = 1.6, 1.8
-        chal_y, chal_h = 3.6, 1.3
+        task_y, task_h = 1.6, 3.5
     else:
         task_x, task_w = 0.5, 12.4
-        task_y, task_h = 1.6, 1.8
-        chal_y, chal_h = 3.6, 1.3
+        task_y, task_h = 1.6, 4.5
 
     add_sp(sld, sp(30, 'Task', task_x, task_y, task_w, task_h,
                    trios_data.get('task',''),
@@ -3364,13 +3361,7 @@ def build_trios_slide(layout_num, title, trios_data, notes, chart_keys=None):
                    color='1F4E79', align='l', fill='DEECF8',
                    border=('156082', 1.5), anchor='ctr'))
 
-    challenge = trios_data.get('challenge','')
-    if challenge:
-        add_sp(sld, sp(31, 'Challenge', task_x, chal_y, task_w, chal_h,
-                       f'Challenge: {challenge}',
-                       font='Twinkl Cursive Looped Light', sz=16,
-                       color='7030A0', align='l', fill='F2E6F9',
-                       border=('7030A0', 1.5), anchor='ctr'))
+    # Challenge removed from slide — kept in speaker notes only
 
     # ── Embed charts ──────────────────────────────────────────────────────
     if has_charts:
