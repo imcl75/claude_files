@@ -6,10 +6,12 @@ Reads all text content from maths_plan_v3.json.
 Reads authored visual/WM/RM data from lesson_data.py.
 """
 
-import sys, copy, re, json, io as _io
+import sys, copy, re, json, io as _io, os, tempfile
 from lxml import etree
 from pptx import Presentation
 from pptx.util import Emu, Pt
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from maths_visuals import render_stats_chart
 
 EMU = 914400
 def emu(inches): return int(inches * EMU)
@@ -44,7 +46,7 @@ if LESSON_NUM not in _mod.LESSON_DATA:
 _ld = _mod.LESSON_DATA[LESSON_NUM]
 VOCAB   = _ld['vocab']
 WM_DATA = _ld['wm']
-RM_DATA = _ld['rm']
+RM_DATA = _ld.get('rm', {})
 
 # ---------------------------------------------------------------------------
 # BUILD VISUALS DICT — authored coords + spotTheMistake from JSON
@@ -1109,6 +1111,44 @@ def build_teaching_slide(layout_num, visual_key, title_text, phase):
     for ph in sld.placeholders:
         if ph.placeholder_format.idx == 0:
             ph.text = title_text
+
+            _A_NS  = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+            _P_NS  = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+            _EMU   = 914400
+
+            # FIX 1: Top-anchor the title so text always renders from y≈0.40"
+            # downward. Default centre-anchor pushes wrapped titles into the
+            # content panel area (placeholder bottom = 1.85").
+            _bodyPr = ph.text_frame._txBody.find(f'{{{_A_NS}}}bodyPr')
+            if _bodyPr is not None:
+                _bodyPr.set('anchor', 't')
+
+            # FIX 2: Clamp title width to 10.5" (right edge at 11.42").
+            # The I Do / We Do badge image lives at x=11.67" in the layout.
+            # Default title right edge is 12.42", so long titles wrap into
+            # the badge. 10.5" leaves 0.25" clearance.
+            _spPr = ph._element.find(f'{{{_P_NS}}}spPr')
+            if _spPr is None:
+                # spPr may be under a different ns in some versions
+                _spPr = ph._element.find(
+                    '{http://schemas.openxmlformats.org/drawingml/2006/main}spPr')
+            if _spPr is None:
+                from lxml import etree as _et
+                _spPr = _et.SubElement(ph._element,
+                    f'{{{_P_NS}}}spPr')
+            _xfrm = _spPr.find(f'{{{_A_NS}}}xfrm')
+            if _xfrm is None:
+                from lxml import etree as _et
+                _xfrm = _et.SubElement(_spPr, f'{{{_A_NS}}}xfrm')
+            _ext = _xfrm.find(f'{{{_A_NS}}}ext')
+            if _ext is None:
+                from lxml import etree as _et
+                _ext = _et.SubElement(_xfrm, f'{{{_A_NS}}}ext')
+            _ext.set('cx', str(int(10.5 * _EMU)))
+            # Preserve cy (height) if already set, else leave for layout default
+            if not _ext.get('cy'):
+                _ext.set('cy', str(int(1.45 * _EMU)))
+
             break
     v = VISUALS[visual_key]
     slide_type = v.get('slide_type', 'grid')
@@ -1130,6 +1170,8 @@ def build_teaching_slide(layout_num, visual_key, title_text, phase):
         draw_column_calc(sld, visual_key)
     elif slide_type == 'fraction_demo':
         draw_fraction_demo_slide(sld, visual_key)
+    elif slide_type == 'stats_chart':
+        draw_stats_chart_slide(sld, visual_key)
     else:
         draw_grid_slide(sld, visual_key, layout_num)
     print(f"  Teaching slide ({title_text[:40]}) ✓")
@@ -2409,6 +2451,104 @@ def draw_fraction_demo_slide(sld, visual_key):
 
     sld.notes_slide.notes_text_frame.text = v.get('notes', '')
 
+
+# ===========================================================================
+# STATISTICS CHART SLIDE
+# Left panel: animated Q&A pairs (question → answer per click).
+# Right panel: matplotlib chart PNG (pictogram / bar_chart / line_graph /
+#              table / double_bar) generated from chart_data.
+# ===========================================================================
+def draw_stats_chart_slide(sld, visual_key):
+    v          = VISUALS[visual_key]
+    chart_type = v['chart_type']
+    chart_data = v['chart_data']
+    questions  = v.get('questions', [])
+    answers    = v.get('answers', [])
+
+    # ── Layout constants ──────────────────────────────────────────────────
+    PNL_X, PNL_Y, PNL_W, PNL_H = 0.40, 1.45, 5.10, 5.80
+    PAD_X, PAD_TOP              = 0.18, 0.22
+    CHT_X, CHT_Y, CHT_W, CHT_H = 5.75, 1.42, 7.20, 5.84
+
+    # ── Generate chart PNG ────────────────────────────────────────────────
+    chart_dir = os.path.join(tempfile.gettempdir(), 'wfa_stats_charts')
+    os.makedirs(chart_dir, exist_ok=True)
+    chart_path = os.path.join(chart_dir, f'{visual_key}_{chart_type}.png')
+    if not os.path.exists(chart_path):
+        render_stats_chart(chart_type, chart_data, chart_path, dpi=180)
+
+    # ── Shape ID counter ─────────────────────────────────────────────────
+    SID = [900]
+    def nid():
+        SID[0] += 1
+        return SID[0]
+
+    # ── Left panel background ─────────────────────────────────────────────
+    add_sp(sld, (
+        f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+        f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+        f'<p:nvSpPr><p:cNvPr id="{nid()}" name="SCPanel"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+        f'<p:spPr><a:xfrm><a:off x="{emu(PNL_X)}" y="{emu(PNL_Y)}"/>'
+        f'<a:ext cx="{emu(PNL_W)}" cy="{emu(PNL_H)}"/></a:xfrm>'
+        f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+        f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
+        f'<a:ln w="{int(1.5*12700)}"><a:solidFill>'
+        f'<a:srgbClr val="BBBBBB"/></a:solidFill></a:ln>'
+        f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+    ))
+
+    # ── Q&A boxes — calculate spacing ─────────────────────────────────────
+    n_pairs   = len(questions)
+    Q_H       = 0.70
+    A_H       = 0.70
+    QA_GAP    = 0.08    # gap between Q and its A
+    PAIR_GAP  = 0.20    # gap between pairs
+    bot_pad   = 0.15
+
+    total_needed = (PAD_TOP + n_pairs * (Q_H + QA_GAP + A_H)
+                    + max(0, n_pairs - 1) * PAIR_GAP + bot_pad)
+    if total_needed > PNL_H:
+        # Compress pair gap
+        PAIR_GAP = max(0.08, (PNL_H - PAD_TOP - n_pairs * (Q_H + QA_GAP + A_H)
+                               - bot_pad) / max(1, n_pairs - 1))
+
+    qx  = PNL_X + PAD_X
+    qw  = PNL_W - 2 * PAD_X
+    cur_y = PNL_Y + PAD_TOP
+
+    anim_groups = []
+
+    for i, (q, a) in enumerate(zip(questions, answers)):
+        # Question box
+        q_sid = nid()
+        add_sp(sld, sp(q_sid, f'SCQ{i}', qx, cur_y, qw, Q_H,
+                       q,
+                       font='Twinkl Cursive Looped Light', sz=13,
+                       bold=False, color='1F4E79', align='l',
+                       fill='DEEAF1', border=('156082', 1.2), anchor='ctr'))
+        anim_groups.append([q_sid])
+        cur_y += Q_H + QA_GAP
+
+        # Answer box
+        a_sid = nid()
+        add_sp(sld, sp(a_sid, f'SCA{i}', qx, cur_y, qw, A_H,
+                       '✓  ' + a,
+                       font='Twinkl Cursive Looped Light', sz=13,
+                       bold=True, color='1A5C2A', align='l',
+                       fill='E8F5E9', border=('1A5C2A', 1.2), anchor='ctr'))
+        anim_groups.append([a_sid])
+        cur_y += A_H + PAIR_GAP
+
+    _apply_animation(sld, anim_groups)
+
+    # ── Chart image ───────────────────────────────────────────────────────
+    sld.shapes.add_picture(chart_path,
+                           emu(CHT_X), emu(CHT_Y),
+                           emu(CHT_W), emu(CHT_H))
+
+    sld.notes_slide.notes_text_frame.text = v.get('notes', '')
+
+
 def draw_stm_word_problem_slide(sld, visual_key):
     v = VISUALS[visual_key]
     px, py, pw, ph = 0.40, 1.45, 7.00, 5.80
@@ -3109,8 +3249,9 @@ build_slide2()
 build_slide3()
 build_slide4()
 build_slide5()
-build_slide6()
-build_slide7()
+if RM_DATA.get('questions'):
+    build_slide6()
+    build_slide7()
 build_slide8()
 
 # Cycle 1 teaching slides
