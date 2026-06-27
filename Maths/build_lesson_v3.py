@@ -212,7 +212,7 @@ def build_slide1():
             t.text = kq_text
 
     # Add a blank slide to prs — its layout ref is set correctly by add_slide
-    new_sld = prs.slides.add_slide(layout(6))   # blank layout
+    new_sld = prs.slides.add_slide(layout(12))  # layout 12 = 'Blank' in this template
 
     # Replace shape tree with source slide's shape tree
     src_spTree = src_slide.shapes._spTree
