@@ -813,6 +813,48 @@ with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
 
 ---
 
+---
+
+## KEY QUESTION SLIDE — RULES (DO NOT DEVIATE)
+
+The KQ slide is always slide 1 of every teaching PPTX.
+
+**Template:** `assets/KQ_Slide_template.pptx`
+This file contains the confirmed working slide layout with all images, cloud shape,
+children group, maths icon and "Being a Mathematician" text in place.
+The only element that changes per lesson is the question text.
+
+**Placeholder text in template:** `Replace this text`
+This is the exact string in TextBox 28 inside Group 20. Replace it and nothing else.
+
+**Question text source:** `PLAN['keyQuestions'][lesson['topic']]`
+The plan JSON has a `keyQuestions` dict keyed by topic string. Use it directly.
+
+**How it is built:**
+- `inject_kq_slide(out)` is called in `build_lesson_v3.py` immediately after `prs.save(out)`
+- It opens the template as a zip, replaces the placeholder text via lxml `<a:t>` iteration,
+  bakes the DEECF8 background directly into the slide XML, then prepends the slide
+  into the teaching PPTX via zip/XML manipulation
+- The background is baked because the slide layout reference in the template does not
+  exist in the teaching deck — baking it makes the slide self-contained
+
+**What must never happen:**
+- Do NOT rebuild the KQ slide from scratch
+- Do NOT add new shapes, images or groups
+- Do NOT try to copy the cloud autoshape — it is already in the template
+- Do NOT change KQ_PLACEHOLDER — it must remain `'Replace this text'`
+- Do NOT skip calling `inject_kq_slide` after `prs.save()`
+
+**Named assets in `assets/` (for reference only — not used by the builder):**
+- `KQ_Slide_template.pptx` — the confirmed working template
+- `4 children KQ slide.png` — the four pupil images as one combined PNG
+- `cloud KQ slide.png` — the cloud shape as PNG
+- `KQ key icon.png` — the key + question mark icon
+- `maths-icon.png` — the Being a Mathematician icon
+- `i do icon.png`, `we do icon.png`, `you do icon.png`, `you do trio icon.png` — lesson phase icons
+
+---
+
 ## Dependency files
 
 All in `/mnt/skills/user/maths-complete-planning-and-resources/`:
