@@ -194,7 +194,7 @@ def new_slide(layout_num):
 # Called as a post-process step after prs.save().
 # ===========================================================================
 KQ_TEMPLATE    = '/home/claude/assets/KQ_Slide_template.pptx'
-KQ_PLACEHOLDER = 'Xxxxxxxxxx xxxxxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxx xxxxxxxxxx xxxxxxxxxxxx'
+KQ_PLACEHOLDER = 'Replace this text'
 
 def build_slide1():
     pass   # KQ slide injected post-save — see inject_kq_slide()
@@ -217,6 +217,25 @@ def inject_kq_slide(teaching_pptx_path):
 
     # Replace placeholder text (same operation the user confirmed worked)
     kq_slide_xml = kq_slide_xml.decode('utf-8').replace(KQ_PLACEHOLDER, kq_text).encode('utf-8')
+
+    # Bake light-blue background directly into slide XML so it doesn't depend on layout
+    from lxml import etree as _etree
+    _NSP = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+    _NSA = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+    _root = _etree.fromstring(kq_slide_xml)
+    _cSld = _root.find(f'{{{_NSP}}}cSld')
+    if _cSld is not None:
+        _existing_bg = _cSld.find(f'{{{_NSP}}}bg')
+        if _existing_bg is not None:
+            _cSld.remove(_existing_bg)
+        _bg = _etree.Element(f'{{{_NSP}}}bg')
+        _bgPr = _etree.SubElement(_bg, f'{{{_NSP}}}bgPr')
+        _sf = _etree.SubElement(_bgPr, f'{{{_NSA}}}solidFill')
+        _sc = _etree.SubElement(_sf, f'{{{_NSA}}}srgbClr')
+        _sc.set('val', 'DEECF8')
+        _etree.SubElement(_bgPr, f'{{{_NSA}}}effectLst')
+        _cSld.insert(0, _bg)
+    kq_slide_xml = _etree.tostring(_root, xml_declaration=True, encoding='UTF-8', standalone=True)
 
     # ── Read teaching PPTX ────────────────────────────────────────────────────
     with zipfile.ZipFile(teaching_pptx_path) as tz:
