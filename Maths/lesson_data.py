@@ -1090,4 +1090,354 @@ LESSON_DATA[16] = {
         ['proportion',        'A part of a whole, described as a fraction.'],
         ['"of" means ×',      'When finding a fraction of an amount, "of" means we divide then multiply.'],
     ],
+},
+
+# ─── T6W5 — Statistics ───────────────────────────────────────────────────────
+
+LESSON_DATA[17] = {
+    'visuals': {
+        'c1_ido1': {
+            'slide_type': 'stats_chart',
+            'title': 'Pictograms — reading the key',
+            'chart_type': 'pictogram',
+            'chart_data': {
+                'title': 'Favourite sports in Year 4',
+                'categories': ['Football', 'Volleyball', 'Basketball', 'Swimming', 'Capoeira'],
+                'values': [12, 8, 6, 10, 4],
+                'key_value': 2,
+                'symbol_label': 'pupils',
+            },
+            'questions': [
+                'How many pupils chose volleyball?',
+                'Which sport was most popular?',
+                'How many more pupils chose football than capoeira?',
+            ],
+            'answers': [
+                '8 pupils  (4 symbols × 2)',
+                'Football — 12 pupils',
+                '8 more pupils  (12 − 4)',
+            ],
+            'notes': 'I DO C1 — Model reading the key first. Count the symbols, then multiply by 2. '
+                     'Stress: always read the key before reading ANY value from a pictogram. '
+                     'Capoeira link — Brazilian martial art / dance form.',
+        },
+        'c1_ido2': {
+            'slide_type': 'stats_chart',
+            'title': 'Bar charts — reading the scale',
+            'chart_type': 'bar_chart',
+            'chart_data': {
+                'title': 'Animals spotted at a Brazilian wildlife reserve',
+                'categories': ['Toucan', 'Jaguar', 'Monkey', 'Parrot', 'Caiman'],
+                'values': [15, 7, 23, 30, 12],
+                'y_max': 35,
+                'y_step': 5,
+                'y_label': 'Number of animals',
+            },
+            'questions': [
+                'How many jaguars were spotted?  (Look at the scale carefully.)',
+                'How many toucans and caimans were spotted altogether?',
+                'Which animal was spotted most often?',
+            ],
+            'answers': [
+                '7 jaguars — the bar sits between the 5 and 10 lines',
+                '27 altogether  (15 + 12)',
+                'Parrot — 30',
+            ],
+            'notes': 'I DO C1 — KEY TEACHING: values do not always land on a gridline. '
+                     'Jaguar (7), Monkey (23) and Caiman (12) all sit between lines. '
+                     'Model: find the two surrounding lines, estimate where the bar falls.',
+        },
+        'c2_ido1': {
+            'slide_type': 'stats_chart',
+            'title': 'Tables — rows, columns, totals',
+            'chart_type': 'table',
+            'chart_data': {
+                'title': 'Average daily sunshine hours',
+                'col_headers': ['Season', 'England', 'Brazil', 'Total'],
+                'rows': [
+                    ['Spring',  5,  7, 12],
+                    ['Summer',  8,  9, 17],
+                    ['Autumn',  4,  7, 11],
+                    ['Winter',  2,  8, 10],
+                    ['Total',  19, 31, 50],
+                ],
+                'highlight_row': 4,
+                'highlight_col': 3,
+            },
+            'questions': [
+                'In which season does England get the most sunshine?',
+                'Which country has the higher annual total?',
+                'In which season is the difference between the two countries smallest?',
+            ],
+            'answers': [
+                'Summer — 8 hours per day',
+                'Brazil — 31 hours vs England\'s 19',
+                'Summer — just 1 hour apart  (8 vs 9)',
+            ],
+            'notes': 'I DO C2 — Model the reading method: row label first, then column header, '
+                     'then find the intersection. Read totals row and column separately. '
+                     'Geography link: Brazil barely changes (near the equator). England varies a lot.',
+        },
+        'c2_ido2': {
+            'slide_type': 'stm_word_problem',
+            'title': 'Spot the mistake',
+            'problem': ('A bar chart shows the number of animals spotted at a wildlife reserve.\n'
+                        'The scale goes up in 5s.\n'
+                        "The bar for 'Caiman' reaches the 4th gridline.\n"
+                        "A pupil writes: 'There were 4 caimans spotted.'"),
+            'wrong_line': 'There were 4 caimans spotted.',
+            'correct_line': 'There were 20 caimans spotted.',
+            'caption': 'What has gone wrong here?',
+            'notes': 'STM: The pupil counted gridlines (4 lines) rather than reading the scale. '
+                     'The 4th line on a scale of 5 = 4 × 5 = 20. '
+                     'Always read the scale, not the line count.',
+        },
+    },
+    'wm': {
+        'items': [43, 17, 8, 62, 29, 5, 74],
+        'qa': [
+            {'q': 'What was the 3rd number?',         'a': '8'},
+            {'q': 'What was the last number?',        'a': '74'},
+            {'q': 'Which number was the largest?',    'a': '74'},
+            {'q': 'What were the first two numbers?', 'a': '43 and 17'},
+            {'q': 'What was the 5th number?',         'a': '29'},
+        ],
+    },
+    'vocab': [
+        ['key',       'The part of a pictogram that tells you what each symbol represents.'],
+        ['scale',     'The numbered axis on a bar chart that tells you the value of each bar.'],
+        ['interpret', 'To read and explain what data means, not just copy the numbers.'],
+    ],
+}
+
+LESSON_DATA[18] = {
+    'visuals': {
+        'c1_ido1': {
+            'slide_type': 'stats_chart',
+            'title': 'Sum — add the values',
+            'chart_type': 'bar_chart',
+            'chart_data': {
+                'title': 'Animals counted at an Amazon river each day',
+                'categories': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+                'values': [18, 24, 15, 30, 21],
+                'y_max': 35,
+                'y_step': 5,
+                'y_label': 'Number of animals',
+            },
+            'questions': [
+                'How many animals were counted on Monday and Friday altogether?',
+                'What is the total for all five days?',
+            ],
+            'answers': [
+                '39 animals  (18 + 21)',
+                '108 animals  (18 + 24 + 15 + 30 + 21)',
+            ],
+            'notes': 'I DO C1 — Model the process: READ both values from the chart, RECORD them, '
+                     'then CALCULATE. Never try to hold values in your head. '
+                     'Sum = addition. Show working clearly.',
+        },
+        'c1_ido2': {
+            'slide_type': 'stats_chart',
+            'title': 'Difference — find the gap',
+            'chart_type': 'bar_chart',
+            'chart_data': {
+                'title': 'Animals counted at an Amazon river each day',
+                'categories': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+                'values': [18, 24, 15, 30, 21],
+                'y_max': 35,
+                'y_step': 5,
+                'y_label': 'Number of animals',
+            },
+            'questions': [
+                'How many MORE animals were counted on Thursday than Wednesday?',
+                'How many FEWER were counted on Monday than Tuesday?',
+            ],
+            'answers': [
+                '15 more  (30 − 15)',
+                '6 fewer  (24 − 18)',
+            ],
+            'notes': 'I DO C1 SAME CHART — Contrast directly with the previous slide. '
+                     '"How many more / fewer" = difference = subtract. '
+                     'The same chart, completely different calculation. '
+                     'KEY: the WORDS in the question tell us which operation to use.',
+        },
+        'c2_ido1': {
+            'slide_type': 'stats_chart',
+            'title': 'Comparing two data sets',
+            'chart_type': 'double_bar',
+            'chart_data': {
+                'title': 'Average temperature (°C) — London and Rio de Janeiro',
+                'categories': ['Spring', 'Summer', 'Autumn', 'Winter'],
+                'series': [
+                    {'label': 'London',         'values': [11, 18, 12,  6], 'colour': '#1798d3'},
+                    {'label': 'Rio de Janeiro', 'values': [25, 28, 23, 22], 'colour': '#e57d24'},
+                ],
+                'y_max': 32,
+                'y_step': 4,
+                'y_label': 'Temperature (°C)',
+            },
+            'questions': [
+                'In which season is the gap between the two cities largest?',
+                'What is the temperature difference in summer?',
+                'Which city has more consistent temperatures across the year?',
+            ],
+            'answers': [
+                'Winter — London 6°C, Rio 22°C — a gap of 16°C',
+                '10°C difference  (28 − 18)',
+                'Rio — it barely changes (22°C to 28°C). London varies far more.',
+            ],
+            'notes': 'I DO C2 — Model reading the SAME season for BOTH bars before comparing. '
+                     'Geography link: Brazil is close to the equator so temperatures are stable '
+                     'year-round. England is further away — much bigger seasonal variation.',
+        },
+        'c2_ido2': {
+            'slide_type': 'stm_word_problem',
+            'title': 'Spot the mistake',
+            'problem': ('Class A raised £240 at the school fair.\n'
+                        'Class B raised £185.\n'
+                        "A pupil says: 'Class A raised £425 more than Class B.'"),
+            'wrong_line': 'Class A raised £425 more.',
+            'correct_line': 'Class A raised £55 more.',
+            'caption': 'What went wrong?',
+            'notes': 'STM: "How many more" = difference = subtract. '
+                     'The pupil added 240 + 185 = 425 instead of subtracting. '
+                     '240 − 185 = 55. Reinforce: SUM = add, DIFFERENCE = subtract.',
+        },
+    },
+    'wm': {
+        'items': ['data', 'total', 'sum', 'compare', 'difference'],
+        'qa': [
+            {'q': 'What was the 2nd word?',                        'a': 'total'},
+            {'q': 'What was the last word?',                       'a': 'difference'},
+            {'q': 'Which word was the shortest?',                  'a': 'sum'},
+            {'q': 'What were the 3rd and 4th words?',              'a': 'sum and compare'},
+            {'q': 'How many words had more than 5 letters?',       'a': '2 — compare and difference'},
+        ],
+    },
+    'vocab': [
+        ['sum',        'The result of adding values together — the total.'],
+        ['difference', 'The result of subtracting one value from another — the gap between them.'],
+        ['compare',    'To look at two or more values and describe how they are the same or different.'],
+    ],
+}
+
+LESSON_DATA[19] = {
+    'visuals': {
+        'c1_ido1': {
+            'slide_type': 'stats_chart',
+            'title': 'Line graphs — reading values',
+            'chart_type': 'line_graph',
+            'chart_data': {
+                'title': 'Temperature in Bristol on a June day',
+                'x_values': ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'],
+                'y_values': [14, 17, 21, 24, 22, 18],
+                'y_min': 10,
+                'y_max': 28,
+                'y_step': 2,
+                'x_label': 'Time',
+                'y_label': 'Temperature (°C)',
+            },
+            'questions': [
+                'What was the temperature at 12:00?',
+                'At what time was Bristol warmest?',
+                'Between which two readings did temperature rise the most?',
+            ],
+            'answers': [
+                '21°C',
+                '14:00 — 24°C',
+                '10:00 to 12:00 — it rose by 4°C',
+            ],
+            'notes': 'I DO C1 — Introduce line graphs as showing CONTINUOUS data. '
+                     'Model reading a labelled point: find the time on the x-axis, '
+                     'trace up to the line, trace left to read the temperature. '
+                     'Contrast with bar charts: line graphs show change over time.',
+        },
+        'c1_ido2': {
+            'slide_type': 'stats_chart',
+            'title': 'Line graphs — between the points',
+            'chart_type': 'line_graph',
+            'chart_data': {
+                'title': 'Temperature in Bristol on a June day',
+                'x_values': ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'],
+                'y_values': [14, 17, 21, 24, 22, 18],
+                'y_min': 10,
+                'y_max': 28,
+                'y_step': 2,
+                'x_label': 'Time',
+                'y_label': 'Temperature (°C)',
+            },
+            'questions': [
+                'Was it exactly 14°C at 08:00 then suddenly 17°C at 10:00?',
+                'What was the temperature probably at around 09:00?',
+            ],
+            'answers': [
+                'No — it rose steadily all the way through those two hours.',
+                'About 15°C to 16°C — roughly halfway between 14 and 17.',
+            ],
+            'notes': 'I DO C1 — KEY CONCEPT: the LINE itself carries meaning. '
+                     'Temperature changed continuously — every minute, not just at our readings. '
+                     'The line lets us ESTIMATE values between points. '
+                     'This is what makes line graphs different from bar charts.',
+        },
+        'c2_ido1': {
+            'slide_type': 'stats_chart',
+            'title': 'Reading between the points',
+            'chart_type': 'line_graph',
+            'chart_data': {
+                'title': 'Temperature in São Paulo on a June day',
+                'x_values': ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'],
+                'y_values': [22, 26, 30, 32, 29, 25],
+                'y_min': 18,
+                'y_max': 36,
+                'y_step': 2,
+                'x_label': 'Time',
+                'y_label': 'Temperature (°C)',
+            },
+            'questions': [
+                'Estimate the temperature in São Paulo at 09:00.',
+                'Estimate the temperature at 11:00.',
+                'At approximately what time was it 30°C on the way down?',
+            ],
+            'answers': [
+                'About 24°C — halfway between 22°C and 26°C.',
+                'About 28°C — halfway between 26°C and 30°C.',
+                'Around 15:00 — the line falls from 32 to 29, passing through 30 near the start.',
+            ],
+            'notes': 'I DO C2 — Model estimation method step by step: '
+                     '(1) Find the two surrounding labelled points. '
+                     '(2) Judge where the unlabelled time sits between them. '
+                     '(3) Estimate proportionally. '
+                     'Stress appropriate language: "about", "approximately", "roughly".',
+        },
+        'c2_ido2': {
+            'slide_type': 'stm_word_problem',
+            'title': 'Spot the mistake',
+            'problem': ('A line graph shows 200 visitors at 10:00 and 300 visitors at 12:00.\n'
+                        'The line rises steadily.\n'
+                        "A pupil is asked: 'Estimate the number of visitors at 11:00.'\n"
+                        "The pupil writes: '300 visitors.'"),
+            'wrong_line': '300 visitors at 11:00.',
+            'correct_line': 'About 250 visitors at 11:00.',
+            'caption': 'What has gone wrong?',
+            'notes': 'STM: The pupil read the nearest LABELLED value (300 at 12:00) '
+                     'rather than estimating between the two surrounding points. '
+                     '11:00 is halfway between 10:00 and 12:00. '
+                     'The line rises steadily from 200 to 300, so at 11:00 ≈ 250.',
+        },
+    },
+    'wm': {
+        'items': ['📊', '🌡️', '🌿', '🌧️', '🦁', '📈'],
+        'qa': [
+            {'q': 'What was the 1st emoji?',                    'a': '📊'},
+            {'q': 'What was the 4th emoji?',                    'a': '🌧️'},
+            {'q': 'What was the last emoji?',                   'a': '📈'},
+            {'q': 'What were the 2nd and 3rd emojis?',          'a': '🌡️ and 🌿'},
+            {'q': 'How many emojis were there altogether?',     'a': '6'},
+        ],
+    },
+    'vocab': [
+        ['continuous', 'Data that changes smoothly over time, like temperature — not in separate steps.'],
+        ['interpolate', 'To estimate a value between two known points on a line graph.'],
+        ['trend',       'The general direction data is moving — rising, falling, or staying the same.'],
+    ],
 }
