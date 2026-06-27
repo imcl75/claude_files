@@ -244,8 +244,10 @@ def inject_kq_slide(teaching_pptx_path):
         r'Target="\.\./slideLayouts/slideLayout\d+\.xml"',
         'Target="../slideLayouts/slideLayout13.xml"', kq_rels_str)
     # Remove notes slide reference (not needed)
-    kq_rels_str = re.sub(r'<Relationship[^/]*/>', lambda m:
-        '' if 'notesSlide' in m.group(0) else m.group(0), kq_rels_str)
+    # FIX: old regex r'<Relationship[^/]*/>' never matched because Type URLs contain '/'.
+    # Line-by-line filter also wrong — rels are single-line, deletes everything.
+    # Use element-level regex matching only the notesSlide Relationship element:
+    kq_rels_str = re.sub(r'<Relationship[^>]+notesSlide[^>]+/>', '', kq_rels_str)
 
     # ── Choose a slide filename that won't clash ───────────────────────────────
     nums = [int(re.search(r'slide(\d+)', n).group(1))
@@ -863,12 +865,13 @@ def build_slide7():
             (f'AText{i+1}', '1D6B40', 0.800, 2800, True,  q['a']),
         ]:
             h = 0.320 if 'Topic' in label else (0.427 if 'QText' in label else a_h)
+            _fill_xml = '<a:solidFill><a:srgbClr val="156082"/></a:solidFill>' if 'Topic' in label else '<a:noFill/>'
             add_sp(sld, f'''<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
                                  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
   <p:nvSpPr><p:cNvPr id="{spid}" name="{label}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
   <p:spPr><a:xfrm><a:off x="{emu(lx)}" y="{emu(cy+y_off)}"/><a:ext cx="{emu(lw)}" cy="{emu(h)}"/></a:xfrm>
     <a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
-    {"<a:solidFill><a:srgbClr val=\"156082\"/></a:solidFill>" if "Topic" in label else "<a:noFill/>"}
+    {_fill_xml}
     <a:ln w="0"><a:noFill/></a:ln>
   </p:spPr><p:txBody><a:bodyPr rtlCol="0" anchor="ctr"/>
     <a:lstStyle/><a:p><a:pPr algn="l"/><a:r>
