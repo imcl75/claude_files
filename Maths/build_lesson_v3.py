@@ -3306,30 +3306,42 @@ def build_spot_the_mistake_slide(layout_num, visual_key, title_text):
 # ===========================================================================
 # TRIOS SLIDE
 # ===========================================================================
-def build_trios_slide(layout_num, title, trios_data, notes):
+def build_trios_slide(layout_num, title, trios_data, notes, chart_keys=None):
+    """chart_keys: list of VISUALS keys whose charts should appear on this slide."""
     sld = new_slide(layout_num)
     for ph in sld.placeholders:
         if ph.placeholder_format.idx == 0:
             ph.text = title
         elif ph.placeholder_format.idx == 1:
-            # Left content placeholder — hide it when no roles are provided
-            # (suppressed by making it invisible via XML)
             from pptx.oxml.ns import qn as _qn
             sp_elem = ph._element
             spPr = sp_elem.find(_qn('p:spPr'))
             if spPr is None:
                 from lxml import etree as _et
                 spPr = _et.SubElement(sp_elem, _qn('p:spPr'))
-            # Set invisible fill + no line
             from lxml import etree as _et
-            noFill = _et.SubElement(spPr, _qn('a:noFill'))
+            _et.SubElement(spPr, _qn('a:noFill'))
             ln = _et.SubElement(spPr, _qn('a:ln'))
             _et.SubElement(ln, _qn('a:noFill'))
 
     roles = trios_data.get('roles', [])
     has_roles = bool(roles)
+    has_charts = bool(chart_keys)
+    n_charts = len(chart_keys) if chart_keys else 0
 
-    if has_roles:
+    # ── Layout: if charts present, text sits in top portion; charts below ─
+    if has_charts:
+        task_x, task_w = 0.5, 12.4
+        task_y, task_h = 1.50, 1.55
+        chal_y, chal_h = 3.12, 1.20
+        chart_y = 4.40
+        chart_h = 2.70
+        if n_charts == 1:
+            chart_x, chart_w = 2.17, 9.00   # centred
+        else:
+            chart_w = 6.10
+            chart_xs = [0.40, 6.83]
+    elif has_roles:
         roles_colors = [('1F4E79','DEEAF1'), ('7030A0','EAD1F0'), ('C00000','FCE4D6')]
         role_w, role_h = 3.8, 1.0
         for i, (role_text, (text_col, fill_col)) in enumerate(zip(roles, roles_colors)):
@@ -3339,11 +3351,14 @@ def build_trios_slide(layout_num, title, trios_data, notes):
                            bold=True, color=text_col, align='l',
                            fill=fill_col, border=(text_col, 1.5), anchor='ctr'))
         task_x, task_w = 4.6, 8.5
+        task_y, task_h = 1.6, 1.8
+        chal_y, chal_h = 3.6, 1.3
     else:
-        # No roles — use full width for task and challenge
         task_x, task_w = 0.5, 12.4
+        task_y, task_h = 1.6, 1.8
+        chal_y, chal_h = 3.6, 1.3
 
-    add_sp(sld, sp(30, 'Task', task_x, 1.6, task_w, 1.8,
+    add_sp(sld, sp(30, 'Task', task_x, task_y, task_w, task_h,
                    trios_data.get('task',''),
                    font='Twinkl Cursive Looped Light', sz=18,
                    color='1F4E79', align='l', fill='DEECF8',
@@ -3351,11 +3366,27 @@ def build_trios_slide(layout_num, title, trios_data, notes):
 
     challenge = trios_data.get('challenge','')
     if challenge:
-        add_sp(sld, sp(31, 'Challenge', task_x, 3.6, task_w, 1.3,
+        add_sp(sld, sp(31, 'Challenge', task_x, chal_y, task_w, chal_h,
                        f'Challenge: {challenge}',
                        font='Twinkl Cursive Looped Light', sz=16,
                        color='7030A0', align='l', fill='F2E6F9',
                        border=('7030A0', 1.5), anchor='ctr'))
+
+    # ── Embed charts ──────────────────────────────────────────────────────
+    if has_charts:
+        chart_dir = os.path.join(tempfile.gettempdir(), 'wfa_stats_charts')
+        os.makedirs(chart_dir, exist_ok=True)
+        for i, vk in enumerate(chart_keys):
+            v = VISUALS.get(vk, {})
+            ct = v.get('chart_type', 'bar_chart')
+            cd = v.get('chart_data', {})
+            chart_path = os.path.join(chart_dir, f'{vk}_{ct}.png')
+            if not os.path.exists(chart_path):
+                render_stats_chart(ct, cd, chart_path, dpi=180)
+            cx = chart_xs[i] if n_charts > 1 else chart_x
+            sld.shapes.add_picture(chart_path,
+                                   emu(cx), emu(chart_y),
+                                   emu(chart_w), emu(chart_h))
 
     sld.notes_slide.notes_text_frame.text = notes
     print(f"  Trios slide ({title[:40]}) ✓")
@@ -3516,9 +3547,11 @@ if c1['slideTitles'].get('wedo') and 'c1_wedo' in VISUALS:
     build_teaching_slide(3, 'c1_wedo', c1['slideTitles']['wedo'][0], 'WE DO')
 
 build_trios_slide(4, c1['slideTitles']['trios'][0], c1['trios'],
-                  f"YOU DO (TRIOS)\n{c1['trios']['task']}\nChallenge: {c1['trios']['challenge']}")
-build_independent_slide(5, c1['slideTitles']['independent'][0], c1['independent'],
-                        f"YOU DO (INDEPENDENT) — C1\n{c1['independent']['standard']}")
+                  f"YOU DO (TRIOS)\n{c1['trios']['task']}\nChallenge: {c1['trios']['challenge']}",
+                  chart_keys=c1.get('trios_charts', []))
+if c1.get('slideCount',{}).get('independent',1) > 0:
+    build_independent_slide(5, c1['slideTitles']['independent'][0], c1['independent'],
+                            f"YOU DO (INDEPENDENT) — C1\n{c1['independent']['standard']}")
 build_lp_slide('Learning Paper 1')
 build_lp_slide('Marking Station 1')
 
@@ -3552,9 +3585,11 @@ if c2['slideTitles'].get('wedo'):
         build_teaching_slide(3, 'c2_wedo', c2['slideTitles']['wedo'][0], 'WE DO')
 
 build_trios_slide(4, c2['slideTitles']['trios'][0], c2['trios'],
-                  f"YOU DO (TRIOS)\n{c2['trios']['task']}\nChallenge: {c2['trios']['challenge']}")
-build_independent_slide(5, c2['slideTitles']['independent'][0], c2['independent'],
-                        f"YOU DO (INDEPENDENT) — C2\n{c2['independent']['standard']}")
+                  f"YOU DO (TRIOS)\n{c2['trios']['task']}\nChallenge: {c2['trios']['challenge']}",
+                  chart_keys=c2.get('trios_charts', []))
+if c2.get('slideCount',{}).get('independent',1) > 0:
+    build_independent_slide(5, c2['slideTitles']['independent'][0], c2['independent'],
+                            f"YOU DO (INDEPENDENT) — C2\n{c2['independent']['standard']}")
 build_lp_slide('Learning Paper 2')
 build_lp_slide('Marking Station 2')
 
