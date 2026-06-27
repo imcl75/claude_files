@@ -3173,3 +3173,331 @@ def _timetable(spec, path, dpi):
 # ─── CONVENIENCE ALIASES ──────────────────────────────────────────────────────
 MID_GREY = '#A0A0A0'
 
+
+
+# ─── STATISTICS CHARTS ───────────────────────────────────────────────────────
+# Used by draw_stats_chart_slide in build_lesson_v3.py.
+# All functions accept a chart_data dict and write a PNG to output_path.
+
+_WFA_BLUE   = '#1798d3'
+_WFA_ORANGE = '#e57d24'
+_GRID_LINE  = '#CCCCCC'
+_AXIS_COL   = '#444444'
+_TEXT_COL   = '#1A1A1A'
+_LABEL_SIZE = 11
+_TICK_SIZE  = 10
+
+
+def render_stats_pictogram(data, output_path, dpi=150):
+    """Horizontal pictogram. Each symbol = key_value items."""
+    cats      = data['categories']
+    vals      = data['values']
+    key_val   = data.get('key_value', 2)
+    sym_label = data.get('symbol_label', 'pupils')
+    title     = data.get('title', '')
+    colour    = data.get('colour', _WFA_BLUE)
+
+    n     = len(cats)
+    max_syms = max(v // key_val for v in vals)
+
+    fig_w = max(6.5, max_syms * 0.55 + 2.5)
+    fig_h = n * 0.65 + 1.2
+    fig, ax = plt.subplots(figsize=(fig_w, fig_h))
+    ax.set_facecolor('white')
+    fig.patch.set_facecolor('white')
+
+    RADIUS = 0.20
+    SYM_W  = 0.52   # horizontal spacing per symbol
+
+    # Longest category label — determine left margin
+    max_len = max(len(c) for c in cats)
+    label_x_end = 0.05 + max_len * 0.062   # rough em-width
+
+    for i, (cat, val) in enumerate(zip(cats, vals)):
+        y_row = (n - 1 - i) * 0.65 + 0.5
+        # Category label
+        ax.text(label_x_end - 0.04, y_row, cat,
+                ha='right', va='center',
+                fontsize=_LABEL_SIZE, color=_TEXT_COL, fontweight='bold')
+        # Symbols
+        n_syms = val // key_val
+        for j in range(n_syms):
+            cx = label_x_end + 0.08 + j * SYM_W + RADIUS
+            circle = plt.Circle((cx, y_row), RADIUS, color=colour, zorder=3)
+            ax.add_patch(circle)
+
+    # Key
+    key_y = -0.25
+    ax.add_patch(plt.Circle((label_x_end + 0.08 + RADIUS, key_y), RADIUS,
+                             color=colour, zorder=3))
+    ax.text(label_x_end + 0.08 + RADIUS * 2 + 0.12, key_y,
+            f'= {key_val} {sym_label}',
+            ha='left', va='center', fontsize=_LABEL_SIZE - 1, color=_TEXT_COL)
+
+    total_w  = label_x_end + 0.08 + max_syms * SYM_W + 0.3
+    total_h  = n * 0.65 + 0.6
+    ax.set_xlim(0, total_w)
+    ax.set_ylim(-0.55, total_h)
+    ax.axis('off')
+
+    if title:
+        ax.text(total_w / 2, total_h + 0.05, title,
+                ha='center', va='bottom',
+                fontsize=_LABEL_SIZE, fontweight='bold', color=_TEXT_COL)
+
+    return _save(fig, output_path, dpi)
+
+
+def render_stats_bar_chart(data, output_path, dpi=150):
+    """Vertical bar chart with explicit y scale."""
+    cats    = data['categories']
+    vals    = data['values']
+    y_max   = data.get('y_max', max(vals) + 5)
+    y_step  = data.get('y_step', 5)
+    y_label = data.get('y_label', '')
+    x_label = data.get('x_label', '')
+    title   = data.get('title', '')
+    colour  = data.get('colour', _WFA_BLUE)
+
+    fig, ax = plt.subplots(figsize=(6.5, 5.0))
+    ax.set_facecolor('white')
+    fig.patch.set_facecolor('white')
+
+    x_pos = range(len(cats))
+    bars = ax.bar(x_pos, vals, color=colour, width=0.55,
+                  edgecolor='white', linewidth=0.8, zorder=3)
+
+    # Grid lines at each y_step
+    yticks = list(range(0, y_max + 1, y_step))
+    ax.set_yticks(yticks)
+    ax.yaxis.grid(True, color=_GRID_LINE, linewidth=0.8, zorder=0)
+    ax.set_axisbelow(True)
+
+    ax.set_ylim(0, y_max)
+    ax.set_xticks(list(x_pos))
+    ax.set_xticklabels(cats, fontsize=_LABEL_SIZE - 1,
+                       color=_TEXT_COL, fontweight='bold')
+    ax.tick_params(axis='y', labelsize=_TICK_SIZE, colors=_AXIS_COL)
+    ax.tick_params(axis='x', length=0)
+    for spine in ['top', 'right']:
+        ax.spines[spine].set_visible(False)
+    for spine in ['left', 'bottom']:
+        ax.spines[spine].set_color(_GRID_LINE)
+
+    if y_label:
+        ax.set_ylabel(y_label, fontsize=_LABEL_SIZE - 1,
+                      color=_TEXT_COL, labelpad=6)
+    if x_label:
+        ax.set_xlabel(x_label, fontsize=_LABEL_SIZE - 1,
+                      color=_TEXT_COL, labelpad=6)
+    if title:
+        ax.set_title(title, fontsize=_LABEL_SIZE, fontweight='bold',
+                     color=_TEXT_COL, pad=8)
+
+    plt.tight_layout(pad=0.5)
+    return _save(fig, output_path, dpi)
+
+
+def render_stats_line_graph(data, output_path, dpi=150):
+    """Line graph with dots at data points."""
+    x_vals  = data['x_values']
+    y_vals  = data['y_values']
+    y_min   = data.get('y_min', 0)
+    y_max   = data.get('y_max', max(y_vals) + 2)
+    y_step  = data.get('y_step', 2)
+    x_label = data.get('x_label', '')
+    y_label = data.get('y_label', '')
+    title   = data.get('title', '')
+    colour  = data.get('colour', _WFA_BLUE)
+    # Optional: mark certain points differently (e.g. for interpolation slides)
+    interp_xs = data.get('interpolation_marks', [])
+
+    fig, ax = plt.subplots(figsize=(6.5, 4.8))
+    ax.set_facecolor('white')
+    fig.patch.set_facecolor('white')
+
+    x_idx = list(range(len(x_vals)))
+    ax.plot(x_idx, y_vals, color=colour, linewidth=2.2,
+            marker='o', markersize=8, markerfacecolor=colour,
+            markeredgecolor='white', markeredgewidth=1.5, zorder=4)
+
+    # Interpolation markers (vertical dashed lines at unlabelled x positions)
+    for ix in interp_xs:
+        ax.axvline(x=ix, color=_WFA_ORANGE, linewidth=1.2,
+                   linestyle='--', zorder=2)
+
+    # Grid
+    yticks = list(range(y_min, y_max + 1, y_step))
+    ax.set_yticks(yticks)
+    ax.yaxis.grid(True, color=_GRID_LINE, linewidth=0.8, zorder=0)
+    ax.xaxis.grid(True, color=_GRID_LINE, linewidth=0.8, zorder=0)
+    ax.set_axisbelow(True)
+
+    ax.set_ylim(y_min, y_max)
+    ax.set_xlim(-0.3, len(x_vals) - 0.7)
+    ax.set_xticks(x_idx)
+    ax.set_xticklabels(x_vals, fontsize=_TICK_SIZE,
+                       color=_TEXT_COL, fontweight='bold', rotation=0)
+    ax.tick_params(axis='y', labelsize=_TICK_SIZE, colors=_AXIS_COL)
+    ax.tick_params(axis='x', length=0)
+    for spine in ['top', 'right']:
+        ax.spines[spine].set_visible(False)
+    for spine in ['left', 'bottom']:
+        ax.spines[spine].set_color(_GRID_LINE)
+
+    if y_label:
+        ax.set_ylabel(y_label, fontsize=_LABEL_SIZE - 1,
+                      color=_TEXT_COL, labelpad=6)
+    if x_label:
+        ax.set_xlabel(x_label, fontsize=_LABEL_SIZE - 1,
+                      color=_TEXT_COL, labelpad=6)
+    if title:
+        ax.set_title(title, fontsize=_LABEL_SIZE, fontweight='bold',
+                     color=_TEXT_COL, pad=8)
+
+    plt.tight_layout(pad=0.5)
+    return _save(fig, output_path, dpi)
+
+
+def render_stats_table(data, output_path, dpi=150):
+    """Two-way table with coloured header row and optional totals highlight."""
+    col_headers  = data['col_headers']
+    rows         = data['rows']
+    title        = data.get('title', '')
+    hi_row       = data.get('highlight_row', -1)   # 0-based data row; -1 = none
+    hi_col       = data.get('highlight_col', -1)   # 0-based col; -1 = none
+
+    n_cols = len(col_headers)
+    n_rows = len(rows)
+    col_w  = 1.35
+    row_h  = 0.50
+    head_h = 0.55
+    pad_t  = 0.40 if title else 0.10
+    fig_w  = max(5.5, col_w * n_cols + 0.2)
+    fig_h  = pad_t + head_h + row_h * n_rows + 0.15
+
+    fig, ax = plt.subplots(figsize=(fig_w, fig_h))
+    ax.set_xlim(0, n_cols * col_w)
+    ax.set_ylim(0, fig_h)
+    ax.axis('off')
+    fig.patch.set_facecolor('white')
+
+    HEADER_BG   = _WFA_BLUE
+    TOTAL_BG    = '#cce6f5'
+    ALT_BG      = '#f5f5f5'
+    BORDER      = '#999999'
+
+    # Title
+    if title:
+        ax.text(n_cols * col_w / 2, fig_h - 0.08, title,
+                ha='center', va='top',
+                fontsize=_LABEL_SIZE, fontweight='bold', color=_TEXT_COL)
+
+    # Header row (top of table)
+    hdr_y = fig_h - pad_t - head_h
+    for ci, hdr in enumerate(col_headers):
+        rect = plt.Rectangle((ci * col_w, hdr_y), col_w, head_h,
+                              facecolor=HEADER_BG, edgecolor='white', linewidth=0.8)
+        ax.add_patch(rect)
+        ax.text(ci * col_w + col_w / 2, hdr_y + head_h / 2, str(hdr),
+                ha='center', va='center',
+                fontsize=_LABEL_SIZE, color='white', fontweight='bold')
+
+    # Data rows
+    for ri, row in enumerate(rows):
+        row_y = hdr_y - (ri + 1) * row_h
+        is_hi_row = (ri == hi_row)
+        for ci, val in enumerate(row):
+            is_hi_col = (ci == hi_col)
+            if is_hi_row or is_hi_col:
+                bg   = TOTAL_BG
+                bold = True
+                tc   = _WFA_BLUE
+            elif ri % 2 == 1:
+                bg   = ALT_BG
+                bold = (ci == 0)
+                tc   = _TEXT_COL
+            else:
+                bg   = 'white'
+                bold = (ci == 0)
+                tc   = _TEXT_COL
+            rect = plt.Rectangle((ci * col_w, row_y), col_w, row_h,
+                                  facecolor=bg, edgecolor=BORDER, linewidth=0.5)
+            ax.add_patch(rect)
+            ax.text(ci * col_w + col_w / 2, row_y + row_h / 2, str(val),
+                    ha='center', va='center',
+                    fontsize=_LABEL_SIZE - 0.5, color=tc,
+                    fontweight='bold' if bold else 'normal')
+
+    plt.tight_layout(pad=0.1)
+    return _save(fig, output_path, dpi)
+
+
+def render_stats_double_bar(data, output_path, dpi=150):
+    """Side-by-side grouped bar chart for two data series."""
+    cats    = data['categories']
+    series  = data['series']    # [{'label': ..., 'values': [...], 'colour': ...}]
+    y_max   = data.get('y_max', 35)
+    y_step  = data.get('y_step', 4)
+    y_label = data.get('y_label', '')
+    title   = data.get('title', '')
+
+    n_groups = len(cats)
+    n_series = len(series)
+    bar_w    = 0.35
+    x_idx    = list(range(n_groups))
+
+    fig, ax = plt.subplots(figsize=(7.0, 4.8))
+    ax.set_facecolor('white')
+    fig.patch.set_facecolor('white')
+
+    offsets = [-bar_w / 2 * (n_series - 1) + i * bar_w for i in range(n_series)]
+    for s, offset in zip(series, offsets):
+        colour = s.get('colour', _WFA_BLUE)
+        ax.bar([x + offset for x in x_idx], s['values'],
+               width=bar_w, color=colour, label=s['label'],
+               edgecolor='white', linewidth=0.6, zorder=3)
+
+    yticks = list(range(0, y_max + 1, y_step))
+    ax.set_yticks(yticks)
+    ax.yaxis.grid(True, color=_GRID_LINE, linewidth=0.8, zorder=0)
+    ax.set_axisbelow(True)
+    ax.set_ylim(0, y_max)
+    ax.set_xticks(x_idx)
+    ax.set_xticklabels(cats, fontsize=_LABEL_SIZE - 1,
+                       color=_TEXT_COL, fontweight='bold')
+    ax.tick_params(axis='y', labelsize=_TICK_SIZE, colors=_AXIS_COL)
+    ax.tick_params(axis='x', length=0)
+    for spine in ['top', 'right']:
+        ax.spines[spine].set_visible(False)
+    for spine in ['left', 'bottom']:
+        ax.spines[spine].set_color(_GRID_LINE)
+
+    if y_label:
+        ax.set_ylabel(y_label, fontsize=_LABEL_SIZE - 1,
+                      color=_TEXT_COL, labelpad=6)
+    if title:
+        ax.set_title(title, fontsize=_LABEL_SIZE, fontweight='bold',
+                     color=_TEXT_COL, pad=8)
+
+    leg = ax.legend(fontsize=_LABEL_SIZE - 1, loc='upper right',
+                    framealpha=0.9, edgecolor=_GRID_LINE)
+    leg.get_frame().set_linewidth(0.5)
+
+    plt.tight_layout(pad=0.5)
+    return _save(fig, output_path, dpi)
+
+
+def render_stats_chart(chart_type, chart_data, output_path, dpi=150):
+    """Dispatch to the correct stats chart renderer."""
+    dispatch = {
+        'pictogram':  render_stats_pictogram,
+        'bar_chart':  render_stats_bar_chart,
+        'line_graph': render_stats_line_graph,
+        'table':      render_stats_table,
+        'double_bar': render_stats_double_bar,
+    }
+    if chart_type not in dispatch:
+        raise ValueError(f'Unknown chart_type: {chart_type!r}')
+    dispatch[chart_type](chart_data, output_path, dpi)
+    return output_path
