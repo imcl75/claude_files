@@ -115,7 +115,11 @@ def layout(n):
 # IMAGE HELPER — always direct file read
 # ---------------------------------------------------------------------------
 def add_pic(slide, image_filename, x, y, w, h):
-    img_path = f'/home/claude/unpacked/ppt/media/{image_filename}'
+    # Absolute path wins; otherwise read from unpacked media
+    if os.path.isabs(image_filename):
+        img_path = image_filename
+    else:
+        img_path = f'/home/claude/unpacked/ppt/media/{image_filename}'
     with open(img_path, 'rb') as f:
         img_bytes = f.read()
     pic = slide.shapes.add_picture(_io.BytesIO(img_bytes), emu(x), emu(y), emu(w), emu(h))
@@ -184,39 +188,57 @@ def new_slide(layout_num):
     return prs.slides.add_slide(layout(layout_num))
 
 # ===========================================================================
-# SLIDE 1 — KEY QUESTION  (fixed: exact template positions, black, underlined)
+# SLIDE 1 — KEY QUESTION  (loaded from KQ_Slide_template.pptx, text replaced)
 # ===========================================================================
 def build_slide1():
-    sld = new_slide(13)
-    sid = [29]
-    def nid(): sid[0]+=1; return sid[0]
+    """
+    Loads KQ_Slide_template.pptx, replaces placeholder text with the topic's
+    key question, then inserts the slide as slide 1 in prs.
+    No image rebuilding — the template is the source of truth.
+    """
+    import copy as _copy
+    from pptx import Presentation as _Prs
 
+    KQ_TEMPLATE   = '/home/claude/assets/KQ_Slide_template.pptx'
+    KQ_PLACEHOLDER = 'Xxxxxxxxxx xxxxxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxx xxxxxxxxxx xxxxxxxxxxxx'
     kq_text = KEY_QUESTIONS[L1['topic']]
 
-    # Cloud PNG image (fixed — contains "Key Question?" label, key icon, red ?)
-    # Positioned to match your reference: x=1.745, y=0.093, w=10.160, h=3.332
-    add_pic(sld,'cloud_kq.png', 1.745, 0.093, 10.160, 3.332)
+    # Load template and replace placeholder in XML
+    src_prs  = _Prs(KQ_TEMPLATE)
+    src_slide = src_prs.slides[0]
+    NS_A = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+    for t in src_slide._element.iter(f'{{{NS_A}}}t'):
+        if KQ_PLACEHOLDER in (t.text or ''):
+            t.text = kq_text
 
-    # Question text box — floats over right portion of cloud
-    # x=4.934, y=1.110, w=5.902, h=1.500 (slightly taller than ref for wrapping)
-    add_sp(sld, sp(nid(),'KQText', 4.934, 1.110, 5.902, 1.500,
-                   kq_text, font='Twinkl Cursive Looped',
-                   sz=26, bold=False, color='000000', align='l',
-                   fill=None, no_line=True, anchor='t'))
+    # Add a blank slide to prs — its layout ref is set correctly by add_slide
+    new_sld = prs.slides.add_slide(layout(6))   # blank layout
 
-    # Children clipart and maths logo (same positions as ref)
-    add_pic(sld,'image7.png',  3.243, 3.103, 6.458, 3.056)
-    add_pic(sld,'image1.png',  5.867, 5.840, 1.210, 1.052)
+    # Replace shape tree with source slide's shape tree
+    src_spTree = src_slide.shapes._spTree
+    dst_spTree = new_sld.shapes._spTree
+    dst_spTree.clear()
+    for child in src_spTree:
+        dst_spTree.append(_copy.deepcopy(child))
 
-    # "Being a Mathematician" label
-    add_sp(sld, sp(nid(),'BAM', 4.934, 6.836, 3.077, 0.429,
-                   'Being a Mathematician', font='Twinkl Cursive Looped Light',
-                   sz=14, bold=True, color='000000', align='ctr',
-                   fill=None, no_line=True))
+    # Copy image parts from source into new slide's relationships
+    R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
+    for rel in src_slide.part.rels.values():
+        if rel.is_external or 'image' not in rel.reltype:
+            continue
+        new_rId = new_sld.part.relate_to(rel.target_part, rel.reltype)
+        # Update every rId reference in the new slide's XML
+        for el in new_sld._element.iter():
+            for attr in ('embed', 'link'):
+                if el.get(f'{{{R}}}{attr}') == rel.rId:
+                    el.set(f'{{{R}}}{attr}', new_rId)
 
-    sld.notes_slide.notes_text_frame.text = (
-        f"KEY QUESTION — {L1['topic']}\n{kq_text}\n"
-        "Same slide used for all lessons in this topic block.")
+    # Move this slide to position 0 (it was appended at the end)
+    sldIdLst = prs.slides._sldIdLst
+    kq_entry = sldIdLst[-1]
+    sldIdLst.remove(kq_entry)
+    sldIdLst.insert(0, kq_entry)
+
     print("Slide 1 (Key Question) ✓")
 
 # ===========================================================================
