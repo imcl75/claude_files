@@ -371,3 +371,77 @@ with zipfile.ZipFile(TMP, 'w', zipfile.ZIP_DEFLATED) as zout:
             zout.writestr(name, data)
 os.replace(TMP, SRC)
 print(f"Saved: {SRC}")
+
+
+# ─── Part 3: Fix OOXML issues that cause PowerPoint repair prompts ─────────────
+# After slide renaming and section slide insertion, several structural issues
+# remain that PowerPoint flags on open:
+#  1. notesSlide back-refs still point to old slide numbers (post rename)
+#  2. Empty <a:r> runs in all notesSlides (pptxgenjs quirk)
+#  3. notesMaster1.xml.rels references theme1.xml instead of theme2.xml
+#  4. theme2.xml is missing from the ZIP
+
+def fix_ooxml_issues():
+    # 1. Fix notesSlide back-refs ─────────────────────────────────────────────
+    # Build map: notesSlideN → slideN (from slide _rels)
+    ns_to_slide = {}
+    for name, data in files.items():
+        if not re.match(r'ppt/slides/_rels/slide\d+\.xml\.rels$', name):
+            continue
+        s_num = int(re.search(r'slide(\d+)', name).group(1))
+        for m in re.finditer(r'notesSlide(\d+)\.xml', data.decode('utf-8', errors='ignore')):
+            ns_to_slide[int(m.group(1))] = s_num
+
+    for name in list(files.keys()):
+        if not re.match(r'ppt/notesSlides/_rels/notesSlide\d+\.xml\.rels$', name):
+            continue
+        ns_num = int(re.search(r'notesSlide(\d+)', name).group(1))
+        if ns_num not in ns_to_slide:
+            continue
+        correct_slide = ns_to_slide[ns_num]
+        rels = files[name].decode('utf-8')
+        m = re.search(r'Target="\.\./slides/(slide\d+\.xml)"', rels)
+        if m and m.group(1) != f'slide{correct_slide}.xml':
+            files[name] = rels.replace(
+                m.group(1), f'slide{correct_slide}.xml'
+            ).encode('utf-8')
+
+    # 2. Remove empty <a:r> runs from all notesSlide XML ─────────────────────
+    # pptxgenjs emits <a:r><a:rPr .../><a:t></a:t></a:r> — PowerPoint removes these
+    empty_run_pat = re.compile(
+        r'<a:r>\s*<a:rPr[^/]*/>\s*<a:t>\s*</a:t>\s*</a:r>'
+    )
+    for name in list(files.keys()):
+        if not re.match(r'ppt/notesSlides/notesSlide\d+\.xml$', name):
+            continue
+        content = files[name].decode('utf-8')
+        fixed = empty_run_pat.sub('', content)
+        if fixed != content:
+            files[name] = fixed.encode('utf-8')
+
+    # 3. Fix notesMaster rels: theme1.xml → theme2.xml ────────────────────────
+    nm_rels_key = 'ppt/notesMasters/_rels/notesMaster1.xml.rels'
+    if nm_rels_key in files:
+        nm_rels = files[nm_rels_key].decode('utf-8')
+        if 'theme/theme1.xml' in nm_rels:
+            files[nm_rels_key] = nm_rels.replace(
+                'theme/theme1.xml', 'theme/theme2.xml'
+            ).encode('utf-8')
+
+    # 4. Add theme2.xml if missing ────────────────────────────────────────────
+    if 'ppt/theme/theme1.xml' in files and 'ppt/theme/theme2.xml' not in files:
+        files['ppt/theme/theme2.xml'] = files['ppt/theme/theme1.xml']
+        # Declare it in Content_Types
+        ct = files['[Content_Types].xml'].decode('utf-8')
+        if 'theme2.xml' not in ct:
+            ct = ct.replace(
+                '<Override PartName="/ppt/theme/theme1.xml"',
+                '<Override PartName="/ppt/theme/theme2.xml" '
+                'ContentType="application/vnd.openxmlformats-officedocument.theme+xml"/>'
+                '<Override PartName="/ppt/theme/theme1.xml"'
+            )
+            files['[Content_Types].xml'] = ct.encode('utf-8')
+
+    print("  OOXML issues fixed ✓")
+
+fix_ooxml_issues()
