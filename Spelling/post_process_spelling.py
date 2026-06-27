@@ -226,6 +226,25 @@ def insert_section_slide():
     for old, new in renames.items():
         files[new] = files.pop(old)
 
+    # FIX: also update presentation.xml.rels so renamed slide targets stay correct.
+    # Without this, rId11 still targets slides/slide11.xml after slide11 is renamed
+    # to slide12 — then the new section slide11.xml causes a duplicate reference.
+    prs_rels_bytes = files['ppt/_rels/presentation.xml.rels']
+    slide_renames = {
+        old.replace('ppt/', ''): new.replace('ppt/', '')
+        for old, new in renames.items()
+        if re.match(r'ppt/slides/slide\d+\.xml$', old)
+    }
+    # Sort descending by number to avoid slide1 matching inside slide10, slide11 etc.
+    for old_rel, new_rel in sorted(slide_renames.items(),
+                                    key=lambda x: int(re.search(r'\d+', x[0]).group()),
+                                    reverse=True):
+        prs_rels_bytes = prs_rels_bytes.replace(
+            f'Target="{old_rel}"'.encode(),
+            f'Target="{new_rel}"'.encode()
+        )
+    files['ppt/_rels/presentation.xml.rels'] = prs_rels_bytes
+
     # Build section slide XML
     W, H = 9144000, 5143500  # 10" x 5.625" in EMU
     def cm(v): return int(v * 360000)
@@ -233,7 +252,7 @@ def insert_section_slide():
     rels = (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
         '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
-        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout" Target="../slideLayouts/slideLayout2.xml"/>'
+        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout" Target="../slideLayouts/slideLayout1.xml"/>'
         f'<Relationship Id="{img_rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image{new_img_num}.png"/>'
         '</Relationships>'
     )
