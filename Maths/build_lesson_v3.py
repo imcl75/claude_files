@@ -188,57 +188,121 @@ def new_slide(layout_num):
     return prs.slides.add_slide(layout(layout_num))
 
 # ===========================================================================
-# SLIDE 1 — KEY QUESTION  (loaded from KQ_Slide_template.pptx, text replaced)
+# SLIDE 1 — KEY QUESTION
+# Takes KQ_Slide_template.pptx, replaces the placeholder text, injects the
+# whole slide unchanged into the built PPTX via zip manipulation.
+# Called as a post-process step after prs.save().
 # ===========================================================================
-def build_slide1():
-    """
-    Loads KQ_Slide_template.pptx, replaces placeholder text with the topic's
-    key question, then inserts the slide as slide 1 in prs.
-    No image rebuilding — the template is the source of truth.
-    """
-    import copy as _copy
-    from pptx import Presentation as _Prs
+KQ_TEMPLATE    = '/home/claude/assets/KQ_Slide_template.pptx'
+KQ_PLACEHOLDER = 'Xxxxxxxxxx xxxxxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxx xxxxxxxxxx xxxxxxxxxxxx'
 
-    KQ_TEMPLATE   = '/home/claude/assets/KQ_Slide_template.pptx'
-    KQ_PLACEHOLDER = 'Xxxxxxxxxx xxxxxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxx xxxxxxxxxx xxxxxxxxxxxx'
+def build_slide1():
+    pass   # KQ slide injected post-save — see inject_kq_slide()
+
+def inject_kq_slide(teaching_pptx_path):
+    """
+    Post-save: opens the built teaching PPTX and the KQ template as zips,
+    replaces the placeholder text, then prepends the KQ slide.
+    Nothing about the KQ slide changes except the question text.
+    """
+    import zipfile, re, shutil
+
     kq_text = KEY_QUESTIONS[L1['topic']]
 
-    # Load template and replace placeholder in XML
-    src_prs  = _Prs(KQ_TEMPLATE)
-    src_slide = src_prs.slides[0]
-    NS_A = 'http://schemas.openxmlformats.org/drawingml/2006/main'
-    for t in src_slide._element.iter(f'{{{NS_A}}}t'):
-        if KQ_PLACEHOLDER in (t.text or ''):
-            t.text = kq_text
+    # ── Read KQ template ──────────────────────────────────────────────────────
+    with zipfile.ZipFile(KQ_TEMPLATE) as kz:
+        kq_slide_xml = kz.read('ppt/slides/slide1.xml')
+        kq_rels_xml  = kz.read('ppt/slides/_rels/slide1.xml.rels')
+        kq_media     = {n: kz.read(n) for n in kz.namelist() if n.startswith('ppt/media/')}
 
-    # Add a blank slide to prs — its layout ref is set correctly by add_slide
-    new_sld = prs.slides.add_slide(layout(12))  # layout 12 = 'Blank' in this template
+    # Replace placeholder text (same operation the user confirmed worked)
+    kq_slide_xml = kq_slide_xml.decode('utf-8').replace(KQ_PLACEHOLDER, kq_text).encode('utf-8')
 
-    # Replace shape tree with source slide's shape tree
-    src_spTree = src_slide.shapes._spTree
-    dst_spTree = new_sld.shapes._spTree
-    dst_spTree.clear()
-    for child in src_spTree:
-        dst_spTree.append(_copy.deepcopy(child))
+    # ── Read teaching PPTX ────────────────────────────────────────────────────
+    with zipfile.ZipFile(teaching_pptx_path) as tz:
+        t_files = {n: tz.read(n) for n in tz.namelist() if not n.endswith('/')}
 
-    # Copy image parts from source into new slide's relationships
-    R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
-    for rel in src_slide.part.rels.values():
-        if rel.is_external or 'image' not in rel.reltype:
-            continue
-        new_rId = new_sld.part.relate_to(rel.target_part, rel.reltype)
-        # Update every rId reference in the new slide's XML
-        for el in new_sld._element.iter():
-            for attr in ('embed', 'link'):
-                if el.get(f'{{{R}}}{attr}') == rel.rId:
-                    el.set(f'{{{R}}}{attr}', new_rId)
+    # ── Rename KQ media to avoid filename conflicts ───────────────────────────
+    existing_media = {n.split('/')[-1] for n in t_files if n.startswith('ppt/media/')}
+    remap = {}   # original_name → name_in_teaching_pptx
+    for path in kq_media:
+        fname = path.split('/')[-1]
+        base, ext = fname.rsplit('.', 1)
+        new = fname
+        n = 0
+        while new in existing_media:
+            n += 1; new = f'{base}_kq{n}.{ext}'
+        existing_media.add(new)
+        remap[fname] = new
 
-    # Move this slide to position 0 (it was appended at the end)
-    sldIdLst = prs.slides._sldIdLst
-    kq_entry = sldIdLst[-1]
-    sldIdLst.remove(kq_entry)
-    sldIdLst.insert(0, kq_entry)
+    # Update KQ slide rels to use renamed media and point to teaching blank layout
+    kq_rels_str = kq_rels_xml.decode('utf-8')
+    for orig, new in remap.items():
+        kq_rels_str = kq_rels_str.replace(f'../media/{orig}', f'../media/{new}')
+    # Map layout to teaching PPTX blank layout (slideLayout13.xml = 'Blank')
+    kq_rels_str = re.sub(
+        r'Target="\.\./slideLayouts/slideLayout\d+\.xml"',
+        'Target="../slideLayouts/slideLayout13.xml"', kq_rels_str)
+    # Remove notes slide reference (not needed)
+    kq_rels_str = re.sub(r'<Relationship[^/]*/>', lambda m:
+        '' if 'notesSlide' in m.group(0) else m.group(0), kq_rels_str)
 
+    # ── Choose a slide filename that won't clash ───────────────────────────────
+    nums = [int(re.search(r'slide(\d+)', n).group(1))
+            for n in t_files if re.match(r'ppt/slides/slide\d+\.xml$', n)]
+    kq_num  = max(nums) + 1
+    kq_path = f'ppt/slides/slide{kq_num}.xml'
+    kq_rpath= f'ppt/slides/_rels/slide{kq_num}.xml.rels'
+
+    # ── Prepend KQ slide in presentation.xml ──────────────────────────────────
+    from lxml import etree
+    NSP = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+    NR  = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
+
+    prs_root = etree.fromstring(t_files['ppt/presentation.xml'])
+    sldIdLst = prs_root.find(f'{{{NSP}}}sldIdLst')
+    new_id   = max(int(e.get('id')) for e in sldIdLst) + 1
+    new_rId  = 'rIdKQ'
+    el = etree.Element(f'{{{NSP}}}sldId')
+    el.set('id', str(new_id)); el.set(f'{{{NR}}}id', new_rId)
+    sldIdLst.insert(0, el)
+    t_files['ppt/presentation.xml'] = etree.tostring(
+        prs_root, xml_declaration=True, encoding='UTF-8', standalone=True)
+
+    # ── Add slide relationship in ppt/_rels/presentation.xml.rels ────────────
+    NC = 'http://schemas.openxmlformats.org/package/2006/relationships'
+    rels_root = etree.fromstring(t_files['ppt/_rels/presentation.xml.rels'])
+    el2 = etree.SubElement(rels_root, 'Relationship')
+    el2.set('Id', new_rId)
+    el2.set('Type', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide')
+    el2.set('Target', f'slides/slide{kq_num}.xml')
+    t_files['ppt/_rels/presentation.xml.rels'] = etree.tostring(
+        rels_root, xml_declaration=True, encoding='UTF-8', standalone=True)
+
+    # ── Add content type entry ────────────────────────────────────────────────
+    ct_root = etree.fromstring(t_files['[Content_Types].xml'])
+    # Ensure .wdp (HD Photo) has a Default entry
+    existing_defaults = {e.get('Extension') for e in ct_root.findall('Default')}
+    if 'wdp' not in existing_defaults:
+        d = etree.SubElement(ct_root, 'Default')
+        d.set('Extension', 'wdp'); d.set('ContentType', 'image/vnd.ms-photo')
+    ov = etree.SubElement(ct_root, 'Override')
+    ov.set('PartName', f'/ppt/slides/slide{kq_num}.xml')
+    ov.set('ContentType',
+           'application/vnd.openxmlformats-officedocument.presentationml.slide+xml')
+    t_files['[Content_Types].xml'] = etree.tostring(
+        ct_root, xml_declaration=True, encoding='UTF-8', standalone=True)
+
+    # ── Write output ──────────────────────────────────────────────────────────
+    tmp = teaching_pptx_path + '.tmp'
+    with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as oz:
+        for name, data in t_files.items():
+            oz.writestr(name, data)
+        oz.writestr(kq_path,  kq_slide_xml)
+        oz.writestr(kq_rpath, kq_rels_str.encode('utf-8'))
+        for orig_path, data in kq_media.items():
+            oz.writestr(f'ppt/media/{remap[orig_path.split("/")[-1]]}', data)
+    shutil.move(tmp, teaching_pptx_path)
     print("Slide 1 (Key Question) ✓")
 
 # ===========================================================================
@@ -3346,7 +3410,8 @@ build_learning_review()
 # ---------------------------------------------------------------------------
 out = f'/home/claude/{week_label}_L{lesson_num}_Teaching.pptx'
 prs.save(out)
-print(f"\n=== Saved: {out} ({len(prs.slides)} slides) ===")
+inject_kq_slide(out)
+print(f"\n=== Saved: {out} ({len(prs.slides)+1} slides) ===")
 
 # ---------------------------------------------------------------------------
 # PRE-FLIGHT CHECK
