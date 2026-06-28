@@ -563,11 +563,11 @@ Run these checks before delivering:
 ## Step 7: File Naming and Output
 
 ```
-{TaWb}_Being_a_Reader.pptx         e.g. T5W2_Being_a_Reader.pptx
-Reading_Content_{TaWb}.xlsx        e.g. Reading_Content_T5W2.xlsx
-{TaWb}_Standard_Pupil.pdf          e.g. T5W2_Standard_Pupil.pdf
-{TaWb}_Supported_Pupil.pdf         e.g. T5W2_Supported_Pupil.pdf
-{TaWb}_All_Answers.pdf             e.g. T5W2_All_Answers.pdf
+{TxWy} - ReaderTeaching.pptx        e.g. T5W2 - ReaderTeaching.pptx
+{TxWy} - ReaderData.xlsx            e.g. T5W2 - ReaderData.xlsx
+{TxWy} - ReaderStandard.pdf         e.g. T5W2 - ReaderStandard.pdf
+{TxWy} - ReaderSupported.pdf        e.g. T5W2 - ReaderSupported.pdf
+{TxWy} - ReaderAnswers.pdf          e.g. T5W2 - ReaderAnswers.pdf
 ```
 
 Copy all 5 to `/mnt/user-data/outputs/` and use `present_files`.
