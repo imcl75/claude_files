@@ -24,7 +24,7 @@ LESSON_NUM = int(sys.argv[1]) if len(sys.argv) > 1 else 1
 # ---------------------------------------------------------------------------
 # LOAD JSON PLAN
 # ---------------------------------------------------------------------------
-with open('/home/claude/transfer_files/maths_plan_v3.json') as f:
+with open('/tmp/claude_work/transfer_files/maths_plan_v3.json') as f:
     PLAN = json.load(f)
 
 L1 = PLAN['lessons'][LESSON_NUM - 1]
@@ -36,7 +36,7 @@ print(f"Building lesson {LESSON_NUM}: {L1['day']} ({L1['topic']}) — {L1['li'][
 # LOAD AUTHORED LESSON DATA (visuals, WM, RM, vocab)
 # ---------------------------------------------------------------------------
 import importlib.util as _ilu
-_spec = _ilu.spec_from_file_location('lesson_data', '/home/claude/lesson_data.py')
+_spec = _ilu.spec_from_file_location('lesson_data', '/tmp/claude_work/lesson_data.py')
 _mod  = _ilu.module_from_spec(_spec)
 _spec.loader.exec_module(_mod)
 
@@ -79,7 +79,7 @@ if 'c2_ido2' not in VISUALS:
     VISUALS['c2_ido2'] = stm_visual
 
 # ---------------------------------------------------------------------------
-prs = Presentation('/home/claude/template.pptx')
+prs = Presentation('/tmp/claude_work/template.pptx')
 
 # Extract LO slide avatar image parts BEFORE deleting template slides
 _lo_sld3 = prs.slides[2]
@@ -119,7 +119,7 @@ def add_pic(slide, image_filename, x, y, w, h):
     if os.path.isabs(image_filename):
         img_path = image_filename
     else:
-        img_path = f'/home/claude/unpacked/ppt/media/{image_filename}'
+        img_path = f'/tmp/claude_work/unpacked/ppt/media/{image_filename}'
     with open(img_path, 'rb') as f:
         img_bytes = f.read()
     pic = slide.shapes.add_picture(_io.BytesIO(img_bytes), emu(x), emu(y), emu(w), emu(h))
@@ -193,8 +193,8 @@ def new_slide(layout_num):
 # whole slide unchanged into the built PPTX via zip manipulation.
 # Called as a post-process step after prs.save().
 # ===========================================================================
-KQ_TEMPLATE    = '/home/claude/assets/KQ_Slide_template.pptx'
-KQ_PLACEHOLDER = 'Xxxxxxxxxx xxxxxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxx xxxxxxxxxx xxxxxxxxxxxx'
+KQ_TEMPLATE    = '/tmp/claude_work/assets/KQ_Slide_template.pptx'
+KQ_PLACEHOLDER = 'Replace this text'
 
 def build_slide1():
     pass   # KQ slide injected post-save — see inject_kq_slide()
@@ -325,7 +325,7 @@ def build_slide2():
 # ===========================================================================
 def build_slide3():
     # Read template slide 3 XML
-    with open('/home/claude/unpacked/ppt/slides/slide3.xml') as f:
+    with open('/tmp/claude_work/unpacked/ppt/slides/slide3.xml') as f:
         template_xml = f.read()
 
     lo = L1['loText']
@@ -379,7 +379,7 @@ def build_slide3():
             slide_spTree.append(copy.deepcopy(child))
 
     # Add LO avatar images using pre-extracted ImagePart objects
-    with open('/home/claude/unpacked/ppt/slides/_rels/slide3.xml.rels') as f:
+    with open('/tmp/claude_work/unpacked/ppt/slides/_rels/slide3.xml.rels') as f:
         rels_content = f.read()
     rid_map = {}
     for m in re.finditer(r'Id="(rId\d+)"[^>]*Target="\.\./media/([^"]+)"', rels_content):
@@ -2818,7 +2818,7 @@ def draw_stm_word_problem_slide(sld, visual_key):
                    fill=None, no_line=True, anchor='t'))
 
     # Wrong working — red box
-    wrong = v.get('wrong_working', '')
+    wrong = v.get('wrong_working') or v.get('wrong_line', '')
     wlines = wrong.split('\n')
     add_sp(sld, sp(nid(), 'WrongBox', px + 0.25, py + 2.20,
                    pw - 0.50, max(0.65, 0.55 * len(wlines)),
@@ -2827,7 +2827,7 @@ def draw_stm_word_problem_slide(sld, visual_key):
                    fill='C00000', border=('800000', 1.5), anchor='ctr'))
 
     # Error explanation
-    error = v.get('error', '')
+    error = v.get('error') or v.get('correct_line', '')
     elines = error.split('\n')
     err_h  = max(0.75, 0.55 * len(elines))
     add_sp(sld, sp(nid(), 'ErrorBox', px + 0.25, py + 3.20,
@@ -3592,7 +3592,7 @@ build_learning_review()
 # ---------------------------------------------------------------------------
 # SAVE
 # ---------------------------------------------------------------------------
-out = f'/home/claude/{week_label}_L{lesson_num}_Teaching.pptx'
+out = f'/tmp/claude_work/{week_label}_L{lesson_num}_Teaching.pptx'
 prs.save(out)
 inject_kq_slide(out)
 print(f"\n=== Saved: {out} ({len(prs.slides)+1} slides) ===")
