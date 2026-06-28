@@ -3592,7 +3592,8 @@ build_learning_review()
 # ---------------------------------------------------------------------------
 # SAVE
 # ---------------------------------------------------------------------------
-out = f'/tmp/claude_work/{week_label}_L{lesson_num}_Teaching.pptx'
+DAY_NUM = {'Monday':1,'Tuesday':2,'Wednesday':3,'Thursday':4,'Friday':5}
+out = f'/tmp/claude_work/{week_label} - {DAY_NUM.get(day,1)} - {day} - MathsTeaching.pptx'
 prs.save(out)
 inject_kq_slide(out)
 print(f"\n=== Saved: {out} ({len(prs.slides)+1} slides) ===")
