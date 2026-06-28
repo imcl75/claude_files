@@ -812,4 +812,9 @@ def main():
 
 
 if __name__ == '__main__':
+    import sys as _sys
+    if len(_sys.argv) > 1:
+        _wl = _sys.argv[1]
+        WEEK_LABEL      = _wl
+        OUTPUT_FILENAME = f'{_wl} - MathsWorkingMemory.pptx'
     main()
