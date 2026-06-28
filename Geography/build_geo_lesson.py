@@ -395,6 +395,78 @@ def build_learning_review(spec, base_unpacked):
 
 # ── Main assembler ────────────────────────────────────────────────────
 
+
+def normalise_media_names(build_tmp):
+    """Rename non-standard media files to imageN.ext to prevent PowerPoint repair prompts.
+    
+    The WFA template contains files like conn_col.emf, conn_grey.emf, hdphoto1.wdp etc.
+    with non-standard names. PowerPoint expects ppt/media/imageN.ext; custom names
+    trigger the repair dialog when those files are referenced from slides.
+    """
+    import glob
+    media_dir = os.path.join(build_tmp, 'ppt', 'media')
+    if not os.path.exists(media_dir):
+        return
+
+    # Find highest existing imageN number
+    existing = glob.glob(os.path.join(media_dir, 'image*.* '))
+    max_n = 0
+    for p in existing:
+        m = re.search(r'image(\d+)\.', os.path.basename(p))
+        if m:
+            max_n = max(max_n, int(m.group(1)))
+
+    # Find non-standard files (anything not matching imageN.ext)
+    non_std = []
+    for fname in os.listdir(media_dir):
+        if not re.match(r'image\d+\.\w+$', fname):
+            non_std.append(fname)
+
+    if not non_std:
+        return
+
+    # Build rename map: old_name → new_name
+    rename_map = {}
+    counter = max_n + 1
+    for fname in sorted(non_std):
+        ext = fname.rsplit('.', 1)[-1] if '.' in fname else 'bin'
+        new_name = f'image{counter}.{ext}'
+        rename_map[fname] = new_name
+        counter += 1
+
+    # Rename the actual files
+    for old, new in rename_map.items():
+        os.rename(
+            os.path.join(media_dir, old),
+            os.path.join(media_dir, new)
+        )
+
+    # Update all _rels files that reference the old names
+    rels_dirs = [
+        os.path.join(build_tmp, 'ppt', 'slides', '_rels'),
+        os.path.join(build_tmp, 'ppt', 'slideLayouts', '_rels'),
+        os.path.join(build_tmp, 'ppt', 'slideMasters', '_rels'),
+        os.path.join(build_tmp, 'ppt', 'notesMasters', '_rels'),
+        os.path.join(build_tmp, 'ppt', 'notesSlides', '_rels'),
+    ]
+    for rels_dir in rels_dirs:
+        if not os.path.exists(rels_dir):
+            continue
+        for fname in os.listdir(rels_dir):
+            if not fname.endswith('.rels'):
+                continue
+            path = os.path.join(rels_dir, fname)
+            with open(path, 'r', encoding='utf-8') as f:
+                text = f.read()
+            changed = False
+            for old, new in rename_map.items():
+                if old in text:
+                    text = text.replace(old, new)
+                    changed = True
+            if changed:
+                with open(path, 'w', encoding='utf-8') as f:
+                    f.write(text)
+
 def assemble(args, slide_specs):
     base_pptx   = args.base
     kc_img_path = args.kc
@@ -506,6 +578,7 @@ def assemble(args, slide_specs):
     out_name = f'T{term}W{week}_-_Lesson_{lesson}_-_Writers_-_{topic}.pptx'
     out_path = os.path.join(out_dir, out_name)
 
+    normalise_media_names(build_tmp)
     if os.path.exists(out_path): os.remove(out_path)
     with zipfile.ZipFile(out_path, 'w', zipfile.ZIP_DEFLATED) as z:
         for root, dirs, files in os.walk(build_tmp):
