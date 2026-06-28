@@ -42,7 +42,7 @@ LL_H         = 4.24 * CM * LABEL_SCALE   # 73.5pt
 LL_X         = M
 ICON_W       = 18.7            # 0.26" in pt
 ICON_H       = ICON_W * (103/120)
-ICON_PATH    = '/home/claude/lp_assets/mathematician_icon.png'
+ICON_PATH    = '/tmp/claude_work/lp_assets/mathematician_icon.png'
 CHART_DIR    = '/tmp/wfa_stats_charts'
 
 # Colours (RGB 0-1)
@@ -390,7 +390,8 @@ DAYS = {17: 'Monday', 18: 'Tuesday', 19: 'Wednesday'}
 def build(lesson_num):
     d   = LP[lesson_num]
     day = DAYS[lesson_num]
-    out = f'/home/claude/T6W5_{day}_L{lesson_num}_LP.pdf'
+    _dn = {'Monday':1,'Tuesday':2,'Wednesday':3,'Thursday':4,'Friday':5}
+    out = f'/tmp/claude_work/T6W5 - {_dn.get(day,1)} - {day} - MathsLP.pdf'
 
     c = canvas.Canvas(out, pagesize=A4)
     c.setTitle(f'T6W5 {day} L{lesson_num} — Statistics LP')
@@ -462,5 +463,6 @@ if __name__ == '__main__':
     n = int(sys.argv[1]) if len(sys.argv) > 1 else 17
     pdf  = build(n)
     day  = DAYS[n]
-    pptx = f'/home/claude/T6W5_{day}_L{n}_LP.pptx'
+    _dn = {'Monday':1,'Tuesday':2,'Wednesday':3,'Thursday':4,'Friday':5}
+    pptx = f'/tmp/claude_work/T6W5 - {_dn.get(day,1)} - {day} - MathsLP.pptx'
     make_pptx_wrapper(pdf, pptx)
