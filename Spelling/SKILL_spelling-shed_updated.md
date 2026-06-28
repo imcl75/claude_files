@@ -13,10 +13,10 @@ description: >
 # Spelling Shed Lesson Generator
 
 Produces two files for every lesson:
-- **`spelling_shed_slides_<CODE>_<Day>.pptx`** — 23-slide animated teaching deck (21 base + 1 key spelling + 1 section slide)
-- **`spelling_lp_<CODE>_<Day>.pptx`** — 2-slide LP (Learning Paper), half-A4 cut-and-fold format
+- **`{TxWy} - {N} - {Day} - SpellingTeaching.pptx`** — 23-slide animated teaching deck (21 base + 1 key spelling + 1 section slide)
+- **`{TxWy} - {N} - {Day} - SpellingLP.pptx`** — 2-slide LP (Learning Paper), half-A4 cut-and-fold format
 
-**File naming rule (non-negotiable):** always include the day name — e.g. `spelling_shed_slides_CN_Mon.pptx`, `spelling_lp_CN_Mon.pptx`.
+**File naming rule (non-negotiable):** always include term/week, day number and day name — e.g. `T6W3 - 2 - Tuesday - SpellingTeaching.pptx`, `T6W3 - 2 - Tuesday - SpellingLP.pptx`.
 
 ---
 
@@ -35,9 +35,10 @@ Ask the following in a single message:
 
 1. **What are the 10 spelling words?**  
    Add: *"Say 'suggest' and I'll propose a set for you to confirm."*
-2. **Which day is this lesson?** (Mon / Tue / Wed — needed for the filename)
-3. **Is there a Key Spelling word?** (a word from the class key list they are struggling with)
-4. **Any specific preferences?** (Word Shed word, Morphology Matrix word, starter format) — *Claude chooses if none given.*
+2. **Term and week reference?** (e.g. T6W3 — needed for the filename)
+3. **Which day is this lesson, and what day number?** (e.g. Tuesday = day 2 — Monday=1, Tuesday=2, Wednesday=3, Thursday=4, Friday=5)
+4. **Is there a Key Spelling word?** (a word from the class key list they are struggling with)
+5. **Any specific preferences?** (Word Shed word, Morphology Matrix word, starter format) — *Claude chooses if none given.*
 
 ---
 
@@ -222,10 +223,14 @@ for f, exp in [
 "
 
 # Rename teaching deck to include day
-mv spelling_shed_slides_<CODE>.pptx spelling_shed_slides_<CODE>_<Day>.pptx
+WEEK=T6W3  # substitute actual week label
+DAY_NUM=2  # substitute actual day number
+DAY=Tuesday  # substitute actual day name
+mv spelling_shed_slides_<CODE>.pptx "${WEEK} - ${DAY_NUM} - ${DAY} - SpellingTeaching.pptx"
 
-cp spelling_shed_slides_<CODE>_<Day>.pptx /mnt/user-data/outputs/
-cp spelling_lp_<CODE>_<Day>.pptx         /mnt/user-data/outputs/
+cp "${WEEK} - ${DAY_NUM} - ${DAY} - SpellingTeaching.pptx" /mnt/user-data/outputs/
+cp spelling_lp_<CODE>_<DAY>.pptx "${WEEK} - ${DAY_NUM} - ${DAY} - SpellingLP.pptx"
+cp "${WEEK} - ${DAY_NUM} - ${DAY} - SpellingLP.pptx"      /mnt/user-data/outputs/
 ```
 
 ---
@@ -294,8 +299,8 @@ If for any reason the template is regenerated from scratch, these must be re-app
 
 | File | Slides | Notes |
 |------|--------|-------|
-| `spelling_shed_slides_<CODE>_<Day>.pptx` | 23 | 21 base + 1 key spelling + 1 Independent Learning section slide |
-| `spelling_lp_<CODE>_<Day>.pptx` | 2 | LP: Slide 1 = Side A (cloze), Slide 2 = Side B. Each slide = two identical half-A4 panels (cut line at 14.85cm). |
+| `{TxWy} - {N} - {Day} - SpellingTeaching.pptx` | 23 | 21 base + 1 key spelling + 1 Independent Learning section slide |
+| `{TxWy} - {N} - {Day} - SpellingLP.pptx` | 2 | LP: Slide 1 = Side A (cloze), Slide 2 = Side B. Each slide = two identical half-A4 panels (cut line at 14.85cm). |
 
 ---
 
