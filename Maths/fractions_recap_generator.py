@@ -14,7 +14,7 @@ from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN
 from lxml import etree
 
-OUT_FILE  = '/home/claude/T6W5_Fractions_Recap.pptx'
+OUT_FILE  = '/tmp/claude_work/T6W5_Fractions_Recap.pptx'
 CHART_DIR = tempfile.mkdtemp(prefix='wfa_frac_v2_')
 EMU_IN    = 914400
 
@@ -220,10 +220,37 @@ def draw_title_bar(slide, day, direction_label, colour):
         font='Aptos', sz=18, bold=True,
         color=C_WHITE, align=PP_ALIGN.RIGHT)
 
+# ── Ensure badge images are available, fetching from Shared/badges/ if needed ──
+def _ensure_badges(local_dir):
+    import urllib.request, os
+    BASE = 'https://raw.githubusercontent.com/imcl75/claude_files/main/Shared/badges'
+    TOKEN_FILE = '/mnt/skills/user/github-sync/SKILL.md'
+    token = ''
+    if os.path.exists(TOKEN_FILE):
+        import re as _re
+        m = _re.search(r'github_pat_[A-Za-z0-9_]+', open(TOKEN_FILE).read())
+        if m: token = m.group()
+    os.makedirs(local_dir, exist_ok=True)
+    for fname in ['badge_ido.png', 'badge_wedo.png', 'badge_youdo_ind.png', 'badge_youdo_trio.png']:
+        dest = os.path.join(local_dir, fname)
+        if not os.path.exists(dest):
+            url = f'{BASE}/{fname}'
+            req = urllib.request.Request(url,
+                headers={'Authorization': f'token {token}'} if token else {})
+            try:
+                with urllib.request.urlopen(req) as r:
+                    open(dest, 'wb').write(r.read())
+            except Exception as e:
+                print(f'  Warning: could not fetch {fname}: {e}')
+
+_BADGE_DIR = '/tmp/claude_work/assets'
+_ensure_badges(_BADGE_DIR)
+
 BADGE_PATHS = {
-    'I Do':   '/home/claude/assets/badge_ido.png',
-    'You Do': '/home/claude/assets/badge_youdo_ind.png',
-    'We Do':  '/home/claude/assets/badge_wedo.png',
+    'I Do':   f'{_BADGE_DIR}/badge_ido.png',
+    'You Do': f'{_BADGE_DIR}/badge_youdo_ind.png',
+    'We Do':  f'{_BADGE_DIR}/badge_wedo.png',
+    'Trios':  f'{_BADGE_DIR}/badge_youdo_trio.png',
 }
 BADGE_W, BADGE_H = 1.20, 0.52   # display size in inches
 
@@ -506,7 +533,7 @@ def _set_hidden_and_animate(slide, shape_ids):
 
 # ── Build ─────────────────────────────────────────────────────────────────────
 def build():
-    prs = Presentation('/home/claude/assets/rapid_maths_TEMPLATE.pptx')
+    prs = Presentation('/tmp/claude_work/assets/rapid_maths_TEMPLATE.pptx')
 
     # Clear template slides
     NS_R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
