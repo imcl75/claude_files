@@ -1,7 +1,22 @@
 // generate_geo_lps_v2.js — T6W4 Geography LPs, fixed label + ruled lines
-const PptxGenJS = require('pptxgenjs');
-const fs        = require('fs');
-const path      = require('path');
+const PptxGenJS   = require('pptxgenjs');
+const fs          = require('fs');
+const path        = require('path');
+const { execSync } = require('child_process');
+
+// ── Layout validator (python) ─────────────────────────────────────────
+function validateLayout(pptxPath) {
+  const validator = '/home/claude/validate_pptx_layout.py';
+  if (!fs.existsSync(validator)) {
+    console.log('  [validate] validator not found — skipping');
+    return;
+  }
+  try {
+    execSync(`python3 "${validator}" "${pptxPath}" --warnings`, { stdio: 'inherit' });
+  } catch(e) {
+    // exit code 0 = clean; non-zero only if --strict. Warnings/errors are printed to stdout.
+  }
+}
 
 const ASSETS = '/home/claude';
 const OUT    = '/home/claude';
@@ -289,6 +304,7 @@ async function buildLP1() {
   }
 
   await pres.writeFile({ fileName: path.join(OUT, 'T6W4_-_LP1_-_Geographers_-_Locating_Brazil.pptx') });
+  validateLayout(path.join(OUT, 'T6W4_-_LP1_-_Geographers_-_Locating_Brazil.pptx'));
   console.log('LP1 done');
 }
 
@@ -410,6 +426,7 @@ async function buildLP2() {
     margin: 0, valign: 'top', paraSpaceAfter: 6 });
 
   await pres.writeFile({ fileName: path.join(OUT, 'T6W4_-_LP2_-_Geographers_-_Brazil_Physical_Geography.pptx') });
+  validateLayout(path.join(OUT, 'T6W4_-_LP2_-_Geographers_-_Brazil_Physical_Geography.pptx'));
   console.log('LP2 done');
 }
 
@@ -535,6 +552,7 @@ async function buildLP3() {
       fontSize: 10, fontFace: FL, color: GREEN, bold: true, margin: 0 });
 
   await pres.writeFile({ fileName: path.join(OUT, 'T6W4_-_LP3_-_Geographers_-_England_Comparison_Frame.pptx') });
+  validateLayout(path.join(OUT, 'T6W4_-_LP3_-_Geographers_-_England_Comparison_Frame.pptx'));
   console.log('LP3 done');
 }
 
