@@ -20,6 +20,14 @@ description: Use this skill whenever building a Being a Geographer lesson deck (
 
 Do not carry forward whatever hidden slides happened to exist in the previous lesson's file as the structural "base" without checking their content first. If reusing a previous lesson as a template, strip slides 1 and verify nothing of the previous lesson's actual content survives into the new build unintentionally.
 
+## LO slide third box (idx14) — known overlap fix
+
+The "I will be successful by…" header text wraps to two lines when long, but the body placeholder for that third box uses the same default y-position as the other two columns, causing overlap. Locked-in fix: apply an explicit override ONLY to the idx=14 placeholder shape — `x=8979945, y=5200000, cx=2559050, cy=984000`. Leave the other two LO boxes (idx10, idx13) on their default inherited position. When writing XML to apply this, never use a generic `<p:sp>...</p:sp>` regex to isolate a single shape if other shapes in the file declare `xmlns:` attributes on their opening tag — the lookahead won't recognise `<p:sp xmlns:p="...">` as a shape boundary and will silently merge multiple shapes into one match. Rebuild the slide's shapes from defined Python functions with the override passed as a parameter to only the target shape, rather than doing a post-hoc string find-and-replace across the whole slide XML.
+
+## Concept-teaching slides need explanation before application
+
+When introducing a new spatial or technical concept (e.g. topography, biome, climate zone), a bare definition followed immediately by a discussion/apply task is not enough. Structure these slides as: (1) plain-language definition, (2) two named real-world examples the children can picture, (3) how to recognise it on a map/image if relevant, (4) only then the application or discussion task. Don't combine vocabulary recall (e.g. quick word/definition pairs for easier terms) with concept-teaching (e.g. topography) on the same slide — split them: a quick vocabulary slide for terms that don't need much unpacking, and a separate, fuller slide for any concept that needs real explanation.
+
 ## We Do activities needing real-world image identification
 
 Default to embedding real stock photographs directly on the slide with click-to-reveal labels (numbered images → "Check answers" reveal), not a separate printable card PDF. Innes prefers this format and supplies/sources the photos himself or via PowerPoint's own stock image search — do not build Claude-rendered illustrations as a substitute unless explicitly asked. If a photo-ID activity is needed and no photos are available yet, build the slide structure with clearly marked placeholder image frames and flag to Innes that photos need adding.
