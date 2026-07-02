@@ -803,10 +803,11 @@ files = {
     "T6W6 - ReaderTeaching.pptx": f"{WORK}/T6W6_ReaderTeaching.pptx",
     "T6W6 - ReaderAnswers.pdf":   f"{WORK}/T6W6_ReaderAnswers.pdf",
 }
-for lesson in LESSONS:
+for i, lesson in enumerate(LESSONS, 1):
     day = DATES[lesson][0]
+    folder = f"{i}-{day}"
     for cls in ("LMES", "IM"):
-        arc = f"{day}/T6W6 - {day} - {cls}.pdf"
+        arc = f"{folder}/T6W6 - {day} - {cls}.pdf"
         src = f"{WORK}/{day}_{cls}.pdf"
         files[arc] = src
 
