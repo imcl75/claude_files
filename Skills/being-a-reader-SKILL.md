@@ -68,9 +68,28 @@ At the start of every session, confirm stored profiles with a single yes/no prom
 
 Only update profiles if Innes flags a change. Profiles update roughly 2–3 times per year — not weekly. If no profiles are stored yet, ask Innes for the list once, then store them in memory for subsequent sessions.
 
-**Current stored profiles:** *(update this list whenever Innes confirms a change)*
+**Current stored profiles** *(update whenever Innes confirms a change; levels are relative so they carry across year groups automatically):*
 
-> *(empty — ask Innes at first session)*
+| Pupil | Level tag | Resolves in Y4 | Resolves in Y5 |
+|-------|-----------|----------------|----------------|
+| Adnan | `Ph2` | Ph2 | Ph2 |
+| Callum | `Ph2` | Ph2 | Ph2 |
+| Hope | `3-behind` | Y1 | Y2 |
+| Roland | `2-behind` | Y2 | Y3 |
+| Teddie | `1-behind` | Y3 | Y4-adapted |
+| Asel | `current-adapted` | Y4-adapted | Y5-adapted |
+| Asimenia | `current-adapted` | Y4-adapted | Y5-adapted |
+| Bailey | `current-adapted` | Y4-adapted | Y5-adapted |
+| Daisy | `current-adapted` | Y4-adapted | Y5-adapted |
+| Jimi | `current-adapted` | Y4-adapted | Y5-adapted |
+| Reggie | `current-adapted` | Y4-adapted | Y5-adapted |
+
+All other pupils (Aaliyah, Amir, Arthur, Bonnie, Cameron, Carena, Ceecee, Cody, Connie, Cruz, Delton, Diyan, Dovind, Elliot, Eloho, Emilia, Fola, Freya, Haris, Heidi, Iris, Isabelle, Isla, Izzy, Jacob, Jesse, Josh, Lilly, Lily H, Lois, Louie, Maddie, Maisie, Mary, Maximilian, Meshach, Mia, Penny, Phoebe, Ralf, Ramani, Rory, Ruby, Sam, Sebastian, Sohan, Taylor, Zeek, Ziyad) — **standard paper only**.
+
+**Session start confirmation format:**
+> *Adapted pupils on record: Adnan (Ph2), Callum (Ph2), Hope (3 years behind), Roland (2 years behind), Teddie (1 year behind), Asel / Asimenia / Bailey / Daisy / Jimi / Reggie (current year adapted). Still correct?*
+
+When resolving relative tags at build time, ask for the current year group if not already confirmed (Y4 or Y5) and apply the Resolves column above. For year groups beyond Y5, extend the pattern.
 
 ---
 
@@ -196,6 +215,7 @@ This section defines how adapted reading papers work. Each adapted pupil has a *
 | `Y3` | Y3 level | 3 lessons, each blends all three skill types | Separate shorter text per lesson, same topic |
 | `Y2` | Y2 level | 3 lessons, each blends all three skill types | Separate shorter text per lesson, same topic |
 | `Y1` | Y1 level | 3 lessons, each blends all three skill types | Separate shorter text per lesson, same topic |
+| `Ph2` | Phase 2 phonics | 3 lessons, each blends all three skill types | Very short simple text; adult support assumed for non-decodable words |
 | `Ph3` / `Ph4` / `Ph5` | Phonetically decodable at that phase | 3 lessons, each blends all three skill types | Decodable text within specified phase GPCs; sight/tricky words permitted; glossary always included |
 
 ### Text Length by Level
@@ -206,27 +226,30 @@ This section defines how adapted reading papers work. Each adapted pupil has a *
 | `Y3` | 130–170 words (separate text per lesson) |
 | `Y2` | 90–130 words (separate text per lesson) |
 | `Y1` | 60–90 words (separate text per lesson) |
+| `Ph2` | 30–50 words (separate text per lesson); very short sentences, simple vocabulary |
 | `Ph3–5` | Shorter than Y1 equivalent; strict phase GPC vocabulary |
 
 For `Y4-adapted`: write one text on the same topic as the standard extract, same single-paragraph literary prose format, but with simpler vocabulary and shorter sentences.
 
 For `Y3` and below: write three separate short texts on the same topic. The texts are thematically consistent (same subject, same enquiry link) but not a single passage split across lessons. Each should work as a standalone reading.
 
-For phonically decodable texts: check each content word against the declared phase. Include a glossary at the top of the page (or as a box on the worksheet) for any content-specific words a child at that level could not decode or infer. Sight words listed in the DfE phonics appendix for the phase are permitted.
+For `Ph2`: write very short texts (30–50 words) using simple vocabulary and short sentences. Adult support is assumed for any non-decodable words — do not restrict vocabulary so tightly that the text becomes meaningless. Include a glossary for key content words. Aim for simple sentence structures (subject–verb–object). Questions must require no more than one word or a tick in response.
+
+For phonically decodable texts at Ph3–5: check each content word against the declared phase. Include a glossary at the top of the page (or as a box on the worksheet) for any content-specific words a child at that level could not decode or infer. Sight words listed in the DfE phonics appendix for the phase are permitted.
 
 ### Question Distribution by Level
 
 Each lesson for `Y3`, `Y2`, `Y1` and `Ph3–5` blends all three skill types in every lesson. The relative weighting shifts with level:
 
-| Skill type | `Y4-adapted` | `Y3` | `Y2` | `Y1` | `Ph3–5` |
-|-----------|-------------|------|------|------|---------|
-| Retrieval (closed/short) | Standard mix for the lesson type | Majority | Dominant | Dominant | Dominant |
-| Vocabulary | Standard | 1–2 questions | 1–2 questions | 1 simple question | 1 simple question |
-| Basic inference (tick/circle) | Standard | 2 questions | 1 question | 1 question | 1 question |
-| Extended inference (written) | Standard | 1 short sentence | None | None | None |
-| Glossary | Rarely | If needed | Usually | Always | Always |
-| Total questions per lesson | 5 | 5 | 5 | 4 | 3–4 |
-| Lines per written answer | 2 | 2 | 1–2 | 1 | 1 |
+| Skill type | `Y4-adapted` | `Y3` | `Y2` | `Y1` | `Ph2` | `Ph3–5` |
+|-----------|-------------|------|------|------|-------|---------|
+| Retrieval (closed/short) | Standard mix for the lesson type | Majority | Dominant | Dominant | Dominant | Dominant |
+| Vocabulary | Standard | 1–2 questions | 1–2 questions | 1 simple question | 1 simple question | 1 simple question |
+| Basic inference (tick/circle) | Standard | 2 questions | 1 question | 1 question | 1 question | 1 question |
+| Extended inference (written) | Standard | 1 short sentence | None | None | None | None |
+| Glossary | Rarely | If needed | Usually | Always | Always | Always |
+| Total questions per lesson | 5 | 5 | 5 | 4 | 3 | 3–4 |
+| Lines per written answer | 2 | 2 | 1–2 | 1 | None | 1 |
 
 For `Y4-adapted`: the same 3-lesson single-skill structure as standard. Just simpler text and lighter question load (5 questions, 2 lines per written answer).
 
@@ -237,6 +260,8 @@ For `Y4-adapted`: the same 3-lesson single-skill structure as standard. Just sim
 **Y2:** tick_v, true_false, short (one-word or short phrase answers). Circle/underline options where possible. No written extended response. One fill or cloze question if appropriate.
 
 **Y1:** Tick only, circle, copy-out-the-word. No open writing. Questions use simple sentence structure: "Where did X go?" "Tick the word that means..." Maximum 4 questions per lesson to keep within page.
+
+**Ph2:** Tick only or circle. No writing at all — every question answered by ticking or circling. Maximum 3 questions per lesson. Question text should be as simple as possible but adult will read it aloud if needed, so does not need to be strictly decodable. Keep question text short. Example formats: "Tick what X did." / "Circle the word that means..."
 
 **Ph3–5:** Tick, circle, copy one word/phrase. Maximum 3–4 questions. All question text written strictly within decodable vocabulary as far as possible, using tricky words only where unavoidable. Instructions kept very short.
 
@@ -405,7 +430,7 @@ def answer_lines(c, y, n, gap=6.5*mm):
     return y - n * gap - 2*mm
 ```
 
-Standard: 3 lines per written question. Adapted: 2 lines (Y4-adapted / Y3); 1 line (Y2); none or 1 (Y1 / Ph).
+Standard: 3 lines per written question. Adapted: 2 lines (Y4-adapted / Y3); 1 line (Y2); none or 1 (Y1 / Ph3–5); none at all (Ph2 — tick/circle only, no writing lines).
 
 **Inter-question spacing:** Allow ~3–4mm between bottom of one question block and top of the next question label. After `render_question()` return `y - 3*mm`. After MC tables add an extra 1mm. After match tables add an extra 1mm.
 
