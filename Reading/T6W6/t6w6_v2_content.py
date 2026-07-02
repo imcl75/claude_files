@@ -479,3 +479,36 @@ GLOSSARY_IMAGES = {
         "drought":        f"{IMG_DIR}/drought.jpg",
     },
 }
+
+# ═══════════════════════════════════════════════════════════
+# LEVEL-SPECIFIC LEARNING LABELS
+# Agreed T6W6 session. Y4-adapted and standard use lesson default.
+# ═══════════════════════════════════════════════════════════
+
+LL_PHONICS = {
+    "lf":  "LF: To read accurately and understand what I have read",
+    "sc1": "I can: recognise some words and decode others",
+    "sc2": "I can: show my understanding of what I have read",
+}
+
+LL_2_PLUS_BEHIND = {
+    "lf":  "LF: To read accurately and understand what I have read",
+    "sc1": "I can: use different strategies to read and understand",
+    "sc2": "I can: answer questions about what I have read",
+}
+
+LL_1_BEHIND = {
+    "lf":  "LF: To read and comprehend different texts",
+    "sc1": "I can: use different strategies to read and comprehend",
+    "sc2": "I can: answer a variety of questions about what I have read",
+}
+
+# Map level tag → LL dict (None = use standard lesson LF)
+LEVEL_LL = {
+    "Ph2":        LL_PHONICS,
+    "Y1":         LL_2_PLUS_BEHIND,
+    "Y2":         LL_2_PLUS_BEHIND,
+    "Y3":         LL_1_BEHIND,
+    "Y4-adapted": None,   # uses standard lesson LF
+    "Y4-standard":None,
+}
