@@ -68,12 +68,14 @@ def draw_header(c, lesson_type, date_str, key_q, lf, ican1, ican2, pupil_name=No
     except Exception:
         pass
     c.setFont("Helvetica", 8)
+    day, date = date_str
+    c.drawString(icon_x + 8*mm, y - 5*mm, f"{day} {date}")
+
+    # Adapted pupils: name right-aligned in top-right corner on the same row
     if pupil_name:
-        label = f"{pupil_name} \u2014 {lesson_type}"
-    else:
-        day, date = date_str
-        label = f"{day} {date}"
-    c.drawString(icon_x + 8*mm, y - 5*mm, label)
+        c.setFont("Helvetica-Bold", 8)
+        c.setFillColorRGB(*DARK)
+        c.drawRightString(MARGIN + CW, y - 5*mm, pupil_name)
     y -= 7*mm
 
     c.setStrokeColorRGB(*GREY_LINE); c.setLineWidth(0.3)
