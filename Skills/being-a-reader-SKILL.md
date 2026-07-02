@@ -13,12 +13,12 @@ Being a Reader is Innes's weekly reading comprehension system. Each week produce
 {TxWy} - Being a Reader.zip
 ├── {TxWy} - ReaderTeaching.pptx       ← teaching slides
 ├── {TxWy} - ReaderAnswers.pdf         ← all answers (standard + adapted)
-├── {Day1}/                            ← named after lesson day e.g. Monday/
+├── {N}-{Day1}/                        ← numbered in week order e.g. 1-Monday/
 │   ├── {TxWy} - {Day1} - LMES.pdf
 │   └── {TxWy} - {Day1} - IM.pdf
-├── {Day2}/
+├── {N+1}-{Day2}/
 │   ├── ...
-└── {Day3}/
+└── {N+2}-{Day3}/
     ├── ...
 ```
 
@@ -358,7 +358,7 @@ Format: **word** — one-sentence plain definition in language appropriate to th
 
 ### Naming Convention
 
-- The pupil's **first name** appears in the header of their paper (same position as the date line). Example: `Amara — Vocabulary`
+- The pupil's **first name** appears **right-aligned in the top-right corner** of the header row (same line as the date). The date still shows normally on the left. No label such as 'supported', 'adapted' or 'lower ability' anywhere on the page.
 - No label such as "supported", "adapted", "lower ability" or similar anywhere on the page
 - The paper is otherwise identical in layout to the standard paper — same header structure, same school colours, same font
 
@@ -371,6 +371,100 @@ One PDF per named pupil containing their three lesson pages (in order: Lesson 1 
 ```
 
 Include answers for all adapted versions in the All Answers PDF, grouped by pupil after the standard answers.
+
+---
+
+## Image Glossary (Ph2 and Y1)
+
+Pupils reading at Ph2 or Y1 level get an **image glossary** instead of a plain text glossary. Each glossary row contains a thumbnail image (22mm × 14mm) on the left and the bold word + definition on the right.
+
+### Which levels get image glossaries
+
+| Level | Glossary type |
+|-------|--------------|
+| `Ph2` | Image glossary (all 3 lessons) |
+| `Y1`  | Image glossary (all 3 lessons) |
+| `Y2` and above | No glossary unless added explicitly |
+
+### Image sources
+
+Fetch images from Wikimedia Commons at build time using `Special:FilePath/{filename}`. Convert SVG to PNG with `cairosvg`. Resize to 240×160px with `PIL.Image.thumbnail`. Cache to `gloss_imgs/` to avoid re-fetching.
+
+For words where a photo is unavailable, draw a simple programmatic illustration using `PIL.ImageDraw` — at 22mm × 14mm these render clearly.
+
+```python
+GLOSSARY_IMAGES = {
+    "Vocabulary": {
+        "Brazil":   "gloss_imgs/brazil_flag.png",
+        "Carnival": "gloss_imgs/carnival_small.jpg",
+        "English":  "gloss_imgs/english_flag.png",
+    },
+    # add Retrieval and Inference entries per topic
+}
+
+def get_glossary(level, lesson):
+    if level in ("Ph2", "Y1"):
+        return PH2_GLOSSARY.get(lesson), GLOSSARY_IMAGES.get(lesson)
+    return None, None
+```
+
+### Rendering
+
+```python
+def draw_image_glossary(c, glossary_text, glossary_imgs, y_top):
+    IMG_W = 22*mm; IMG_H = 14*mm; GAP = 3*mm; PAD = 2*mm
+    n = len(glossary_text)
+    bh = n * (IMG_H + 2*mm) + 3*mm
+    c.setStrokeColorRGB(*GREY_LINE); c.setLineWidth(0.4)
+    c.setFillColorRGB(1, 1, 1)
+    c.roundRect(MARGIN, y_top - bh, CW, bh, 1*mm, fill=1, stroke=1)
+    ty = y_top - PAD
+    for word, defn in glossary_text.items():
+        img_path = (glossary_imgs or {}).get(word)
+        if img_path:
+            c.drawImage(img_path, MARGIN + PAD, ty - IMG_H,
+                        width=IMG_W, height=IMG_H,
+                        preserveAspectRatio=True, mask='auto')
+        tx = MARGIN + PAD + IMG_W + GAP
+        c.setFillColorRGB(*DARK); c.setFont("Helvetica-Bold", 8)
+        c.drawString(tx, ty - 5*mm, word + ":")
+        ww = c.stringWidth(word + ": ", "Helvetica-Bold", 8)
+        c.setFont("Helvetica", 8)
+        c.drawString(tx + ww, ty - 5*mm, defn)
+        ty -= IMG_H + 2*mm
+    return y_top - bh - 2*mm
+```
+
+In `build_page`, detect image glossary vs plain text:
+
+```python
+if glossary:
+    gtext, gimgs = glossary if isinstance(glossary, tuple) else (glossary, None)
+    if gtext:
+        if gimgs:
+            y = draw_image_glossary(c, gtext, gimgs, y)
+        else:
+            y = draw_glossary(c, gtext, y)
+```
+
+---
+
+## Text Extract Font Sizes by Level
+
+Lower-level texts are set at larger font sizes so they are easier to read without a support adult:
+
+```python
+TEXT_FONT_SIZE = {
+    "Y4-standard": 10.5,
+    "Y4-adapted":  10.5,
+    "Y3":          11.0,
+    "Y2":          12.0,
+    "Y1":          12.5,
+    "Ph2":         13.0,
+}
+```
+
+Pass the appropriate size to `draw_text_box(c, text, y, font_size=fs)`.
 
 ---
 
@@ -515,21 +609,26 @@ def answer_lines(c, y, n, gap=6.5*mm):
 
 Standard: 3 lines per written question. Adapted: 2 lines (Y4-adapted / Y3); 1 line (Y2); none or 1 (Y1 / Ph3–5); none at all (Ph2 — tick/circle only, no writing lines).
 
-**Inter-question spacing:** Allow ~3–4mm between bottom of one question block and top of the next question label. After `render_question()` return `y - 3*mm`. After MC tables add an extra 1mm. After match tables add an extra 1mm.
+**Inter-question spacing:** Allow ~3–4mm between bottom of one question block and top of the next question label. After `render_question()` return `y - 3*mm`.
+
+**Gap after text box:** Use 5mm gap after the text extract box (not 3mm) to give breathing room before Q1.
 
 **MC table:** 4-cell 2×2, full page width, ~6mm row height.
 
 **Match table:** Left col 28%, right col 48%, 24% gap between for drawing lines. Row height 7mm.
 
-**Tick options — column logic:**
+**Tick box position:** Draw the tick box **immediately after the option text** (3mm gap), not right-aligned to the page edge. This prevents pupils ticking the wrong option.
+
 ```python
-max_len = max(len(o) for o in options)
-if max_len > 25:
-    per_row = 2   # long options: 2 per row
-elif len(options) == 5:
-    per_row = 5   # 5 short options: all on one row
-else:
-    per_row = 4
+def draw_tick_v_pupil(c, options, y):
+    rh = 7*mm
+    for i, opt in enumerate(options):
+        ry = y - i*rh
+        c.drawString(MARGIN + 2*mm, ry - 4*mm, opt)
+        tw = c.stringWidth(opt, 'Helvetica', 9)
+        bx = MARGIN + 2*mm + tw + 3*mm   # box immediately after text
+        c.rect(bx, ry - 6*mm, 5*mm, 5*mm, fill=0, stroke=1)
+    return y - len(options)*rh - 1*mm
 ```
 
 **Fill-in-blank:** Draw only the prompt as the question label (not the sentence). Draw the fill sentence separately with an inline underline blank (28mm wide).
@@ -798,8 +897,8 @@ ZIP_PATH = f"/mnt/user-data/outputs/{WEEK_REF} - Being a Reader.zip"
 files = {
     f"{WEEK_REF} - ReaderTeaching.pptx":  "/mnt/user-data/outputs/...",
     f"{WEEK_REF} - ReaderAnswers.pdf":     "/mnt/user-data/outputs/...",
-    f"{DAY1}/{WEEK_REF} - {DAY1} - LMES.pdf": "/mnt/user-data/outputs/...",
-    f"{DAY1}/{WEEK_REF} - {DAY1} - IM.pdf":   "/mnt/user-data/outputs/...",
+    f"{i}-{DAY1}/{WEEK_REF} - {DAY1} - LMES.pdf"  # i = lesson order (1, 2, 3...): "/mnt/user-data/outputs/...",
+    f"{i}-{DAY1}/{WEEK_REF} - {DAY1} - IM.pdf":   "/mnt/user-data/outputs/...",
     # ... etc for DAY2 and DAY3
 }
 
