@@ -107,13 +107,40 @@ def draw_text_box(c, text, y_top, font_size=10.5):
     ty = y_top - 3*mm - font_size * 0.72
     for l in lines:
         c.drawString(MARGIN + 3*mm, ty, l); ty -= lh
-    return y_top - bh - 3*mm
+    return y_top - bh - 5*mm   # 5mm gap after box (was 3mm)
+
+def draw_image_glossary(c, glossary_text, glossary_imgs, y_top):
+    """Glossary box: thumbnail image + bold word + definition per row."""
+    IMG_W = 22*mm; IMG_H = 14*mm; GAP = 3*mm; PAD = 2*mm
+    n = len(glossary_text)
+    bh = n * (IMG_H + 2*mm) + 3*mm
+    c.setStrokeColorRGB(*GREY_LINE); c.setLineWidth(0.4)
+    c.setFillColorRGB(1, 1, 1)
+    c.roundRect(MARGIN, y_top - bh, CW, bh, 1*mm, fill=1, stroke=1)
+    ty = y_top - PAD
+    for word, defn in glossary_text.items():
+        img_path = (glossary_imgs or {}).get(word)
+        if img_path:
+            try:
+                c.drawImage(img_path, MARGIN + PAD, ty - IMG_H,
+                            width=IMG_W, height=IMG_H,
+                            preserveAspectRatio=True, mask='auto')
+            except Exception:
+                pass
+        tx = MARGIN + PAD + IMG_W + GAP
+        c.setFillColorRGB(*DARK); c.setFont("Helvetica-Bold", 8)
+        c.drawString(tx, ty - 5*mm, word + ":")
+        ww = c.stringWidth(word + ": ", "Helvetica-Bold", 8)
+        c.setFont("Helvetica", 8)
+        dlines = wrap(c, defn, "Helvetica", 8, CW - PAD - IMG_W - GAP - PAD - ww)
+        c.drawString(tx + ww, ty - 5*mm, dlines[0] if dlines else "")
+        ty -= IMG_H + 2*mm
+    return y_top - bh - 2*mm
 
 def draw_glossary(c, glossary, y_top):
-    """Small glossary box at top of page (above text box)."""
+    """Text-only glossary box (no images) — Y3 and above."""
     items = list(glossary.items())
-    c.setFont("Helvetica-Bold", 7.5)
-    c.setFillColorRGB(*DARK)
+    c.setFont("Helvetica-Bold", 7.5); c.setFillColorRGB(*DARK)
     bh = len(items) * 5*mm + 4*mm
     c.setStrokeColorRGB(*GREY_LINE); c.setLineWidth(0.4)
     c.roundRect(MARGIN, y_top - bh, CW, bh, 1*mm, fill=0, stroke=1)
@@ -172,14 +199,16 @@ def draw_mc_answer(c, options, correct, y):
     return y - 2*rh - 1.5*mm
 
 def draw_tick_v_pupil(c, options, y):
-    """KS2-style vertical tick — square box on right side of each option."""
+    """KS2-style vertical tick — square box immediately after option text."""
     rh = 7*mm
     for i, opt in enumerate(options):
         ry = y - i*rh
         c.setFillColorRGB(*DARK); c.setFont("Helvetica", 9)
         c.drawString(MARGIN + 2*mm, ry - 4*mm, opt)
-        c.setStrokeColorRGB(0.3,0.3,0.3); c.setLineWidth(0.5)
-        c.rect(MARGIN + CW - 6*mm, ry - 6*mm, 5*mm, 5*mm, fill=0, stroke=1)
+        tw = c.stringWidth(opt, "Helvetica", 9)
+        bx = MARGIN + 2*mm + tw + 3*mm   # 3mm gap after text
+        c.setStrokeColorRGB(0.3, 0.3, 0.3); c.setLineWidth(0.5)
+        c.rect(bx, ry - 6*mm, 5*mm, 5*mm, fill=0, stroke=1)
     return y - len(options)*rh - 1*mm
 
 def draw_tick_v_answer(c, options, correct, y):
@@ -188,17 +217,18 @@ def draw_tick_v_answer(c, options, correct, y):
     for i, opt in enumerate(options):
         ry = y - i*rh
         ok = opt in correct_list
+        tw = c.stringWidth(opt, "Helvetica-Bold" if ok else "Helvetica", 9)
+        bx = MARGIN + 2*mm + tw + 3*mm
         if ok:
             c.setFillColorRGB(*GREEN); c.setFont("Helvetica-Bold", 9)
         else:
             c.setFillColorRGB(*DARK); c.setFont("Helvetica", 9)
         c.drawString(MARGIN + 2*mm, ry - 4*mm, opt)
-        c.setStrokeColorRGB(0.3,0.3,0.3); c.setLineWidth(0.5)
-        c.rect(MARGIN + CW - 6*mm, ry - 6*mm, 5*mm, 5*mm,
-               fill=1 if ok else 0, stroke=1)
+        c.setStrokeColorRGB(0.3, 0.3, 0.3); c.setLineWidth(0.5)
+        c.rect(bx, ry - 6*mm, 5*mm, 5*mm, fill=1 if ok else 0, stroke=1)
         if ok:
             c.setFillColorRGB(*GREEN); c.setFont("Helvetica-Bold", 11)
-            c.drawString(MARGIN + CW - 5.5*mm, ry - 5.5*mm, "\u2713")
+            c.drawString(bx + 0.5*mm, ry - 5.5*mm, "\u2713")
     return y - len(options)*rh - 1*mm
 
 def draw_fill(c, sentence, y, is_answer=False, answer=""):
@@ -632,15 +662,20 @@ def render_question(c, q, y, is_answer=False, n_lines=3, min_y=20*mm):
 # ── build_page ──────────────────────────────────────────────────────────────
 
 def build_page(path, lesson_type, text, questions, date_str, is_answer,
-               n_lines=3, pupil_name=None, glossary=None):
+               n_lines=3, pupil_name=None, glossary=None, text_font_size=10.5):
     c = canvas.Canvas(path, pagesize=A4)
     c.setFillColorRGB(*DARK)
     y = draw_header(c, lesson_type, date_str, KEY_Q,
                     LF[lesson_type], ICAN[lesson_type][0], ICAN[lesson_type][1],
                     pupil_name=pupil_name)
     if glossary:
-        y = draw_glossary(c, glossary, y)
-    y = draw_text_box(c, text, y)
+        gtext, gimgs = glossary if isinstance(glossary, tuple) else (glossary, None)
+        if gtext:
+            if gimgs:
+                y = draw_image_glossary(c, gtext, gimgs, y)
+            else:
+                y = draw_glossary(c, gtext, y)
+    y = draw_text_box(c, text, y, font_size=text_font_size)
     for q in questions:
         r = render_question(c, q, y, is_answer=is_answer, n_lines=n_lines, min_y=12*mm)
         if r is None: break
@@ -693,10 +728,21 @@ LEVEL_DATA = {
     },
 }
 
+# Text extract font sizes — larger for lower reading levels
+TEXT_FONT_SIZE = {
+    "Y4-standard": 10.5,
+    "Y4-adapted":  10.5,
+    "Y3":          11.0,
+    "Y2":          12.0,
+    "Y1":          12.5,
+    "Ph2":         13.0,
+}
+
 def get_glossary(level, lesson):
-    if level == "Ph2":
-        return PH2_GLOSSARY.get(lesson)
-    return None
+    """Return (text_dict, images_dict_or_None). Images for Ph2 and Y1."""
+    if level in ("Ph2", "Y1"):
+        return PH2_GLOSSARY.get(lesson), GLOSSARY_IMAGES.get(lesson)
+    return None, None
 
 # ── Build all individual pages ──────────────────────────────────────────────
 
@@ -731,14 +777,15 @@ for pupil in all_adapted:
             continue
         text, qs, nl = LEVEL_DATA[level][lesson]
         date = DATES[lesson]
-        gloss = get_glossary(level, lesson)
+        gloss = get_glossary(level, lesson)   # returns (text, imgs) tuple
+        fs = TEXT_FONT_SIZE.get(level, 10.5)
         p = f"{WORK}/{name}_{lesson}_pupil.pdf"
         build_page(p, lesson, text, qs, date, False, nl,
-                   pupil_name=name, glossary=gloss)
+                   pupil_name=name, glossary=gloss, text_font_size=fs)
         pages_p.append(p)
         a = f"{WORK}/{name}_{lesson}_ans.pdf"
         build_page(a, lesson, text, qs, date, True, nl,
-                   pupil_name=name, glossary=gloss)
+                   pupil_name=name, glossary=gloss, text_font_size=fs)
         pages_a.append(a)
     adapted_pupil_pages[name] = pages_p
     adapted_ans_pages[name]   = pages_a
