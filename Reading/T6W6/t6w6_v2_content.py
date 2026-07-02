@@ -377,7 +377,7 @@ PH2_GLOSSARY = {
     "Vocabulary": {
         "Brazil":   "a big country far away",
         "Carnival": "a big party with music and dancing",
-        "English":  "the language we speak",
+        "English":  "the main language in England",
     },
     "Retrieval": {
         "Amazon":        "a huge forest in Brazil",
@@ -454,3 +454,28 @@ IM_STANDARD   = ["Amir","Arthur","Bonnie","Carena","Ceecee","Cody","Connie","Diy
                   "Emilia","Freya","Haris","Iris","Izzy","Jesse","Lois","Louie",
                   "Maddie","Maximilian","Penny","Phoebe","Ramani","Rory","Sam","Sohan",
                   "Zeek","Ziyad"]  # 26
+
+# ═══════════════════════════════════════════════════════════
+# GLOSSARY IMAGE PATHS — Ph2 and Y1 levels
+# Used by draw_image_glossary() in the build script
+# ═══════════════════════════════════════════════════════════
+
+IMG_DIR = "/home/claude/gloss_imgs"
+
+GLOSSARY_IMAGES = {
+    "Vocabulary": {
+        "Brazil":   f"{IMG_DIR}/brazil_flag.png",
+        "Carnival": f"{IMG_DIR}/carnival_small.jpg",
+        "English":  f"{IMG_DIR}/english_flag.png",
+    },
+    "Retrieval": {
+        "Amazon":        f"{IMG_DIR}/amazon.jpg",
+        "deforestation": f"{IMG_DIR}/deforest3.jpg",
+        "wildlife":      f"{IMG_DIR}/wildlife.jpg",
+    },
+    "Inference": {
+        "climate change": f"{IMG_DIR}/earth.png",
+        "flood":          f"{IMG_DIR}/flood.jpg",
+        "drought":        f"{IMG_DIR}/drought.jpg",
+    },
+}
