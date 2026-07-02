@@ -1,21 +1,30 @@
 ---
 name: being-a-reader
-description: "Create a full week of Being a Reader reading comprehension resources for Y4 or Y5. Use this skill whenever Innes asks for reading lessons, Being a Reader lessons, reading comprehension resources, vocabulary/retrieval/inference lessons, or says things like 'make this week's reading', 'create the reading for next week', 'Being a Reader for [text]', 'reading lessons linked to [book]'. Also trigger when he uploads content and mentions reading questions, comprehension questions, or refers to the three-lesson reading cycle. This skill produces: 1 PPTX (teaching slides), 1 Standard Pupil PDF (all 3 lessons), named Adapted Pupil PDFs (one per pupil on record at their level), and 1 All Answers PDF. Always use this skill even for partial requests like 'just the PDFs' or 'just the PPTX' — the skill handles selective output. Always ask year group (Y4/Y5) at session start. Always confirm adapted pupil profiles at session start."
+description: "Create a full week of Being a Reader reading comprehension resources for Y4 or Y5. Use this skill whenever Innes asks for reading lessons, Being a Reader lessons, reading comprehension resources, vocabulary/retrieval/inference lessons, or says things like 'make this week's reading', 'create the reading for next week', 'Being a Reader for [text]', 'reading lessons linked to [book]'. Also trigger when he uploads content and mentions reading questions, comprehension questions, or refers to the three-lesson reading cycle. Final output is a single zip per week containing: PPTX + answers PDF at root, one folder per lesson day each holding two class PDFs (LMES and IM). Always confirm adapted pupil profiles and class lists at session start. Always ask year group (Y4/Y5) at session start."
 ---
 
 # Being a Reader Skill
 
 ## Overview
 
-Being a Reader is Innes's weekly reading comprehension system. Each week produces the following files:
+Being a Reader is Innes's weekly reading comprehension system. Each week produces a **single zip file** delivered via `present_files`. Structure:
 
-1. ~~**XLSX** — master data file (all content in structured table)~~ **Not built by default — omit from the build loop unless Innes specifically asks for it. Code and column structure are preserved in Step 3 for when it is needed.**
-2. **PPTX** — teaching slides for smartboard delivery (21 slides, 7 per lesson)
-3. **Standard Pupil PDF** — 3 pages (Voc, Ret, Inf), 7 questions each
-4. **Adapted Pupil PDFs** — one per named pupil on record; content, structure and text depend on level tag (see Adapted Version Spec section). The pupil's first name appears on their paper. No label like "supported" or "adapted" is visible to the child.
-5. **All Answers PDF** — covers Standard plus all adapted versions
+```
+{TxWy} - Being a Reader.zip
+├── {TxWy} - ReaderTeaching.pptx       ← teaching slides
+├── {TxWy} - ReaderAnswers.pdf         ← all answers (standard + adapted)
+├── {Day1}/                            ← named after lesson day e.g. Monday/
+│   ├── {TxWy} - {Day1} - LMES.pdf
+│   └── {TxWy} - {Day1} - IM.pdf
+├── {Day2}/
+│   ├── ...
+└── {Day3}/
+    ├── ...
+```
 
-Order is always **Vocabulary → Retrieval → Inference**.
+Each day PDF (per class) contains pages sorted **lowest → highest reading level**: adapted pupils in level order first, then standard copies (one per standard pupil in that class).
+
+Order of lessons is always **Vocabulary → Retrieval → Inference**.
 
 ---
 
@@ -41,6 +50,75 @@ for name, b64_block in re.findall(pattern, skill):
 
 Scripts will be at `/home/claude/build_reading_pdfs.py`, `/home/claude/replace_reading_pptx.py`, and `/home/claude/slide_finishing_fixes.py`.
 
+### Tick instruction patch (apply immediately after extraction)
+
+The embedded `build_reading_pdfs.py` has the old right-aligned "Tick one." behaviour. Apply this patch after extraction to move it inline with the question:
+
+```python
+with open('/home/claude/build_reading_pdfs.py', 'r') as f:
+    src = f.read()
+
+OLD = '''    # For tick_v: draw "Tick one." / "Tick two." right-aligned on the same line as the question
+    if qtype == "tick_v":
+        n_correct = 1 if isinstance(correct, str) else len(correct)
+        instr = f"Tick {\'one\' if n_correct == 1 else \'two\'}."
+        iw = c.stringWidth(instr, "Helvetica-Bold", 9)
+        c.drawString(MARGIN + CW - iw, y, instr)
+    # For fill-in-blank with a separate sentence line, only show the prompt as the label
+    label_lines_text = q_lines_all[0]'''
+
+NEW = '''    # For tick_v: append "[Tick one.]" / "[Tick two.]" inline with the question text
+    if qtype == "tick_v":
+        n_correct = 1 if isinstance(correct, str) else len(correct)
+        instr = f"[Tick {\'one\' if n_correct == 1 else \'two\'}.]"
+    else:
+        instr = None
+    # For fill-in-blank with a separate sentence line, only show the prompt as the label
+    label_lines_text = q_lines_all[0]
+    if instr:
+        label_lines_text = label_lines_text + "  " + instr'''
+
+src = src.replace(OLD, NEW)
+with open('/home/claude/build_reading_pdfs.py', 'w') as f:
+    f.write(src)
+print("Tick patch applied.")
+```
+
+### __main__ guard (apply so the module can be imported)
+
+The build now imports `build_reading_pdfs` as a module rather than running it standalone. After the tick patch, apply this guard:
+
+```python
+MARKER = "# ── Build all 12 individual PDFs"
+with open('/home/claude/build_reading_pdfs.py', 'r') as f:
+    src = f.read()
+if MARKER in src and 'if __name__' not in src:
+    idx = src.find(MARKER)
+    before, after = src[:idx], src[idx:]
+    indented = '\n'.join('    ' + l if l.strip() else l for l in after.split('\n'))
+    with open('/home/claude/build_reading_pdfs.py', 'w') as f:
+        f.write(before + "if __name__ == '__main__':\n" + indented)
+    print("__main__ guard applied.")
+```
+
+### Icon extraction
+
+Extract the Being a Reader icon from the PPTX template (required for PDF headers):
+
+```python
+import zipfile, shutil, os
+
+template = '/home/claude/BeingAReader_Template.pptx'
+icon_dest = '/home/claude/reader_icon_saved.png'
+
+if not os.path.exists(icon_dest):
+    with zipfile.ZipFile(template) as z:
+        # image2.png is the person-reading silhouette used in the header
+        with z.open('ppt/media/image2.png') as src, open(icon_dest, 'wb') as dst:
+            shutil.copyfileobj(src, dst)
+    print(f"Icon extracted → {icon_dest}")
+```
+
 The previous week's PPTX is stored in GitHub at `imcl75/claude_files/Reading/BeingAReader_Template.pptx`. Fetch it silently at session start using the github-sync fetch pattern if not already in the session. Only ask Innes if the GitHub fetch fails.
 
 ---
@@ -62,36 +140,38 @@ Generate all content (extracts, questions, answers, vocabulary) yourself unless 
 
 ### Adapted Pupil Profiles — Session Start Protocol
 
-At the start of every session, confirm stored profiles with a single yes/no prompt before asking any other inputs. Format:
+At the start of every session, confirm stored profiles with a single yes/no prompt before asking any other inputs:
 
-> *Adapted pupils on record: [Name] ([tag]), [Name] ([tag]) … Still correct?*
+> *Adapted pupils on record: Adnan (Ph2), Callum (Ph2), Hope (3 years behind), Roland (2 years behind), Asimenia / Jimi / Reggie (current-adapted, LMES), Teddie (1 year behind), Asel / Bailey / Daisy (current-adapted, IM). Still correct?*
 
-Only update profiles if Innes flags a change. Profiles update roughly 2–3 times per year — not weekly. If no profiles are stored yet, ask Innes for the list once, then store them in memory for subsequent sessions.
+Only update profiles if Innes flags a change. Profiles update roughly 2–3 times per year. Update the class column in September when year groups change.
 
-**Current stored profiles** *(update whenever Innes confirms a change; levels are relative so they carry across year groups automatically):*
+**Current stored profiles** *(levels are relative — carry across year groups automatically):*
 
-| Pupil | Level tag | Resolves in Y4 | Resolves in Y5 |
-|-------|-----------|----------------|----------------|
-| Adnan | `Ph2` | Ph2 | Ph2 |
-| Callum | `Ph2` | Ph2 | Ph2 |
-| Hope | `3-behind` | Y1 | Y2 |
-| Roland | `2-behind` | Y2 | Y3 |
-| Teddie | `1-behind` | Y3 | Y4-adapted |
-| Asel | `current-adapted` | Y4-adapted | Y5-adapted |
-| Asimenia | `current-adapted` | Y4-adapted | Y5-adapted |
-| Bailey | `current-adapted` | Y4-adapted | Y5-adapted |
-| Daisy | `current-adapted` | Y4-adapted | Y5-adapted |
-| Jimi | `current-adapted` | Y4-adapted | Y5-adapted |
-| Reggie | `current-adapted` | Y4-adapted | Y5-adapted |
+| Pupil | Level tag | Resolves Y4 | Resolves Y5 | Class 25-26 |
+|-------|-----------|-------------|-------------|-------------|
+| Adnan | `Ph2` | Ph2 | Ph2 | LMES |
+| Callum | `Ph2` | Ph2 | Ph2 | LMES |
+| Hope | `3-behind` | Y1 | Y2 | LMES |
+| Roland | `2-behind` | Y2 | Y3 | LMES |
+| Asimenia | `current-adapted` | Y4-adapted | Y5-adapted | LMES |
+| Jimi | `current-adapted` | Y4-adapted | Y5-adapted | LMES |
+| Reggie | `current-adapted` | Y4-adapted | Y5-adapted | LMES |
+| Teddie | `1-behind` | Y3 | Y4-adapted | IM |
+| Asel | `current-adapted` | Y4-adapted | Y5-adapted | IM |
+| Bailey | `current-adapted` | Y4-adapted | Y5-adapted | IM |
+| Daisy | `current-adapted` | Y4-adapted | Y5-adapted | IM |
 
-All other pupils (Aaliyah, Amir, Arthur, Bonnie, Cameron, Carena, Ceecee, Cody, Connie, Cruz, Delton, Diyan, Dovind, Elliot, Eloho, Emilia, Fola, Freya, Haris, Heidi, Iris, Isabelle, Isla, Izzy, Jacob, Jesse, Josh, Lilly, Lily H, Lois, Louie, Maddie, Maisie, Mary, Maximilian, Meshach, Mia, Penny, Phoebe, Ralf, Ramani, Rory, Ruby, Sam, Sebastian, Sohan, Taylor, Zeek, Ziyad) — **standard paper only**.
+**Standard class lists (2025-26):**
 
-**Session start confirmation format:**
-> *Adapted pupils on record: Adnan (Ph2), Callum (Ph2), Hope (3 years behind), Roland (2 years behind), Teddie (1 year behind), Asel / Asimenia / Bailey / Daisy / Jimi / Reggie (current year adapted). Still correct?*
+LMES (23): Aaliyah, Cameron, Cruz, Delton, Dovind, Elliot, Eloho, Fola, Heidi, Isabelle, Isla, Jacob, Josh, Lilly, Lily H, Maisie, Mary, Meshach, Mia, Ralf, Ruby, Sebastian, Taylor
 
-When resolving relative tags at build time, ask for the current year group if not already confirmed (Y4 or Y5) and apply the Resolves column above. For year groups beyond Y5, extend the pattern.
+IM (26): Amir, Arthur, Bonnie, Carena, Ceecee, Cody, Connie, Diyan, Emilia, Freya, Haris, Iris, Izzy, Jesse, Lois, Louie, Maddie, Maximilian, Penny, Phoebe, Ramani, Rory, Sam, Sohan, Zeek, Ziyad
+
+**Day document sort order (within each class):** Ph2 → Y1 → Y2 → Y3 → Y4-adapted → standard copies (one per standard pupil in that class, all identical, unnamed).
 
 ---
+
 
 ## Step 2: Content Generation Rules
 
@@ -101,7 +181,7 @@ When resolving relative tags at build time, ask for the current year group if no
 - **CRITICAL: The extract text must be byte-for-byte identical across PPTX slide, PPTX practice Q, XLSX, and PDF worksheet**
 - For narrative/book topics: write as **narrative literary prose** — a single flowing paragraph that reads like a well-written literary analysis. NOT non-fiction report style, NOT bullet points, NOT multiple separated paragraphs
 - Standard extract: **Y4 = 200–250 words / Y5 = 250–300 words, single paragraph**
-- Supported extract: **Y4-adapted = 130–150 words / Y5 = 160–180 words, single simpler paragraph** (see Adapted Version Spec for Y3 and below)
+- Supported extract: **Y4-adapted = 200–220 words (close to standard length, slightly simplified vocabulary and sentence structure) / Y5 = 160–180 words** (see Adapted Version Spec for Y3 and below)
 - Embed lesson vocabulary words naturally in the standard extract
 
 ### Vocabulary (5 words per lesson, 15 total)
@@ -222,7 +302,7 @@ This section defines how adapted reading papers work. Each adapted pupil has a *
 
 | Level | Words per text |
 |-------|---------------|
-| `Y4-adapted` | 130–150 words (same single text used for all 3 lessons, like standard) |
+| `Y4-adapted` | 200–220 words (one text per lesson, close to standard length but simpler vocabulary and shorter sentences) |
 | `Y3` | 130–170 words (separate text per lesson) |
 | `Y2` | 90–130 words (separate text per lesson) |
 | `Y1` | 60–90 words (separate text per lesson) |
@@ -248,7 +328,7 @@ Each lesson for `Y3`, `Y2`, `Y1` and `Ph3–5` blends all three skill types in e
 | Basic inference (tick/circle) | Standard | 2 questions | 1 question | 1 question | 1 question | 1 question |
 | Extended inference (written) | Standard | 1 short sentence | None | None | None | None |
 | Glossary | Rarely | If needed | Usually | Always | Always | Always |
-| Total questions per lesson | 5 | 5 | 5 | 4 | 3 | 3–4 |
+| Total questions per lesson | 5 | 5 | 5 | 6 | 3 | 3–4 |
 | Lines per written answer | 2 | 2 | 1–2 | 1 | None | 1 |
 
 For `Y4-adapted`: the same 3-lesson single-skill structure as standard. Just simpler text and lighter question load (5 questions, 2 lines per written answer).
@@ -259,7 +339,7 @@ For `Y4-adapted`: the same 3-lesson single-skill structure as standard. Just sim
 
 **Y2:** tick_v, true_false, short (one-word or short phrase answers). Circle/underline options where possible. No written extended response. One fill or cloze question if appropriate.
 
-**Y1:** Tick only, circle, copy-out-the-word. No open writing. Questions use simple sentence structure: "Where did X go?" "Tick the word that means..." Maximum 4 questions per lesson to keep within page.
+**Y1:** Tick only, true/false, copy-out-the-word. No open writing beyond one-word answers. Questions use simple sentence structure. Aim for 6 questions per lesson to fill the page — mix tick_v, true_false and short (one word). Variety across the three lessons is important; ensure most question types appear across the week.
 
 **Ph2:** Tick only or circle. No writing at all — every question answered by ticking or circling. Maximum 3 questions per lesson. Question text should be as simple as possible but adult will read it aloud if needed, so does not need to be strictly decodable. Keep question text short. Example formats: "Tick what X did." / "Circle the word that means..."
 
@@ -416,6 +496,9 @@ Rounded-corner bordered box. Border #2c2c6c, bg #f0f0f8. Font: Helvetica 10.5pt.
 ```python
 label = f"{qnum[1:]}. "   # qnum is stored as "Q1", "Q2" etc — strip the Q
 ```
+
+**Tick one / Tick two instruction — INLINE with question, not right-aligned.**
+The instruction `[Tick one.]` or `[Tick two.]` is appended directly to the question text, not placed at the far right of the page. Example: `1. Which word means 'contrast'? [Tick one.]` This is applied via the tick patch in Step 0.
 
 **Answer lines: SOLID, not dashed**
 
@@ -659,40 +742,73 @@ Without this step, every weekly build needs manual repair. The fixes are determi
 Run these checks before delivering:
 
 **PDFs:**
-- [ ] Each of the 12 individual pages is exactly 1 page
-- [ ] Header: "Key Question" [icon] "Day DD/MM/YYYY" — date NOT right-aligned
+- [ ] Each individual page is exactly 1 page (no overflow)
+- [ ] Header: "Key Question" [icon] "Day DD/MM/YYYY" on standard; pupil name on adapted — date NOT right-aligned
+- [ ] Tick instruction appears inline: "Question text? [Tick one.]" — not right-aligned
 - [ ] Questions numbered 1. 2. 3. — no Q prefix
 - [ ] Answer lines solid (not dashed)
-- [ ] Q7 present on every page (if not, reduce spacing slightly)
+- [ ] Q7 present on standard pages; Q5/Q6 present on adapted pages
 - [ ] Match table has visible gap between columns for drawing lines
-- [ ] Tick options on 1 row if short (≤25 chars each), 2 rows if long
 - [ ] All extracts are single paragraphs, not split into multiple paragraphs
+- [ ] Ph2 pages: tick-only questions, word help glossary visible, large text
+- [ ] Y1 pages: 6 questions, variety of tick_v / true_false / short across the 3 lessons
+- [ ] Y4-adapted text: 200–220 words (similar length to standard)
+- [ ] Day documents: adapted pupils appear before standard copies, sorted lowest→highest
 
 **PPTX:**
 - [ ] Validate passes: `python /mnt/skills/public/pptx/scripts/office/pack.py ... --original`
 - [ ] Title slides show correct day names (Tue/Thu/Fri not Mon/Tue/Wed)
-- [ ] Vocab slides: all 5 words correct, all 5 ? bars aligned to rows, no bleed-through visible when tested in LibreOffice render (check pdftoppm output)
+- [ ] Vocab slides: all 5 words correct, all 5 ? bars aligned to rows
 - [ ] Write-it-5-times slides: focus word appears in BOTH table cell AND spider diagram
 - [ ] Extract text on slides matches PDF extract text exactly
-- [ ] Fluency instruction on Retrieval slide renders at large size (sz=4400), single text box only
+- [ ] Fluency instruction on Retrieval slide renders at large size (sz=4400)
 
 **After QA:**
-- **Y4:** save as `BeingAReader_Template.pptx` in `/home/claude/` and push to `Reading/BeingAReader_Template.pptx` via github-sync (overwrites — this becomes next week's Y4 base)
-- **Y5:** save as the output file only; the permanent Y5 master in GitHub is not overwritten each week
+- **Y4:** save as `BeingAReader_Template.pptx` in `/home/claude/` and push to `Reading/BeingAReader_Template.pptx` via github-sync
+- **Y5:** save as output file only; permanent Y5 master in GitHub is not overwritten
 
 ---
 
 ## Step 7: File Naming and Output
 
+All output is delivered as **a single zip file** via `present_files`. Structure:
+
 ```
-{TxWy} - ReaderTeaching.pptx        e.g. T5W2 - ReaderTeaching.pptx
-{TxWy} - ReaderData.xlsx            e.g. T5W2 - ReaderData.xlsx
-{TxWy} - ReaderStandard.pdf         e.g. T5W2 - ReaderStandard.pdf
-{TxWy} - Reader_{FirstName}.pdf     e.g. T5W2 - Reader_Amara.pdf   (one per adapted pupil)
-{TxWy} - ReaderAnswers.pdf          e.g. T5W2 - ReaderAnswers.pdf
+{TxWy} - Being a Reader.zip
+├── {TxWy} - ReaderTeaching.pptx
+├── {TxWy} - ReaderAnswers.pdf
+├── {Day1}/
+│   ├── {TxWy} - {Day1} - LMES.pdf
+│   └── {TxWy} - {Day1} - IM.pdf
+├── {Day2}/
+│   ├── {TxWy} - {Day2} - LMES.pdf
+│   └── {TxWy} - {Day2} - IM.pdf
+└── {Day3}/
+    ├── {TxWy} - {Day3} - LMES.pdf
+    └── {TxWy} - {Day3} - IM.pdf
 ```
 
-Copy all files to `/mnt/user-data/outputs/` and use `present_files`.
+Day folder names use the full day name (Monday, Tuesday, Wednesday etc). Each class PDF for a lesson contains all pages for that day in sort order: adapted pupils lowest-to-highest, then standard copies.
+
+```python
+import zipfile, os
+
+ZIP_PATH = f"/mnt/user-data/outputs/{WEEK_REF} - Being a Reader.zip"
+
+files = {
+    f"{WEEK_REF} - ReaderTeaching.pptx":  "/mnt/user-data/outputs/...",
+    f"{WEEK_REF} - ReaderAnswers.pdf":     "/mnt/user-data/outputs/...",
+    f"{DAY1}/{WEEK_REF} - {DAY1} - LMES.pdf": "/mnt/user-data/outputs/...",
+    f"{DAY1}/{WEEK_REF} - {DAY1} - IM.pdf":   "/mnt/user-data/outputs/...",
+    # ... etc for DAY2 and DAY3
+}
+
+with zipfile.ZipFile(ZIP_PATH, 'w', zipfile.ZIP_DEFLATED) as zf:
+    for arc_name, src_path in files.items():
+        zf.write(src_path, arc_name)
+```
+
+Use `present_files` on the zip only — do not present individual PDFs.
 
 ---
 
