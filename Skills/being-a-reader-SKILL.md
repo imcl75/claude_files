@@ -1,19 +1,19 @@
 ---
 name: being-a-reader
-description: "Create a full week of Being a Reader reading comprehension resources for Y4 or Y5. Use this skill whenever Innes asks for reading lessons, Being a Reader lessons, reading comprehension resources, vocabulary/retrieval/inference lessons, or says things like 'make this week's reading', 'create the reading for next week', 'Being a Reader for [text]', 'reading lessons linked to [book]'. Also trigger when he uploads content and mentions reading questions, comprehension questions, or refers to the three-lesson reading cycle. This skill produces 5 files: 3 PDFs (Standard Pupil, Supported Pupil, All Answers), 1 PPTX (teaching slides), and 1 XLSX (content data file). Always use this skill even for partial requests like 'just the PDFs' or 'just the PPTX' — the skill handles selective output. Always ask year group (Y4/Y5) at session start."
+description: "Create a full week of Being a Reader reading comprehension resources for Y4 or Y5. Use this skill whenever Innes asks for reading lessons, Being a Reader lessons, reading comprehension resources, vocabulary/retrieval/inference lessons, or says things like 'make this week's reading', 'create the reading for next week', 'Being a Reader for [text]', 'reading lessons linked to [book]'. Also trigger when he uploads content and mentions reading questions, comprehension questions, or refers to the three-lesson reading cycle. This skill produces: 1 PPTX (teaching slides), 1 Standard Pupil PDF (all 3 lessons), named Adapted Pupil PDFs (one per pupil on record at their level), and 1 All Answers PDF. Always use this skill even for partial requests like 'just the PDFs' or 'just the PPTX' — the skill handles selective output. Always ask year group (Y4/Y5) at session start. Always confirm adapted pupil profiles at session start."
 ---
 
 # Being a Reader Skill
 
 ## Overview
 
-Being a Reader is Innes's weekly reading comprehension system. Each week produces **5 files** from a single set of content:
+Being a Reader is Innes's weekly reading comprehension system. Each week produces the following files:
 
 1. ~~**XLSX** — master data file (all content in structured table)~~ **Not built by default — omit from the build loop unless Innes specifically asks for it. Code and column structure are preserved in Step 3 for when it is needed.**
 2. **PPTX** — teaching slides for smartboard delivery (21 slides, 7 per lesson)
 3. **Standard Pupil PDF** — 3 pages (Voc, Ret, Inf), 7 questions each
-4. **Supported Pupil PDF** — 3 pages (Voc, Ret, Inf), 5 questions each
-5. **All Answers PDF** — 6 pages (Std Voc, Sup Voc, Std Ret, Sup Ret, Std Inf, Sup Inf)
+4. **Adapted Pupil PDFs** — one per named pupil on record; content, structure and text depend on level tag (see Adapted Version Spec section). The pupil's first name appears on their paper. No label like "supported" or "adapted" is visible to the child.
+5. **All Answers PDF** — covers Standard plus all adapted versions
 
 Order is always **Vocabulary → Retrieval → Inference**.
 
@@ -60,6 +60,18 @@ Before generating anything, collect from Innes:
 
 Generate all content (extracts, questions, answers, vocabulary) yourself unless Innes supplies an XLSX.
 
+### Adapted Pupil Profiles — Session Start Protocol
+
+At the start of every session, confirm stored profiles with a single yes/no prompt before asking any other inputs. Format:
+
+> *Adapted pupils on record: [Name] ([tag]), [Name] ([tag]) … Still correct?*
+
+Only update profiles if Innes flags a change. Profiles update roughly 2–3 times per year — not weekly. If no profiles are stored yet, ask Innes for the list once, then store them in memory for subsequent sessions.
+
+**Current stored profiles:** *(update this list whenever Innes confirms a change)*
+
+> *(empty — ask Innes at first session)*
+
 ---
 
 ## Step 2: Content Generation Rules
@@ -70,7 +82,7 @@ Generate all content (extracts, questions, answers, vocabulary) yourself unless 
 - **CRITICAL: The extract text must be byte-for-byte identical across PPTX slide, PPTX practice Q, XLSX, and PDF worksheet**
 - For narrative/book topics: write as **narrative literary prose** — a single flowing paragraph that reads like a well-written literary analysis. NOT non-fiction report style, NOT bullet points, NOT multiple separated paragraphs
 - Standard extract: **Y4 = 200–250 words / Y5 = 250–300 words, single paragraph**
-- Supported extract: **Y4 = 130–150 words / Y5 = 160–180 words, single simpler paragraph**
+- Supported extract: **Y4-adapted = 130–150 words / Y5 = 160–180 words, single simpler paragraph** (see Adapted Version Spec for Y3 and below)
 - Embed lesson vocabulary words naturally in the standard extract
 
 ### Vocabulary (5 words per lesson, 15 total)
@@ -82,7 +94,7 @@ Generate all content (extracts, questions, answers, vocabulary) yourself unless 
 
 ### Questions
 
-- Standard: 7 questions. Supported: 5 questions (genuinely easier, not just fewer)
+- Standard: 7 questions. Adapted (all levels): 5 questions max (fewer for Y1/Ph; see Adapted Version Spec). Genuinely adapted content — not just fewer questions from the same text.
 - Questions progress Q1 (easiest) → Q7 (hardest)
 - **Q7 is always first to drop** if the page doesn't fit on a single A4
 - **Y4 calibration:** answerable in 1–3 sentences by an 8–9 year old; inference questions focus on unstated meaning from clues
@@ -172,6 +184,91 @@ Two questions per lesson shown with answers on the PPTX Practice Questions slide
 
 ---
 
+## Adapted Version Spec
+
+This section defines how adapted reading papers work. Each adapted pupil has a **level tag** that determines the text, structure and question mix for their three lessons. The adapted paper is otherwise produced alongside the standard paper using the same topic and key question link.
+
+### Level Tags
+
+| Tag | Reading level | Lesson structure | Text approach |
+|-----|--------------|-----------------|---------------|
+| `Y4-adapted` | Low Y4 | 3 lessons, each with single skill focus (Voc / Ret / Inf) — same as standard | Simpler text on same topic; same topic but lighter vocabulary and shorter sentences |
+| `Y3` | Y3 level | 3 lessons, each blends all three skill types | Separate shorter text per lesson, same topic |
+| `Y2` | Y2 level | 3 lessons, each blends all three skill types | Separate shorter text per lesson, same topic |
+| `Y1` | Y1 level | 3 lessons, each blends all three skill types | Separate shorter text per lesson, same topic |
+| `Ph3` / `Ph4` / `Ph5` | Phonetically decodable at that phase | 3 lessons, each blends all three skill types | Decodable text within specified phase GPCs; sight/tricky words permitted; glossary always included |
+
+### Text Length by Level
+
+| Level | Words per text |
+|-------|---------------|
+| `Y4-adapted` | 130–150 words (same single text used for all 3 lessons, like standard) |
+| `Y3` | 130–170 words (separate text per lesson) |
+| `Y2` | 90–130 words (separate text per lesson) |
+| `Y1` | 60–90 words (separate text per lesson) |
+| `Ph3–5` | Shorter than Y1 equivalent; strict phase GPC vocabulary |
+
+For `Y4-adapted`: write one text on the same topic as the standard extract, same single-paragraph literary prose format, but with simpler vocabulary and shorter sentences.
+
+For `Y3` and below: write three separate short texts on the same topic. The texts are thematically consistent (same subject, same enquiry link) but not a single passage split across lessons. Each should work as a standalone reading.
+
+For phonically decodable texts: check each content word against the declared phase. Include a glossary at the top of the page (or as a box on the worksheet) for any content-specific words a child at that level could not decode or infer. Sight words listed in the DfE phonics appendix for the phase are permitted.
+
+### Question Distribution by Level
+
+Each lesson for `Y3`, `Y2`, `Y1` and `Ph3–5` blends all three skill types in every lesson. The relative weighting shifts with level:
+
+| Skill type | `Y4-adapted` | `Y3` | `Y2` | `Y1` | `Ph3–5` |
+|-----------|-------------|------|------|------|---------|
+| Retrieval (closed/short) | Standard mix for the lesson type | Majority | Dominant | Dominant | Dominant |
+| Vocabulary | Standard | 1–2 questions | 1–2 questions | 1 simple question | 1 simple question |
+| Basic inference (tick/circle) | Standard | 2 questions | 1 question | 1 question | 1 question |
+| Extended inference (written) | Standard | 1 short sentence | None | None | None |
+| Glossary | Rarely | If needed | Usually | Always | Always |
+| Total questions per lesson | 5 | 5 | 5 | 4 | 3–4 |
+| Lines per written answer | 2 | 2 | 1–2 | 1 | 1 |
+
+For `Y4-adapted`: the same 3-lesson single-skill structure as standard. Just simpler text and lighter question load (5 questions, 2 lines per written answer).
+
+### Question Format at Each Level
+
+**Y3:** Mix of short, tick_v, true_false, written (one sentence max). Avoid match, attrib_table, order. Evidence answers can be copied directly from text.
+
+**Y2:** tick_v, true_false, short (one-word or short phrase answers). Circle/underline options where possible. No written extended response. One fill or cloze question if appropriate.
+
+**Y1:** Tick only, circle, copy-out-the-word. No open writing. Questions use simple sentence structure: "Where did X go?" "Tick the word that means..." Maximum 4 questions per lesson to keep within page.
+
+**Ph3–5:** Tick, circle, copy one word/phrase. Maximum 3–4 questions. All question text written strictly within decodable vocabulary as far as possible, using tricky words only where unavoidable. Instructions kept very short.
+
+### Glossary Rules
+
+A glossary is a small boxed list at the top of the worksheet (or in a side column if space allows) defining words the child needs to understand the text but cannot decode or infer.
+
+- `Y1` and `Ph3–5`: always include a glossary
+- `Y2`: include if any content-specific words would otherwise block comprehension
+- `Y3`: include if needed (usually 1–2 words)
+- `Y4-adapted`: include only if the text uses a content-specific term with no context clue
+
+Format: **word** — one-sentence plain definition in language appropriate to the level.
+
+### Naming Convention
+
+- The pupil's **first name** appears in the header of their paper (same position as the date line). Example: `Amara — Vocabulary`
+- No label such as "supported", "adapted", "lower ability" or similar anywhere on the page
+- The paper is otherwise identical in layout to the standard paper — same header structure, same school colours, same font
+
+### Output per Pupil
+
+One PDF per named pupil containing their three lesson pages (in order: Lesson 1 / Lesson 2 / Lesson 3 as defined per their level tag). File name:
+
+```
+{TxWy} - Reader_{FirstName}.pdf    e.g. T5W2 - Reader_Amara.pdf
+```
+
+Include answers for all adapted versions in the All Answers PDF, grouped by pupil after the standard answers.
+
+---
+
 ## Step 3: Build the XLSX
 
 Read `/mnt/skills/public/xlsx/SKILL.md` first.
@@ -198,13 +295,13 @@ Read `/mnt/skills/public/pdf/SKILL.md` first. Use ReportLab. Each page **must fi
 
 ### Build Process
 
-Build **12 individual PDFs** (Standard + Supported + Answers × 3 lessons), check each is 1 page, then merge into 3 and delete individuals.
+Build individual PDFs for: Standard (3 pages) + each adapted pupil (3 pages each) + All Answers. Check each page fits on exactly one A4, then merge into final files and delete individuals.
 
 ```python
 from pypdf import PdfReader, PdfWriter
-# Merge: Standard = Voc_Std + Ret_Std + Inf_Std
-# Supported = Voc_Sup + Ret_Sup + Inf_Sup
-# All Answers = Voc_Std_Ans + Voc_Sup_Ans + Ret_Std_Ans + Ret_Sup_Ans + Inf_Std_Ans + Inf_Sup_Ans
+# Standard = Voc_Std + Ret_Std + Inf_Std
+# Reader_{FirstName} = Lesson1_{Name} + Lesson2_{Name} + Lesson3_{Name}  (per pupil)
+# All Answers = Voc_Std_Ans + [Voc_{Name}_Ans ...] + Ret_Std_Ans + [Ret_{Name}_Ans ...] + Inf_Std_Ans + [Inf_{Name}_Ans ...]
 ```
 
 ### Page Dimensions
@@ -285,7 +382,7 @@ Then below the header line (with thin divider):
 
 ### Text Extract Box
 
-Rounded-corner bordered box. Border #2c2c6c, bg #f0f0f8. Font: Helvetica 10.5pt. Single flowing paragraph. Approx 30–35mm tall for standard text, 22–27mm for supported.
+Rounded-corner bordered box. Border #2c2c6c, bg #f0f0f8. Font: Helvetica 10.5pt. Single flowing paragraph. Approx 30–35mm tall for standard text, 22–27mm for adapted (Y4-adapted/Y3); shorter texts for Y2 and below will naturally take less space.
 
 ### Question Rendering Rules — EXACT (do not vary)
 
@@ -308,7 +405,7 @@ def answer_lines(c, y, n, gap=6.5*mm):
     return y - n * gap - 2*mm
 ```
 
-Standard: 3 lines per written question. Supported: 2 lines.
+Standard: 3 lines per written question. Adapted: 2 lines (Y4-adapted / Y3); 1 line (Y2); none or 1 (Y1 / Ph).
 
 **Inter-question spacing:** Allow ~3–4mm between bottom of one question block and top of the next question label. After `render_question()` return `y - 3*mm`. After MC tables add an extra 1mm. After match tables add an extra 1mm.
 
@@ -566,11 +663,11 @@ Run these checks before delivering:
 {TxWy} - ReaderTeaching.pptx        e.g. T5W2 - ReaderTeaching.pptx
 {TxWy} - ReaderData.xlsx            e.g. T5W2 - ReaderData.xlsx
 {TxWy} - ReaderStandard.pdf         e.g. T5W2 - ReaderStandard.pdf
-{TxWy} - ReaderSupported.pdf        e.g. T5W2 - ReaderSupported.pdf
+{TxWy} - Reader_{FirstName}.pdf     e.g. T5W2 - Reader_Amara.pdf   (one per adapted pupil)
 {TxWy} - ReaderAnswers.pdf          e.g. T5W2 - ReaderAnswers.pdf
 ```
 
-Copy all 5 to `/mnt/user-data/outputs/` and use `present_files`.
+Copy all files to `/mnt/user-data/outputs/` and use `present_files`.
 
 ---
 
