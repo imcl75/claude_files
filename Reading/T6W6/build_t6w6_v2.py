@@ -662,11 +662,18 @@ def render_question(c, q, y, is_answer=False, n_lines=3, min_y=20*mm):
 # ── build_page ──────────────────────────────────────────────────────────────
 
 def build_page(path, lesson_type, text, questions, date_str, is_answer,
-               n_lines=3, pupil_name=None, glossary=None, text_font_size=10.5):
+               n_lines=3, pupil_name=None, glossary=None, text_font_size=10.5,
+               level_ll=None):
+    """level_ll: dict with 'lf','sc1','sc2' keys, or None to use lesson default."""
     c = canvas.Canvas(path, pagesize=A4)
     c.setFillColorRGB(*DARK)
-    y = draw_header(c, lesson_type, date_str, KEY_Q,
-                    LF[lesson_type], ICAN[lesson_type][0], ICAN[lesson_type][1],
+    if level_ll:
+        lf, sc1, sc2 = level_ll["lf"], level_ll["sc1"], level_ll["sc2"]
+    else:
+        lf  = LF[lesson_type]
+        sc1 = ICAN[lesson_type][0]
+        sc2 = ICAN[lesson_type][1]
+    y = draw_header(c, lesson_type, date_str, KEY_Q, lf, sc1, sc2,
                     pupil_name=pupil_name)
     if glossary:
         gtext, gimgs = glossary if isinstance(glossary, tuple) else (glossary, None)
@@ -779,13 +786,14 @@ for pupil in all_adapted:
         date = DATES[lesson]
         gloss = get_glossary(level, lesson)   # returns (text, imgs) tuple
         fs = TEXT_FONT_SIZE.get(level, 10.5)
+        ll = LEVEL_LL.get(level)              # level-specific learning labels
         p = f"{WORK}/{name}_{lesson}_pupil.pdf"
         build_page(p, lesson, text, qs, date, False, nl,
-                   pupil_name=name, glossary=gloss, text_font_size=fs)
+                   pupil_name=name, glossary=gloss, text_font_size=fs, level_ll=ll)
         pages_p.append(p)
         a = f"{WORK}/{name}_{lesson}_ans.pdf"
         build_page(a, lesson, text, qs, date, True, nl,
-                   pupil_name=name, glossary=gloss, text_font_size=fs)
+                   pupil_name=name, glossary=gloss, text_font_size=fs, level_ll=ll)
         pages_a.append(a)
     adapted_pupil_pages[name] = pages_p
     adapted_ans_pages[name]   = pages_a
