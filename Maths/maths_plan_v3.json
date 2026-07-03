@@ -28,7 +28,8 @@
     "Fractions": "How can a fraction be greater than one whole?",
     "Statistics": "What can a graph or chart tell us that a list of numbers cannot?",
     "End of year consolidation": "How do we tackle a problem we have never seen before?",
-    "Multistep problems \u2014 all 4 operations": "How do we decide which operation to use \u2014 and in what order?"
+    "Multistep problems \u2014 all 4 operations": "How do we decide which operation to use \u2014 and in what order?",
+    "Statistics cont. + consolidation": "How do we decide which calculation a statistics question is asking for?"
   },
   "lessons": [
     {
@@ -2424,77 +2425,107 @@
       "topic": "Statistics",
       "li": "Pupils draw and label accurate line graphs from a given data set.",
       "vocabularyFocus": [
-        "plot",
-        "label",
         "axis",
+        "axes",
+        "dataset",
+        "plot",
         "scale",
+        "label",
         "title",
-        "interval",
-        "join",
-        "point",
-        "accurate",
-        "data set"
+        "trend"
       ],
+      "keyQuestion": "How do we turn a table of data into a clear and accurate line graph?",
+      "loText": {
+        "walt": "\u2026draw an accurate line graph from a given data set.",
+        "tiob": "\u2026a well-drawn line graph shows the same data as a table but makes trends visible at a glance.",
+        "iwstb": "\u2026setting up axes with a suitable scale, plotting each data point as a cross, and joining consecutive points with straight lines."
+      },
       "cycle1": {
         "focus": "Setting up axes and choosing a scale",
         "ido": [
-          "Model: given a data set 0\u2013350, choose scale of 50. Label both axes including units. Draw and label the y-axis.",
-          "Common errors: not starting scale at 0, unequal intervals, missing axis labels."
+          "Model choosing a scale for Bristol monthly rainfall. Ask: what is the highest value? Round up to 100. Show labelling both axes with title and units.",
+          "Spot the Mistake \u2014 wrong scale (too small, data doesn\u2019t fit)."
         ],
         "slideTitles": {
           "ido": [
-            "Setting up the axes",
-            "Common errors \u2014 scale and labels"
+            "Setting up axes \u2014 choosing the right scale",
+            "Spot the mistake"
           ],
           "wedo": [
-            "Together \u2014 draw the axes"
+            "Together \u2014 check the scale"
           ],
           "trios": [
-            "Trios \u2014 scale decisions"
+            "Trios \u2014 plan your axes"
           ],
           "independent": [
-            "Independent \u2014 set up and start"
+            "Independent \u2014 axes and scale check"
           ]
         },
         "slideCount": {
           "ido": 2,
           "wedo": 1,
           "trios": 1,
-          "independent": 1
-        }
+          "independent": 0
+        },
+        "trios": {
+          "task": "Look at the Bristol rainfall data. Decide together: what scale will you use for the y-axis? What steps? Write your decisions and reasons before drawing anything.",
+          "challenge": "If you had to show both Bristol and Manaus rainfall on the same graph, what scale would you need? Would the Bristol data still be clear?"
+        },
+        "independent": {
+          "standard": "Complete LP1 \u2014 use the data table to draw the Bristol rainfall line graph.",
+          "supported": "Complete LP1 adapted \u2014 the scale is already labelled. Plot each cross and join the points.",
+          "stretch": "Going further \u2014 on the back, write three statements about the trend your graph shows."
+        },
+        "trios_charts": [
+          "c1_ido1"
+        ]
       },
       "cycle2": {
         "focus": "Plotting points and joining with a line",
         "ido": [
-          "Model plotting each data point accurately. Join with a ruler. Check: does the line make sense?"
+          "Model plotting Manaus rainfall: mark each point as a cross, then join consecutive points with straight lines one at a time.",
+          "Spot the Mistake \u2014 smooth curve instead of straight-line segments."
         ],
         "slideTitles": {
           "ido": [
-            "Plot, join, check"
+            "Plotting points and joining with a line",
+            "Spot the mistake"
           ],
           "wedo": [
-            "Together \u2014 complete the graph"
+            "Together \u2014 plot and join"
           ],
           "trios": [
-            "Trios \u2014 check each other's graph"
+            "Trios \u2014 draw and compare"
           ],
           "independent": [
-            "Independent \u2014 complete the line graph"
+            "Independent \u2014 complete the graph"
           ]
         },
         "slideCount": {
-          "ido": 1,
+          "ido": 2,
           "wedo": 1,
           "trios": 1,
-          "independent": 1
-        }
+          "independent": 0
+        },
+        "trios": {
+          "task": "Draw the Manaus rainfall graph on LP2. Then write two statements comparing the Bristol and Manaus trends. Which city has greater variation?",
+          "challenge": "In which months are Bristol and Manaus most similar in rainfall? Use your graph to support your answer."
+        },
+        "independent": {
+          "standard": "Complete LP2 \u2014 draw the Rio de Janeiro rainfall line graph and answer the questions.",
+          "supported": "Complete LP2 adapted \u2014 axes are provided. Plot the points and join them.",
+          "stretch": "Going further \u2014 compare Rio and Manaus. Which shows greater change across the six months?"
+        },
+        "trios_charts": [
+          "c2_ido1"
+        ]
       },
       "spotTheMistake": {
         "slideTitle": "Spot the mistake",
-        "concept": "Unequal intervals on the y-axis",
-        "errorType": "unequal_scale_intervals",
-        "errorInstruction": "A pupil drew a line graph with y-axis labels: 0, 10, 20, 35, 50.",
-        "errorNote": "The gaps between labels are not equal (10, 10, 15, 15). This distorts the graph \u2014 the line will look steeper or flatter than the data actually shows. Intervals must be equal.",
+        "concept": "Scale too small \u2014 highest data value does not fit on the y-axis",
+        "errorType": "scale_too_small",
+        "errorInstruction": "A pupil draws a y-axis from 0 to 50mm in steps of 10. Their highest data value is 89mm.",
+        "errorNote": "The scale ends at 50mm but the data reaches 89mm. The scale must go to at least 90mm \u2014 use 0\u2013100 in steps of 10.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -2503,109 +2534,133 @@
         "extraPoints": [],
         "calcDisplay": {
           "type": "word_problem",
-          "correctAnswer": "Use equal intervals: 0, 10, 20, 30, 40, 50",
-          "errorAnswer": "0, 10, 20, 35, 50"
+          "correctAnswer": "",
+          "errorAnswer": ""
         }
-      },
-      "loText": {
-        "walt": "\u2026draw and label an accurate line graph from a data set.",
-        "tiob": "\u2026drawing accurate graphs requires careful decisions about scale and labelling \u2014 a poorly scaled graph gives the wrong impression of the data.",
-        "iwstb": "\u2026choosing an appropriate scale, labelling both axes including units, plotting points accurately, and joining them with a straight line."
       },
       "lp1": {
         "topic": "Statistics",
-        "task": "Draw a line graph from a given data set; label fully.",
-        "questions": 1
+        "task": "Draw a line graph from the Bristol rainfall data table.",
+        "questions": 2
       },
       "lp2": {
         "topic": "Statistics",
-        "task": "Draw a line graph and write two observations about the trend.",
+        "task": "Draw a line graph from the Rio de Janeiro rainfall data table.",
         "questions": 2
       },
       "learningReviewStems": [
         "I chose my scale by\u2026",
-        "A label I mustn't forget is\u2026",
-        "My graph shows that\u2026"
+        "Joining points with straight lines matters because\u2026",
+        "The trend my graph shows is\u2026"
       ]
     },
     {
       "lesson": 21,
       "week": "T6W6",
       "weekIndex": 6,
-      "day": "Tuesday",
-      "topic": "Statistics cont. + consolidation",
-      "li": "Pupils answer mixed reasoning questions drawing on statistics and calculation.",
+      "day": "Wednesday",
+      "topic": "Statistics",
+      "li": "Pupils answer multi-step reasoning questions using data from bar charts and tables.",
       "vocabularyFocus": [
-        "interpret",
-        "calculate",
-        "reason",
-        "justify",
-        "total",
+        "multi-step",
+        "evidence",
+        "operation",
+        "sum",
         "difference",
-        "average",
-        "efficient",
-        "explain"
+        "total",
+        "calculate"
       ],
+      "keyQuestion": "How do we decide which calculation a statistics question is asking for?",
+      "loText": {
+        "walt": "\u2026use data from bar charts and tables to answer multi-step reasoning questions.",
+        "tiob": "\u2026reading a chart correctly is only half the work \u2014 we also need to choose the right calculation.",
+        "iwstb": "\u2026identifying whether a question asks for a sum or difference, reading values carefully, and showing the calculation clearly."
+      },
       "cycle1": {
-        "focus": "Combining reading data with calculation",
+        "focus": "Reading a bar chart and calculating",
         "ido": [
-          "Show a bar chart. Q: 'What is the total of the three highest categories?' \u2014 read three values then add.",
-          "Q: 'How many more than the lowest category does the highest have?' \u2014 read then subtract."
+          "Bar chart: WFA Sports Day points. Model reading values then calculating sum and difference.",
+          "Spot the Mistake \u2014 pupil adds instead of subtracts for a 'how many more' question."
         ],
         "slideTitles": {
           "ido": [
-            "Read then calculate",
-            "Sum of the top three"
+            "Sports Day \u2014 reading and calculating",
+            "Spot the mistake"
           ],
           "wedo": [
-            "Together \u2014 read then calculate"
+            "Together \u2014 read, then calculate"
           ],
           "trios": [
-            "Trios \u2014 write your own question"
+            "Trios \u2014 write the calculation"
           ],
           "independent": [
-            "Independent \u2014 mixed questions"
+            "Independent \u2014 bar chart questions"
           ]
         },
         "slideCount": {
           "ido": 2,
           "wedo": 1,
           "trios": 1,
-          "independent": 1
-        }
+          "independent": 0
+        },
+        "trios": {
+          "task": "Look at the Sports Day bar chart. Write one sum statement and one difference statement using data from the chart. Show the calculation for each.",
+          "challenge": "If Year 4 scores 10 more points next year, what would the new total for all year groups be? Show every step."
+        },
+        "independent": {
+          "standard": "Complete LP1 \u2014 three questions using the Sports Day bar chart.",
+          "supported": "Complete LP1 adapted \u2014 use the sentence frames to structure each answer.",
+          "stretch": "Going further on LP1 \u2014 which two year groups together scored exactly the same as the other two combined? Prove it."
+        },
+        "trios_charts": [
+          "c1_ido1"
+        ]
       },
       "cycle2": {
-        "focus": "Multi-step reasoning from statistics",
+        "focus": "Multi-step reasoning from a table",
         "ido": [
-          "Show a table of weekly sales. Q: 'Which week had the greatest increase from the week before?' \u2014 calculate differences between adjacent values."
+          "Library books two-way table. Model reading rows and columns, then calculating total and difference across categories."
         ],
         "slideTitles": {
           "ido": [
-            "Greatest increase \u2014 find the differences"
+            "Library books \u2014 reading a two-way table",
+            "Spot the mistake"
           ],
           "wedo": [
-            "Together \u2014 week-to-week changes"
+            "Together \u2014 table reading and calculation"
           ],
           "trios": [
-            "Trios \u2014 data reasoning"
+            "Trios \u2014 find the evidence"
           ],
           "independent": [
-            "Independent \u2014 reasoning questions"
+            "Independent \u2014 table questions"
           ]
         },
         "slideCount": {
-          "ido": 1,
+          "ido": 2,
           "wedo": 1,
           "trios": 1,
-          "independent": 1
-        }
+          "independent": 0
+        },
+        "trios": {
+          "task": "Look at the library table. Write one statement comparing two classes and one statement using the totals row. Each must include a calculation.",
+          "challenge": "Which class borrowed the highest proportion of non-fiction books? Show how you worked it out."
+        },
+        "independent": {
+          "standard": "Complete LP2 \u2014 four questions using the library table.",
+          "supported": "Complete LP2 adapted \u2014 use the row/column hints to find each value.",
+          "stretch": "Going further on LP2 \u2014 write your own question using the table. Swap with a partner and answer theirs."
+        },
+        "trios_charts": [
+          "c2_ido1"
+        ]
       },
       "spotTheMistake": {
         "slideTitle": "Spot the mistake",
-        "concept": "Using the wrong column from a table",
-        "errorType": "wrong_table_column",
-        "errorInstruction": "The table shows Monday: 145, Tuesday: 210, Wednesday: 185. What is the total for the week?",
-        "errorNote": "The answer shown is 540 \u2014 the pupil added 145 + 210 + 185 = 540, which is the correct method. A common error: adding Monday + Wednesday only (145 + 185 = 330) and missing Tuesday. Always check you have used every row.",
+        "concept": "Adding instead of subtracting for a 'how many more' question",
+        "errorType": "wrong_operation",
+        "errorInstruction": "Year 4 scored 34 points. Year 3 scored 28 points. How many MORE did Year 4 score?",
+        "errorNote": "The pupil wrote 34 + 28 = 62. 'How many more' means difference = subtract: 34 \u2212 28 = 6.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -2614,107 +2669,132 @@
         "extraPoints": [],
         "calcDisplay": {
           "type": "word_problem",
-          "correctAnswer": "540",
-          "note": "Check every row is included before adding."
+          "correctAnswer": "",
+          "errorAnswer": ""
         }
-      },
-      "loText": {
-        "walt": "\u2026answer mixed questions that combine reading from a chart or table with calculation.",
-        "tiob": "\u2026statistics and calculation go together: data gives us numbers and calculation turns those numbers into answers to real questions.",
-        "iwstb": "\u2026reading values from charts or tables accurately, then applying addition, subtraction, multiplication or division to find answers."
       },
       "lp1": {
         "topic": "Statistics",
-        "task": "Six mixed questions from a bar chart: reading, sum, difference, reasoning.",
-        "questions": 6
+        "task": "Three multi-step questions from the Sports Day bar chart.",
+        "questions": 3
       },
       "lp2": {
         "topic": "Statistics",
-        "task": "Four multi-step reasoning questions from a table.",
+        "task": "Four reasoning questions from the library two-way table.",
         "questions": 4
       },
       "learningReviewStems": [
-        "I read the data first by\u2026",
-        "The calculation I chose was\u2026",
-        "I justified my answer by\u2026"
+        "I knew this was a difference question because\u2026",
+        "To find the total I\u2026",
+        "Evidence from the data that supports my answer\u2026"
       ]
     },
     {
       "lesson": 22,
       "week": "T6W6",
       "weekIndex": 6,
-      "day": "Wednesday",
-      "topic": "Statistics cont. + consolidation",
-      "li": "Pupils draw conclusions and spot trends across multiple data representations.",
+      "day": "Thursday",
+      "topic": "Statistics",
+      "li": "Pupils describe trends and make connections between different data representations.",
       "vocabularyFocus": [
         "trend",
-        "conclusion",
-        "increase",
-        "decrease",
-        "steady",
-        "sudden",
-        "comparison",
         "represent",
-        "data set"
+        "increase",
+        "connection",
+        "overall",
+        "compare"
       ],
+      "keyQuestion": "What does a line graph show that a table makes harder to see \u2014 and vice versa?",
+      "loText": {
+        "walt": "\u2026describe trends in data and connect two different representations of the same data.",
+        "tiob": "\u2026different representations serve different purposes \u2014 a graph makes trends visible instantly, a table gives exact values and differences.",
+        "iwstb": "\u2026describing the overall trend in a line graph or table, and explaining what each representation makes easier or harder to see."
+      },
       "cycle1": {
         "focus": "Spotting and describing trends",
         "ido": [
-          "Show a line graph of plant growth over 6 weeks. Q: 'When did the plant grow fastest?' 'Is growth speeding up or slowing down?' Model how to describe."
+          "Line graph: city park visitors Jan\u2013Jun. Model how to describe the trend in a full sentence. Identify the biggest single increase.",
+          "Spot the Mistake \u2014 pupil describes an increasing trend as 'stays the same'."
         ],
         "slideTitles": {
           "ido": [
-            "Describing trends \u2014 faster, slower, steady"
+            "Spotting a trend \u2014 park visitors",
+            "Spot the mistake"
           ],
           "wedo": [
             "Together \u2014 describe the trend"
           ],
           "trios": [
-            "Trios \u2014 three trend statements"
+            "Trios \u2014 write the trend statement"
           ],
           "independent": [
-            "Independent \u2014 trend questions"
+            "Independent \u2014 line graph questions"
           ]
         },
         "slideCount": {
-          "ido": 1,
+          "ido": 2,
           "wedo": 1,
           "trios": 1,
-          "independent": 1
-        }
+          "independent": 0
+        },
+        "trios": {
+          "task": "Look at the park visitors line graph. Write one sentence describing the overall trend. Then write one sentence about the biggest change and one about the smallest change.",
+          "challenge": "Predict what the number of visitors might be in July. Explain your reasoning using the trend."
+        },
+        "independent": {
+          "standard": "Complete LP1 \u2014 three questions about the park visitors line graph.",
+          "supported": "Complete LP1 adapted \u2014 use the sentence frame to help describe the trend.",
+          "stretch": "Going further \u2014 write a question about the graph that requires estimating a value for July."
+        },
+        "trios_charts": [
+          "c1_ido1"
+        ]
       },
       "cycle2": {
         "focus": "Connecting two representations of the same data",
         "ido": [
-          "Show the same data as both a table and a line graph. Q: 'What does the line graph show that the table doesn't?' 'What does the table show that the graph doesn't?'"
+          "Show the park visitors data as a table with a Change column. What does the table add that the graph doesn\u2019t show directly? What does the graph show better?"
         ],
         "slideTitles": {
           "ido": [
-            "Two representations \u2014 what's different?"
+            "The same data \u2014 table and line graph",
+            "Spot the mistake"
           ],
           "wedo": [
-            "Together \u2014 table and graph"
+            "Together \u2014 what can each show?"
           ],
           "trios": [
-            "Trios \u2014 which is better?"
+            "Trios \u2014 compare the two representations"
           ],
           "independent": [
-            "Independent \u2014 compare representations"
+            "Independent \u2014 table questions"
           ]
         },
         "slideCount": {
-          "ido": 1,
+          "ido": 2,
           "wedo": 1,
           "trios": 1,
-          "independent": 1
-        }
+          "independent": 0
+        },
+        "trios": {
+          "task": "You have both the line graph and the table for park visitors. Write: one thing the line graph shows more clearly, and one thing the table shows more clearly. Be specific \u2014 give an example using the data.",
+          "challenge": "A friend says: 'I only need the table \u2014 I can work everything out from it.' Do you agree? Write your answer using evidence."
+        },
+        "independent": {
+          "standard": "Complete LP2 \u2014 four questions using the park visitors table.",
+          "supported": "Complete LP2 adapted \u2014 use the highlighting hints to find each value.",
+          "stretch": "Going further \u2014 add a 'cumulative total' column to the table. What does this tell you?"
+        },
+        "trios_charts": [
+          "c2_ido1"
+        ]
       },
       "spotTheMistake": {
         "slideTitle": "Spot the mistake",
-        "concept": "Describing a trend as a single event rather than a pattern",
-        "errorType": "point_vs_trend",
-        "errorInstruction": "The line graph shows sales increase each month. Describe the trend.",
-        "errorNote": "The answer shown is 'Sales were highest in December' \u2014 that is a fact, not a trend. A trend describes what happens over time: 'Sales increased steadily throughout the year, with the largest rise in the last quarter.'",
+        "concept": "Thinking you need a line graph to describe a trend \u2014 misunderstanding what a table can show",
+        "errorType": "representation_confusion",
+        "errorInstruction": "Describe the trend in this data: Jan 120, Feb 140, Mar 190, Apr 280, May 350, Jun 420.",
+        "errorNote": "You don\u2019t need a line graph. Look at whether values go up or down row by row. All values increase \u2014 the trend is increasing.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -2723,107 +2803,132 @@
         "extraPoints": [],
         "calcDisplay": {
           "type": "word_problem",
-          "correctAnswer": "Sales increased steadily over the year.",
-          "errorAnswer": "Sales were highest in December."
+          "correctAnswer": "",
+          "errorAnswer": ""
         }
-      },
-      "loText": {
-        "walt": "\u2026draw conclusions and describe trends using information from line graphs and tables.",
-        "tiob": "\u2026data becomes useful when we can draw conclusions from it, not just read individual values.",
-        "iwstb": "\u2026describing what a line graph shows over time, comparing two representations, and writing a clear trend statement."
       },
       "lp1": {
         "topic": "Statistics",
-        "task": "Trend questions from a line graph; write three trend statements.",
+        "task": "Three questions about the park visitors line graph.",
         "questions": 3
       },
       "lp2": {
         "topic": "Statistics",
-        "task": "Two representations of the same data \u2014 comparison and conclusion questions.",
+        "task": "Four questions connecting the line graph and table representations.",
         "questions": 4
       },
       "learningReviewStems": [
-        "A trend is different from a single fact because\u2026",
-        "I described the trend by\u2026",
-        "Two representations I compared were\u2026"
+        "A trend I spotted was\u2026",
+        "The line graph makes it easier to see\u2026",
+        "The table makes it easier to see\u2026"
       ]
     },
     {
       "lesson": 23,
       "week": "T6W6",
       "weekIndex": 6,
-      "day": "Thursday",
-      "topic": "Statistics cont. + consolidation",
+      "day": "Friday",
+      "topic": "Statistics",
       "li": "Pupils solve mixed problems drawing on statistics and calculation across multiple question types.",
       "vocabularyFocus": [
-        "consolidate",
-        "multi-step",
-        "interpret",
-        "calculate",
-        "justify",
-        "explain",
-        "data",
-        "chart",
-        "table"
+        "survey",
+        "frequency",
+        "conclude",
+        "total",
+        "difference",
+        "evidence"
       ],
+      "keyQuestion": "How do we tackle a statistics question we haven\u2019t seen before?",
+      "loText": {
+        "walt": "\u2026solve mixed statistics problems using data from different chart types.",
+        "tiob": "\u2026strong readers of data can switch between chart types and question types without being thrown by the format.",
+        "iwstb": "\u2026reading values accurately from double bar charts and bar charts, choosing the correct calculation, and showing working clearly."
+      },
       "cycle1": {
-        "focus": "Consolidation \u2014 statistics and calculation mixed",
+        "focus": "Double bar chart \u2014 sum and difference across series",
         "ido": [
-          "Model a complex problem: a table of monthly income. 'What was the total for the first quarter? How much more was earned in summer than in spring? What fraction of annual income came in December?'"
+          "Double bar chart: Maple class books read, Term 5 vs Term 6. Model reading two series, calculating total per term, finding increase/decrease per category.",
+          "Spot the Mistake \u2014 pupil subtracts instead of adding for a 'total across both terms' question."
         ],
         "slideTitles": {
           "ido": [
-            "Consolidation \u2014 layered questions from data"
+            "Comparing two data sets \u2014 books read",
+            "Spot the mistake"
           ],
           "wedo": [
-            "Together \u2014 work through the layers"
+            "Together \u2014 sum across series"
           ],
           "trios": [
-            "Trios \u2014 create a question"
+            "Trios \u2014 multi-step challenge"
           ],
           "independent": [
-            "Independent \u2014 full challenge"
+            "Independent \u2014 double bar chart questions"
           ]
         },
         "slideCount": {
-          "ido": 1,
+          "ido": 2,
           "wedo": 1,
           "trios": 1,
-          "independent": 1
-        }
+          "independent": 0
+        },
+        "trios": {
+          "task": "Look at the double bar chart. Calculate the total for each term. Then find which category changed the most and which changed the least. Show every calculation.",
+          "challenge": "If the class sets a target of reading 40 books per term next year, how many more books per category would they need to read on average?"
+        },
+        "independent": {
+          "standard": "Complete LP1 \u2014 three questions using the double bar chart.",
+          "supported": "Complete LP1 adapted \u2014 the term totals are started for you.",
+          "stretch": "Going further \u2014 write a statement saying which term showed better reading habits and why, using data to support it."
+        },
+        "trios_charts": [
+          "c1_ido1"
+        ]
       },
       "cycle2": {
-        "focus": "Justify and explain \u2014 statistics reasoning",
+        "focus": "Mixed consolidation \u2014 bar chart and calculation",
         "ido": [
-          "Show a claim: 'The data shows that Wednesdays are always the busiest day.' Pupils decide if the data supports this claim."
+          "Tuck shop bar chart. Model reading values then calculating: sum, difference, and a money calculation (quantity \u00d7 price)."
         ],
         "slideTitles": {
           "ido": [
-            "Does the data support the claim?"
+            "Tuck shop totals \u2014 reading and calculating",
+            "Spot the mistake"
           ],
           "wedo": [
-            "Together \u2014 agree or disagree?"
+            "Together \u2014 calculate from the chart"
           ],
           "trios": [
-            "Trios \u2014 evidence from data"
+            "Trios \u2014 the hardest question"
           ],
           "independent": [
-            "Independent \u2014 support or challenge"
+            "Independent \u2014 mixed statistics challenge"
           ]
         },
         "slideCount": {
-          "ido": 1,
+          "ido": 2,
           "wedo": 1,
           "trios": 1,
-          "independent": 1
-        }
+          "independent": 0
+        },
+        "trios": {
+          "task": "Look at the tuck shop bar chart. Set each other a challenge: one sum question, one difference question, and one question that combines the chart with a money calculation. Show the answers.",
+          "challenge": "The tuck shop wants to raise \u00a350. Which single item, if its price doubled, would get closest to this target? Show your reasoning."
+        },
+        "independent": {
+          "standard": "Complete LP2 \u2014 four questions using the tuck shop bar chart.",
+          "supported": "Complete LP2 adapted \u2014 the calculation type is labelled for each question.",
+          "stretch": "Going further on LP2 \u2014 write your own question that uses data from the chart AND involves money. Show the full solution."
+        },
+        "trios_charts": [
+          "c2_ido1"
+        ]
       },
       "spotTheMistake": {
         "slideTitle": "Spot the mistake",
-        "concept": "Making a conclusion that goes beyond what the data shows",
-        "errorType": "overinterpretation",
-        "errorInstruction": "A bar chart shows Year 4 sold the most cakes. A pupil writes: 'Year 4 are always the best at fundraising.'",
-        "errorNote": "The data shows one event. 'Always' goes beyond the evidence. Write only what the data shows: 'In this sale, Year 4 sold the most cakes.'",
+        "concept": "Subtracting instead of adding for a 'total across both' question",
+        "errorType": "wrong_operation",
+        "errorInstruction": "Fiction books: Term 5 = 11, Term 6 = 15. How many fiction books in total across both terms?",
+        "errorNote": "Total across both = sum: 11 + 15 = 26. The pupil subtracted (15 \u2212 11 = 4). 'Total' = add; 'more than' = subtract.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -2832,29 +2937,24 @@
         "extraPoints": [],
         "calcDisplay": {
           "type": "word_problem",
-          "correctAnswer": "In this sale, Year 4 sold the most cakes.",
-          "errorAnswer": "Year 4 are always the best at fundraising."
+          "correctAnswer": "",
+          "errorAnswer": ""
         }
-      },
-      "loText": {
-        "walt": "\u2026solve mixed problems that combine interpreting data with multi-step calculation.",
-        "tiob": "\u2026combining statistics skills with calculation gives us a full toolkit for answering complex data questions.",
-        "iwstb": "\u2026reading data accurately, selecting the right calculations, showing clear working, and writing conclusions that stay close to the evidence."
       },
       "lp1": {
         "topic": "Statistics",
-        "task": "A layered set of questions from one data source.",
-        "questions": 5
+        "task": "Three questions using the double bar chart.",
+        "questions": 3
       },
       "lp2": {
         "topic": "Statistics",
-        "task": "Justify or challenge a claim using data evidence.",
-        "questions": 2
+        "task": "Four mixed questions including a money calculation.",
+        "questions": 4
       },
       "learningReviewStems": [
-        "I used the data to show\u2026",
-        "My conclusion was supported by\u2026",
-        "I made sure not to go beyond the data by\u2026"
+        "I knew which operation to use because\u2026",
+        "A conclusion I can draw from the data is\u2026",
+        "The question type I find hardest is\u2026 because\u2026"
       ]
     },
     {
