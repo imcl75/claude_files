@@ -384,17 +384,365 @@ LP = {
     },
 },
 }
-DAYS = {17: 'Monday', 18: 'Tuesday', 19: 'Wednesday'}
+
+# ── T6W6 LP data ──────────────────────────────────────────────────────────────
+LP.update({
+20: {
+    'date': '06/07/2026', 'topic': 'Statistics',
+    'lf':   'LF: To draw an accurate line graph from a given data set.',
+    'ican': ['I can choose a suitable scale and label both axes.',
+             'I can plot data points and join them with straight lines.'],
+    'lp1': {
+        'lp_type': 'draw_graph',
+        'intro': 'Use the data in the table to draw a line graph in the space on the right.',
+        'table_headers': ['Month', 'Rainfall (mm)'],
+        'table_rows': [['Jan', 89], ['Feb', 71], ['Mar', 58],
+                       ['Apr', 48], ['May', 52], ['Jun', 45]],
+        'ax': {
+            'x_labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            'y_min': 0, 'y_max': 100, 'y_step': 10,
+            'x_label': 'Month', 'y_label': 'Rainfall (mm)',
+            'title_prompt': 'Give your graph a title:',
+            'ms_values': [89, 71, 58, 48, 52, 45],
+        },
+        'instructions': [
+            '1.  Check the scale — what does each grid line represent?',
+            '2.  Plot each cross (×) at the correct height.',
+            '3.  Join the points with straight lines — one segment at a time.',
+            '4.  Write a title and label both axes.',
+        ],
+        'qs': [
+            ('What is the wettest month shown?',  'January — 89mm'),
+            ('How much less rain falls in June than in January?',
+             '89 − 45 = 44mm less'),
+        ],
+    },
+    'lp2': {
+        'lp_type': 'draw_graph',
+        'intro': 'Use the data below to draw a line graph.  Choose your own scale.',
+        'table_headers': ['Month', 'Rainfall (mm)'],
+        'table_rows': [['Jan', 130], ['Feb', 120], ['Mar', 100],
+                       ['Apr', 80],  ['May', 50],  ['Jun', 40]],
+        'ax': {
+            'x_labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            'y_min': 0, 'y_max': 150, 'y_step': 25,
+            'x_label': 'Month', 'y_label': 'Rainfall (mm)',
+            'title_prompt': 'Give your graph a title:',
+            'ms_values': [130, 120, 100, 80, 50, 40],
+        },
+        'instructions': [
+            '1.  Find the highest value — what scale do you need?',
+            '2.  Label the y-axis in equal steps.',
+            '3.  Plot each point carefully and join with straight lines.',
+        ],
+        'qs': [
+            ('Which month has the most rainfall?',     'January — 130mm'),
+            ('Describe the trend from January to June.',
+             'Rainfall falls every month — a clear downward trend.'),
+        ],
+    },
+},
+21: {
+    'date': '08/07/2026', 'topic': 'Statistics',
+    'lf':   'LF: To answer reasoning questions using data from bar charts and tables.',
+    'ican': ['I can identify the correct calculation from a bar chart or table.',
+             'I can calculate sums and differences to answer multi-step questions.'],
+    'lp1': {
+        'chart': 'c1_ido1_bar_chart.png',
+        'chart_label': 'WFA Sports Day — points by year group',
+        'intro': 'Use the bar chart to answer the questions.',
+        'qs': [
+            ('How many points did Year 4 and Year 5 score altogether?',
+             '34 + 31 = 65 points'),
+            ('How many fewer points did Year 3 score than Year 6?',
+             '37 − 28 = 9 fewer points'),
+            ('What is the total for all four year groups?',
+             '28 + 34 + 31 + 37 = 130 points'),
+        ],
+    },
+    'lp2': {
+        'chart': 'c2_ido1_table.png',
+        'chart_label': 'Books borrowed from WFA library — Spring term',
+        'intro': 'Use the table to answer the questions.',
+        'qs': [
+            ('How many books did Maple class borrow altogether?',
+             '45 + 23 = 68 books'),
+            ('Which class borrowed more non-fiction — Hazel or Elm?',
+             'Elm — 42 vs 31'),
+            ('How many more fiction books were borrowed than non-fiction in total?',
+             '112 − 96 = 16 more fiction books'),
+            ('Write a statement comparing Maple and Hazel class totals.',
+             'Any valid statement using 68 and 69.'),
+        ],
+    },
+},
+22: {
+    'date': '09/07/2026', 'topic': 'Statistics',
+    'lf':   'LF: To describe trends and connect different data representations.',
+    'ican': ['I can describe the overall trend shown by a line graph or table.',
+             'I can compare what different representations show about the same data.'],
+    'lp1': {
+        'chart': 'c1_ido1_line_graph.png',
+        'chart_label': 'Visitors to a city park — Jan to Jun',
+        'intro': 'Use the line graph to answer the questions.',
+        'qs': [
+            ('How many visitors came in February?',
+             '140 visitors'),
+            ('Between which two months did visitor numbers increase the most?',
+             'March to April — increased by 90'),
+            ('Describe the overall trend from January to June.',
+             'Visitor numbers increased every month — a clear upward trend.'),
+        ],
+    },
+    'lp2': {
+        'chart': 'c2_ido1_table.png',
+        'chart_label': 'Park visitors — monthly data with changes',
+        'intro': 'Use the table to answer the questions.',
+        'qs': [
+            ('In which month did the change from the previous month first reach +70?',
+             'May — change was +70'),
+            ('What does the Change column tell you that the Visitors column alone does not?',
+             'Exactly how much numbers went up or down each month.'),
+            ('Could you describe the overall trend from this table?  How?',
+             'Yes — look at whether visitor numbers go up or down from row to row.'),
+            ('Which representation makes it easier to see the trend at a glance — the table or the line graph?  Explain.',
+             'The line graph — the rising line is instantly visible without reading every number.'),
+        ],
+    },
+},
+23: {
+    'date': '11/07/2026', 'topic': 'Statistics',
+    'lf':   'LF: To solve mixed statistics problems across different chart types.',
+    'ican': ['I can read and interpret data from a range of chart types.',
+             'I can choose the right calculation to answer questions about data.'],
+    'lp1': {
+        'chart': 'c1_ido1_double_bar.png',
+        'chart_label': 'Books read — Maple class, Term 5 vs Term 6',
+        'intro': 'Use the double bar chart to answer the questions.',
+        'qs': [
+            ('How many books were read in Term 6 altogether?',
+             '15 + 9 + 5 + 7 = 36 books'),
+            ('Which category increased the most from Term 5 to Term 6?',
+             'Fiction — increased by 4  (11 → 15)'),
+            ('Which category decreased from Term 5 to Term 6?',
+             'Comics — fell by 1  (8 → 7)'),
+        ],
+    },
+    'lp2': {
+        'chart': 'c2_ido1_bar_chart.png',
+        'chart_label': 'Tuck shop sales — items sold in one week',
+        'intro': 'Use the bar chart to answer the questions.',
+        'qs': [
+            ('How many items were sold in total across all five products?',
+             '32 + 18 + 25 + 14 + 41 = 130 items'),
+            ('How many more waters were sold than raisin pots?',
+             '41 − 14 = 27 more'),
+            ('Crackers cost 40p each.  How much money was taken from cracker sales?',
+             '18 × 40p = 720p = £7.20'),
+            ('Write one thing the bar chart tells you that surprises you.  Use data to support it.',
+             'Any valid observation with a data value.'),
+        ],
+    },
+},
+})
+
+DAYS = {17: 'Monday',  18: 'Tuesday',  19: 'Wednesday',
+        20: 'Monday',  21: 'Wednesday', 22: 'Thursday',  23: 'Friday'}
+
+WEEK = {17: 'T6W5', 18: 'T6W5', 19: 'T6W5',
+        20: 'T6W6', 21: 'T6W6', 22: 'T6W6', 23: 'T6W6'}
+
+# ── Blank-axes LP (for drawing lessons) ───────────────────────────────────────
+def draw_blank_axes_area(c, ax, x, y_bottom, w, h, is_ms):
+    """
+    Draw blank graph paper with pre-labelled axes.
+    ax: dict with x_labels, y_min, y_max, y_step, x_label, y_label, ms_values.
+    x, y_bottom: bottom-left of the drawing area (bottom-up coords).
+    """
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as mpatches
+    import numpy as np
+    import io
+
+    x_labels = ax['x_labels']
+    y_min    = ax.get('y_min', 0)
+    y_max    = ax['y_max']
+    y_step   = ax['y_step']
+    x_label  = ax.get('x_label', '')
+    y_label  = ax.get('y_label', '')
+    ms_vals  = ax.get('ms_values', [])
+
+    n_x = len(x_labels)
+    n_y = int((y_max - y_min) / y_step)
+
+    fig, ax_plt = plt.subplots(figsize=(3.2, 3.0), dpi=180)
+    ax_plt.set_facecolor('white')
+    fig.patch.set_facecolor('white')
+
+    ax_plt.set_xlim(-0.5, n_x - 0.5)
+    ax_plt.set_ylim(y_min, y_max)
+    ax_plt.set_xticks(range(n_x))
+    ax_plt.set_xticklabels(x_labels, fontsize=7)
+    ax_plt.set_yticks(range(y_min, y_max + 1, y_step))
+    ax_plt.tick_params(axis='both', labelsize=7)
+    ax_plt.set_xlabel(x_label, fontsize=7, labelpad=2)
+    ax_plt.set_ylabel(y_label, fontsize=7, labelpad=2)
+    ax_plt.grid(True, linewidth=0.4, color='#AAAAAA', alpha=0.6)
+    ax_plt.spines['top'].set_visible(False)
+    ax_plt.spines['right'].set_visible(False)
+    ax_plt.spines['left'].set_linewidth(0.8)
+    ax_plt.spines['bottom'].set_linewidth(0.8)
+
+    if is_ms and ms_vals and len(ms_vals) == n_x:
+        ax_plt.plot(range(n_x), ms_vals,
+                    color='#C83030', linewidth=1.2, marker='x',
+                    markersize=5, markeredgewidth=1.5, zorder=3)
+
+    buf = io.BytesIO()
+    plt.tight_layout(pad=0.3)
+    fig.savefig(buf, format='png', dpi=180, bbox_inches='tight',
+                facecolor='white')
+    plt.close(fig)
+    buf.seek(0)
+
+    import tempfile
+    tmp = tempfile.mktemp(suffix='.png')
+    with open(tmp, 'wb') as f:
+        f.write(buf.read())
+
+    img = PILImage.open(tmp)
+    iw, ih = img.size
+    aspect = iw / ih
+    draw_h = h
+    draw_w = h * aspect
+    if draw_w > w:
+        draw_w = w
+        draw_h = w / aspect
+    dx = (w - draw_w) / 2
+    dy = (h - draw_h) / 2
+    c.drawImage(tmp, x + dx, y_bottom + dy, draw_w, draw_h,
+                preserveAspectRatio=True, mask='auto')
+    os.unlink(tmp)
+
+
+def draw_half_draw(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
+    """
+    Half-page LP for draw-graph lessons.
+    Left column: LL (if lp1), instructions, data table, 2 short questions.
+    Right column: blank graph paper (or completed graph for marking station).
+    """
+    PAD = 10
+
+    # ── Learning Label (LP1 only) ────────────────────────────────────────────
+    q_top = region_top - PAD
+    if show_ll:
+        ll_h = draw_ll(c, LL_X, region_top - PAD,
+                       meta['date'], meta['topic'], meta['lf'], meta['ican'])
+        q_top = region_top - PAD - ll_h - 8
+
+    # ── Intro instruction line ────────────────────────────────────────────────
+    intro_para = Paragraph(lp_data['intro'], INTRO_STYLE)
+    _, intro_h = intro_para.wrap(Q_W, 200)
+    intro_h += 4
+    cy = q_top
+    intro_para.drawOn(c, Q_X, cy - intro_h)
+    cy -= intro_h + 4
+
+    # ── Data table ────────────────────────────────────────────────────────────
+    hdrs = lp_data['table_headers']
+    rows = lp_data['table_rows']
+    ROW_H = 13
+    COL_W = [Q_W * 0.45, Q_W * 0.45]
+    TBL_W = sum(COL_W)
+    TBL_H = ROW_H * (1 + len(rows))
+    tbl_top = cy
+
+    # Header row
+    filled_rect(c, Q_X, tbl_top - ROW_H, TBL_W, ROW_H,
+                fill_rgb=(0.09, 0.60, 0.83), stroke_rgb=None)
+    for ci, hdr in enumerate(hdrs):
+        x_off = Q_X + sum(COL_W[:ci])
+        c.setFont('LibSansBold', 7.5)
+        set_fill(c, (1, 1, 1))
+        c.drawString(x_off + 3, tbl_top - ROW_H + 3, hdr)
+    cy = tbl_top - ROW_H
+
+    # Data rows
+    for ri, row in enumerate(rows):
+        fill = (0.93, 0.97, 1.0) if ri % 2 == 0 else (1, 1, 1)
+        filled_rect(c, Q_X, cy - ROW_H, TBL_W, ROW_H,
+                    fill_rgb=fill, stroke_rgb=(0.75, 0.75, 0.75), lw=0.4)
+        for ci, val in enumerate(row):
+            x_off = Q_X + sum(COL_W[:ci])
+            c.setFont('LibSans', 7.5)
+            set_fill(c, (0.1, 0.1, 0.1))
+            c.drawString(x_off + 3, cy - ROW_H + 3, str(val))
+        cy -= ROW_H
+
+    cy -= 6
+
+    # ── Step instructions ─────────────────────────────────────────────────────
+    steps = lp_data.get('instructions', [])
+    for step in steps:
+        p = Paragraph(step, ParagraphStyle('ST',
+            fontName='LibSans', fontSize=7, leading=10,
+            textColor=(0.2, 0.2, 0.2)))
+        _, ph = p.wrap(Q_W, 200)
+        p.drawOn(c, Q_X, cy - ph)
+        cy -= ph + 2
+
+    cy -= 4
+
+    # ── Short questions ───────────────────────────────────────────────────────
+    for qi, (qt, ans) in enumerate(lp_data.get('qs', [])):
+        qp = Paragraph(f'{qi+1}.  {qt}', Q_STYLE)
+        _, qph = qp.wrap(Q_W - 6, 200)
+        qbox_h = qph + 8
+        filled_rect(c, Q_X, cy - qbox_h, Q_W, qbox_h,
+                    fill_rgb=Q_BG, stroke_rgb=Q_BORDER, lw=0.6)
+        set_fill(c, (0, 0, 0))
+        qp.drawOn(c, Q_X + 3, cy - qbox_h + 4)
+        cy -= qbox_h + 3
+
+        ANS_H = 18
+        if is_ms:
+            filled_rect(c, Q_X, cy - ANS_H, Q_W, ANS_H,
+                        fill_rgb=GRN_BG, stroke_rgb=GRN, lw=0.6)
+            ap = Paragraph(f'✓  {ans}', ANS_STYLE)
+            ap.wrap(Q_W - 6, ANS_H - 4)
+            ap.drawOn(c, Q_X + 3, cy - ANS_H + 3)
+        else:
+            outline_rect(c, Q_X, cy - ANS_H, Q_W, ANS_H, stroke_rgb=GREY, lw=0.5)
+        cy -= ANS_H + 4
+
+    # ── Title box prompt ──────────────────────────────────────────────────────
+    prompt = lp_data['ax'].get('title_prompt', 'Title:')
+    c.setFont('LibSans', 7)
+    set_fill(c, (0.3, 0.3, 0.3))
+    if cy > region_bot + 20:
+        c.drawString(Q_X, cy - 8, prompt)
+        outline_rect(c, Q_X, cy - 22, Q_W, 14, stroke_rgb=GREY, lw=0.5)
+
+    # ── Blank (or completed) graph area on right ──────────────────────────────
+    graph_h = region_top - region_bot - 2 * PAD
+    draw_blank_axes_area(c, lp_data['ax'],
+                         CHART_X, region_bot + PAD,
+                         CHART_W, graph_h, is_ms)
 
 # ── Build ─────────────────────────────────────────────────────────────────────
 def build(lesson_num):
     d   = LP[lesson_num]
     day = DAYS[lesson_num]
+    wk  = WEEK.get(lesson_num, 'T6W5')
     _dn = {'Monday':1,'Tuesday':2,'Wednesday':3,'Thursday':4,'Friday':5}
-    out = f'/tmp/claude_work/T6W5 - {_dn.get(day,1)} - {day} - MathsLP.pdf'
+    out = f'/tmp/claude_work/{wk} - {_dn.get(day,1)} - {day} - MathsLP.pdf'
 
     c = canvas.Canvas(out, pagesize=A4)
-    c.setTitle(f'T6W5 {day} L{lesson_num} — Statistics LP')
+    c.setTitle(f'{wk} {day} L{lesson_num} — Statistics LP')
+
+    is_draw = d['lp1'].get('lp_type') == 'draw_graph'
 
     for page_type in ['standard', 'adapted', 'marking']:
         is_ms = (page_type == 'marking')
@@ -404,13 +752,18 @@ def build(lesson_num):
         c.setFillColorRGB(1,1,1)
         c.rect(0, 0, W, H, fill=1, stroke=0)
 
-        # LP1 — top half (y from CUT_Y to H)
-        draw_half(c, d['lp1'], H - M, CUT_Y + M, d,
-                  show_ll=True, is_ms=is_ms)
-
-        # LP2 — bottom half (y from 0 to CUT_Y)
-        draw_half(c, d['lp2'], CUT_Y - M, M, d,
-                  show_ll=False, is_ms=is_ms)
+        if is_draw:
+            # Draw-graph format: blank axes + data table
+            draw_half_draw(c, d['lp1'], H - M, CUT_Y + M, d,
+                           show_ll=True, is_ms=is_ms)
+            draw_half_draw(c, d['lp2'], CUT_Y - M, M, d,
+                           show_ll=False, is_ms=is_ms)
+        else:
+            # Standard format: chart + questions
+            draw_half(c, d['lp1'], H - M, CUT_Y + M, d,
+                      show_ll=True, is_ms=is_ms)
+            draw_half(c, d['lp2'], CUT_Y - M, M, d,
+                      show_ll=False, is_ms=is_ms)
 
         draw_cut_line(c)
         c.showPage()
@@ -463,6 +816,7 @@ if __name__ == '__main__':
     n = int(sys.argv[1]) if len(sys.argv) > 1 else 17
     pdf  = build(n)
     day  = DAYS[n]
-    _dn = {'Monday':1,'Tuesday':2,'Wednesday':3,'Thursday':4,'Friday':5}
-    pptx = f'/tmp/claude_work/T6W5 - {_dn.get(day,1)} - {day} - MathsLP.pptx'
+    wk   = WEEK.get(n, 'T6W5')
+    _dn  = {'Monday':1,'Tuesday':2,'Wednesday':3,'Thursday':4,'Friday':5}
+    pptx = f'/tmp/claude_work/{wk} - {_dn.get(day,1)} - {day} - MathsLP.pptx'
     make_pptx_wrapper(pdf, pptx)
