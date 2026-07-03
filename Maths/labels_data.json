@@ -78,5 +78,45 @@
     "lf": "LF: To read and interpret line graphs, including estimating between labelled points.",
     "ican1": "I can read values at labelled points and estimate between labels.",
     "ican2": "I can describe the trend shown by a line graph."
+  },
+  {
+    "lesson": 20,
+    "week": "T6W6",
+    "day": "Monday",
+    "date": "06/07/2026",
+    "topic": "Statistics",
+    "lf": "LF: To draw an accurate line graph from a given data set.",
+    "ican1": "I can choose a suitable scale and label both axes.",
+    "ican2": "I can plot data points and join them with straight lines."
+  },
+  {
+    "lesson": 21,
+    "week": "T6W6",
+    "day": "Wednesday",
+    "date": "08/07/2026",
+    "topic": "Statistics",
+    "lf": "LF: To answer reasoning questions using data from bar charts and tables.",
+    "ican1": "I can identify the correct calculation from a bar chart or table.",
+    "ican2": "I can calculate sums and differences to answer multi-step questions."
+  },
+  {
+    "lesson": 22,
+    "week": "T6W6",
+    "day": "Thursday",
+    "date": "09/07/2026",
+    "topic": "Statistics",
+    "lf": "LF: To describe trends and connect different data representations.",
+    "ican1": "I can describe the trend shown in a line graph or table.",
+    "ican2": "I can compare what different representations show about the same data."
+  },
+  {
+    "lesson": 23,
+    "week": "T6W6",
+    "day": "Friday",
+    "date": "11/07/2026",
+    "topic": "Statistics",
+    "lf": "LF: To solve mixed statistics problems across different chart types.",
+    "ican1": "I can read and interpret data from a range of chart types.",
+    "ican2": "I can choose the right calculation to answer questions about data."
   }
 ]
