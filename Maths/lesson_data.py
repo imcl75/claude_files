@@ -1443,15 +1443,26 @@ LESSON_DATA[19] = {
 }
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# T6W6 — Statistics (continued) + consolidation  L20–L23
+# T6W6 — Statistics (drawing, evaluating, full data cycle)  L20–L23
 # Mon 6 Jul / Wed 8 Jul / Thu 9 Jul / Fri 11 Jul
-# Contexts: Bristol & Manaus rainfall (L20); WFA Sports Day & library (L21);
-#           city park visitors (L22); Maple class books & tuck shop (L23)
+#
+# Progression from T6W5 (L17–L19):
+#   L17 read pictograms/bar charts/tables; L18 calculated sums & differences;
+#   L19 read line graphs (interpolating between points).
+# T6W6 moves from READING to CREATING and EVALUATING:
+#   L20: Draw accurate line graphs (continuous data) — parallel to L19
+#   L21: Draw bar charts from raw data — parallel to L20 but discrete data
+#   L22: Evaluate a claim using chart evidence — higher-order reasoning
+#   L23: Full data cycle — collect, tally, choose representation, draw, analyse
+#
+# CLF cross-curricular:
+#   Science Y4 — measuring and recording data from experiments (L21)
+#   Geography Y4 — England/Brazil contrasting study, hemisphere data (L22)
+#   Computing Y4 — data and databases; sort and survey (L23)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 LESSON_DATA[20] = {
     'visuals': {
-        # ── CYCLE 1: Setting up axes and choosing a scale ────────────────────
         'c1_ido1': {
             'slide_type': 'stats_chart',
             'title': 'Setting up axes — choosing the right scale',
@@ -1460,29 +1471,25 @@ LESSON_DATA[20] = {
                 'title': 'Average monthly rainfall — Bristol, Jan to Jun 2026',
                 'x_values': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                 'y_values': [89, 71, 58, 48, 52, 45],
-                'y_min': 0,
-                'y_max': 100,
-                'y_step': 10,
-                'x_label': 'Month',
-                'y_label': 'Rainfall (mm)',
+                'y_min': 0, 'y_max': 100, 'y_step': 10,
+                'x_label': 'Month', 'y_label': 'Rainfall (mm)',
             },
             'questions': [
-                'What was the wettest month?  How much rain fell?',
+                'What was the wettest month? How much rain fell?',
                 'How much less rain fell in June than in January?',
                 'Between which two months did rainfall fall the most?',
             ],
             'answers': [
                 'January — 89mm',
-                '89 − 45 = 44mm less',
+                '89 \u2212 45 = 44mm less',
                 'January to February — fell by 18mm',
             ],
             'notes': (
-                'I DO C1 — AXES FIRST before reading any values. '
-                'Ask: what is the highest value? (89mm) → round up to 100. '
-                'Step of 10 gives 10 grid lines — sensible and readable. '
-                'Show: title → y-axis label + scale → x-axis label → categories. '
-                'Always label axes with units. Geography link: Bristol gets most rain Oct–Jan; '
-                'this is the tail end of the wet period moving into a drier summer.'
+                'I DO C1 — AXES FIRST before reading values. '
+                'Highest value = 89mm. Round up to 100. Steps of 10 = 10 grid lines. '
+                'Show: title \u2192 y-axis label + scale \u2192 x-axis label \u2192 categories. '
+                'Always label axes with units. '
+                'Geography link: Bristol gets most rain Oct\u2013Jan; this is the tail end of the wet period.'
             ),
         },
         'c1_ido2': {
@@ -1494,49 +1501,40 @@ LESSON_DATA[20] = {
                 'They draw a y-axis from 0 to 50mm in steps of 10.\n'
                 "They can't fit all the points on their graph."
             ),
-            'wrong_line': 'The y-axis goes up to 50mm.',
-            'correct_line': 'The scale must go to at least 90mm — use 0–100mm in steps of 10.',
+            'wrong_line': 'Y-axis goes up to 50mm.',
+            'correct_line': 'Scale must reach at least 90mm \u2014 use 0\u2013100mm in steps of 10.',
             'caption': 'What has gone wrong with the scale?',
             'notes': (
-                'STM: The scale (50mm) is too small to fit the highest data value (89mm). '
-                'Always check the highest value first. '
-                'Then choose a scale that exceeds it with a round, sensible step. '
-                '89mm → scale to 100mm, steps of 10 works well. '
-                'A step of 7 or 11 would make it difficult to read.'
+                'STM: Scale too small for the highest value. '
+                'Always check the highest value first, then choose a scale that exceeds it. '
+                '89mm \u2192 scale to 100, steps of 10.'
             ),
         },
-        # ── CYCLE 2: Plotting points and joining with a line ─────────────────
         'c2_ido1': {
             'slide_type': 'stats_chart',
             'title': 'Plotting points and joining with a line',
             'chart_type': 'line_graph',
             'chart_data': {
-                'title': 'Average monthly rainfall — Manaus, Brazil, Jan to Jun',
+                'title': 'Average monthly rainfall \u2014 Manaus, Brazil, Jan to Jun',
                 'x_values': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                 'y_values': [260, 290, 310, 300, 270, 100],
-                'y_min': 0,
-                'y_max': 350,
-                'y_step': 50,
-                'x_label': 'Month',
-                'y_label': 'Rainfall (mm)',
+                'y_min': 0, 'y_max': 350, 'y_step': 50,
+                'x_label': 'Month', 'y_label': 'Rainfall (mm)',
             },
             'questions': [
                 'In which month does the most rain fall?',
-                'What is the difference in rainfall between March and June?',
+                'What is the difference between March and June rainfall?',
                 'Describe the trend from January to June.',
             ],
             'answers': [
-                'March — 310mm',
-                '310 − 100 = 210mm',
-                'Rainfall rises to a peak in March, then falls sharply — wet season ending.',
+                'March \u2014 310mm',
+                '310 \u2212 100 = 210mm',
+                'Rainfall rises to a peak in March then falls sharply \u2014 the dry season begins.',
             ],
             'notes': (
-                'I DO C2 — Geography link: Manaus is in the Amazon rainforest. '
-                'It has a very wet season Jan–May; the dry season starts in June. '
-                'Scale: 0–350mm, steps of 50 — 7 grid lines. '
-                'Key teaching: PLOT every point before joining anything. '
-                'Join with straight lines between consecutive points — not smooth curves, not isolated dots. '
-                'The sharp drop in June is dramatic: good for discussion of climate difference vs Bristol.'
+                'I DO C2 \u2014 Geography link: Manaus is in the Amazon rainforest. '
+                'Wet season Jan\u2013May; dry season starts June. Scale 0\u2013350, steps of 50. '
+                'Plot every point FIRST, then join with straight lines \u2014 one segment at a time, not a curve.'
             ),
         },
         'c2_ido2': {
@@ -1544,28 +1542,26 @@ LESSON_DATA[20] = {
             'title': 'Spot the mistake',
             'problem': (
                 'A pupil plots six monthly data points on a line graph.\n'
-                'After plotting all the points, they draw a smooth curve\n'
-                'that swoops between them all in one flowing line.'
+                'After plotting them all, they draw a smooth curve\n'
+                'that swoops between the points in one arc.'
             ),
             'wrong_line': 'Joined with a smooth curve.',
-            'correct_line': 'Join consecutive points with straight lines, one segment at a time.',
+            'correct_line': 'Join consecutive points with straight lines \u2014 one segment at a time.',
             'caption': 'What should the pupil have done?',
             'notes': (
-                'STM: A smooth curve implies a mathematical relationship (like a quadratic). '
-                'In KS2 line graphs, always use straight lines between consecutive plotted points. '
-                'Join Jan→Feb, then Feb→Mar, etc. — not one sweeping arc across all points. '
-                'The correct term is "straight-line segments".'
+                'STM: In KS2 line graphs, always straight-line segments between consecutive plotted points. '
+                'Not one sweeping curve.'
             ),
         },
     },
     'wm': {
         'items': [43, 27, 85, 16, 62, 38, 54],
         'qa': [
-            {'q': 'What was the 3rd number?',             'a': '85'},
-            {'q': 'Which number was the smallest?',       'a': '16'},
-            {'q': 'What was the 6th number?',             'a': '38'},
-            {'q': 'Which two numbers add to 101?',        'a': '85 and 16'},
-            {'q': 'What were the last two numbers?',      'a': '38 and 54'},
+            {'q': 'What was the 3rd number?',         'a': '85'},
+            {'q': 'Which number was smallest?',        'a': '16'},
+            {'q': 'What was the 6th number?',          'a': '38'},
+            {'q': 'Which two numbers add to 101?',     'a': '85 and 16'},
+            {'q': 'What were the last two numbers?',   'a': '38 and 54'},
         ],
     },
     'vocab': [
@@ -1573,389 +1569,452 @@ LESSON_DATA[20] = {
         ['dataset', 'A collection of related values, such as monthly rainfall figures.'],
         ['plot',    'To mark a data point on a graph at the correct position on both axes.'],
     ],
+    'rm': {
+        'day': 1,
+        'questions': [
+            {'num': 1, 'topic': 'Place Value',
+             'q': 'What is 1,000 more than 8,743?', 'a': '9,743'},
+            {'num': 2, 'topic': 'Addition and Subtraction',
+             'q': 'Calculate 6,483 + 2,759.', 'a': '9,242'},
+            {'num': 3, 'topic': 'Fractions',
+             'q': 'What is 3/4 of 48?', 'a': '36'},
+            {'num': 4, 'topic': 'Measurement',
+             'q': 'How many grams are in 2.5 kg?', 'a': '2,500 g'},
+            {'num': 5, 'topic': 'Addition and Subtraction',
+             'q': 'Calculate 8,000 \u2212 3,467.', 'a': '4,533'},
+        ],
+    },
 }
 
+# ─────────────────────────────────────────────────────────────────────────────
+# L21  Wed 8 Jul — Drawing bar charts from data
+# CLF Science Y4: measuring and recording data from experiments
+# Builds on L17 (reading bar charts) — now pupils DRAW them
+# ─────────────────────────────────────────────────────────────────────────────
 LESSON_DATA[21] = {
     'visuals': {
-        # ── CYCLE 1: Reading a bar chart and calculating ──────────────────────
+        # ── CYCLE 1: Choosing a scale and completing a bar chart ─────────────
         'c1_ido1': {
             'slide_type': 'stats_chart',
-            'title': 'Sports Day — reading and calculating',
+            'title': 'Completing a bar chart — minibeasts survey',
             'chart_type': 'bar_chart',
             'chart_data': {
-                'title': 'WFA Sports Day — points scored by year group',
-                'categories': ['Year 3', 'Year 4', 'Year 5', 'Year 6'],
-                'values': [28, 34, 31, 37],
-                'y_max': 45,
-                'y_step': 5,
-                'y_label': 'Points scored',
+                'title': 'Minibeasts found in the WFA school garden',
+                'categories': ['Worm', 'Beetle', 'Snail', 'Spider', 'Ant'],
+                'values': [8, 5, 4, 12, 19],
+                'y_max': 20, 'y_step': 2,
+                'y_label': 'Number found',
                 'color': '#1798d3',
             },
             'questions': [
-                'What was the total points scored across all year groups?',
-                'How many more points did Year 6 score than Year 3?',
-                'Year 4 scored how many more points than Year 3?',
+                'Which minibeast was found the most? How many were found?',
+                'How many more spiders than snails were found?',
+                'What is the total number of worms and beetles found?',
             ],
             'answers': [
-                '28 + 34 + 31 + 37 = 130 points',
-                '37 − 28 = 9 more points',
-                '34 − 28 = 6 more points',
+                'Ants \u2014 19',
+                '12 \u2212 4 = 8 more spiders',
+                '8 + 5 = 13',
             ],
             'notes': (
-                'I DO C1 — Model the two-step process: READ from the chart, then CALCULATE. '
-                'Do not try to hold values in memory. Write them down first. '
-                'Q1 uses addition (sum of all). Q2 and Q3 use subtraction (difference). '
-                'Key vocab: total = sum all values; "how many more" = difference = subtract. '
-                'School link: this is a familiar, real context for Y4.'
+                'I DO C1 \u2014 Science cross-curricular link: Y4 Living Things and Habitats. '
+                'Pupils surveyed minibeasts in the school garden. '
+                'BEFORE drawing: ask pupils \u2014 what is the highest value? (19) '
+                'What scale fits? 0\u201320 in steps of 2 gives 10 grid lines. '
+                'Model: axes \u2192 scale \u2192 draw each bar to the exact gridline. '
+                'For odd values: between gridlines, estimate carefully. '
+                'On LP1, three bars are already drawn. Pupils add Worm and Ant.'
             ),
         },
         'c1_ido2': {
             'slide_type': 'stm_word_problem',
             'title': 'Spot the mistake',
             'problem': (
-                'A bar chart shows Sports Day points.\n'
-                'Year 4 scored 34 points.  Year 3 scored 28 points.\n'
-                "A pupil is asked: 'How many more points did Year 4 score than Year 3?'\n"
-                'The pupil writes: 34 + 28 = 62 points.'
+                'A pupil draws a bar chart. The y-axis goes up in 5s.\n'
+                'They need to draw a bar for 15 minibeasts.\n'
+                'They draw it up to the 2nd gridline and label it 15.'
             ),
-            'wrong_line': 'Year 4 scored 62 more points.',
-            'correct_line': 'Year 4 scored 6 more points  (34 − 28 = 6).',
+            'wrong_line': 'Bar drawn to the 2nd gridline.',
+            'correct_line': '2nd gridline on a scale of 5s = 10, not 15. The 3rd gridline = 15.',
             'caption': 'What went wrong?',
             'notes': (
-                'STM: "How many more" = difference = subtract, not add. '
-                'The pupil read both values correctly but used the wrong operation. '
-                'Visualise: more means gap, gap means subtraction. '
-                '34 − 28 = 6 — not 62.'
+                'STM: The pupil confused the line number with the value. '
+                'A scale going up in 5s means: line 1 = 5, line 2 = 10, line 3 = 15. '
+                'Always read the number written beside each gridline, not count from the bottom.'
             ),
         },
-        # ── CYCLE 2: Multi-step reasoning from a table ────────────────────────
+        # ── CYCLE 2: Drawing a bar chart from scratch ────────────────────────
         'c2_ido1': {
             'slide_type': 'stats_chart',
-            'title': 'Library books — reading a two-way table',
-            'chart_type': 'table',
+            'title': 'Drawing from scratch — how Maple class travel to school',
+            'chart_type': 'bar_chart',
             'chart_data': {
-                'title': 'Books borrowed from WFA library — Spring term',
-                'col_headers': ['Class', 'Fiction', 'Non-fiction', 'Total'],
-                'rows': [
-                    ['Maple (Y4)',  45, 23, 68],
-                    ['Hazel (Y5)', 38, 31, 69],
-                    ['Elm (Y6)',   29, 42, 71],
-                    ['Total',     112, 96, 208],
-                ],
-                'highlight_row': 3,
-                'highlight_col': 3,
+                'title': 'How Maple class travel to school',
+                'categories': ['Walk', 'Cycle', 'Car', 'Bus', 'Scooter'],
+                'values': [10, 4, 8, 3, 1],
+                'y_max': 12, 'y_step': 2,
+                'y_label': 'Number of pupils',
+                'color': '#1798d3',
             },
             'questions': [
-                'How many non-fiction books did Hazel class borrow?',
-                'Which class borrowed the most books overall?',
-                'How many more fiction books were borrowed than non-fiction, across all classes?',
+                'How many more pupils walk than travel by car?',
+                'What is the total for cycling and scooting combined?',
+                'How many pupils are in the class altogether?',
             ],
             'answers': [
-                '31 books',
-                'Elm class — 71 books',
-                '112 − 96 = 16 more fiction books',
+                '10 \u2212 8 = 2 more',
+                '4 + 1 = 5',
+                '10 + 4 + 8 + 3 + 1 = 26',
             ],
             'notes': (
-                'I DO C2 — Model the reading method: ROW label first, then COLUMN header, '
-                'then find the intersection cell. '
-                'Q3 is multi-step: read two values from the totals row, then subtract. '
-                'Highlight the totals row and totals column — these summarise across both axes. '
-                'Cross-curricular: Being a Reader — links to reading for pleasure data.'
+                'I DO C2 \u2014 Geography link: local fieldwork data (how pupils travel to school). '
+                'Model drawing from scratch: axes \u2192 scale (highest value 10, use 0\u201312 in 2s) '
+                '\u2192 draw all five bars \u2192 label axes and title. '
+                'On LP2, pupils receive the data table and blank axes and draw all bars themselves.'
             ),
         },
         'c2_ido2': {
             'slide_type': 'stm_word_problem',
             'title': 'Spot the mistake',
             'problem': (
-                'A table shows library books borrowed.\n'
-                'Maple class borrowed 45 fiction books and 23 non-fiction books.\n'
-                "A pupil writes: 'Maple class borrowed 45 books altogether.'"
+                'A pupil draws a bar chart showing how pupils travel to school.\n'
+                'The highest value is 10 pupils.\n'
+                'They use a y-axis that only goes up to 8.'
             ),
-            'wrong_line': 'Maple class borrowed 45 books altogether.',
-            'correct_line': 'Maple class borrowed 45 + 23 = 68 books altogether.',
-            'caption': 'Why is this answer wrong?',
+            'wrong_line': 'Y-axis goes up to 8.',
+            'correct_line': 'The highest value is 10 \u2014 the scale must go to at least 10. Use 0\u201312 in steps of 2.',
+            'caption': 'Why is this wrong?',
             'notes': (
-                'STM: The pupil used only the Fiction value and ignored the Non-fiction column. '
-                '"Altogether" means the total across all categories — both columns must be included. '
-                '45 + 23 = 68. '
-                'Stress: always re-read the question carefully. '
-                '"Altogether" = add every relevant value.'
+                'STM: If any bar value exceeds the scale, that bar cannot be drawn. '
+                'Always check the highest value in the data BEFORE setting the scale. '
+                'Highest value = 10 \u2192 scale to 12, steps of 2.'
             ),
         },
     },
     'wm': {
-        'items': ['⚽', '🎵', '🌊', '🔬', '🏆', '📚', '🎨'],
+        'items': ['\U0001f33f', '\U0001f30a', '\U0001f98b', '\U0001f3af', '\U0001f4da', '\U0001f30d', '\U0001f9ea'],
         'qa': [
-            {'q': 'Which emoji was 4th?',                       'a': '🔬'},
-            {'q': 'What were the last two emojis?',             'a': '📚 and 🎨'},
-            {'q': 'Which emoji was 1st?',                       'a': '⚽'},
-            {'q': 'How many emojis were shown?',                'a': '7'},
-            {'q': 'Which emoji was in the middle (4th of 7)?',  'a': '🔬'},
+            {'q': 'Which emoji was 3rd?',                 'a': '\U0001f98b'},
+            {'q': 'What was the last emoji?',             'a': '\U0001f9ea'},
+            {'q': 'Which emoji was 5th?',                 'a': '\U0001f4da'},
+            {'q': 'What were the 2nd and 6th emojis?',   'a': '\U0001f30a and \U0001f30d'},
+            {'q': 'How many emojis were shown?',          'a': '7'},
         ],
     },
     'vocab': [
-        ['multi-step',  'A problem that needs two or more calculations to reach the answer.'],
-        ['evidence',    'Values or data from a chart or table that you use to support an answer.'],
-        ['operation',   'A mathematical process — addition, subtraction, multiplication or division.'],
+        ['interval', 'The gap between each numbered mark on an axis — e.g. 0, 2, 4, 6 has an interval of 2.'],
+        ['discrete',  'Data that can only take certain values, such as whole numbers of pupils or minibeasts.'],
+        ['frequency', 'How many times something occurs in a set of data.'],
     ],
+    'rm': {
+        'day': 3,
+        'questions': [
+            {'num': 1, 'topic': 'Place Value',
+             'q': 'Write 4,060 in words.', 'a': 'four thousand and sixty'},
+            {'num': 2, 'topic': 'Fractions',
+             'q': 'Write two equivalent fractions for 1/2.',
+             'a': '2/4 and 4/8 (or any equivalent pair)'},
+            {'num': 3, 'topic': 'Addition and Subtraction',
+             'q': 'Calculate 7,254 \u2212 3,816.', 'a': '3,438'},
+            {'num': 4, 'topic': 'Measurement',
+             'q': 'A jug holds 1.5 litres.\nHow many ml is this?', 'a': '1,500 ml'},
+            {'num': 5, 'topic': 'Place Value',
+             'q': 'What is the value of the digit 7 in 7,324?',
+             'a': '7,000 (7 thousands)'},
+        ],
+    },
 }
 
+# ─────────────────────────────────────────────────────────────────────────────
+# L22  Thu 9 Jul — Evaluating a claim using chart evidence
+# CLF Geography Y4: England/Brazil contrasting study
+# Builds on L17\u2013L20 \u2014 moves from describing to evaluating
+# ─────────────────────────────────────────────────────────────────────────────
 LESSON_DATA[22] = {
     'visuals': {
-        # ── CYCLE 1: Spotting and describing trends ───────────────────────────
+        # ── CYCLE 1: Evaluate a claim from a bar chart ───────────────────────
         'c1_ido1': {
             'slide_type': 'stats_chart',
-            'title': 'Spotting a trend — park visitors',
-            'chart_type': 'line_graph',
+            'title': 'Agree, disagree or not enough information?',
+            'chart_type': 'double_bar',
             'chart_data': {
-                'title': 'Visitors to a city park — Jan to Jun',
-                'x_values': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                'y_values': [120, 140, 190, 280, 350, 420],
-                'y_min': 0,
-                'y_max': 450,
-                'y_step': 50,
-                'x_label': 'Month',
-                'y_label': 'Number of visitors',
+                'title': 'Average monthly rainfall (mm) \u2014 Bristol vs Manaus, Jan\u2013Jun',
+                'categories': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                'series': [
+                    {'label': 'Bristol',  'values': [89, 71, 58, 48, 52, 45],  'colour': '#1798d3'},
+                    {'label': 'Manaus',   'values': [260, 290, 310, 300, 270, 100], 'colour': '#e57d24'},
+                ],
+                'y_max': 350, 'y_step': 50,
+                'y_label': 'Rainfall (mm)',
             },
             'questions': [
-                'How many visitors came in March?',
-                'Between which two months did visitor numbers increase the most?',
-                'Describe the overall trend from January to June.',
+                'Claim: "Bristol gets more rain than Manaus in every month."\nAgree, disagree, or not enough information? Show your evidence.',
+                'Claim: "Manaus gets more than twice as much rain as Bristol in March."\nCheck the claim with a calculation.',
+                'Which month is the most similar between the two cities? How do you know?',
             ],
             'answers': [
-                '190 visitors',
-                'March to April — increased by 90 visitors',
-                'Visitor numbers increased every month — the park became steadily busier.',
+                'Disagree \u2014 Manaus gets more rain in every month shown. e.g. Jan: 260 > 89.',
+                'Agree \u2014 Manaus March = 310mm. Bristol March = 58mm. 2 \u00d7 58 = 116. 310 > 116.',
+                'June \u2014 Bristol 45mm, Manaus 100mm. Closest pair, though still very different.',
             ],
             'notes': (
-                'I DO C1 — Model how to describe a trend in a sentence: '
-                '"The number of [thing] [increased/decreased/stayed the same] [from X to Y]." '
-                'The biggest single jump is Mar→Apr (+90). '
-                'Geography/science link: warmer weather in spring draws more visitors outdoors. '
-                'Stress: a trend is the OVERALL direction, not just the biggest jump.'
+                'I DO C1 \u2014 Geography cross-curricular: CLF Y4 contrasting study England/Brazil. '
+                'The double bar chart uses data pupils already know from L20 line graphs. '
+                'Model the EVIDENCE structure: "I [agree/disagree] because... [data value] shows..." '
+                'Q2 requires calculation: does the data support the claim? Not just a yes/no \u2014 show the maths. '
+                'Q3 requires comparing pairs: June is closest but both values differ enormously.'
             ),
         },
         'c1_ido2': {
             'slide_type': 'stm_word_problem',
             'title': 'Spot the mistake',
             'problem': (
-                'A line graph shows park visitors rising every month from Jan to Jun.\n'
-                "A pupil is asked to describe the trend and writes:\n"
-                "'The number of visitors stayed the same each month.'"
+                'A pupil looks at the Bristol/Manaus rainfall chart.\n'
+                'They are asked: "Agree or disagree: Bristol gets more rain than Manaus in June."\n'
+                "The pupil writes: 'Agree — Bristol gets 45mm and that's the smallest bar so they get the most.'"
             ),
-            'wrong_line': 'Visitor numbers stayed the same each month.',
-            'correct_line': 'The number of visitors increased every month — the line rises throughout.',
-            'caption': 'Why is this description wrong?',
+            'wrong_line': 'Small bar = less. Bristol 45mm < Manaus 100mm.',
+            'correct_line': 'A smaller bar means less rain. Bristol 45mm < Manaus 100mm \u2014 Manaus gets more. Disagree.',
+            'caption': 'What has the pupil misunderstood?',
             'notes': (
-                'STM: The pupil appears to have misread the graph or confused "trend" with a flat line. '
-                'A rising line = increasing trend. '
-                'Check: does the line go up? Down? Stay level? '
-                'The answer must match what the line actually does.'
+                'STM: The pupil has confused bar height with the value. '
+                'Smaller bar = smaller value = less rain. '
+                'Always read the scale: 45mm < 100mm, so Manaus gets more rain in June.'
             ),
         },
-        # ── CYCLE 2: Connecting two representations of the same data ─────────
+        # ── CYCLE 2: Evaluate a claim from a table ───────────────────────────
         'c2_ido1': {
             'slide_type': 'stats_chart',
-            'title': 'The same data — table and line graph',
+            'title': 'Evaluating a claim from a table',
             'chart_type': 'table',
             'chart_data': {
-                'title': 'Park visitors — monthly data',
-                'col_headers': ['Month', 'Visitors', 'Change from previous month'],
+                'title': 'Hours of daylight \u2014 Bristol and S\u00e3o Paulo, by season',
+                'col_headers': ['Season', 'Bristol (hours)', 'S\u00e3o Paulo (hours)'],
                 'rows': [
-                    ['Jan', 120, '—'],
-                    ['Feb', 140, '+20'],
-                    ['Mar', 190, '+50'],
-                    ['Apr', 280, '+90'],
-                    ['May', 350, '+70'],
-                    ['Jun', 420, '+70'],
+                    ['Winter',  8,  11],
+                    ['Spring',  12, 12],
+                    ['Summer',  17, 11],
+                    ['Autumn',  12, 12],
                 ],
                 'highlight_row': None,
-                'highlight_col': 2,
+                'highlight_col': None,
             },
             'questions': [
-                'In which month did visitor numbers increase the most from the previous month?',
-                'What does the table show that is difficult to see in the line graph alone?',
-                'What does the line graph show that the table makes harder to see?',
+                'Claim: "Bristol always has fewer hours of daylight than S\u00e3o Paulo."\nAgree, disagree or not enough information?',
+                'Claim: "The total hours of daylight across all four seasons is the same for both cities."\nCheck this claim.',
+                'Why does Bristol have more daylight in summer but less in winter than S\u00e3o Paulo?',
             ],
             'answers': [
-                'April — increased by 90 from March',
-                'The exact amount of each increase (the Change column)',
-                'The overall trend and rate of change at a glance — you can see the line rising',
+                'Disagree \u2014 in summer Bristol has 17h and S\u00e3o Paulo has 11h. Bristol gets MORE in summer.',
+                'Bristol: 8+12+17+12 = 49h. S\u00e3o Paulo: 11+12+11+12 = 46h. Not the same \u2014 disagree.',
+                'Bristol is in the northern hemisphere. Long summer days but short winter days. '
+                'S\u00e3o Paulo (southern hemisphere) has reversed seasons, so its summer is our winter.',
             ],
             'notes': (
-                'I DO C2 — KEY TEACHING: the same data, two different forms. '
-                'The table gives PRECISE values and a calculated change column. '
-                'The line graph gives VISUAL pattern — trend is obvious at a glance. '
-                'Neither is better — they serve different purposes. '
-                'Q2 and Q3 are metacognitive: what CAN each show, what does each make HARDER? '
-                'This directly answers the lesson key question.'
+                'I DO C2 \u2014 Geography cross-curricular: CLF Y4 \u2014 Identify hemisphere (northern/southern); '
+                'know that seasons are reversed between hemispheres. '
+                'Q2 is a calculation check: add all four seasons for each city. '
+                'Q3 is the key geography insight: hemispheres explain the pattern. '
+                'Stress the evidence structure: "I disagree BECAUSE [specific value] shows..."'
             ),
         },
         'c2_ido2': {
             'slide_type': 'stm_word_problem',
             'title': 'Spot the mistake',
             'problem': (
-                'A pupil looks at a table showing visitor numbers for 6 months.\n'
-                "They are asked: 'Describe the overall trend.'\n"
-                "The pupil writes: 'I cannot tell — there is no line to follow.'"
+                'A pupil evaluates this claim: "S\u00e3o Paulo has more daylight in summer than Bristol."\n'
+                "They write: 'Agree \u2014 S\u00e3o Paulo is closer to the equator so it must be sunnier.'"
             ),
-            'wrong_line': "I cannot tell — there is no line to follow.",
-            'correct_line': 'Look at the values in order: each month is higher than the last — the trend is increasing.',
-            'caption': 'What has this pupil misunderstood?',
+            'wrong_line': 'Closer to equator = more summer daylight.',
+            'correct_line': "The table shows Bristol has 17h in summer, S\u00e3o Paulo 11h. Evidence trumps assumption.",
+            'caption': 'What went wrong with this pupil\u2019s method?',
             'notes': (
-                'STM: You do not need a line graph to describe a trend. '
-                'Look at whether the values in the table increase, decrease or stay the same from row to row. '
-                '120 → 140 → 190 → 280 → 350 → 420: each is larger. Trend = increasing. '
-                'A line graph makes it EASIER to see but is not the only way to find a trend.'
+                'STM: The pupil used a general assumption instead of reading the table. '
+                'Key lesson: always use DATA to evaluate a claim, not background knowledge alone. '
+                'The table clearly shows Bristol has MORE daylight in summer (17h vs 11h) \u2014 disagree. '
+                'Pupils need to read the table first, then use their geography knowledge to EXPLAIN, not to skip the data.'
             ),
         },
     },
     'wm': {
         'items': [
-            'The 🌡️ showed it was 24 degrees outside.',
-            'She counted 🦋 on each flower in the garden.',
-            'He carried a 🎒 weighing 4 kilograms.',
-            'They spotted 🚢 ships sailing past the harbour.',
-            'A 🌧️ shower arrived and everyone got wet.',
-            'The 🦊 ran quickly across the field.',
-            'The 🏖️ was busy with summer visitors.',
+            'The \U0001f321\ufe0f showed it was 24 degrees outside.',
+            'She counted \U0001f98b butterflies on each flower.',
+            'He carried a \U0001f9f3 weighing 4 kilograms.',
+            'They spotted \U0001f6a2 ships sailing past the harbour.',
+            'A \U0001f327\ufe0f shower arrived and everyone got wet.',
+            'The \U0001f98a ran quickly across the field.',
+            'The \U0001f3d6\ufe0f was busy with summer visitors.',
         ],
         'qa': [
-            {'q': 'What did the thermometer show?',           'a': '24 degrees 🌡️'},
-            {'q': 'What did she count on the flowers?',       'a': 'Butterflies 🦋'},
-            {'q': 'How heavy was the bag?',                   'a': '4 kilograms 🎒'},
-            {'q': 'What arrived and made everyone wet?',      'a': 'A shower 🌧️'},
-            {'q': 'What ran quickly across the field?',       'a': 'A fox 🦊'},
+            {'q': 'What did the thermometer show?',       'a': '24 degrees \U0001f321\ufe0f'},
+            {'q': 'What was she counting on the flowers?','a': 'Butterflies \U0001f98b'},
+            {'q': 'How heavy was the box?',               'a': '4 kilograms \U0001f9f3'},
+            {'q': 'What arrived and made everyone wet?',  'a': 'A shower \U0001f327\ufe0f'},
+            {'q': 'What ran across the field?',           'a': 'A fox \U0001f98a'},
         ],
     },
     'vocab': [
-        ['represent',  'To show the same information in a different format, such as a table or a graph.'],
-        ['connection', 'A link between two things — here, two different ways of showing the same data.'],
-        ['increase',   'Getting larger — when data values go up over time.'],
+        ['claim',    'A statement that may or may not be true \u2014 you must use data to check it.'],
+        ['evaluate', 'To decide whether a statement is true or false, using evidence from data.'],
+        ['evidence', 'Specific values from a chart or table that support or disprove a claim.'],
     ],
+    'rm': {
+        'day': 4,
+        'questions': [
+            {'num': 1, 'topic': 'Place Value',
+             'q': 'Round 7,856 to the nearest 1,000.', 'a': '8,000'},
+            {'num': 2, 'topic': 'Addition and Subtraction',
+             'q': 'Calculate 5,372 + 4,938.', 'a': '10,310'},
+            {'num': 3, 'topic': 'Fractions',
+             'q': 'Which is larger \u2014 5/8 or 1/2?\nExplain.', 'a': '5/8  (5/8 > 4/8)'},
+            {'num': 4, 'topic': 'Measurement',
+             'q': 'A shelf is 2 m 35 cm long.\nHow many cm is this?', 'a': '235 cm'},
+            {'num': 5, 'topic': 'Fractions',
+             'q': 'What is 2/5 of 60?', 'a': '24'},
+        ],
+    },
 }
 
+# ─────────────────────────────────────────────────────────────────────────────
+# L23  Fri 11 Jul — Full data cycle
+# CLF Computing Y4: data and databases; sort and survey data
+# Synthesis lesson: tally \u2192 choose representation \u2192 draw \u2192 analyse
+# ─────────────────────────────────────────────────────────────────────────────
 LESSON_DATA[23] = {
     'visuals': {
-        # ── CYCLE 1: Mixed — double bar chart + multi-step ───────────────────
+        # ── CYCLE 1: Model the full data cycle ───────────────────────────────
         'c1_ido1': {
             'slide_type': 'stats_chart',
-            'title': 'Comparing two data sets — books read',
-            'chart_type': 'double_bar',
+            'title': 'The full data cycle \u2014 from list to chart',
+            'chart_type': 'bar_chart',
             'chart_data': {
-                'title': 'Books read by Maple class — Term 5 vs Term 6',
-                'categories': ['Fiction', 'Non-fiction', 'Poetry', 'Comics'],
-                'series': [
-                    {'label': 'Term 5', 'values': [11, 6, 3, 8],  'colour': '#1798d3'},
-                    {'label': 'Term 6', 'values': [15, 9, 5, 7],  'colour': '#e57d24'},
-                ],
-                'y_max': 18,
-                'y_step': 2,
-                'y_label': 'Number of books',
+                'title': 'Maple class favourite school subject',
+                'categories': ['Maths', 'Science', 'English', 'Art', 'PE'],
+                'values': [8, 6, 5, 4, 3],
+                'y_max': 10, 'y_step': 2,
+                'y_label': 'Number of pupils',
+                'color': '#1798d3',
             },
             'questions': [
-                'How many books were read in Term 5 altogether?',
-                'How many more fiction books were read in Term 6 than Term 5?',
-                'Which category showed the biggest increase from Term 5 to Term 6?',
+                'Why is a bar chart the best choice for this data?',
+                'Which subject did the most pupils choose? How many more than PE?',
+                'What fraction of the class chose Maths?  (Class of 26)',
             ],
             'answers': [
-                '11 + 6 + 3 + 8 = 28 books',
-                '15 − 11 = 4 more books',
-                'Non-fiction — increased by 3  (6 → 9)',
+                'It compares separate categories clearly. Line graph is for continuous data over time.',
+                'Maths \u2014 8 pupils. 8 \u2212 3 = 5 more than PE.',
+                '8/26 (not easily simplified, but correct as a fraction).',
             ],
             'notes': (
-                'I DO C1 — Consolidation: use ALL previously learned skills here. '
-                'Q1: sum across all categories in one term. '
-                'Q2: difference between the two series for one category. '
-                'Q3: calculate the increase for each category (Fiction +4, NF +3, Poetry +2, Comics −1) '
-                'then compare. Reading link: Being a Reader — book tracking across the year.'
+                'I DO C1 \u2014 Computing cross-curricular: CLF Y4 data and databases / sorting data. '
+                'Model the FULL CYCLE on a think-aloud: '
+                '1. Start with the unsorted list of 26 responses (show on slide before this). '
+                '2. Tally each response \u2014 systematic, no skipping. '
+                '3. Choose representation: bar chart for comparing categories (not line graph). '
+                '4. Draw: axes, scale (highest = 8, use 0\u201310 in 2s), bars, title, labels. '
+                '5. Analyse: answer questions from YOUR chart. '
+                'Q3 introduces fractional thinking naturally.'
             ),
         },
         'c1_ido2': {
             'slide_type': 'stm_word_problem',
             'title': 'Spot the mistake',
             'problem': (
-                'A double bar chart shows books read in Term 5 and Term 6.\n'
-                'Fiction: Term 5 = 11, Term 6 = 15.\n'
-                "A pupil is asked: 'How many fiction books were read in total across both terms?'\n"
-                'The pupil writes: 15 − 11 = 4 books.'
+                'Maple class votes for their favourite subject.\n'
+                'A pupil tallies the 26 responses and draws a line graph,\n'
+                'with subjects on the x-axis and a line connecting them.'
             ),
-            'wrong_line': 'Only 4 fiction books were read in total.',
-            'correct_line': 'A total of 26 fiction books were read  (11 + 15 = 26).',
-            'caption': 'What has gone wrong?',
+            'wrong_line': 'Drew a line graph for favourite subject.',
+            'correct_line': 'Line graphs show continuous data over time. Categories need a bar chart or pictogram.',
+            'caption': 'Why is a line graph wrong here?',
             'notes': (
-                'STM: "Total across both terms" = sum (add), not difference (subtract). '
-                'The pupil subtracted instead of adding — likely because a comparison bar chart '
-                'invites comparison (difference), but the question says "in total" = sum. '
-                'Read the question keyword carefully: total / altogether = add; '
-                'more / fewer / difference = subtract.'
+                'STM: Line graphs are for continuous data that changes over time (rainfall, temperature). '
+                'Favourite subjects are separate, unordered categories \u2014 discrete data. '
+                'Joining them with a line suggests one leads into the next, which is meaningless. '
+                'A bar chart keeps each category visually separate and comparable.'
             ),
         },
-        # ── CYCLE 2: Mixed consolidation — bar chart + calculation ────────────
+        # ── CYCLE 2: Pupils apply the full cycle independently ───────────────
         'c2_ido1': {
             'slide_type': 'stats_chart',
-            'title': 'Tuck shop totals — reading and calculating',
+            'title': 'Choose your representation \u2014 Olympic sports survey',
             'chart_type': 'bar_chart',
             'chart_data': {
-                'title': 'Tuck shop sales — items sold in one week',
-                'categories': ['Apple', 'Crackers', 'Flapjack', 'Raisin pot', 'Water'],
-                'values': [32, 18, 25, 14, 41],
-                'y_max': 50,
-                'y_step': 5,
-                'y_label': 'Number sold',
-                'color': '#2bae62',
+                'title': 'Favourite sport to watch \u2014 Y4 Paris Olympics survey',
+                'categories': ['Football', 'Gymnastics', 'Swimming', 'Athletics', 'Cycling'],
+                'values': [7, 6, 5, 4, 4],
+                'y_max': 8, 'y_step': 2,
+                'y_label': 'Number of pupils',
+                'color': '#1798d3',
             },
             'questions': [
-                'How many apples and flapjacks were sold altogether?',
-                'How many more waters than crackers were sold?',
-                'If each flapjack costs 50p, how much money was taken from flapjack sales?',
+                'How many pupils took part in the survey altogether?',
+                'Two sports tied. Which two, and how many pupils chose each?',
+                'Could you use a pictogram for this data? What would be a good key value?',
             ],
             'answers': [
-                '32 + 25 = 57 items',
-                '41 − 18 = 23 more',
-                '25 × 50p = £12.50',
+                '7 + 6 + 5 + 4 + 4 = 26 pupils',
+                'Athletics and Cycling \u2014 4 pupils each.',
+                'Yes. Key of 2 (each symbol = 2 pupils) works well \u2014 all values are even or can be shown with halves.',
             ],
             'notes': (
-                'I DO C2 — Consolidation challenge. Q3 is multistep: read from chart → multiply. '
-                'This mixes statistics with money/multiplication — genuine cross-topic reasoning. '
-                'Encourage pupils to write the calculation clearly before answering. '
-                'Measurement link: money calculations (50p = £0.50). '
-                'Before answering Q3, check: do pupils need to convert pence to pounds?'
+                'I DO C2 \u2014 Model applying the full cycle to a second dataset. '
+                'Paris Olympics 2024 context: pupils were 7\u20138 during the Games \u2014 familiar and engaging. '
+                'Q3 asks pupils to think about a different representation for the same data \u2014 metacognitive. '
+                'Key of 2 works because all values are small; key of 5 would require quarter-symbols for 4. '
+                'On LP2, pupils receive the raw list of 26 responses and apply the full cycle independently.'
             ),
         },
         'c2_ido2': {
             'slide_type': 'stm_word_problem',
             'title': 'Spot the mistake',
             'problem': (
-                'A bar chart shows tuck shop sales.\n'
-                'Water: 41 sold.  Each bottle costs 60p.\n'
-                "A pupil calculates the total money from water sales and writes: '41 + 60 = 101p.'"
+                'A pupil draws a pictogram for the Olympic sports data.\n'
+                'Key: each \u2b50 = 5 pupils.\n'
+                'For Football (7 pupils) they draw 1 whole star and 2 halves.'
             ),
-            'wrong_line': '41 + 60 = 101p from water sales.',
-            'correct_line': '41 × 60 = 2460p = £24.60 from water sales.',
-            'caption': 'What went wrong?',
+            'wrong_line': '1 whole + 2 halves = 7.',
+            'correct_line': '1 whole + 2 halves = 1 \u00d7 5 + 2 \u00d7 2.5 = 10. Wrong key or wrong number of symbols.',
+            'caption': 'What has gone wrong?',
             'notes': (
-                'STM: The pupil added the quantity and the price instead of multiplying. '
-                '"How much money from 41 bottles at 60p each" = repeated addition = multiplication. '
-                '41 × 60 = 2460p = £24.60. '
-                'Addition would only work if the question asked for the total number of two items. '
-                'Visualise: each of the 41 bottles earns 60p — so 41 lots of 60p.'
+                'STM: With key = 5, half a symbol = 2.5. So 1 whole + 1 half = 7.5, not 7. '
+                '7 cannot be shown exactly with a key of 5. '
+                'Solutions: use key = 1 (exact but tedious), or key = 2 (so 3.5 symbols = 7), '
+                'or switch to a bar chart where any value can be shown exactly. '
+                'This reinforces why choosing the right representation \u2014 and the right key \u2014 matters.'
             ),
         },
     },
     'wm': {
         'items': [65, 18, 42, 93, 37, 56, 24],
         'qa': [
-            {'q': 'What was the 3rd number?',             'a': '42'},
-            {'q': 'Which number was the largest?',        'a': '93'},
-            {'q': 'What was the 5th number?',             'a': '37'},
-            {'q': 'What were the last two numbers?',      'a': '56 and 24'},
-            {'q': 'What was the 2nd number?',             'a': '18'},
+            {'q': 'What was the 3rd number?',        'a': '42'},
+            {'q': 'Which number was largest?',        'a': '93'},
+            {'q': 'What was the 5th number?',         'a': '37'},
+            {'q': 'What were the last two numbers?',  'a': '56 and 24'},
+            {'q': 'What was the 2nd number?',         'a': '18'},
         ],
     },
     'vocab': [
-        ['survey',      'A way of collecting data by asking questions or counting things.'],
-        ['frequency',   'How often something appears in a set of data.'],
-        ['conclude',    'To decide what your data shows and explain what it means.'],
+        ['tally',    'A way of counting using marks grouped in fives to keep track of data.'],
+        ['represent','To show data in a chosen format \u2014 such as a bar chart or pictogram.'],
+        ['cycle',    'The full process: collect data, organise it, represent it, then analyse it.'],
     ],
+    'rm': {
+        'day': 5,
+        'questions': [
+            {'num': 1, 'topic': 'Place Value',
+             'q': 'Order greatest first:\n3,099  3,909  3,990  3,009',
+             'a': '3,990  \u2003  3,909  \u2003  3,099  \u2003  3,009'},
+            {'num': 2, 'topic': 'Fractions',
+             'q': 'What fraction of 1 hour is 15 minutes?', 'a': '1/4'},
+            {'num': 3, 'topic': 'Addition and Subtraction',
+             'q': 'Calculate 9,423 \u2212 6,285.', 'a': '3,138'},
+            {'num': 4, 'topic': 'Measurement',
+             'q': 'A recipe uses 750 ml from a 1-litre carton.\nHow much is left?', 'a': '250 ml'},
+            {'num': 5, 'topic': 'Place Value',
+             'q': 'What is 100 more than 9,905?', 'a': '10,005'},
+        ],
+    },
 }
