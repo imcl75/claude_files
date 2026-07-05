@@ -499,9 +499,7 @@ def assemble(args, slide_specs):
     week  = getattr(args, 'week', 1)
     lesson = getattr(args, 'lesson', 1)
     topic = getattr(args, 'topic', 'Writing').replace(' ', '_')
-    day_name = getattr(args, 'day', 'Monday')
-    day_num  = getattr(args, 'day_num', 1)
-    out_name = f'T{term}W{week} - {day_num} - {day_name} - WriterTeaching.pptx'
+    out_name = f'T{term}W{week}_-_Lesson_{lesson}_-_Writers_-_{topic}.pptx'
     out_path = os.path.join(out_dir, out_name)
 
     if os.path.exists(out_path): os.remove(out_path)
@@ -526,8 +524,6 @@ def main():
     parser.add_argument('--topic',       default='Writing')
     parser.add_argument('--out',         default='/home/claude')
     parser.add_argument('--slides-json', default=None)
-    parser.add_argument('--day',         default='Monday')
-    parser.add_argument('--day-num',     type=int, default=1)
     args = parser.parse_args()
 
     if args.slides_json:
