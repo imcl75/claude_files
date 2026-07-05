@@ -174,6 +174,25 @@ def fix_pptx(input_path, output_path=None):
         any_fixed = True
 
     # ------------------------------------------------------------------ #
+    # 5. Non-numeric relationship IDs in presentation.xml.rels            #
+    # (e.g. rIdKQ) cause PowerPoint repair on open. Rename to rIdN.       #
+    # ------------------------------------------------------------------ #
+    if 'ppt/_rels/presentation.xml.rels' in files:
+        prels_str = files['ppt/_rels/presentation.xml.rels'].decode('utf-8')
+        non_std_ids = re.findall(r'Id="(rId[A-Za-z][A-Za-z0-9]*)"', prels_str)
+        if non_std_ids:
+            nums = [int(m) for m in re.findall(r'rId(\d+)', prels_str)]
+            next_num = max(nums) + 1 if nums else 1
+            for bad_id in non_std_ids:
+                new_id = f'rId{next_num}'
+                for fkey in ['ppt/_rels/presentation.xml.rels', 'ppt/presentation.xml']:
+                    if fkey in files:
+                        files[fkey] = files[fkey].decode('utf-8').replace(bad_id, new_id).encode('utf-8')
+                next_num += 1
+            print(f'  [fix_pptx_ooxml] Fixed {len(non_std_ids)} non-numeric rId(s): {non_std_ids}')
+            any_fixed = True
+
+    # ------------------------------------------------------------------ #
     # Write output                                                         #
     # ------------------------------------------------------------------ #
     with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as z:
