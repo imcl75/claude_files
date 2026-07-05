@@ -214,6 +214,8 @@ def insert_section_slide():
     files[f'ppt/media/image{new_img_num}.png'] = img_data
 
     # Renumber slides 11+ → 12+ to make room for new slide 11
+    # CRITICAL: process in DESCENDING slide-number order to avoid cascade overwrite bug.
+    # Forward order (11→12, 12→13 ...) makes each pop() destroy the data the next step needs.
     renames = {}
     for k in list(files.keys()):
         m = re.match(r'ppt/slides/(slide(\d+)\.xml)', k)
@@ -223,27 +225,9 @@ def insert_section_slide():
         if m2 and int(m2.group(2)) > 10:
             renames[k] = f'ppt/slides/_rels/slide{int(m2.group(2))+1}.xml.rels'
 
-    for old, new in renames.items():
+    for old, new in sorted(renames.items(),
+                            key=lambda x: -int(re.search(r'(\d+)', x[0]).group(1))):
         files[new] = files.pop(old)
-
-    # FIX: also update presentation.xml.rels so renamed slide targets stay correct.
-    # Without this, rId11 still targets slides/slide11.xml after slide11 is renamed
-    # to slide12 — then the new section slide11.xml causes a duplicate reference.
-    prs_rels_bytes = files['ppt/_rels/presentation.xml.rels']
-    slide_renames = {
-        old.replace('ppt/', ''): new.replace('ppt/', '')
-        for old, new in renames.items()
-        if re.match(r'ppt/slides/slide\d+\.xml$', old)
-    }
-    # Sort descending by number to avoid slide1 matching inside slide10, slide11 etc.
-    for old_rel, new_rel in sorted(slide_renames.items(),
-                                    key=lambda x: int(re.search(r'\d+', x[0]).group()),
-                                    reverse=True):
-        prs_rels_bytes = prs_rels_bytes.replace(
-            f'Target="{old_rel}"'.encode(),
-            f'Target="{new_rel}"'.encode()
-        )
-    files['ppt/_rels/presentation.xml.rels'] = prs_rels_bytes
 
     # Build section slide XML
     W, H = 9144000, 5143500  # 10" x 5.625" in EMU
@@ -252,7 +236,7 @@ def insert_section_slide():
     rels = (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
         '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
-        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout" Target="../slideLayouts/slideLayout1.xml"/>'
+        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout" Target="../slideLayouts/slideLayout2.xml"/>'
         f'<Relationship Id="{img_rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image{new_img_num}.png"/>'
         '</Relationships>'
     )
@@ -371,77 +355,3 @@ with zipfile.ZipFile(TMP, 'w', zipfile.ZIP_DEFLATED) as zout:
             zout.writestr(name, data)
 os.replace(TMP, SRC)
 print(f"Saved: {SRC}")
-
-
-# ─── Part 3: Fix OOXML issues that cause PowerPoint repair prompts ─────────────
-# After slide renaming and section slide insertion, several structural issues
-# remain that PowerPoint flags on open:
-#  1. notesSlide back-refs still point to old slide numbers (post rename)
-#  2. Empty <a:r> runs in all notesSlides (pptxgenjs quirk)
-#  3. notesMaster1.xml.rels references theme1.xml instead of theme2.xml
-#  4. theme2.xml is missing from the ZIP
-
-def fix_ooxml_issues():
-    # 1. Fix notesSlide back-refs ─────────────────────────────────────────────
-    # Build map: notesSlideN → slideN (from slide _rels)
-    ns_to_slide = {}
-    for name, data in files.items():
-        if not re.match(r'ppt/slides/_rels/slide\d+\.xml\.rels$', name):
-            continue
-        s_num = int(re.search(r'slide(\d+)', name).group(1))
-        for m in re.finditer(r'notesSlide(\d+)\.xml', data.decode('utf-8', errors='ignore')):
-            ns_to_slide[int(m.group(1))] = s_num
-
-    for name in list(files.keys()):
-        if not re.match(r'ppt/notesSlides/_rels/notesSlide\d+\.xml\.rels$', name):
-            continue
-        ns_num = int(re.search(r'notesSlide(\d+)', name).group(1))
-        if ns_num not in ns_to_slide:
-            continue
-        correct_slide = ns_to_slide[ns_num]
-        rels = files[name].decode('utf-8')
-        m = re.search(r'Target="\.\./slides/(slide\d+\.xml)"', rels)
-        if m and m.group(1) != f'slide{correct_slide}.xml':
-            files[name] = rels.replace(
-                m.group(1), f'slide{correct_slide}.xml'
-            ).encode('utf-8')
-
-    # 2. Remove empty <a:r> runs from all notesSlide XML ─────────────────────
-    # pptxgenjs emits <a:r><a:rPr .../><a:t></a:t></a:r> — PowerPoint removes these
-    empty_run_pat = re.compile(
-        r'<a:r>\s*<a:rPr[^/]*/>\s*<a:t>\s*</a:t>\s*</a:r>'
-    )
-    for name in list(files.keys()):
-        if not re.match(r'ppt/notesSlides/notesSlide\d+\.xml$', name):
-            continue
-        content = files[name].decode('utf-8')
-        fixed = empty_run_pat.sub('', content)
-        if fixed != content:
-            files[name] = fixed.encode('utf-8')
-
-    # 3. Fix notesMaster rels: theme1.xml → theme2.xml ────────────────────────
-    nm_rels_key = 'ppt/notesMasters/_rels/notesMaster1.xml.rels'
-    if nm_rels_key in files:
-        nm_rels = files[nm_rels_key].decode('utf-8')
-        if 'theme/theme1.xml' in nm_rels:
-            files[nm_rels_key] = nm_rels.replace(
-                'theme/theme1.xml', 'theme/theme2.xml'
-            ).encode('utf-8')
-
-    # 4. Add theme2.xml if missing ────────────────────────────────────────────
-    if 'ppt/theme/theme1.xml' in files and 'ppt/theme/theme2.xml' not in files:
-        files['ppt/theme/theme2.xml'] = files['ppt/theme/theme1.xml']
-        # Declare it in Content_Types
-        ct = files['[Content_Types].xml'].decode('utf-8')
-        if 'theme2.xml' not in ct:
-            ct = ct.replace(
-                '<Override PartName="/ppt/theme/theme1.xml"',
-                '<Override PartName="/ppt/theme/theme2.xml" '
-                'ContentType="application/vnd.openxmlformats-officedocument.theme+xml"/>'
-                '<Override PartName="/ppt/theme/theme1.xml"'
-            )
-            files['[Content_Types].xml'] = ct.encode('utf-8')
-
-    print("  OOXML issues fixed ✓")
-
-fix_ooxml_issues()
