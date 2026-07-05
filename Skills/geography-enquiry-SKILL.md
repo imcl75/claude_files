@@ -40,6 +40,15 @@ The actual cause of the LO slide needing extra dead clicks was not in any slide-
 
 Default to embedding real stock photographs directly on the slide with click-to-reveal labels (numbered images → "Check answers" reveal), not a separate printable card PDF. Innes prefers this format and supplies/sources the photos himself or via PowerPoint's own stock image search — do not build Claude-rendered illustrations as a substitute unless explicitly asked. If a photo-ID activity is needed and no photos are available yet, build the slide structure with clearly marked placeholder image frames and flag to Innes that photos need adding.
 
+## Teaching slide / LP alignment — modeling rule
+
+Before finalising any I Do or We Do slide, check: does the LP for this task contain a visual stimulus pupils work from? If yes, that visual must appear on the teaching slide so Innes can model the task on screen. Two methods:
+
+1. **Same image on slide** — if the LP used a Higgsfield image, embed the same image in the teaching slide. For card-sort activities, show 2–3 example cards on the We Do slide.
+2. **LP snip on slide** — render the relevant section of the LP as a PNG (using `fitz` page render + crop), then embed as an image shape in the teaching slide. Use this when the LP task itself is what needs modeling (e.g. the comparison table with some blanks filled in, the cloze sentences, the schematic map with grid questions).
+
+Never leave a We Do or I Do slide as text-only instructions when the LP task is visually driven. The slide and LP must be usable together in the room — Innes reads the slide while pupils look at the same stimulus on their LP.
+
 ## Continuity checks
 
 Before referencing "your map/work from yesterday" or any carried-over resource in a new lesson, verify that resource actually exists from the previous lesson's build. Don't assume continuity — check the previous lesson's LP and deck for what pupils actually produced.
