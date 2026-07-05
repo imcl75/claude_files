@@ -173,6 +173,7 @@ files = [
     'inject_key_spelling.py',
     'post_process_spelling.py',
     'you_do_image.png',
+    'key_spelling_template.pptx',
 ]
 dest_names = {
     'slides-template.js':    'spelling_shed_slides_template.js',
@@ -188,12 +189,7 @@ for fname in files:
     print(f'Fetched {fname} → /home/claude/{dest}')
 ```
 
-Also copy the key spelling template:
-```python
-import shutil
-shutil.copy('/mnt/skills/user/spelling-shed/references/key_spelling_template.pptx',
-            '/home/claude/key_spelling_template.pptx')
-```
+(`key_spelling_template.pptx` is now fetched from GitHub in the loop above — no separate copy step needed.)
 
 Install dependencies if needed:
 ```bash
