@@ -1443,114 +1443,176 @@ LESSON_DATA[19] = {
 }
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# T6W6 — Statistics (drawing, evaluating, full data cycle)  L20–L23
+# T6W6 — Statistics  L20–L23
 # Mon 6 Jul / Wed 8 Jul / Thu 9 Jul / Fri 11 Jul
 #
-# Progression from T6W5 (L17–L19):
-#   L17 read pictograms/bar charts/tables; L18 calculated sums & differences;
-#   L19 read line graphs (interpolating between points).
-# T6W6 moves from READING to CREATING and EVALUATING:
-#   L20: Draw accurate line graphs (continuous data) — parallel to L19
-#   L21: Draw bar charts from raw data — parallel to L20 but discrete data
-#   L22: Evaluate a claim using chart evidence — higher-order reasoning
-#   L23: Full data cycle — collect, tally, choose representation, draw, analyse
+# Teaching structure for drawing lessons (L20, L21, L23):
+#   C1 I Do 1  = data table only (Dataset A) + axis-planning questions
+#   C1 I Do 2  = STM (scale error)
+#   wedo_visual = data table (Dataset B) — teacher draws this live on board
+#   C2 I Do 1  = completed chart (Dataset A or LP C) — C2 reading/analysis
+#   C2 I Do 2  = STM (misreading the graph)
+#   LP         = Dataset C — pupils choose scale, write all labels, draw, answer
 #
 # CLF cross-curricular:
-#   Science Y4 — measuring and recording data from experiments (L21)
-#   Geography Y4 — England/Brazil contrasting study, hemisphere data (L22)
-#   Computing Y4 — data and databases; sort and survey (L23)
+#   Science Y4: measuring temperature; states of matter → L20
+#   Geography Y4: England/Brazil contrasting study → L20, L22
+#   PSHE/Citizenship: environmental awareness (litter pick) → L21
+#   Being a Reader: library/books data → L21
+#   Computing Y4: data and databases; survey data → L23
 # ═══════════════════════════════════════════════════════════════════════════════
 
 LESSON_DATA[20] = {
     'visuals': {
+        # ── C1 I Do 1: DATA TABLE ONLY (Dataset A — London January temps) ─────
+        # Pupils see the numbers first. Questions scaffold axis-planning.
+        # No chart is shown — teacher talks through scale choices with the class.
         'c1_ido1': {
             'slide_type': 'stats_chart',
-            'title': 'Setting up axes — choosing the right scale',
-            'chart_type': 'line_graph',
+            'title': 'Setting up axes — what scale do we need?',
+            'chart_type': 'table',
             'chart_data': {
-                'title': 'Average monthly rainfall — Bristol, Jan to Jun 2026',
-                'x_values': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                'y_values': [89, 71, 58, 48, 52, 45],
-                'y_min': 0, 'y_max': 100, 'y_step': 10,
-                'x_label': 'Month', 'y_label': 'Rainfall (mm)',
+                'title': 'Temperature in London on a January day',
+                'col_headers': ['Time', 'Temperature (°C)'],
+                'rows': [
+                    ['6 am',  3],
+                    ['9 am',  5],
+                    ['12 pm', 8],
+                    ['3 pm',  7],
+                    ['6 pm',  4],
+                ],
+                'highlight_row': None,
+                'highlight_col': None,
             },
             'questions': [
-                'What was the wettest month? How much rain fell?',
-                'How much less rain fell in June than in January?',
-                'Between which two months did rainfall fall the most?',
+                'What is the highest temperature in the table?',
+                'What scale would fit all the values? What step size gives clear grid lines?',
+                'What labels does each axis need?  What are the units?',
             ],
             'answers': [
-                'January — 89mm',
-                '89 \u2212 45 = 44mm less',
-                'January to February — fell by 18mm',
+                '8\u00b0C',
+                '0\u201310\u00b0C in steps of 2 works well \u2014 5 clear grid lines',
+                'x-axis: Time  |  y-axis: Temperature (\u00b0C)',
             ],
             'notes': (
-                'I DO C1 — AXES FIRST before reading values. '
-                'Highest value = 89mm. Round up to 100. Steps of 10 = 10 grid lines. '
-                'Show: title \u2192 y-axis label + scale \u2192 x-axis label \u2192 categories. '
-                'Always label axes with units. '
-                'Geography link: Bristol gets most rain Oct\u2013Jan; this is the tail end of the wet period.'
+                'I DO C1 \u2014 DATA TABLE ONLY. No chart is visible yet. '
+                'Talk through every axis decision before drawing anything. '
+                'Highest value = 8\u00b0C. Scale 0\u201310, step 2 gives 5 grid lines \u2014 easy to read. '
+                'Ask: what would happen if we used steps of 3? Or started at 2 not 0? '
+                'Science Y4 link: measuring temperature in \u00b0C. '
+                'Geography Y4 link: England data for the England/Brazil contrasting study.'
             ),
         },
+        # ── C1 I Do 2: STM — unequal intervals ───────────────────────────────
         'c1_ido2': {
             'slide_type': 'stm_word_problem',
             'title': 'Spot the mistake',
             'problem': (
-                'A pupil records monthly rainfall in Bristol.\n'
-                'The highest value in their data is 89mm.\n'
-                'They draw a y-axis from 0 to 50mm in steps of 10.\n'
-                "They can't fit all the points on their graph."
+                'A pupil draws a temperature line graph.\n'
+                'Their y-axis shows: 0, 5, 10, 20, 25, 30.\n'
+                'They plot their points at what they think\n'
+                'are the correct heights.'
             ),
-            'wrong_line': 'Y-axis goes up to 50mm.',
-            'correct_line': 'Scale must reach at least 90mm \u2014 use 0\u2013100mm in steps of 10.',
-            'caption': 'What has gone wrong with the scale?',
+            'wrong_line': 'Y-axis: 0, 5, 10, 20, 25, 30.',
+            'correct_line': 'Every interval must be equal \u2014 e.g. 0, 5, 10, 15, 20, 25, 30.',
+            'caption': 'What has gone wrong with this scale?',
             'notes': (
-                'STM: Scale too small for the highest value. '
-                'Always check the highest value first, then choose a scale that exceeds it. '
-                '89mm \u2192 scale to 100, steps of 10.'
+                'STM: The interval jumps from 10 to 20 (a gap of 10) '
+                'while all other gaps are 5. Unequal intervals distort the graph '
+                'and make it impossible to plot accurately. '
+                'Fix: use 0\u201330 in equal steps of 5 throughout.'
             ),
         },
-        'c2_ido1': {
+        # ── We Do visual: DATA TABLE (Dataset B — Rio de Janeiro January) ─────
+        # Teacher draws this live on the board. Different data, similar theme.
+        # The trios_charts key in the plan references 'wedo_visual' so this
+        # appears on the We Do slide for teacher modelling.
+        'wedo_visual': {
             'slide_type': 'stats_chart',
-            'title': 'Plotting points and joining with a line',
-            'chart_type': 'line_graph',
+            'title': 'We Do \u2014 watch as I draw this',
+            'chart_type': 'table',
             'chart_data': {
-                'title': 'Average monthly rainfall \u2014 Manaus, Brazil, Jan to Jun',
-                'x_values': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                'y_values': [260, 290, 310, 300, 270, 100],
-                'y_min': 0, 'y_max': 350, 'y_step': 50,
-                'x_label': 'Month', 'y_label': 'Rainfall (mm)',
+                'title': 'Temperature in Rio de Janeiro on a January day',
+                'col_headers': ['Time', 'Temperature (\u00b0C)'],
+                'rows': [
+                    ['6 am',  24],
+                    ['9 am',  27],
+                    ['12 pm', 31],
+                    ['3 pm',  30],
+                    ['6 pm',  26],
+                ],
+                'highlight_row': None,
+                'highlight_col': None,
             },
             'questions': [
-                'In which month does the most rain fall?',
-                'What is the difference between March and June rainfall?',
-                'Describe the trend from January to June.',
+                'What is the highest value?  What scale will we need?',
+                'Call out the step size as I draw each grid line.',
+                'What should I write on each axis?',
             ],
             'answers': [
-                'March \u2014 310mm',
-                '310 \u2212 100 = 210mm',
-                'Rainfall rises to a peak in March then falls sharply \u2014 the dry season begins.',
+                '31\u00b0C \u2014 scale 0\u201335, step 5',
+                'Steps of 5: 0, 5, 10, 15, 20, 25, 30, 35',
+                'x: Time  |  y: Temperature (\u00b0C)',
             ],
             'notes': (
-                'I DO C2 \u2014 Geography link: Manaus is in the Amazon rainforest. '
-                'Wet season Jan\u2013May; dry season starts June. Scale 0\u2013350, steps of 50. '
-                'Plot every point FIRST, then join with straight lines \u2014 one segment at a time, not a curve.'
+                'WE DO \u2014 I draw this graph live on the board while pupils contribute. '
+                'Dataset B is different from Dataset A: bigger values, different scale needed. '
+                'This challenges pupils to see that the scale changes with the data. '
+                'Geography Y4 link: Rio de Janeiro \u2014 Brazil, southern hemisphere, '
+                'January is SUMMER there (opposite of England). '
+                'Ask: why is Rio so much warmer than London in January?'
             ),
         },
+        # ── C2 I Do 1: Completed London graph — reading back ─────────────────
+        # After LP, pupils check their Bristol graph then look at this
+        # completed London graph to practise reading a line graph.
+        'c2_ido1': {
+            'slide_type': 'stats_chart',
+            'title': 'Reading your graph \u2014 what does it tell us?',
+            'chart_type': 'line_graph',
+            'chart_data': {
+                'title': 'Temperature in London on a January day',
+                'x_values': ['6 am', '9 am', '12 pm', '3 pm', '6 pm'],
+                'y_values': [3, 5, 8, 7, 4],
+                'y_min': 0, 'y_max': 10, 'y_step': 2,
+                'x_label': 'Time', 'y_label': 'Temperature (\u00b0C)',
+            },
+            'questions': [
+                'What was the temperature at 9 am?',
+                'How much did the temperature rise from 6 am to 12 pm?',
+                'Describe the trend across the day in one sentence.',
+            ],
+            'answers': [
+                '5\u00b0C',
+                '8 \u2212 3 = 5\u00b0C rise',
+                'Temperature rises through the morning, peaks at noon, then falls in the afternoon.',
+            ],
+            'notes': (
+                'C2 I DO \u2014 Now the completed London graph is revealed. '
+                'Pupils compare their Bristol July graph (LP) against this London January graph. '
+                'Key question: what is similar? What is different? '
+                '(Bristol July: warmer throughout; similar shape \u2014 rises to midday, falls after.) '
+                'This is reading a line graph \u2014 revisiting T6W5 L19 skill with a new context.'
+            ),
+        },
+        # ── C2 I Do 2: STM — misreading between points ────────────────────────
         'c2_ido2': {
             'slide_type': 'stm_word_problem',
             'title': 'Spot the mistake',
             'problem': (
-                'A pupil plots six monthly data points on a line graph.\n'
-                'After plotting them all, they draw a smooth curve\n'
-                'that swoops between the points in one arc.'
+                'A pupil looks at the London temperature graph.\n'
+                'They say: "The temperature at 10:30 am was 8\u00b0C\n'
+                'because that is what the line shows at the top."'
             ),
-            'wrong_line': 'Joined with a smooth curve.',
-            'correct_line': 'Join consecutive points with straight lines \u2014 one segment at a time.',
-            'caption': 'What should the pupil have done?',
+            'wrong_line': 'Temperature at 10:30 am = 8\u00b0C.',
+            'correct_line': '8\u00b0C is the value at 12 pm. At 10:30 am the line is between 9 am and 12 pm \u2014 approximately 6\u00b0C.',
+            'caption': 'Why is this reading wrong?',
             'notes': (
-                'STM: In KS2 line graphs, always straight-line segments between consecutive plotted points. '
-                'Not one sweeping curve.'
+                'STM: The pupil read the highest point on the graph rather than reading '
+                'horizontally from 10:30 am. Between 9 am (5\u00b0C) and 12 pm (8\u00b0C), '
+                '10:30 am is roughly halfway, so approximately 6\u20137\u00b0C. '
+                'To read between plotted points: find the time on the x-axis, '
+                'trace up to the line, then across to the y-axis.'
             ),
         },
     },
@@ -1565,9 +1627,9 @@ LESSON_DATA[20] = {
         ],
     },
     'vocab': [
-        ['axis',    'The horizontal or vertical line on a graph showing the scale or categories.'],
-        ['dataset', 'A collection of related values, such as monthly rainfall figures.'],
-        ['plot',    'To mark a data point on a graph at the correct position on both axes.'],
+        ['axis',     'The horizontal or vertical line on a graph showing categories or scale.'],
+        ['scale',    'The equally spaced set of values marked on an axis of a graph.'],
+        ['interval', 'The equal gap between each value on a scale \u2014 e.g. 0, 2, 4, 6 has an interval of 2.'],
     ],
     'rm': {
         'day': 1,
@@ -1588,123 +1650,168 @@ LESSON_DATA[20] = {
 
 # ─────────────────────────────────────────────────────────────────────────────
 # L21  Wed 8 Jul — Drawing bar charts from data
-# CLF Science Y4: measuring and recording data from experiments
-# Builds on L17 (reading bar charts) — now pupils DRAW them
+# CLF PSHE/Citizenship: litter and environmental awareness → I Do
+# CLF Being a Reader: library data → We Do
 # ─────────────────────────────────────────────────────────────────────────────
 LESSON_DATA[21] = {
     'visuals': {
-        # ── CYCLE 1: Choosing a scale and completing a bar chart ─────────────
+        # ── C1 I Do 1: DATA TABLE ONLY (Dataset A — litter pick) ─────────────
         'c1_ido1': {
             'slide_type': 'stats_chart',
-            'title': 'Completing a bar chart — minibeasts survey',
-            'chart_type': 'bar_chart',
+            'title': 'Setting up a bar chart \u2014 what scale do we need?',
+            'chart_type': 'table',
             'chart_data': {
-                'title': 'Minibeasts found in the WFA school garden',
-                'categories': ['Worm', 'Beetle', 'Snail', 'Spider', 'Ant'],
-                'values': [8, 5, 4, 12, 19],
-                'y_max': 20, 'y_step': 2,
-                'y_label': 'Number found',
-                'color': '#1798d3',
+                'title': 'Litter collected during the WFA school litter pick',
+                'col_headers': ['Type of litter', 'Number found'],
+                'rows': [
+                    ['Crisp packets',    18],
+                    ['Sweet wrappers',   22],
+                    ['Plastic bottles',  12],
+                    ['Cans',              8],
+                    ['Paper',            15],
+                ],
+                'highlight_row': None,
+                'highlight_col': None,
             },
             'questions': [
-                'Which minibeast was found the most? How many were found?',
-                'How many more spiders than snails were found?',
-                'What is the total number of worms and beetles found?',
+                'What is the highest value in the table?',
+                'What scale would fit all values?  What step size works cleanly?',
+                'How many bars will the chart have?  What labels do the axes need?',
             ],
             'answers': [
-                'Ants \u2014 19',
-                '12 \u2212 4 = 8 more spiders',
-                '8 + 5 = 13',
+                '22 (sweet wrappers)',
+                '0\u201325 in steps of 5 \u2014 5 equally spaced grid lines',
+                '5 bars.  x: Type of litter  |  y: Number found',
             ],
             'notes': (
-                'I DO C1 \u2014 Science cross-curricular link: Y4 Living Things and Habitats. '
-                'Pupils surveyed minibeasts in the school garden. '
-                'BEFORE drawing: ask pupils \u2014 what is the highest value? (19) '
-                'What scale fits? 0\u201320 in steps of 2 gives 10 grid lines. '
-                'Model: axes \u2192 scale \u2192 draw each bar to the exact gridline. '
-                'For odd values: between gridlines, estimate carefully. '
-                'On LP1, three bars are already drawn. Pupils add Worm and Ant.'
+                'I DO C1 \u2014 DATA TABLE ONLY. No chart yet. '
+                'Talk through axis decisions before touching a pencil. '
+                'Highest value = 22. Scale 0\u201325, step 5 \u2014 each gridline = 5. '
+                'For the bar for 22: draw it 4 gridlines up, then estimate 2/5 of the way to the next. '
+                'Better: could use 0\u201325 in steps of 5 and acknowledge 22 sits between 20 and 25. '
+                'PSHE/Citizenship link: litter and environmental impact. '
+                'Ask: which litter type might be most harmful to wildlife?'
             ),
         },
+        # ── C1 I Do 2: STM — bar to wrong gridline ────────────────────────────
         'c1_ido2': {
             'slide_type': 'stm_word_problem',
             'title': 'Spot the mistake',
             'problem': (
                 'A pupil draws a bar chart. The y-axis goes up in 5s.\n'
-                'They need to draw a bar for 15 minibeasts.\n'
-                'They draw it up to the 2nd gridline and label it 15.'
+                'They need to draw a bar for Sweet wrappers (22).\n'
+                'They draw the bar up to the 4th gridline and label it 22.'
             ),
-            'wrong_line': 'Bar drawn to the 2nd gridline.',
-            'correct_line': '2nd gridline on a scale of 5s = 10, not 15. The 3rd gridline = 15.',
-            'caption': 'What went wrong?',
+            'wrong_line': 'Bar drawn to 4th gridline = 22.',
+            'correct_line': '4th gridline on a scale of 5s = 20, not 22. Draw between 4th and 5th gridlines.',
+            'caption': 'What has gone wrong?',
             'notes': (
-                'STM: The pupil confused the line number with the value. '
-                'A scale going up in 5s means: line 1 = 5, line 2 = 10, line 3 = 15. '
-                'Always read the number written beside each gridline, not count from the bottom.'
+                'STM: The pupil counted gridlines (4th = 20) but labelled it as 22. '
+                'On a scale of 5s: 1st = 5, 2nd = 10, 3rd = 15, 4th = 20, 5th = 25. '
+                '22 sits just under 2/5 of the way between 20 and 25. '
+                'Always read the NUMBER beside the gridline, not count how many lines up.'
             ),
         },
-        # ── CYCLE 2: Drawing a bar chart from scratch ────────────────────────
+        # ── We Do visual: DATA TABLE (Dataset B — library books) ──────────────
+        'wedo_visual': {
+            'slide_type': 'stats_chart',
+            'title': 'We Do \u2014 watch as I draw this',
+            'chart_type': 'table',
+            'chart_data': {
+                'title': 'Books in the WFA school reading area',
+                'col_headers': ['Genre', 'Number of books'],
+                'rows': [
+                    ['Adventure',  16],
+                    ['Fantasy',    24],
+                    ['Science',    11],
+                    ['History',     8],
+                    ['Poetry',      6],
+                ],
+                'highlight_row': None,
+                'highlight_col': None,
+            },
+            'questions': [
+                'What is the highest value?  What scale do we need?',
+                'Call out the step size as I draw each gridline.',
+                'Which bar will be the tallest?',
+            ],
+            'answers': [
+                '24 \u2014 scale 0\u201325, step 5',
+                'Steps of 5: 0, 5, 10, 15, 20, 25',
+                'Fantasy \u2014 24 books',
+            ],
+            'notes': (
+                'WE DO \u2014 I draw this bar chart live on the board. Pupils contribute. '
+                'Dataset B has the same scale as Dataset A (highest ≈ 22\u201324, scale 0\u201325, step 5). '
+                'Being a Reader cross-curricular link: library book genres. '
+                'Ask: which genre would YOU choose? Does this match what your class reads? '
+                'Note: Fantasy (24) sits just below the top gridline. Ask pupils to estimate where.'
+            ),
+        },
+        # ── C2 I Do 1: Completed litter pick chart — reading back ─────────────
         'c2_ido1': {
             'slide_type': 'stats_chart',
-            'title': 'Drawing from scratch — how Maple class travel to school',
+            'title': 'Reading your chart \u2014 what does it tell us?',
             'chart_type': 'bar_chart',
             'chart_data': {
-                'title': 'How Maple class travel to school',
-                'categories': ['Walk', 'Cycle', 'Car', 'Bus', 'Scooter'],
-                'values': [10, 4, 8, 3, 1],
-                'y_max': 12, 'y_step': 2,
-                'y_label': 'Number of pupils',
+                'title': 'Litter collected during the WFA school litter pick',
+                'categories': ['Crisp\npackets', 'Sweet\nwrappers', 'Plastic\nbottles', 'Cans', 'Paper'],
+                'values': [18, 22, 12, 8, 15],
+                'y_max': 25, 'y_step': 5,
+                'y_label': 'Number found',
                 'color': '#1798d3',
             },
             'questions': [
-                'How many more pupils walk than travel by car?',
-                'What is the total for cycling and scooting combined?',
-                'How many pupils are in the class altogether?',
+                'Which type of litter was found most often?',
+                'How many more sweet wrappers than cans were found?',
+                'What is the total for crisp packets and paper combined?',
             ],
             'answers': [
-                '10 \u2212 8 = 2 more',
-                '4 + 1 = 5',
-                '10 + 4 + 8 + 3 + 1 = 26',
+                'Sweet wrappers \u2014 22',
+                '22 \u2212 8 = 14 more',
+                '18 + 15 = 33',
             ],
             'notes': (
-                'I DO C2 \u2014 Geography link: local fieldwork data (how pupils travel to school). '
-                'Model drawing from scratch: axes \u2192 scale (highest value 10, use 0\u201312 in 2s) '
-                '\u2192 draw all five bars \u2192 label axes and title. '
-                'On LP2, pupils receive the data table and blank axes and draw all bars themselves.'
+                'C2 I DO \u2014 The completed litter pick bar chart is revealed. '
+                'Pupils compare this against their own after-school activities chart (LP). '
+                'This revisits T6W5 L17/L18 skills (reading bar charts, calculating) '
+                'but now pupils are reading a chart THEY know how to draw.'
             ),
         },
+        # ── C2 I Do 2: STM — misreading a bar height ──────────────────────────
         'c2_ido2': {
             'slide_type': 'stm_word_problem',
             'title': 'Spot the mistake',
             'problem': (
-                'A pupil draws a bar chart showing how pupils travel to school.\n'
-                'The highest value is 10 pupils.\n'
-                'They use a y-axis that only goes up to 8.'
+                'A pupil reads the litter pick bar chart.\n'
+                'The scale goes up in 5s.\n'
+                'They say: "Paper bars are between 15 and 20,\n'
+                'so Paper = 18 because I can see three-fifths of the gap."'
             ),
-            'wrong_line': 'Y-axis goes up to 8.',
-            'correct_line': 'The highest value is 10 \u2014 the scale must go to at least 10. Use 0\u201312 in steps of 2.',
-            'caption': 'Why is this wrong?',
+            'wrong_line': 'Paper = 18 (estimated as 3/5 of gap).',
+            'correct_line': '15 is the exact gridline value. The bar reaches 15, not between 15 and 20.',
+            'caption': 'What has gone wrong?',
             'notes': (
-                'STM: If any bar value exceeds the scale, that bar cannot be drawn. '
-                'Always check the highest value in the data BEFORE setting the scale. '
-                'Highest value = 10 \u2192 scale to 12, steps of 2.'
+                'STM: The pupil over-estimated. Paper = 15 exactly (it sits ON the gridline). '
+                'When a bar sits exactly on a gridline, read that value directly \u2014 no estimation needed. '
+                'Only estimate when the bar falls BETWEEN two gridlines.'
             ),
         },
     },
     'wm': {
         'items': ['\U0001f33f', '\U0001f30a', '\U0001f98b', '\U0001f3af', '\U0001f4da', '\U0001f30d', '\U0001f9ea'],
         'qa': [
-            {'q': 'Which emoji was 3rd?',                 'a': '\U0001f98b'},
-            {'q': 'What was the last emoji?',             'a': '\U0001f9ea'},
-            {'q': 'Which emoji was 5th?',                 'a': '\U0001f4da'},
-            {'q': 'What were the 2nd and 6th emojis?',   'a': '\U0001f30a and \U0001f30d'},
-            {'q': 'How many emojis were shown?',          'a': '7'},
+            {'q': 'Which emoji was 3rd?',               'a': '\U0001f98b'},
+            {'q': 'What was the last emoji?',            'a': '\U0001f9ea'},
+            {'q': 'Which emoji was 5th?',                'a': '\U0001f4da'},
+            {'q': 'What were the 2nd and 6th emojis?',  'a': '\U0001f30a and \U0001f30d'},
+            {'q': 'How many emojis were shown?',         'a': '7'},
         ],
     },
     'vocab': [
-        ['interval', 'The gap between each numbered mark on an axis — e.g. 0, 2, 4, 6 has an interval of 2.'],
-        ['discrete',  'Data that can only take certain values, such as whole numbers of pupils or minibeasts.'],
-        ['frequency', 'How many times something occurs in a set of data.'],
+        ['scale',     'The equally spaced set of values on an axis.'],
+        ['interval',  'The equal gap between each number on a scale \u2014 e.g. 0, 5, 10, 15 has an interval of 5.'],
+        ['discrete',  'Data that can only take exact values, like counting whole numbers of objects.'],
     ],
     'rm': {
         'day': 3,
@@ -1726,13 +1833,11 @@ LESSON_DATA[21] = {
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-# L22  Thu 9 Jul — Evaluating a claim using chart evidence
-# CLF Geography Y4: England/Brazil contrasting study
-# Builds on L17\u2013L20 \u2014 moves from describing to evaluating
+# L22  Thu 9 Jul — Evaluating a claim
+# (Unchanged structure — chart shown is appropriate for this lesson type)
 # ─────────────────────────────────────────────────────────────────────────────
 LESSON_DATA[22] = {
     'visuals': {
-        # ── CYCLE 1: Evaluate a claim from a bar chart ───────────────────────
         'c1_ido1': {
             'slide_type': 'stats_chart',
             'title': 'Agree, disagree or not enough information?',
@@ -1741,51 +1846,68 @@ LESSON_DATA[22] = {
                 'title': 'Average monthly rainfall (mm) \u2014 Bristol vs Manaus, Jan\u2013Jun',
                 'categories': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                 'series': [
-                    {'label': 'Bristol',  'values': [89, 71, 58, 48, 52, 45],  'colour': '#1798d3'},
+                    {'label': 'Bristol',  'values': [89, 71, 58, 48, 52, 45],       'colour': '#1798d3'},
                     {'label': 'Manaus',   'values': [260, 290, 310, 300, 270, 100], 'colour': '#e57d24'},
                 ],
                 'y_max': 350, 'y_step': 50,
                 'y_label': 'Rainfall (mm)',
             },
             'questions': [
-                'Claim: "Bristol gets more rain than Manaus in every month."\nAgree, disagree, or not enough information? Show your evidence.',
-                'Claim: "Manaus gets more than twice as much rain as Bristol in March."\nCheck the claim with a calculation.',
-                'Which month is the most similar between the two cities? How do you know?',
+                'Claim: \u201cBristol gets more rain than Manaus in every month.\u201d\nAgree, disagree, or not enough information?  Show your evidence.',
+                'Claim: \u201cManaus gets more than twice as much rain as Bristol in March.\u201d\nCheck with a calculation.',
+                'Which month is most similar between the two cities?  How do you know?',
             ],
             'answers': [
-                'Disagree \u2014 Manaus gets more rain in every month shown. e.g. Jan: 260 > 89.',
-                'Agree \u2014 Manaus March = 310mm. Bristol March = 58mm. 2 \u00d7 58 = 116. 310 > 116.',
-                'June \u2014 Bristol 45mm, Manaus 100mm. Closest pair, though still very different.',
+                'Disagree \u2014 Manaus gets more in every month. e.g. Jan: 260 > 89.',
+                'Agree \u2014 Manaus March 310mm. Bristol March 58mm. 2\u00d758=116. 310>116.',
+                'June \u2014 Bristol 45mm, Manaus 100mm. Closest pair, still very different.',
             ],
             'notes': (
-                'I DO C1 \u2014 Geography cross-curricular: CLF Y4 contrasting study England/Brazil. '
-                'The double bar chart uses data pupils already know from L20 line graphs. '
-                'Model the EVIDENCE structure: "I [agree/disagree] because... [data value] shows..." '
-                'Q2 requires calculation: does the data support the claim? Not just a yes/no \u2014 show the maths. '
-                'Q3 requires comparing pairs: June is closest but both values differ enormously.'
+                'I DO C1 \u2014 Geography Y4: England/Brazil contrasting study. '
+                'Model the evidence structure: \u201cI disagree because [data value] shows\u2026\u201d '
+                'Q2 requires calculation, not just reading.'
             ),
         },
         'c1_ido2': {
             'slide_type': 'stm_word_problem',
             'title': 'Spot the mistake',
             'problem': (
-                'A pupil looks at the Bristol/Manaus rainfall chart.\n'
-                'They are asked: "Agree or disagree: Bristol gets more rain than Manaus in June."\n'
-                "The pupil writes: 'Agree — Bristol gets 45mm and that's the smallest bar so they get the most.'"
+                'A pupil looks at the Bristol/Manaus chart.\n'
+                '\u201cAgree or disagree: Bristol gets more rain than Manaus in June.\u201d\n'
+                "Pupil writes: \u201cAgree \u2014 Bristol\u2019s bar is smallest so it gets the most.\u201d"
             ),
-            'wrong_line': 'Small bar = less. Bristol 45mm < Manaus 100mm.',
-            'correct_line': 'A smaller bar means less rain. Bristol 45mm < Manaus 100mm \u2014 Manaus gets more. Disagree.',
-            'caption': 'What has the pupil misunderstood?',
-            'notes': (
-                'STM: The pupil has confused bar height with the value. '
-                'Smaller bar = smaller value = less rain. '
-                'Always read the scale: 45mm < 100mm, so Manaus gets more rain in June.'
-            ),
+            'wrong_line': 'Small bar = most rain.',
+            'correct_line': 'Smaller bar = less rain. Bristol 45mm < Manaus 100mm \u2014 Manaus gets more. Disagree.',
+            'caption': 'What has gone wrong?',
+            'notes': 'STM: pupil confused bar height with value. Smaller bar = smaller value = less rain.',
         },
-        # ── CYCLE 2: Evaluate a claim from a table ───────────────────────────
+        'wedo_visual': {
+            'slide_type': 'stats_chart',
+            'title': 'We Do \u2014 let\'s evaluate these',
+            'chart_type': 'double_bar',
+            'chart_data': {
+                'title': 'Average monthly rainfall (mm) \u2014 Bristol vs Manaus, Jan\u2013Jun',
+                'categories': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                'series': [
+                    {'label': 'Bristol',  'values': [89, 71, 58, 48, 52, 45],       'colour': '#1798d3'},
+                    {'label': 'Manaus',   'values': [260, 290, 310, 300, 270, 100], 'colour': '#e57d24'},
+                ],
+                'y_max': 350, 'y_step': 50,
+                'y_label': 'Rainfall (mm)',
+            },
+            'questions': [
+                'Claim: \u201cManaus gets less rain in June than in January.\u201d',
+                'Claim: \u201cBristol rainfall decreases every single month.\u201d',
+            ],
+            'answers': [
+                'Agree \u2014 Jan 260mm, Jun 100mm. 100 < 260.',
+                'Disagree \u2014 May (52mm) is more than Apr (48mm). Not every month decreases.',
+            ],
+            'notes': 'WE DO \u2014 Pupils evaluate claims together. Teacher models the evidence sentence structure.',
+        },
         'c2_ido1': {
             'slide_type': 'stats_chart',
-            'title': 'Evaluating a claim from a table',
+            'title': 'Evaluating claims from a table',
             'chart_type': 'table',
             'chart_data': {
                 'title': 'Hours of daylight \u2014 Bristol and S\u00e3o Paulo, by season',
@@ -1800,40 +1922,32 @@ LESSON_DATA[22] = {
                 'highlight_col': None,
             },
             'questions': [
-                'Claim: "Bristol always has fewer hours of daylight than S\u00e3o Paulo."\nAgree, disagree or not enough information?',
-                'Claim: "The total hours of daylight across all four seasons is the same for both cities."\nCheck this claim.',
-                'Why does Bristol have more daylight in summer but less in winter than S\u00e3o Paulo?',
+                'Claim: \u201cBristol always has fewer hours of daylight than S\u00e3o Paulo.\u201d\nAgree, disagree or not enough information?',
+                'Claim: \u201cThe total daylight hours are the same for both cities.\u201d\nCalculate to check.',
+                'Why does Bristol have more daylight in summer but less in winter?',
             ],
             'answers': [
-                'Disagree \u2014 in summer Bristol has 17h and S\u00e3o Paulo has 11h. Bristol gets MORE in summer.',
-                'Bristol: 8+12+17+12 = 49h. S\u00e3o Paulo: 11+12+11+12 = 46h. Not the same \u2014 disagree.',
-                'Bristol is in the northern hemisphere. Long summer days but short winter days. '
-                'S\u00e3o Paulo (southern hemisphere) has reversed seasons, so its summer is our winter.',
+                'Disagree \u2014 summer: Bristol 17h, S\u00e3o Paulo 11h. Bristol has MORE in summer.',
+                'Bristol: 8+12+17+12=49h. S\u00e3o Paulo: 11+12+11+12=46h. Not the same.',
+                'Bristol is in the northern hemisphere \u2014 long summer days, short winter days.',
             ],
             'notes': (
-                'I DO C2 \u2014 Geography cross-curricular: CLF Y4 \u2014 Identify hemisphere (northern/southern); '
-                'know that seasons are reversed between hemispheres. '
-                'Q2 is a calculation check: add all four seasons for each city. '
-                'Q3 is the key geography insight: hemispheres explain the pattern. '
-                'Stress the evidence structure: "I disagree BECAUSE [specific value] shows..."'
+                'C2 I DO \u2014 Geography Y4: identify hemisphere (northern/southern). '
+                'S\u00e3o Paulo (southern hemisphere) has reversed seasons. '
+                'Q3 is the key geography insight. Use data first, then geography to explain.'
             ),
         },
         'c2_ido2': {
             'slide_type': 'stm_word_problem',
             'title': 'Spot the mistake',
             'problem': (
-                'A pupil evaluates this claim: "S\u00e3o Paulo has more daylight in summer than Bristol."\n'
-                "They write: 'Agree \u2014 S\u00e3o Paulo is closer to the equator so it must be sunnier.'"
+                'A pupil evaluates: \u201cS\u00e3o Paulo has more daylight in summer than Bristol.\u201d\n'
+                "Pupil writes: \u201cAgree \u2014 it\u2019s closer to the equator so it must be sunnier.\u201d"
             ),
-            'wrong_line': 'Closer to equator = more summer daylight.',
-            'correct_line': "The table shows Bristol has 17h in summer, S\u00e3o Paulo 11h. Evidence trumps assumption.",
-            'caption': 'What went wrong with this pupil\u2019s method?',
-            'notes': (
-                'STM: The pupil used a general assumption instead of reading the table. '
-                'Key lesson: always use DATA to evaluate a claim, not background knowledge alone. '
-                'The table clearly shows Bristol has MORE daylight in summer (17h vs 11h) \u2014 disagree. '
-                'Pupils need to read the table first, then use their geography knowledge to EXPLAIN, not to skip the data.'
-            ),
+            'wrong_line': 'Used assumption without checking the data.',
+            'correct_line': 'Table shows Bristol has 17h in summer, S\u00e3o Paulo 11h. Evidence first, then explain.',
+            'caption': 'What went wrong with this method?',
+            'notes': 'STM: always read the data first. Background knowledge explains WHY, not WHAT.',
         },
     },
     'wm': {
@@ -1878,111 +1992,151 @@ LESSON_DATA[22] = {
 
 # ─────────────────────────────────────────────────────────────────────────────
 # L23  Fri 11 Jul — Full data cycle
-# CLF Computing Y4: data and databases; sort and survey data
-# Synthesis lesson: tally \u2192 choose representation \u2192 draw \u2192 analyse
+# CLF Computing Y4: data and databases; surveys and sorting
+# Survey: How are you feeling about moving to Year 5?
 # ─────────────────────────────────────────────────────────────────────────────
 LESSON_DATA[23] = {
     'visuals': {
-        # ── CYCLE 1: Model the full data cycle ───────────────────────────────
+        # ── C1 I Do 1: Worked example (Dataset A) — model the full cycle ──────
+        # Teacher shows a PREVIOUS class's data already tallied.
+        # Models: data table → choose representation → draw → answer.
         'c1_ido1': {
             'slide_type': 'stats_chart',
-            'title': 'The full data cycle \u2014 from list to chart',
+            'title': 'The full data cycle \u2014 model',
+            'chart_type': 'table',
+            'chart_data': {
+                'title': "Last year's Y4 class: What is your favourite thing about school?",
+                'col_headers': ['Favourite thing', 'Number of pupils'],
+                'rows': [
+                    ['Maths',     8],
+                    ['PE',        7],
+                    ['Lunch',     6],
+                    ['Art',       3],
+                    ['Computing', 2],
+                ],
+                'highlight_row': None,
+                'highlight_col': None,
+            },
+            'questions': [
+                'What representation suits this data best?  Why?',
+                'What scale do we need?  How many bars?',
+                'From the finished chart: which answer was most popular?  By how many?',
+            ],
+            'answers': [
+                'Bar chart \u2014 separate categories, not continuous over time.',
+                '0\u201310 in steps of 2.  5 bars.',
+                'Maths \u2014 8 pupils. 8 \u2212 7 = 1 more than PE.',
+            ],
+            'notes': (
+                'I DO C1 \u2014 Model the FULL CYCLE using this worked example. '
+                '1. Show the data table. 2. Choose representation: bar chart (categories not continuous). '
+                '3. Decide scale: highest = 8, so 0\u201310 in steps of 2. '
+                '4. Draw axes, bars, title, labels. '
+                '5. Read from the completed chart. '
+                'Stress: NEVER draw a line graph for categories like this.'
+            ),
+        },
+        # ── C1 I Do 2: STM — line graph for categorical data ─────────────────
+        'c1_ido2': {
+            'slide_type': 'stm_word_problem',
+            'title': 'Spot the mistake',
+            'problem': (
+                "A pupil tallies the 'favourite thing about school' data.\n"
+                'They draw a line graph with subjects on the x-axis\n'
+                'and a line connecting Maths to PE to Lunch to Art to Computing.'
+            ),
+            'wrong_line': 'Drew a line graph for separate categories.',
+            'correct_line': 'Line graphs show continuous data over time. Categories need a bar chart.',
+            'caption': 'Why is a line graph wrong here?',
+            'notes': (
+                'STM: A line joining Maths to PE implies a continuous change between them. '
+                'Categories are separate and unordered \u2014 they cannot be joined with a line. '
+                'Bar chart: each bar is independent. Line graph: points must be in a meaningful order (e.g. time).'
+            ),
+        },
+        # ── We Do visual: class survey process slide ──────────────────────────
+        'wedo_visual': {
+            'slide_type': 'stats_chart',
+            'title': 'We Do \u2014 class survey time',
+            'chart_type': 'table',
+            'chart_data': {
+                'title': 'Our class survey: How are you feeling about moving to Year 5?',
+                'col_headers': ['How I feel', 'Tally', 'Total'],
+                'rows': [
+                    ['Very excited',   '', ''],
+                    ['Excited',        '', ''],
+                    ['A bit nervous',  '', ''],
+                    ['Not sure',       '', ''],
+                ],
+                'highlight_row': None,
+                'highlight_col': None,
+            },
+            'questions': [
+                'Raise your hand when your option is called out.',
+                'Tally each response on your Learning Paper as we go.',
+                'Add up each row to get your totals before drawing.',
+            ],
+            'answers': [
+                '(Totals will vary by class)',
+                '(Check all rows total to 26)',
+                '(Choose scale: highest value \u2192 suitable step)',
+            ],
+            'notes': (
+                'WE DO / DATA COLLECTION MOMENT. '
+                'Run the class survey here \u2014 count by show of hands or quick vote. '
+                'Pupils tally on their LP as you count each response. '
+                'Check: do all tallies add to 26? If not, recount. '
+                'Then pupils independently choose their scale and draw on the LP.'
+            ),
+        },
+        # ── C2 I Do 1: Completed worked example chart — reading back ──────────
+        'c2_ido1': {
+            'slide_type': 'stats_chart',
+            'title': 'Reading our chart \u2014 what does it tell us?',
             'chart_type': 'bar_chart',
             'chart_data': {
-                'title': 'Maple class favourite school subject',
-                'categories': ['Maths', 'Science', 'English', 'Art', 'PE'],
-                'values': [8, 6, 5, 4, 3],
+                'title': "Last year's Y4: Favourite thing about school",
+                'categories': ['Maths', 'PE', 'Lunch', 'Art', 'Computing'],
+                'values': [8, 7, 6, 3, 2],
                 'y_max': 10, 'y_step': 2,
                 'y_label': 'Number of pupils',
                 'color': '#1798d3',
             },
             'questions': [
-                'Why is a bar chart the best choice for this data?',
-                'Which subject did the most pupils choose? How many more than PE?',
-                'What fraction of the class chose Maths?  (Class of 26)',
+                'Which answer was chosen by fewest pupils?',
+                'How many more pupils chose Maths than Art?',
+                'What does this chart tell us about what last year\u2019s Y4 enjoyed?',
             ],
             'answers': [
-                'It compares separate categories clearly. Line graph is for continuous data over time.',
-                'Maths \u2014 8 pupils. 8 \u2212 3 = 5 more than PE.',
-                '8/26 (not easily simplified, but correct as a fraction).',
+                'Computing \u2014 2 pupils',
+                '8 \u2212 3 = 5 more pupils',
+                'Maths and PE were most popular; Computing was least popular.',
             ],
             'notes': (
-                'I DO C1 \u2014 Computing cross-curricular: CLF Y4 data and databases / sorting data. '
-                'Model the FULL CYCLE on a think-aloud: '
-                '1. Start with the unsorted list of 26 responses (show on slide before this). '
-                '2. Tally each response \u2014 systematic, no skipping. '
-                '3. Choose representation: bar chart for comparing categories (not line graph). '
-                '4. Draw: axes, scale (highest = 8, use 0\u201310 in 2s), bars, title, labels. '
-                '5. Analyse: answer questions from YOUR chart. '
-                'Q3 introduces fractional thinking naturally.'
+                'C2 I DO \u2014 The worked example chart is completed. '
+                'Pupils compare with their own Year 5 transition chart. '
+                'Key question: does your class feel similarly or differently about the move to Y5? '
+                'Ask pupils to write one sentence about what their chart tells us.'
             ),
         },
-        'c1_ido2': {
-            'slide_type': 'stm_word_problem',
-            'title': 'Spot the mistake',
-            'problem': (
-                'Maple class votes for their favourite subject.\n'
-                'A pupil tallies the 26 responses and draws a line graph,\n'
-                'with subjects on the x-axis and a line connecting them.'
-            ),
-            'wrong_line': 'Drew a line graph for favourite subject.',
-            'correct_line': 'Line graphs show continuous data over time. Categories need a bar chart or pictogram.',
-            'caption': 'Why is a line graph wrong here?',
-            'notes': (
-                'STM: Line graphs are for continuous data that changes over time (rainfall, temperature). '
-                'Favourite subjects are separate, unordered categories \u2014 discrete data. '
-                'Joining them with a line suggests one leads into the next, which is meaningless. '
-                'A bar chart keeps each category visually separate and comparable.'
-            ),
-        },
-        # ── CYCLE 2: Pupils apply the full cycle independently ───────────────
-        'c2_ido1': {
-            'slide_type': 'stats_chart',
-            'title': 'Choose your representation \u2014 Olympic sports survey',
-            'chart_type': 'bar_chart',
-            'chart_data': {
-                'title': 'Favourite sport to watch \u2014 Y4 Paris Olympics survey',
-                'categories': ['Football', 'Gymnastics', 'Swimming', 'Athletics', 'Cycling'],
-                'values': [7, 6, 5, 4, 4],
-                'y_max': 8, 'y_step': 2,
-                'y_label': 'Number of pupils',
-                'color': '#1798d3',
-            },
-            'questions': [
-                'How many pupils took part in the survey altogether?',
-                'Two sports tied. Which two, and how many pupils chose each?',
-                'Could you use a pictogram for this data? What would be a good key value?',
-            ],
-            'answers': [
-                '7 + 6 + 5 + 4 + 4 = 26 pupils',
-                'Athletics and Cycling \u2014 4 pupils each.',
-                'Yes. Key of 2 (each symbol = 2 pupils) works well \u2014 all values are even or can be shown with halves.',
-            ],
-            'notes': (
-                'I DO C2 \u2014 Model applying the full cycle to a second dataset. '
-                'Paris Olympics 2024 context: pupils were 7\u20138 during the Games \u2014 familiar and engaging. '
-                'Q3 asks pupils to think about a different representation for the same data \u2014 metacognitive. '
-                'Key of 2 works because all values are small; key of 5 would require quarter-symbols for 4. '
-                'On LP2, pupils receive the raw list of 26 responses and apply the full cycle independently.'
-            ),
-        },
+        # ── C2 I Do 2: STM — wrong pictogram key ─────────────────────────────
         'c2_ido2': {
             'slide_type': 'stm_word_problem',
             'title': 'Spot the mistake',
             'problem': (
-                'A pupil draws a pictogram for the Olympic sports data.\n'
+                'A pupil draws a pictogram for the Year 5 survey data.\n'
                 'Key: each \u2b50 = 5 pupils.\n'
-                'For Football (7 pupils) they draw 1 whole star and 2 halves.'
+                '7 pupils felt \u201cVery excited.\u201d\n'
+                'They draw 1 whole star and 2 halves.'
             ),
             'wrong_line': '1 whole + 2 halves = 7.',
-            'correct_line': '1 whole + 2 halves = 1 \u00d7 5 + 2 \u00d7 2.5 = 10. Wrong key or wrong number of symbols.',
-            'caption': 'What has gone wrong?',
+            'correct_line': '1 whole + 2 halves = 1\u00d75 + 2\u00d72.5 = 10, not 7. Use key=2 or a bar chart.',
+            'caption': 'Why does this not work?',
             'notes': (
-                'STM: With key = 5, half a symbol = 2.5. So 1 whole + 1 half = 7.5, not 7. '
-                '7 cannot be shown exactly with a key of 5. '
-                'Solutions: use key = 1 (exact but tedious), or key = 2 (so 3.5 symbols = 7), '
-                'or switch to a bar chart where any value can be shown exactly. '
-                'This reinforces why choosing the right representation \u2014 and the right key \u2014 matters.'
+                'STM: With key=5, half a symbol = 2.5. '
+                '7 cannot be shown exactly using a key of 5 (7\u00f75 = 1.4). '
+                'Solutions: use key=1 (exact but tedious) or use a bar chart. '
+                'This reinforces WHY we chose a bar chart for this data.'
             ),
         },
     },
@@ -1997,7 +2151,7 @@ LESSON_DATA[23] = {
         ],
     },
     'vocab': [
-        ['tally',    'A way of counting using marks grouped in fives to keep track of data.'],
+        ['tally',    'A way of counting using groups of five marks to keep track of data.'],
         ['represent','To show data in a chosen format \u2014 such as a bar chart or pictogram.'],
         ['cycle',    'The full process: collect data, organise it, represent it, then analyse it.'],
     ],
