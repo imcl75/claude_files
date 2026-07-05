@@ -86,8 +86,8 @@
     "date": "06/07/2026",
     "topic": "Statistics",
     "lf": "LF: To draw an accurate line graph from a given data set.",
-    "ican1": "I can choose a suitable scale and label both axes.",
-    "ican2": "I can plot data points and join them with straight lines."
+    "ican1": "I can plot data points accurately at the correct position on given axes.",
+    "ican2": "I can join consecutive plotted points with straight lines and write a title."
   },
   {
     "lesson": 21,
@@ -96,8 +96,8 @@
     "date": "08/07/2026",
     "topic": "Statistics",
     "lf": "LF: To draw an accurate bar chart from a given data set.",
-    "ican1": "I can choose a suitable scale and label both axes.",
-    "ican2": "I can draw bars to the correct height and add a title."
+    "ican1": "I can draw bars to the correct height using a given scale.",
+    "ican2": "I can set up axes with a suitable scale and draw all bars from a data table."
   },
   {
     "lesson": 22,
