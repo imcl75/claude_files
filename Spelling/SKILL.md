@@ -275,7 +275,7 @@ if [ ! -f /home/claude/fix_pptx_ooxml.py ]; then
       "https://raw.githubusercontent.com/imcl75/claude_files/main/Shared/fix_pptx_ooxml.py" \
       -o /home/claude/fix_pptx_ooxml.py
 fi
-python3 /home/claude/fix_pptx_ooxml.py /home/claude/spelling_shed_slides_*.pptx
+python3 /home/claude/fix_pptx_ooxml.py /home/claude/spelling_shed_slides_*.pptx /home/claude/spelling_lp_*.pptx
 ```
 
 

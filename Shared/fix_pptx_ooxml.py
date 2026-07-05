@@ -211,6 +211,9 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print(__doc__)
         sys.exit(1)
-    in_path = sys.argv[1]
-    out_path = sys.argv[2] if len(sys.argv) > 2 else None
-    fix_pptx(in_path, out_path)
+    # Process every path argument in place.
+    # Formerly treated argv[2] as an output path — that corrupted multi-file
+    # glob calls by overwriting file 2 with the fixed content of file 1.
+    for in_path in sys.argv[1:]:
+        print(f"[fix_pptx_ooxml] Processing: {in_path}")
+        fix_pptx(in_path)
