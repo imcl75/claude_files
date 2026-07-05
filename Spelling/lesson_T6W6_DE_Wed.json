@@ -1,0 +1,154 @@
+{
+  "code": "DE",
+  "rule": "Doubling the consonant before -ed and -er",
+  "stage": "T6W6",
+  "objective": "To spell words where the final consonant doubles before -ed or -er",
+  "lpDay": "Wed",
+  "lpSideBType": "vn_dm_sc",
+  "words": [
+    "permitted","committed","preferred","referred","occurred",
+    "bigger","thinner","sadder","hotter","flatter"
+  ],
+  "clozeOrder": [
+    "occurred","flatter","permitted","hotter","referred",
+    "committed","sadder","preferred","bigger","thinner"
+  ],
+  "defs": [
+    "allowed to happen; given official permission",
+    "fully dedicated to something; carried out an action",
+    "liked one thing more than another",
+    "directed someone or something to another person or place",
+    "happened",
+    "larger in size",
+    "having less width or depth",
+    "more unhappy",
+    "having a higher temperature",
+    "more level or less raised"
+  ],
+  "sentences": {
+    "permitted": "Mobile phones were not ____________________ inside the examination hall under any circumstances.",
+    "committed": "The whole team was ____________________ to finishing the project before the end of term.",
+    "preferred": "She ____________________ the seat by the window because she could watch the trains go by.",
+    "referred": "The librarian ____________________ her to a book about local history that nobody else had ever borrowed.",
+    "occurred": "It suddenly ____________________ to him that he had been solving the puzzle the wrong way round.",
+    "bigger": "Manaus is far ____________________ than most people expect; it has a population of over two million.",
+    "thinner": "The ice was much ____________________ at the edges of the lake, so they stayed near the centre.",
+    "sadder": "There was no ____________________ ending in the whole book than the lighthouse keeper saying goodbye.",
+    "hotter": "Brazil is significantly ____________________ than England for most of the year, with a tropical climate.",
+    "flatter": "The south of England is much ____________________ than the north, with fewer hills and wider plains."
+  },
+  "syllableCounts": {
+    "permitted": 3, "committed": 3, "preferred": 2, "referred": 2, "occurred": 2,
+    "bigger": 2, "thinner": 2, "sadder": 2, "hotter": 2, "flatter": 2
+  },
+  "phonemes": {
+    "permitted": [
+      {"t":"dot","l":"p"},{"t":"dot","l":"e"},{"t":"dot","l":"r"},
+      {"t":"dot","l":"m"},{"t":"dot","l":"i"},{"t":"dot","l":"tt"},{"t":"line","l":"ed"}
+    ],
+    "preferred": [
+      {"t":"dot","l":"p"},{"t":"dot","l":"r"},{"t":"dot","l":"e"},
+      {"t":"dot","l":"f"},{"t":"dot","l":"e"},{"t":"dot","l":"rr"},{"t":"line","l":"ed"}
+    ],
+    "occurred": [
+      {"t":"dot","l":"o"},{"t":"dot","l":"c"},{"t":"dot","l":"u"},{"t":"dot","l":"rr"},{"t":"line","l":"ed"}
+    ],
+    "bigger": [
+      {"t":"dot","l":"b"},{"t":"dot","l":"i"},{"t":"dot","l":"gg"},{"t":"line","l":"er"}
+    ],
+    "thinner": [
+      {"t":"line","l":"th"},{"t":"dot","l":"i"},{"t":"dot","l":"nn"},{"t":"line","l":"er"}
+    ],
+    "sadder": [
+      {"t":"dot","l":"s"},{"t":"dot","l":"a"},{"t":"dot","l":"dd"},{"t":"line","l":"er"}
+    ]
+  },
+  "wordMaps": {
+    "words": ["permitted","preferred","occurred","bigger","thinner","sadder"],
+    "syllables": {
+      "permitted": "per|mit|ted",
+      "preferred": "pre|ferred",
+      "occurred": "oc|curred",
+      "bigger": "big|ger",
+      "thinner": "thin|ner",
+      "sadder": "sad|der"
+    }
+  },
+  "starter": {
+    "question": "Can you add -ed or -er to these words? What must you do first?",
+    "words": ["permit","prefer","big","thin","sad","hot"],
+    "answers": ["permitted","preferred","bigger","thinner","sadder","hotter"],
+    "answerLabel": "Double, then add suffix:",
+    "ruleBox": "Same doubling rule as -ing: short vowel + single consonant = double before -ed or -er. For two-syllable verbs, only double if the stress falls on the final syllable (per-MIT → permitted; EN-ter → entered, no double).",
+    "perPairNote": ""
+  },
+  "thisWeeksWordsQ": "What do you notice about today's words?",
+  "thisWeeksWordsPrompt": "Look at each base word. Why does the final consonant double before -ed or -er?",
+  "thisWeeksWordsExplanation": "All today's words double the final consonant before -ed or -er. The rule is the same as for -ing: short vowel + single consonant = double. For two-syllable verbs, the stress must be on the final syllable: per-MIT → permitted (stress on -mit, so double). EN-ter → entered (stress on en-, so no double). The comparative adjectives big, thin, sad, hot and flat all follow the same short-vowel rule.",
+  "etymology": {
+    "word": "preferred",
+    "baseForm": "praeferre",
+    "clicks": [
+      {"label":"Language","body":"Latin, via Old French"},
+      {"label":"Base word","body":"praeferre — to carry before or set in front"},
+      {"label":"Original meaning","body":"prae- (before) + ferre (to carry) — literally to carry something to the front."},
+      {"label":"Then","body":"Came into English via Old French préférer, meaning to esteem one thing more highly than another."},
+      {"label":"Now","body":"We use preferred to mean liked one option more than another."},
+      {"label":"In today's words","body":"The stress falls on the final syllable (pre-FER), so the r doubles: prefer → preferred."}
+    ]
+  },
+  "wordSortQ": "Can you sort these words into two groups?",
+  "wordSort": {
+    "box1label": "No doubling needed",
+    "box1sub": "Long vowel, cluster, or stress on first syllable",
+    "box2label": "Double the consonant",
+    "box2sub": "Short vowel + single consonant (stress on final syllable for 2-syl words)",
+    "hint": "Try removing the suffix. Is the vowel short? Is it a single final consonant? For two-syllable words, where does the stress fall?",
+    "answerNote": "No doubling: entered, listened, helped, opened. Doubled: permitted, committed, bigger, thinner, occurred.",
+    "verbOnly": ["entered","listened","helped","opened"],
+    "verbNoun": [
+      {"word":"permitted","eg":"permit → permit+t+ed"},
+      {"word":"committed","eg":"commit → commit+t+ed"},
+      {"word":"bigger","eg":"big → big+g+er"},
+      {"word":"thinner","eg":"thin → thin+n+er"},
+      {"word":"occurred","eg":"occur → occur+r+ed"}
+    ],
+    "exampleLine": "enter → entered (stress on EN-, no double) | permit → permitted (stress on -MIT, double)"
+  },
+  "spellData": [
+    {"opts":["permitted","permited","permitied"],"correct":0},
+    {"opts":["prefered","preferred","preferrred"],"correct":1},
+    {"opts":["occured","occurred","occuredd"],"correct":1},
+    {"opts":["bigger","biggar","biggger"],"correct":0},
+    {"opts":["comitted","commited","committed"],"correct":2}
+  ],
+  "wordShed": {
+    "baseWord": "occurred",
+    "def": "happened or took place",
+    "sentence": "It occurred to the detective that the footprints could only have been made after the rain.",
+    "rhymes": "referred, preferred, deferred",
+    "morphology": "occur (v) → occurred (past) → occurring (pres part) → occurrence (n) → recur (v) → recurred (past)"
+  },
+  "morphMatrix": {
+    "baseWord": "prefer",
+    "def": "to like one thing more than another",
+    "suffixes": ["-red","-ring","-s","-able","-ence","un-…-red"],
+    "answers": ["preferred","preferring","prefers","preferable","preference","✗ (not standard)"]
+  },
+  "lpVerbNounName": "Find the Base",
+  "lpVerbNounInstr": "Remove -ed or -er. Write the base word (remember: remove the extra letter!).",
+  "lpVerbNoun": [
+    ["permitted","permit"],["committed","commit"],["preferred","prefer"],
+    ["referred","refer"],["occurred","occur"],["bigger","big"]
+  ],
+  "lpDefMatchName": "Match the Meaning",
+  "lpDefMatchInstr": "Write the word that matches each meaning.",
+  "lpDefinitions": [
+    "more level or less raised",
+    "having a higher temperature",
+    "having less width or depth",
+    "more unhappy",
+    "allowed to happen"
+  ],
+  "lpDefMatchAnswers": ["flatter","hotter","thinner","sadder","permitted"]
+}
