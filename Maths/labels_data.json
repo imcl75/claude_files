@@ -95,9 +95,9 @@
     "day": "Wednesday",
     "date": "08/07/2026",
     "topic": "Statistics",
-    "lf": "LF: To answer reasoning questions using data from bar charts and tables.",
-    "ican1": "I can identify the correct calculation from a bar chart or table.",
-    "ican2": "I can calculate sums and differences to answer multi-step questions."
+    "lf": "LF: To draw an accurate bar chart from a given data set.",
+    "ican1": "I can choose a suitable scale and label both axes.",
+    "ican2": "I can draw bars to the correct height and add a title."
   },
   {
     "lesson": 22,
@@ -105,9 +105,9 @@
     "day": "Thursday",
     "date": "09/07/2026",
     "topic": "Statistics",
-    "lf": "LF: To describe trends and connect different data representations.",
-    "ican1": "I can describe the trend shown in a line graph or table.",
-    "ican2": "I can compare what different representations show about the same data."
+    "lf": "LF: To evaluate claims about data using evidence from charts.",
+    "ican1": "I can decide whether a claim is true or false using data values.",
+    "ican2": "I can write a verdict with evidence: \"I agree/disagree because\u2026\""
   },
   {
     "lesson": 23,
@@ -115,8 +115,8 @@
     "day": "Friday",
     "date": "11/07/2026",
     "topic": "Statistics",
-    "lf": "LF: To solve mixed statistics problems across different chart types.",
-    "ican1": "I can read and interpret data from a range of chart types.",
-    "ican2": "I can choose the right calculation to answer questions about data."
+    "lf": "LF: To complete the full data cycle \u2014 tally, represent, draw and analyse.",
+    "ican1": "I can tally a list of data and choose a suitable representation.",
+    "ican2": "I can draw a bar chart and answer questions from my own chart."
   }
 ]
