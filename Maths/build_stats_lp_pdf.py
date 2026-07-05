@@ -390,8 +390,8 @@ LP.update({
 20: {
     'date': '06/07/2026', 'topic': 'Statistics',
     'lf':   'LF: To draw an accurate line graph from a given data set.',
-    'ican': ['I can choose a suitable scale and label both axes.',
-             'I can plot data points and join them with straight lines.'],
+    'ican': ['I can plot data points accurately at the correct position on given axes.',
+             'I can join consecutive plotted points with straight lines and write a title.'],
     'lp1': {
         'lp_type': 'draw_graph',
         'intro': 'Use the data in the table to draw a line graph in the space on the right.',
@@ -445,8 +445,8 @@ LP.update({
 21: {
     'date': '08/07/2026', 'topic': 'Statistics',
     'lf':   'LF: To draw an accurate bar chart from a given data set.',
-    'ican': ['I can choose a suitable scale and label both axes.',
-             'I can draw bars to the correct height and add a title.'],
+    'ican': ['I can draw bars to the correct height using a given scale.',
+             'I can set up axes with a suitable scale and draw all bars from a data table.'],
     'lp1': {
         'lp_type': 'draw_bar',
         'intro': 'Three bars have been drawn for you. Add the missing bars, then answer the questions.',
