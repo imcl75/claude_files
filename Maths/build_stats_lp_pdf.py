@@ -385,102 +385,83 @@ LP = {
 },
 }
 
+
 # ── T6W6 LP data ──────────────────────────────────────────────────────────────
+# L20: draw line graph (Bristol July temps)
+# L21: draw bar chart (after-school activities)
+# L22: evaluate claims (standard chart + questions — no change)
+# L23: tally + draw bar chart (Year 5 transition survey)
 LP.update({
 20: {
     'date': '06/07/2026', 'topic': 'Statistics',
     'lf':   'LF: To draw an accurate line graph from a given data set.',
-    'ican': ['I can plot data points accurately at the correct position on given axes.',
-             'I can join consecutive plotted points with straight lines and write a title.'],
+    'ican': ['I can choose a suitable scale and write the values on the y-axis.',
+             'I can plot data points accurately and join them with straight lines.'],
     'lp1': {
-        'lp_type': 'draw_graph',
-        'intro': 'Use the data in the table to draw a line graph in the space on the right.',
-        'table_headers': ['Month', 'Rainfall (mm)'],
-        'table_rows': [['Jan', 89], ['Feb', 71], ['Mar', 58],
-                       ['Apr', 48], ['May', 52], ['Jun', 45]],
+        'lp_type':      'draw_graph',
+        'intro':        'Use the data in the table to draw a line graph in the space below.',
+        'table_headers':['Time', 'Temperature (\u00b0C)'],
+        'table_rows':   [['6 am', 15], ['9 am', 18], ['12 pm', 23], ['3 pm', 22], ['6 pm', 19]],
         'ax': {
-            'x_labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            'y_min': 0, 'y_max': 100, 'y_step': 10,
-            'x_label': 'Month', 'y_label': 'Rainfall (mm)',
-            'title_prompt': 'Give your graph a title:',
-            'ms_values': [89, 71, 58, 48, 52, 45],
+            'n_x': 5, 'n_y': 5,
+            'ms_x_labels': ['6 am', '9 am', '12 pm', '3 pm', '6 pm'],
+            'ms_y_vals':   [15, 18, 23, 22, 19],
+            'ms_y_min': 0, 'ms_y_max': 25, 'ms_y_step': 5,
+            'ms_x_label': 'Time', 'ms_y_label': 'Temperature (\u00b0C)',
+            'ms_title': 'Temperature in Bristol on a July day',
         },
-        'instructions': [
-            '1.  Check the scale — what does each grid line represent?',
-            '2.  Plot each cross (×) at the correct height.',
-            '3.  Join the points with straight lines — one segment at a time.',
-            '4.  Write a title and label both axes.',
-        ],
         'qs': [
-            ('What is the wettest month shown?',  'January — 89mm'),
-            ('How much less rain falls in June than in January?',
-             '89 − 45 = 44mm less'),
+            ('What was the temperature at 12 pm?', '23\u00b0C'),
+            ('How much warmer was it at 12 pm than at 6 am?', '23 \u2212 15 = 8\u00b0C warmer'),
+            ('Describe the trend across the day.',
+             'Temperature rises to a peak at noon then falls in the afternoon.'),
         ],
     },
     'lp2': {
-        'lp_type': 'draw_graph',
-        'intro': 'Use the data below to draw a line graph.  Choose your own scale.',
-        'table_headers': ['Month', 'Rainfall (mm)'],
-        'table_rows': [['Jan', 130], ['Feb', 120], ['Mar', 100],
-                       ['Apr', 80],  ['May', 50],  ['Jun', 40]],
-        'ax': {
-            'x_labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            'y_min': 0, 'y_max': 150, 'y_step': 25,
-            'x_label': 'Month', 'y_label': 'Rainfall (mm)',
-            'title_prompt': 'Give your graph a title:',
-            'ms_values': [130, 120, 100, 80, 50, 40],
-        },
-        'instructions': [
-            '1.  Find the highest value — what scale do you need?',
-            '2.  Label the y-axis in equal steps.',
-            '3.  Plot each point carefully and join with straight lines.',
-        ],
+        'intro': 'Look at your completed graph and answer these questions in your book.',
         'qs': [
-            ('Which month has the most rainfall?',     'January — 130mm'),
-            ('Describe the trend from January to June.',
-             'Rainfall falls every month — a clear downward trend.'),
+            ('At what time was it warmest?  What was the temperature?',
+             '12 pm \u2014 23\u00b0C'),
+            ('Compare your Bristol July graph with the London January graph from the lesson.\n'
+             'Write one similarity and one difference.',
+             'Similarity: both peak at midday. Difference: Bristol July is much warmer.'),
         ],
     },
 },
 21: {
     'date': '08/07/2026', 'topic': 'Statistics',
     'lf':   'LF: To draw an accurate bar chart from a given data set.',
-    'ican': ['I can draw bars to the correct height using a given scale.',
-             'I can set up axes with a suitable scale and draw all bars from a data table.'],
+    'ican': ['I can choose a suitable scale for a bar chart and write values on the y-axis.',
+             'I can draw bars to the correct height and label my chart fully.'],
     'lp1': {
-        'lp_type': 'draw_bar',
-        'intro': 'Three bars have been drawn for you. Add the missing bars, then answer the questions.',
-        'table_headers': ['Minibeast', 'Number found'],
-        'table_rows': [['Worm', 8], ['Beetle', 5], ['Snail', 4], ['Spider', 12], ['Ant', 19]],
+        'lp_type':      'draw_bar',
+        'intro':        'Use the data in the table to draw a bar chart in the space below.',
+        'table_headers':['Activity', 'Number of pupils'],
+        'table_rows':   [['Football', 8], ['Reading', 5], ['Gaming', 7],
+                         ['Cooking', 4], ['Art', 2]],
         'ax': {
-            'categories': ['Worm', 'Beetle', 'Snail', 'Spider', 'Ant'],
-            'y_min': 0, 'y_max': 20, 'y_step': 2,
-            'x_label': 'Minibeast', 'y_label': 'Number found',
-            'title_prompt': 'Give your chart a title:',
-            'partial_values': [None, 5, 4, 12, None],
-            'ms_values':      [8,    5, 4, 12, 19],
+            'n_x': 5, 'n_y': 5,
+            'ms_x_labels': ['Football', 'Reading', 'Gaming', 'Cooking', 'Art'],
+            'ms_y_vals':   [8, 5, 7, 4, 2],
+            'ms_y_min': 0, 'ms_y_max': 10, 'ms_y_step': 2,
+            'ms_x_label': 'Activity', 'ms_y_label': 'Number of pupils',
+            'ms_title': 'Favourite after-school activities \u2014 Maple class',
         },
         'qs': [
-            ('Which minibeast was found most often?',  'Ants — 19'),
-            ('How many more spiders than snails were found?', '12 \u2212 4 = 8 more'),
+            ('Which activity was most popular?',  'Football \u2014 8 pupils'),
+            ('How many more pupils chose football than art?', '8 \u2212 2 = 6 more'),
+            ('How many pupils are in the class altogether?', '8+5+7+4+2 = 26'),
         ],
     },
     'lp2': {
-        'lp_type': 'draw_bar',
-        'intro': 'Use the data table to draw the bar chart from scratch. Then answer the questions.',
-        'table_headers': ['How they travel', 'Number of pupils'],
-        'table_rows': [['Walk', 10], ['Cycle', 4], ['Car', 8], ['Bus', 3], ['Scooter', 1]],
-        'ax': {
-            'categories': ['Walk', 'Cycle', 'Car', 'Bus', 'Scooter'],
-            'y_min': 0, 'y_max': 12, 'y_step': 2,
-            'x_label': 'How they travel', 'y_label': 'Number of pupils',
-            'title_prompt': 'Give your chart a title:',
-            'partial_values': [None, None, None, None, None],
-            'ms_values':      [10,   4,    8,   3,    1],
-        },
+        'intro': 'Look at your completed chart and answer in your book.',
         'qs': [
-            ('How many more pupils walk than travel by car?', '10 \u2212 8 = 2 more'),
-            ('How many pupils are in the class altogether?',  '10+4+8+3+1 = 26'),
+            ('Write one statement about your bar chart using a number from the data as evidence.',
+             'Any valid statement with a data value cited.'),
+            ('Could you use a pictogram for this data?  '
+             'What key value would work best and why?',
+             'Yes.  Key = 2 works (all values are even or small). '
+             'Key = 5 would leave 7 and 4 hard to show exactly.'),
         ],
     },
 },
@@ -488,90 +469,70 @@ LP.update({
     'date': '09/07/2026', 'topic': 'Statistics',
     'lf':   'LF: To evaluate claims about data using evidence from charts and tables.',
     'ican': ['I can decide whether a claim is true or false using values from a chart.',
-             'I can write a verdict with evidence: "I [agree/disagree] because…"'],
+             'I can write a verdict with evidence: "I agree/disagree because\u2026"'],
     'lp1': {
-        'chart': 'c1_ido1_double_bar.png',
-        'chart_label': 'Average monthly rainfall (mm) — Bristol vs Manaus',
-        'intro': 'For each claim: write Agree, Disagree or Not enough information. Then show your evidence.',
+        'chart':       'c1_ido1_double_bar.png',
+        'chart_label': 'Average monthly rainfall (mm) \u2014 Bristol vs Manaus',
+        'intro':       'For each claim write Agree, Disagree or Not enough information. Show your evidence.',
         'qs': [
-            ('Claim: "Manaus gets more rain than Bristol in every month shown."\nAgree / Disagree / Not enough information?',
-             'Agree — every Manaus bar is taller. e.g. Jan: 260 > 89.'),
-            ('Claim: "Bristol and Manaus get a similar amount of rain in June."\nAgree / Disagree / Not enough information?',
-             'Disagree — Bristol 45mm, Manaus 100mm. 100 \u2212 45 = 55mm difference.'),
-            ('Claim: "Manaus gets more than 200mm of rain in every month from Jan to Jun."\nCheck using the chart.',
-             'Disagree — June is only 100mm, which is less than 200mm.'),
+            ('Claim: \u201cManaus gets more rain than Bristol in every month shown.\u201d',
+             'Agree \u2014 every Manaus bar is taller.  e.g. Jan: 260 > 89.'),
+            ('Claim: \u201cBristol and Manaus get a similar amount of rain in June.\u201d',
+             'Disagree \u2014 Bristol 45mm, Manaus 100mm.  100 \u2212 45 = 55mm difference.'),
+            ('Claim: \u201cManaus gets more than 200mm of rain in every month from Jan to Jun.\u201d',
+             'Disagree \u2014 June is 100mm, which is less than 200mm.'),
         ],
     },
     'lp2': {
-        'chart': 'c2_ido1_table.png',
-        'chart_label': 'Hours of daylight — Bristol and S\u00e3o Paulo, by season',
-        'intro': 'For each claim: write Agree, Disagree or Not enough information. Show your evidence.',
+        'chart':       'c2_ido1_table.png',
+        'chart_label': 'Hours of daylight \u2014 Bristol and S\u00e3o Paulo, by season',
+        'intro':       'For each claim write Agree, Disagree or Not enough information. Show your evidence.',
         'qs': [
-            ('Claim: "Bristol always has fewer hours of daylight than S\u00e3o Paulo."\nAgree / Disagree / Not enough information?',
-             'Disagree — in summer Bristol has 17h, S\u00e3o Paulo 11h. Bristol has MORE.'),
-            ('Claim: "The total daylight hours are the same for both cities."\nCalculate to check.',
-             'Disagree — Bristol: 8+12+17+12 = 49h. S\u00e3o Paulo: 11+12+11+12 = 46h.'),
-            ('Claim: "S\u00e3o Paulo has the same hours of daylight in spring and autumn."\nAgree / Disagree?',
-             'Agree — S\u00e3o Paulo: Spring 12h, Autumn 12h. They are the same.'),
+            ('Claim: \u201cBristol always has fewer hours of daylight than S\u00e3o Paulo.\u201d',
+             'Disagree \u2014 in summer Bristol has 17h, S\u00e3o Paulo 11h.  Bristol has MORE in summer.'),
+            ('Claim: \u201cThe total daylight hours are the same for both cities.\u201d',
+             'Disagree \u2014 Bristol 8+12+17+12=49h.  S\u00e3o Paulo 11+12+11+12=46h.'),
+            ('Claim: \u201cS\u00e3o Paulo has the same hours of daylight in spring and autumn.\u201d',
+             'Agree \u2014 both show 12h.'),
         ],
     },
 },
 23: {
     'date': '11/07/2026', 'topic': 'Statistics',
-    'lf':   'LF: To complete the full data cycle \u2014 tally, represent, draw and analyse.',
-    'ican': ['I can tally a list of data and choose a suitable representation.',
-             'I can draw a bar chart and answer questions from my own chart.'],
+    'lf':   'LF: To complete the full data cycle \u2014 collect, tally, represent and analyse.',
+    'ican': ['I can tally class data accurately and choose a suitable representation.',
+             'I can draw a bar chart from my own data and answer questions from it.'],
     'lp1': {
-        'lp_type': 'tally_draw',
-        'intro': 'Tally the responses below, then draw a bar chart and answer the questions.',
-        'raw_data': (
-            'Maths, Science, Maths, Art, Maths, English, Science, Maths, Art, English, '
-            'Maths, Science, Maths, Art, English, Maths, Science, English, Maths, Maths, '
-            'Science, Art, English, Maths, Science, Art'
-        ),
-        'tally_categories': ['Maths', 'Science', 'English', 'Art', 'PE'],
-        'ms_tallies': [8, 6, 5, 4, 3],
+        'lp_type':     'tally_draw',
+        'survey_q':    'How are you feeling about moving to Year 5?',
+        'intro':       'Tally each response as your teacher counts the hands.',
+        'tally_categories': ['Very excited', 'Excited', 'A bit nervous', 'Not sure'],
+        'ms_tallies':  [12, 8, 4, 2],
         'ax': {
-            'categories': ['Maths', 'Science', 'English', 'Art', 'PE'],
-            'y_min': 0, 'y_max': 10, 'y_step': 2,
-            'x_label': 'Favourite subject', 'y_label': 'Number of pupils',
-            'title_prompt': 'Give your chart a title:',
-            'ms_values': [8, 6, 5, 4, 3],
+            'n_x': 4, 'n_y': 6,
+            'ms_x_labels': ['Very\nexcited', 'Excited', 'A bit\nnervous', 'Not\nsure'],
+            'ms_y_vals':   [12, 8, 4, 2],
+            'ms_y_min': 0, 'ms_y_max': 14, 'ms_y_step': 2,
+            'ms_x_label': 'How I feel', 'ms_y_label': 'Number of pupils',
+            'ms_title': 'How Maple class feels about moving to Year 5',
         },
         'qs': [
-            ('Which subject did the most pupils choose?',
-             'Maths \u2014 8 pupils'),
-            ('How many more pupils chose Maths than Art?',
-             '8 \u2212 4 = 4 more'),
-            ('Why is a bar chart a better choice than a line graph for this data?',
-             'Subjects are separate categories, not continuous over time.'),
+            ('Which feeling was chosen by most pupils?',
+             'Depends on class data \u2014 pupils read from their own chart.'),
+            ('How many pupils chose \u201cVery excited\u201d or \u201cExcited\u201d altogether?',
+             'Pupils add their two values.'),
+            ('What does your chart tell you about how Maple class feels about Year 5?',
+             'Pupils write their own conclusion using data from their chart.'),
         ],
     },
     'lp2': {
-        'lp_type': 'tally_draw',
-        'intro': 'Tally the responses below, then draw a bar chart and answer the questions.',
-        'raw_data': (
-            'Football, Gymnastics, Football, Swimming, Football, Athletics, Gymnastics, '
-            'Football, Athletics, Swimming, Football, Gymnastics, Football, Athletics, '
-            'Swimming, Football, Gymnastics, Swimming, Football, Football, Gymnastics, '
-            'Athletics, Swimming, Football, Gymnastics, Cycling'
-        ),
-        'tally_categories': ['Football', 'Gymnastics', 'Swimming', 'Athletics', 'Cycling'],
-        'ms_tallies': [10, 6, 5, 4, 1],
-        'ax': {
-            'categories': ['Football', 'Gymnastics', 'Swimming', 'Athletics', 'Cycling'],
-            'y_min': 0, 'y_max': 12, 'y_step': 2,
-            'x_label': 'Favourite sport', 'y_label': 'Number of pupils',
-            'title_prompt': 'Give your chart a title:',
-            'ms_values': [10, 6, 5, 4, 1],
-        },
+        'intro': 'Write your answers in your book.',
         'qs': [
-            ('Which sport did most pupils choose?',
-             'Football \u2014 10 pupils'),
-            ('How many pupils were surveyed in total?',
-             '10+6+5+4+1 = 26'),
-            ('If you used a pictogram with key = 2, how many symbols would Football need?',
-             '5 whole symbols  (10 \u00f7 2 = 5)'),
+            ('How many pupils are in your class altogether?  '
+             'Check your tally totals add up to this.',
+             '26 (all tallies should sum to 26)'),
+            ('Write two or three sentences about what your chart shows.',
+             'Pupils write their own summary.'),
         ],
     },
 },
@@ -583,383 +544,379 @@ DAYS = {17: 'Monday',  18: 'Tuesday',  19: 'Wednesday',
 WEEK = {17: 'T6W5', 18: 'T6W5', 19: 'T6W5',
         20: 'T6W6', 21: 'T6W6', 22: 'T6W6', 23: 'T6W6'}
 
-# ── Blank-axes LP (for drawing lessons) ───────────────────────────────────────
-def draw_blank_axes_area(c, ax, x, y_bottom, w, h, is_ms):
+
+# ── Blank axes for drawing lessons ────────────────────────────────────────────
+# Pupils write in all values, labels and title themselves.
+
+def _blank_axes_png(n_x, n_y, chart_type, is_ms, ms_data, tmp_path):
     """
-    Draw blank graph paper with pre-labelled axes.
-    ax: dict with x_labels, y_min, y_max, y_step, x_label, y_label, ms_values.
-    x, y_bottom: bottom-left of the drawing area (bottom-up coords).
+    Render a blank (or marked-up) axes PNG for pupil drawing.
+    chart_type: 'line' or 'bar'
+    is_ms: if True, plot the completed graph in the ms colour
+    ms_data: dict with ms_y_vals, ms_y_min, ms_y_max, ms_y_step, ms_x_labels etc.
     """
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
-    import matplotlib.patches as mpatches
-    import numpy as np
-    import io
+    import numpy as np, io, tempfile
 
-    x_labels = ax['x_labels']
-    y_min    = ax.get('y_min', 0)
-    y_max    = ax['y_max']
-    y_step   = ax['y_step']
-    x_label  = ax.get('x_label', '')
-    y_label  = ax.get('y_label', '')
-    ms_vals  = ax.get('ms_values', [])
-
-    n_x = len(x_labels)
-    n_y = int((y_max - y_min) / y_step)
-
-    fig, ax_plt = plt.subplots(figsize=(3.2, 3.0), dpi=180)
-    ax_plt.set_facecolor('white')
+    fig, ax = plt.subplots(figsize=(6.5, 2.8), dpi=180)
+    ax.set_facecolor('white')
     fig.patch.set_facecolor('white')
 
-    ax_plt.set_xlim(-0.5, n_x - 0.5)
-    ax_plt.set_ylim(y_min, y_max)
-    ax_plt.set_xticks(range(n_x))
-    ax_plt.set_xticklabels(x_labels, fontsize=7)
-    ax_plt.set_yticks(range(y_min, y_max + 1, y_step))
-    ax_plt.tick_params(axis='both', labelsize=7)
-    ax_plt.set_xlabel(x_label, fontsize=7, labelpad=2)
-    ax_plt.set_ylabel(y_label, fontsize=7, labelpad=2)
-    ax_plt.grid(True, linewidth=0.4, color='#AAAAAA', alpha=0.6)
-    ax_plt.spines['top'].set_visible(False)
-    ax_plt.spines['right'].set_visible(False)
-    ax_plt.spines['left'].set_linewidth(0.8)
-    ax_plt.spines['bottom'].set_linewidth(0.8)
+    if is_ms:
+        y_min  = ms_data.get('ms_y_min', 0)
+        y_max  = ms_data.get('ms_y_max', 10)
+        y_step = ms_data.get('ms_y_step', 2)
+        x_labs = ms_data.get('ms_x_labels', [str(i) for i in range(n_x)])
+        y_vals = ms_data.get('ms_y_vals', [])
+        x_lab  = ms_data.get('ms_x_label', '')
+        y_lab  = ms_data.get('ms_y_label', '')
+        title  = ms_data.get('ms_title', '')
 
-    if is_ms and ms_vals and len(ms_vals) == n_x:
-        ax_plt.plot(range(n_x), ms_vals,
-                    color='#C83030', linewidth=1.2, marker='x',
-                    markersize=5, markeredgewidth=1.5, zorder=3)
+        ax.set_xlim(-0.5, n_x - 0.5)
+        ax.set_ylim(y_min, y_max)
+        ax.set_xticks(range(n_x))
+        ax.set_xticklabels(x_labs, fontsize=7)
+        ax.set_yticks(range(y_min, y_max + 1, y_step))
+        ax.tick_params(labelsize=7)
+        ax.set_xlabel(x_lab, fontsize=7, labelpad=2)
+        ax.set_ylabel(y_lab, fontsize=7, labelpad=2)
+        if title:
+            ax.set_title(title, fontsize=7, pad=4)
+        ax.grid(True, linewidth=0.4, color='#AAAAAA', alpha=0.6)
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
 
-    buf = io.BytesIO()
-    plt.tight_layout(pad=0.3)
-    fig.savefig(buf, format='png', dpi=180, bbox_inches='tight',
+        if chart_type == 'line' and y_vals:
+            ax.plot(range(n_x), y_vals, color='#C83030', linewidth=1.5,
+                    marker='x', markersize=6, markeredgewidth=2, zorder=3)
+        elif chart_type == 'bar' and y_vals:
+            ax.bar(range(n_x), y_vals, color='#1798d3', alpha=0.85,
+                   edgecolor='#0f6fa0', linewidth=0.6, width=0.6)
+
+    else:
+        # Fully blank — pupils write everything
+        # Use fixed number of gridlines as visual reference
+        n_y_grid = n_y + 1  # one extra so bottom = 0
+        ax.set_xlim(-0.5, n_x - 0.5)
+        ax.set_ylim(0, n_y_grid)
+
+        # Axis lines thick
+        ax.spines['left'].set_linewidth(1.8)
+        ax.spines['bottom'].set_linewidth(1.8)
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+
+        # Faint grey gridlines — help pupils draw accurately
+        for gy in range(1, n_y_grid + 1):
+            ax.axhline(gy, color='#CCCCCC', linewidth=0.5, alpha=0.7)
+        if chart_type == 'bar':
+            for gx in range(n_x):
+                ax.axvline(gx, color='#CCCCCC', linewidth=0.3, alpha=0.4)
+
+        # No tick labels — pupils write their own
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
+        ax.tick_params(axis='both', length=4, width=1)
+
+    plt.tight_layout(pad=0.4)
+    fig.savefig(tmp_path, format='png', dpi=180, bbox_inches='tight',
                 facecolor='white')
     plt.close(fig)
-    buf.seek(0)
 
-    import tempfile
-    tmp = tempfile.mktemp(suffix='.png')
-    with open(tmp, 'wb') as f:
-        f.write(buf.read())
 
-    img = PILImage.open(tmp)
+def _place_image(c, img_path, x, y_bottom, max_w, max_h):
+    from PIL import Image as PILImage2
+    img = PILImage2.open(img_path)
     iw, ih = img.size
     aspect = iw / ih
-    draw_h = h
-    draw_w = h * aspect
-    if draw_w > w:
-        draw_w = w
-        draw_h = w / aspect
-    dx = (w - draw_w) / 2
-    dy = (h - draw_h) / 2
-    c.drawImage(tmp, x + dx, y_bottom + dy, draw_w, draw_h,
+    w = max_w
+    h = max_w / aspect
+    if h > max_h:
+        h = max_h
+        w = max_h * aspect
+    dx = (max_w - w) / 2
+    c.drawImage(img_path, x + dx, y_bottom, w, h,
                 preserveAspectRatio=True, mask='auto')
-    os.unlink(tmp)
 
 
-def draw_blank_bar_chart_area(c, ax, x, y_bottom, w, h, is_ms):
-    """Blank (or completed) bar chart axes for pupil drawing."""
-    import matplotlib
-    matplotlib.use('Agg')
-    import matplotlib.pyplot as plt
-    import numpy as np
-    import io, tempfile
+def draw_half_draw(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
+    """Vertical layout for line graph drawing LPs."""
+    import tempfile, os
 
-    cats     = ax['categories']
-    y_min    = ax.get('y_min', 0)
-    y_max    = ax['y_max']
-    y_step   = ax['y_step']
-    x_label  = ax.get('x_label', '')
-    y_label  = ax.get('y_label', '')
-    partial  = ax.get('partial_values', [None]*len(cats))
-    ms_vals  = ax.get('ms_values', [])
-    n = len(cats)
+    PAD    = 8
+    FULL_W = CHART_X + CHART_W - Q_X   # full usable width
+    LL_COL = 165                        # LL column width
+    TBL_X  = Q_X + LL_COL + 6          # data table starts here
+    TBL_W  = FULL_W - LL_COL - 6
+    TOP_H  = 80                         # height for LL + table row
 
-    fig, ax_plt = plt.subplots(figsize=(3.2, 3.0), dpi=180)
-    ax_plt.set_facecolor('white')
-    fig.patch.set_facecolor('white')
-    ax_plt.set_ylim(y_min, y_max)
-    ax_plt.set_xticks(range(n))
-    ax_plt.set_xticklabels(cats, fontsize=6, rotation=15, ha='right')
-    ax_plt.set_yticks(range(y_min, y_max + 1, y_step))
-    ax_plt.tick_params(axis='both', labelsize=7)
-    ax_plt.set_xlabel(x_label, fontsize=7, labelpad=2)
-    ax_plt.set_ylabel(y_label, fontsize=7, labelpad=2)
-    ax_plt.grid(axis='y', linewidth=0.4, color='#AAAAAA', alpha=0.6)
-    ax_plt.spines['top'].set_visible(False)
-    ax_plt.spines['right'].set_visible(False)
-    ax_plt.spines['left'].set_linewidth(0.8)
-    ax_plt.spines['bottom'].set_linewidth(0.8)
+    cy = region_top - PAD
 
-    if is_ms and ms_vals:
-        ax_plt.bar(range(n), ms_vals, color='#1798d3', alpha=0.85,
-                   edgecolor='#0f6fa0', linewidth=0.6, width=0.6)
+    # ── LL (top-left) ─────────────────────────────────────────────────────────
+    if show_ll:
+        ll_h = draw_ll(c, Q_X, cy, meta['date'], meta['topic'],
+                       meta['lf'], meta['ican'])
     else:
-        for i, v in enumerate(partial):
-            if v is not None:
-                ax_plt.bar(i, v, color='#1798d3', alpha=0.85,
-                           edgecolor='#0f6fa0', linewidth=0.6, width=0.6)
+        ll_h = TOP_H
 
-    buf = io.BytesIO()
-    plt.tight_layout(pad=0.3)
-    fig.savefig(buf, format='png', dpi=180, bbox_inches='tight', facecolor='white')
-    plt.close(fig)
-    buf.seek(0)
-    tmp = tempfile.mktemp(suffix='.png')
-    with open(tmp, 'wb') as f:
-        f.write(buf.read())
+    # ── Data table (top-right, beside LL) ─────────────────────────────────────
+    hdrs = lp_data.get('table_headers', [])
+    rows = lp_data.get('table_rows', [])
+    if hdrs and rows:
+        ROW_H  = min(13, (TOP_H) // (len(rows) + 1))
+        COL_W  = [TBL_W * 0.55, TBL_W * 0.42]
+        tbl_y  = cy
+        filled_rect(c, TBL_X, tbl_y - ROW_H, sum(COL_W), ROW_H,
+                    fill_rgb=(0.09, 0.60, 0.83), stroke_rgb=None)
+        for ci, hdr in enumerate(hdrs[:2]):
+            c.setFont('LibSansBold', 7.5); set_fill(c, (1, 1, 1))
+            c.drawString(TBL_X + sum(COL_W[:ci]) + 3, tbl_y - ROW_H + 3, hdr)
+        tbl_y -= ROW_H
+        for ri, row in enumerate(rows):
+            fill = (0.93, 0.97, 1.0) if ri % 2 == 0 else (1, 1, 1)
+            filled_rect(c, TBL_X, tbl_y - ROW_H, sum(COL_W), ROW_H,
+                        fill_rgb=fill, stroke_rgb=(0.78, 0.78, 0.78), lw=0.4)
+            for ci, val in enumerate(row[:2]):
+                c.setFont('LibSans', 7.5); set_fill(c, (0.1, 0.1, 0.1))
+                c.drawString(TBL_X + sum(COL_W[:ci]) + 3, tbl_y - ROW_H + 3, str(val))
+            tbl_y -= ROW_H
 
-    img = PILImage.open(tmp)
-    iw, ih = img.size
-    aspect = iw / ih
-    draw_h = h
-    draw_w = h * aspect
-    if draw_w > w:
-        draw_w = w
-        draw_h = w / aspect
-    dx = (w - draw_w) / 2
-    dy = (h - draw_h) / 2
-    c.drawImage(tmp, x + dx, y_bottom + dy, draw_w, draw_h,
-                preserveAspectRatio=True, mask='auto')
-    os.unlink(tmp)
+    # ── Intro text ─────────────────────────────────────────────────────────────
+    intro_y = cy - max(ll_h, TOP_H) - 3
+    intro_p = Paragraph(lp_data.get('intro', ''), INTRO_STYLE)
+    _, intro_h = intro_p.wrap(FULL_W, 60)
+    intro_p.drawOn(c, Q_X, intro_y - intro_h)
+    axes_top = intro_y - intro_h - 4
+
+    # ── Blank (or completed) axes — full width ─────────────────────────────────
+    avail_h = region_bot + PAD
+    q_section_h = len(lp_data.get('qs', [])) * 30 + 6
+    axes_bot  = avail_h + q_section_h
+    axes_h    = axes_top - axes_bot
+
+    tmp_png = '/tmp/_lp_axes_tmp.png'
+    ax_cfg  = lp_data.get('ax', {})
+    _blank_axes_png(ax_cfg.get('n_x', 5), ax_cfg.get('n_y', 5),
+                    'line', is_ms, ax_cfg, tmp_png)
+    _place_image(c, tmp_png, Q_X, axes_bot, FULL_W, max(axes_h, 40))
+
+    # ── Questions at bottom ────────────────────────────────────────────────────
+    cy2 = axes_bot - 3
+    for qi, (qt, ans) in enumerate(lp_data.get('qs', [])):
+        qp = Paragraph(f'{qi+1}.  {qt}', Q_STYLE)
+        _, qph = qp.wrap(FULL_W - 6, 200)
+        qbox_h = qph + 7
+        filled_rect(c, Q_X, cy2 - qbox_h, FULL_W, qbox_h,
+                    fill_rgb=Q_BG, stroke_rgb=Q_BORDER, lw=0.6)
+        set_fill(c, (0, 0, 0)); qp.drawOn(c, Q_X + 3, cy2 - qbox_h + 3)
+        cy2 -= qbox_h + 2
+        ans_h = 16
+        if is_ms:
+            filled_rect(c, Q_X, cy2 - ans_h, FULL_W, ans_h,
+                        fill_rgb=GRN_BG, stroke_rgb=GRN, lw=0.6)
+            ap = Paragraph(f'\u2713  {ans}', ANS_STYLE)
+            ap.wrap(FULL_W - 6, ans_h); ap.drawOn(c, Q_X + 3, cy2 - ans_h + 3)
+        else:
+            outline_rect(c, Q_X, cy2 - ans_h, FULL_W, ans_h, stroke_rgb=GREY, lw=0.5)
+        cy2 -= ans_h + 2
 
 
 def draw_half_bar(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
-    """Half-page LP for bar chart drawing lessons."""
-    PAD = 10
-    q_top = region_top - PAD
+    """Vertical layout for bar chart drawing LPs."""
+    import tempfile, os
+
+    PAD    = 8
+    FULL_W = CHART_X + CHART_W - Q_X
+    LL_COL = 165
+    TBL_X  = Q_X + LL_COL + 6
+    TBL_W  = FULL_W - LL_COL - 6
+    TOP_H  = 80
+
+    cy = region_top - PAD
+
     if show_ll:
-        ll_h = draw_ll(c, LL_X, region_top - PAD,
-                       meta['date'], meta['topic'], meta['lf'], meta['ican'])
-        q_top = region_top - PAD - ll_h - 8
+        ll_h = draw_ll(c, Q_X, cy, meta['date'], meta['topic'],
+                       meta['lf'], meta['ican'])
+    else:
+        ll_h = TOP_H
 
-    intro_para = Paragraph(lp_data['intro'], INTRO_STYLE)
-    _, intro_h = intro_para.wrap(Q_W, 200)
-    intro_h += 4
-    cy = q_top
-    intro_para.drawOn(c, Q_X, cy - intro_h)
-    cy -= intro_h + 4
+    hdrs = lp_data.get('table_headers', [])
+    rows = lp_data.get('table_rows', [])
+    if hdrs and rows:
+        ROW_H = min(13, TOP_H // (len(rows) + 1))
+        COL_W = [TBL_W * 0.58, TBL_W * 0.38]
+        tbl_y = cy
+        filled_rect(c, TBL_X, tbl_y - ROW_H, sum(COL_W), ROW_H,
+                    fill_rgb=(0.09, 0.60, 0.83), stroke_rgb=None)
+        for ci, hdr in enumerate(hdrs[:2]):
+            c.setFont('LibSansBold', 7.5); set_fill(c, (1, 1, 1))
+            c.drawString(TBL_X + sum(COL_W[:ci]) + 3, tbl_y - ROW_H + 3, hdr)
+        tbl_y -= ROW_H
+        for ri, row in enumerate(rows):
+            fill = (0.93, 0.97, 1.0) if ri % 2 == 0 else (1, 1, 1)
+            filled_rect(c, TBL_X, tbl_y - ROW_H, sum(COL_W), ROW_H,
+                        fill_rgb=fill, stroke_rgb=(0.78, 0.78, 0.78), lw=0.4)
+            for ci, val in enumerate(row[:2]):
+                c.setFont('LibSans', 7.5); set_fill(c, (0.1, 0.1, 0.1))
+                c.drawString(TBL_X + sum(COL_W[:ci]) + 3, tbl_y - ROW_H + 3, str(val))
+            tbl_y -= ROW_H
 
-    # Data table
-    hdrs = lp_data['table_headers']
-    rows = lp_data['table_rows']
-    ROW_H = 13
-    COL_W = [Q_W * 0.55, Q_W * 0.35]
-    TBL_W = sum(COL_W)
-    filled_rect(c, Q_X, cy - ROW_H, TBL_W, ROW_H,
-                fill_rgb=(0.09, 0.60, 0.83), stroke_rgb=None)
-    for ci, hdr in enumerate(hdrs):
-        x_off = Q_X + sum(COL_W[:ci])
-        c.setFont('LibSansBold', 7.5); set_fill(c, (1, 1, 1))
-        c.drawString(x_off + 3, cy - ROW_H + 3, hdr)
-    cy -= ROW_H
-    for ri, row in enumerate(rows):
-        fill = (0.93, 0.97, 1.0) if ri % 2 == 0 else (1, 1, 1)
-        filled_rect(c, Q_X, cy - ROW_H, TBL_W, ROW_H,
-                    fill_rgb=fill, stroke_rgb=(0.75, 0.75, 0.75), lw=0.4)
-        for ci, val in enumerate(row):
-            x_off = Q_X + sum(COL_W[:ci])
-            c.setFont('LibSans', 7.5); set_fill(c, (0.1, 0.1, 0.1))
-            c.drawString(x_off + 3, cy - ROW_H + 3, str(val))
-        cy -= ROW_H
-    cy -= 6
+    intro_y = cy - max(ll_h, TOP_H) - 3
+    intro_p = Paragraph(lp_data.get('intro', ''), INTRO_STYLE)
+    _, intro_h = intro_p.wrap(FULL_W, 60)
+    intro_p.drawOn(c, Q_X, intro_y - intro_h)
+    axes_top = intro_y - intro_h - 4
 
+    avail_h = region_bot + PAD
+    q_section_h = len(lp_data.get('qs', [])) * 30 + 6
+    axes_bot = avail_h + q_section_h
+    axes_h   = axes_top - axes_bot
+
+    tmp_png = '/tmp/_lp_axes_tmp.png'
+    ax_cfg  = lp_data.get('ax', {})
+    _blank_axes_png(ax_cfg.get('n_x', 5), ax_cfg.get('n_y', 5),
+                    'bar', is_ms, ax_cfg, tmp_png)
+    _place_image(c, tmp_png, Q_X, axes_bot, FULL_W, max(axes_h, 40))
+
+    cy2 = axes_bot - 3
     for qi, (qt, ans) in enumerate(lp_data.get('qs', [])):
         qp = Paragraph(f'{qi+1}.  {qt}', Q_STYLE)
-        _, qph = qp.wrap(Q_W - 6, 200)
-        qbox_h = qph + 8
-        filled_rect(c, Q_X, cy - qbox_h, Q_W, qbox_h,
+        _, qph = qp.wrap(FULL_W - 6, 200)
+        qbox_h = qph + 7
+        filled_rect(c, Q_X, cy2 - qbox_h, FULL_W, qbox_h,
                     fill_rgb=Q_BG, stroke_rgb=Q_BORDER, lw=0.6)
-        set_fill(c, (0, 0, 0)); qp.drawOn(c, Q_X + 3, cy - qbox_h + 4)
-        cy -= qbox_h + 3
-        ANS_H = 18
+        set_fill(c, (0, 0, 0)); qp.drawOn(c, Q_X + 3, cy2 - qbox_h + 3)
+        cy2 -= qbox_h + 2
+        ans_h = 16
         if is_ms:
-            filled_rect(c, Q_X, cy - ANS_H, Q_W, ANS_H,
+            filled_rect(c, Q_X, cy2 - ans_h, FULL_W, ans_h,
                         fill_rgb=GRN_BG, stroke_rgb=GRN, lw=0.6)
             ap = Paragraph(f'\u2713  {ans}', ANS_STYLE)
-            ap.wrap(Q_W - 6, ANS_H - 4); ap.drawOn(c, Q_X + 3, cy - ANS_H + 3)
+            ap.wrap(FULL_W - 6, ans_h); ap.drawOn(c, Q_X + 3, cy2 - ans_h + 3)
         else:
-            outline_rect(c, Q_X, cy - ANS_H, Q_W, ANS_H, stroke_rgb=GREY, lw=0.5)
-        cy -= ANS_H + 4
-
-    prompt = lp_data['ax'].get('title_prompt', 'Title:')
-    c.setFont('LibSans', 7); set_fill(c, (0.3, 0.3, 0.3))
-    if cy > region_bot + 20:
-        c.drawString(Q_X, cy - 8, prompt)
-        outline_rect(c, Q_X, cy - 22, Q_W, 14, stroke_rgb=GREY, lw=0.5)
-
-    graph_h = region_top - region_bot - 2 * PAD
-    draw_blank_bar_chart_area(c, lp_data['ax'],
-                              CHART_X, region_bot + PAD,
-                              CHART_W, graph_h, is_ms)
+            outline_rect(c, Q_X, cy2 - ans_h, FULL_W, ans_h, stroke_rgb=GREY, lw=0.5)
+        cy2 -= ans_h + 2
 
 
 def draw_half_tally(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
-    """Half-page LP for tally+draw lessons."""
-    PAD = 10
-    q_top = region_top - PAD
+    """Vertical layout for tally + bar chart LPs (L23)."""
+    import tempfile, os
+
+    PAD    = 8
+    FULL_W = CHART_X + CHART_W - Q_X
+
+    cy = region_top - PAD
+
+    # ── LL ────────────────────────────────────────────────────────────────────
     if show_ll:
-        ll_h = draw_ll(c, LL_X, region_top - PAD,
-                       meta['date'], meta['topic'], meta['lf'], meta['ican'])
-        q_top = region_top - PAD - ll_h - 8
+        ll_h = draw_ll(c, Q_X, cy, meta['date'], meta['topic'],
+                       meta['lf'], meta['ican'])
+        cy -= ll_h + 4
 
-    # Intro
-    intro_para = Paragraph(lp_data['intro'], INTRO_STYLE)
-    _, ih = intro_para.wrap(Q_W, 200)
-    intro_para.drawOn(c, Q_X, q_top - ih)
-    cy = q_top - ih - 4
+    # ── Survey question ────────────────────────────────────────────────────────
+    survey_q = lp_data.get('survey_q', '')
+    if survey_q:
+        sq_p = Paragraph(f'<b>{survey_q}</b>', ParagraphStyle('SQ',
+            fontName='LibSansBold', fontSize=8, leading=11, textColor=(0.05,0.05,0.05)))
+        _, sq_h = sq_p.wrap(FULL_W, 40)
+        sq_p.drawOn(c, Q_X, cy - sq_h)
+        cy -= sq_h + 4
 
-    # Raw data display
-    raw_p = Paragraph(
-        '<font size="7" color="#333333">' + lp_data['raw_data'] + '</font>',
-        ParagraphStyle('RD', fontName='LibSans', fontSize=7, leading=10,
-                       backColor=(0.95, 0.97, 1.0), borderPad=4,
-                       textColor=(0.1, 0.1, 0.1))
-    )
-    _, raw_h = raw_p.wrap(Q_W, 200)
-    raw_h = min(raw_h + 8, 60)
-    filled_rect(c, Q_X, cy - raw_h, Q_W, raw_h,
-                fill_rgb=(0.95, 0.97, 1.0), stroke_rgb=(0.8, 0.8, 0.8), lw=0.5)
-    raw_p.drawOn(c, Q_X + 3, cy - raw_h + 3)
-    cy -= raw_h + 5
+    # ── Intro ─────────────────────────────────────────────────────────────────
+    intro_p = Paragraph(lp_data.get('intro', ''), INTRO_STYLE)
+    _, ih = intro_p.wrap(FULL_W, 40)
+    intro_p.drawOn(c, Q_X, cy - ih)
+    cy -= ih + 4
 
-    # Tally table
-    cats  = lp_data['tally_categories']
-    ms_t  = lp_data.get('ms_tallies', [0]*len(cats))
-    ROW_H = 14
-    C1, C2, C3 = Q_W * 0.38, Q_W * 0.38, Q_W * 0.22
-    filled_rect(c, Q_X, cy - ROW_H, Q_W, ROW_H,
+    # ── Tally table ───────────────────────────────────────────────────────────
+    cats   = lp_data.get('tally_categories', [])
+    ms_t   = lp_data.get('ms_tallies', [0] * len(cats))
+    ROW_H  = 14
+    C1, C2, C3 = FULL_W * 0.38, FULL_W * 0.38, FULL_W * 0.22
+    filled_rect(c, Q_X, cy - ROW_H, FULL_W, ROW_H,
                 fill_rgb=(0.09, 0.60, 0.83), stroke_rgb=None)
-    for txt, x_off in [('Category', Q_X + 3),
-                       ('Tally', Q_X + C1 + 3),
-                       ('Total', Q_X + C1 + C2 + 3)]:
-        c.setFont('LibSansBold', 7); set_fill(c, (1, 1, 1))
+    for txt, x_off in [('How I feel', Q_X + 3),
+                        ('Tally', Q_X + C1 + 3),
+                        ('Total', Q_X + C1 + C2 + 3)]:
+        c.setFont('LibSansBold', 7.5); set_fill(c, (1, 1, 1))
         c.drawString(x_off, cy - ROW_H + 3, txt)
     cy -= ROW_H
     for ri, (cat, mt) in enumerate(zip(cats, ms_t)):
         fill = (0.93, 0.97, 1.0) if ri % 2 == 0 else (1, 1, 1)
-        filled_rect(c, Q_X, cy - ROW_H, Q_W, ROW_H,
+        filled_rect(c, Q_X, cy - ROW_H, FULL_W, ROW_H,
                     fill_rgb=fill, stroke_rgb=(0.75, 0.75, 0.75), lw=0.4)
         c.setFont('LibSans', 7.5); set_fill(c, (0.1, 0.1, 0.1))
         c.drawString(Q_X + 3, cy - ROW_H + 3, cat)
         if is_ms:
-            tally_str = '\u2225 ' * (mt // 5) + '| ' * (mt % 5)
-            c.setFont('LibSans', 7)
-            c.drawString(Q_X + C1 + 3, cy - ROW_H + 3, tally_str.strip())
+            tally_str = ('\u2225 ' * (mt // 5) + '| ' * (mt % 5)).strip()
+            c.drawString(Q_X + C1 + 3, cy - ROW_H + 3, tally_str)
             c.drawString(Q_X + C1 + C2 + 3, cy - ROW_H + 3, str(mt))
         cy -= ROW_H
-    cy -= 5
-
-    # Questions
-    for qi, (qt, ans) in enumerate(lp_data.get('qs', [])):
-        qp = Paragraph(f'{qi+1}.  {qt}', Q_STYLE)
-        _, qph = qp.wrap(Q_W - 6, 200)
-        qbox_h = qph + 8
-        filled_rect(c, Q_X, cy - qbox_h, Q_W, qbox_h,
-                    fill_rgb=Q_BG, stroke_rgb=Q_BORDER, lw=0.6)
-        set_fill(c, (0, 0, 0)); qp.drawOn(c, Q_X + 3, cy - qbox_h + 4)
-        cy -= qbox_h + 3
-        ANS_H = 18
-        if is_ms:
-            filled_rect(c, Q_X, cy - ANS_H, Q_W, ANS_H,
-                        fill_rgb=GRN_BG, stroke_rgb=GRN, lw=0.6)
-            ap = Paragraph(f'\u2713  {ans}', ANS_STYLE)
-            ap.wrap(Q_W - 6, ANS_H - 4); ap.drawOn(c, Q_X + 3, cy - ANS_H + 3)
-        else:
-            outline_rect(c, Q_X, cy - ANS_H, Q_W, ANS_H, stroke_rgb=GREY, lw=0.5)
-        cy -= ANS_H + 4
-
-    prompt = lp_data['ax'].get('title_prompt', 'Title:')
-    c.setFont('LibSans', 7); set_fill(c, (0.3, 0.3, 0.3))
-    if cy > region_bot + 20:
-        c.drawString(Q_X, cy - 8, prompt)
-        outline_rect(c, Q_X, cy - 22, Q_W, 14, stroke_rgb=GREY, lw=0.5)
-
-    graph_h = region_top - region_bot - 2 * PAD
-    draw_blank_bar_chart_area(c, lp_data['ax'],
-                              CHART_X, region_bot + PAD,
-                              CHART_W, graph_h, is_ms)
-
-
-def draw_half_draw(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
-    """Half-page LP for draw-graph (line graph) lessons."""
-    PAD = 10
-    q_top = region_top - PAD
-    if show_ll:
-        ll_h = draw_ll(c, LL_X, region_top - PAD,
-                       meta['date'], meta['topic'], meta['lf'], meta['ican'])
-        q_top = region_top - PAD - ll_h - 8
-
-    intro_para = Paragraph(lp_data['intro'], INTRO_STYLE)
-    _, intro_h = intro_para.wrap(Q_W, 200)
-    intro_h += 4
-    cy = q_top
-    intro_para.drawOn(c, Q_X, cy - intro_h)
-    cy -= intro_h + 4
-
-    hdrs = lp_data['table_headers']
-    rows = lp_data['table_rows']
-    ROW_H = 13
-    COL_W = [Q_W * 0.45, Q_W * 0.45]
-    TBL_W = sum(COL_W)
-    filled_rect(c, Q_X, cy - ROW_H, TBL_W, ROW_H,
-                fill_rgb=(0.09, 0.60, 0.83), stroke_rgb=None)
-    for ci, hdr in enumerate(hdrs):
-        x_off = Q_X + sum(COL_W[:ci])
-        c.setFont('LibSansBold', 7.5); set_fill(c, (1, 1, 1))
-        c.drawString(x_off + 3, cy - ROW_H + 3, hdr)
-    cy -= ROW_H
-    for ri, row in enumerate(rows):
-        fill = (0.93, 0.97, 1.0) if ri % 2 == 0 else (1, 1, 1)
-        filled_rect(c, Q_X, cy - ROW_H, TBL_W, ROW_H,
-                    fill_rgb=fill, stroke_rgb=(0.75, 0.75, 0.75), lw=0.4)
-        for ci, val in enumerate(row):
-            x_off = Q_X + sum(COL_W[:ci])
-            c.setFont('LibSans', 7.5); set_fill(c, (0.1, 0.1, 0.1))
-            c.drawString(x_off + 3, cy - ROW_H + 3, str(val))
-        cy -= ROW_H
-    cy -= 6
-
-    for step in lp_data.get('instructions', []):
-        p = Paragraph(step, ParagraphStyle('ST', fontName='LibSans', fontSize=7,
-                      leading=10, textColor=(0.2, 0.2, 0.2)))
-        _, ph = p.wrap(Q_W, 200)
-        p.drawOn(c, Q_X, cy - ph)
-        cy -= ph + 2
     cy -= 4
 
+    # ── Blank/completed bar chart ─────────────────────────────────────────────
+    q_section_h = len(lp_data.get('qs', [])) * 30 + 4
+    axes_bot = region_bot + PAD + q_section_h
+    axes_h   = cy - axes_bot
+
+    tmp_png = '/tmp/_lp_axes_tmp.png'
+    ax_cfg  = lp_data.get('ax', {})
+    _blank_axes_png(ax_cfg.get('n_x', 4), ax_cfg.get('n_y', 6),
+                    'bar', is_ms, ax_cfg, tmp_png)
+    _place_image(c, tmp_png, Q_X, axes_bot, FULL_W, max(axes_h, 40))
+
+    # ── Questions ─────────────────────────────────────────────────────────────
+    cy2 = axes_bot - 3
     for qi, (qt, ans) in enumerate(lp_data.get('qs', [])):
         qp = Paragraph(f'{qi+1}.  {qt}', Q_STYLE)
-        _, qph = qp.wrap(Q_W - 6, 200)
+        _, qph = qp.wrap(FULL_W - 6, 200)
+        qbox_h = qph + 7
+        filled_rect(c, Q_X, cy2 - qbox_h, FULL_W, qbox_h,
+                    fill_rgb=Q_BG, stroke_rgb=Q_BORDER, lw=0.6)
+        set_fill(c, (0, 0, 0)); qp.drawOn(c, Q_X + 3, cy2 - qbox_h + 3)
+        cy2 -= qbox_h + 2
+        ans_h = 16
+        if is_ms:
+            filled_rect(c, Q_X, cy2 - ans_h, FULL_W, ans_h,
+                        fill_rgb=GRN_BG, stroke_rgb=GRN, lw=0.6)
+            ap = Paragraph(f'\u2713  {ans}', ANS_STYLE)
+            ap.wrap(FULL_W - 6, ans_h); ap.drawOn(c, Q_X + 3, cy2 - ans_h + 3)
+        else:
+            outline_rect(c, Q_X, cy2 - ans_h, FULL_W, ans_h, stroke_rgb=GREY, lw=0.5)
+        cy2 -= ans_h + 2
+
+
+def draw_half_lp2_ext(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
+    """Simple extension LP2 for drawing lessons — questions only, no drawing."""
+    PAD    = 8
+    FULL_W = CHART_X + CHART_W - Q_X
+    cy     = region_top - PAD
+
+    intro_p = Paragraph(lp_data.get('intro', 'Going further'), INTRO_STYLE)
+    _, ih   = intro_p.wrap(FULL_W, 60)
+    intro_p.drawOn(c, Q_X, cy - ih)
+    cy -= ih + 6
+
+    for qi, (qt, ans) in enumerate(lp_data.get('qs', [])):
+        qp = Paragraph(f'{qi+1}.  {qt}', Q_STYLE)
+        _, qph = qp.wrap(FULL_W - 6, 200)
         qbox_h = qph + 8
-        filled_rect(c, Q_X, cy - qbox_h, Q_W, qbox_h,
+        filled_rect(c, Q_X, cy - qbox_h, FULL_W, qbox_h,
                     fill_rgb=Q_BG, stroke_rgb=Q_BORDER, lw=0.6)
         set_fill(c, (0, 0, 0)); qp.drawOn(c, Q_X + 3, cy - qbox_h + 4)
         cy -= qbox_h + 3
-        ANS_H = 18
+        ans_h = 36
         if is_ms:
-            filled_rect(c, Q_X, cy - ANS_H, Q_W, ANS_H,
+            filled_rect(c, Q_X, cy - ans_h, FULL_W, ans_h,
                         fill_rgb=GRN_BG, stroke_rgb=GRN, lw=0.6)
             ap = Paragraph(f'\u2713  {ans}', ANS_STYLE)
-            ap.wrap(Q_W - 6, ANS_H - 4); ap.drawOn(c, Q_X + 3, cy - ANS_H + 3)
+            ap.wrap(FULL_W - 6, ans_h - 4); ap.drawOn(c, Q_X + 3, cy - ans_h + 4)
         else:
-            outline_rect(c, Q_X, cy - ANS_H, Q_W, ANS_H, stroke_rgb=GREY, lw=0.5)
-        cy -= ANS_H + 4
+            outline_rect(c, Q_X, cy - ans_h, FULL_W, ans_h, stroke_rgb=GREY, lw=0.5)
+        cy -= ans_h + 4
 
-    prompt = lp_data['ax'].get('title_prompt', 'Title:')
-    c.setFont('LibSans', 7); set_fill(c, (0.3, 0.3, 0.3))
-    if cy > region_bot + 20:
-        c.drawString(Q_X, cy - 8, prompt)
-        outline_rect(c, Q_X, cy - 22, Q_W, 14, stroke_rgb=GREY, lw=0.5)
-
-    graph_h = region_top - region_bot - 2 * PAD
-    draw_blank_axes_area(c, lp_data['ax'],
-                         CHART_X, region_bot + PAD,
-                         CHART_W, graph_h, is_ms)
-
-
-# ── Build ─────────────────────────────────────────────────────────────────────
 def build(lesson_num):
     d   = LP[lesson_num]
     day = DAYS[lesson_num]
@@ -970,33 +927,31 @@ def build(lesson_num):
     c = canvas.Canvas(out, pagesize=A4)
     c.setTitle(f'{wk} {day} L{lesson_num} — Statistics LP')
 
-    is_draw = d['lp1'].get('lp_type') == 'draw_graph'
+    is_draw  = d['lp1'].get('lp_type') == 'draw_graph'
     is_bar   = d['lp1'].get('lp_type') == 'draw_bar'
     is_tally = d['lp1'].get('lp_type') == 'tally_draw'
 
     for page_type in ['standard', 'adapted', 'marking']:
         is_ms = (page_type == 'marking')
         c.setPageSize(A4)
-
-        # White background
-        c.setFillColorRGB(1,1,1)
+        c.setFillColorRGB(1, 1, 1)
         c.rect(0, 0, W, H, fill=1, stroke=0)
 
         if is_draw:
             draw_half_draw(c, d['lp1'], H - M, CUT_Y + M, d,
                            show_ll=True, is_ms=is_ms)
-            draw_half_draw(c, d['lp2'], CUT_Y - M, M, d,
-                           show_ll=False, is_ms=is_ms)
+            draw_half_lp2_ext(c, d['lp2'], CUT_Y - M, M, d,
+                              show_ll=False, is_ms=is_ms)
         elif is_bar:
             draw_half_bar(c, d['lp1'], H - M, CUT_Y + M, d,
                           show_ll=True, is_ms=is_ms)
-            draw_half_bar(c, d['lp2'], CUT_Y - M, M, d,
-                          show_ll=False, is_ms=is_ms)
+            draw_half_lp2_ext(c, d['lp2'], CUT_Y - M, M, d,
+                              show_ll=False, is_ms=is_ms)
         elif is_tally:
             draw_half_tally(c, d['lp1'], H - M, CUT_Y + M, d,
                             show_ll=True, is_ms=is_ms)
-            draw_half_tally(c, d['lp2'], CUT_Y - M, M, d,
-                            show_ll=False, is_ms=is_ms)
+            draw_half_lp2_ext(c, d['lp2'], CUT_Y - M, M, d,
+                              show_ll=False, is_ms=is_ms)
         else:
             draw_half(c, d['lp1'], H - M, CUT_Y + M, d,
                       show_ll=True, is_ms=is_ms)
@@ -1009,7 +964,6 @@ def build(lesson_num):
     c.save()
     print(f'Saved: {out}')
     return out
-
 
 # ── PPTX wrapper for inject_lp_previews.py ────────────────────────────────────
 def make_pptx_wrapper(pdf_path, pptx_path):
