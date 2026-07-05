@@ -608,17 +608,26 @@ def _blank_axes_png(n_x, n_y, chart_type, is_ms, ms_data, tmp_path):
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
 
-        # Faint grey gridlines — help pupils draw accurately
+        # Set explicit tick positions so vertical gridlines align with data points
+        ax.set_xticks(range(n_x))
+
+        # Horizontal gridlines across full width
         for gy in range(1, n_y_grid + 1):
             ax.axhline(gy, color='#CCCCCC', linewidth=0.5, alpha=0.7)
-        if chart_type == 'bar':
-            for gx in range(n_x):
-                ax.axvline(gx, color='#CCCCCC', linewidth=0.3, alpha=0.4)
+
+        # Vertical gridlines up from every x tick — for ALL chart types
+        # Helps pupils plot points accurately above each category/time mark
+        for gx in range(n_x):
+            ax.axvline(gx, color='#CCCCCC', linewidth=0.5, alpha=0.6)
 
         # No tick labels — pupils write their own
-        ax.set_xticklabels([])
-        ax.set_yticklabels([])
-        ax.tick_params(axis='both', length=4, width=1)
+        # Set a large labelpad so matplotlib reserves space below x-axis
+        # even with empty tick labels. bbox_inches='tight' then includes it.
+        ax.set_xticklabels([''] * n_x)
+        ax.set_yticks(range(n_y_grid + 1))
+        ax.set_yticklabels([''] * (n_y_grid + 1))
+        ax.tick_params(axis='x', pad=4, length=5, width=1.2)
+        ax.tick_params(axis='y', pad=4, length=5, width=1.2)
 
     plt.tight_layout(pad=0.4)
     fig.savefig(tmp_path, format='png', dpi=180, bbox_inches='tight',
@@ -691,10 +700,13 @@ def draw_half_draw(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
     axes_top = intro_y - intro_h - 4
 
     # ── Blank (or completed) axes — full width ─────────────────────────────────
-    avail_h = region_bot + PAD
+    # q_top = where Q1 will start.  axes_bot = bottom of axes image.
+    # LABEL_GAP is the explicit >1cm space for pupils to write x-axis labels.
+    LABEL_GAP   = 35
     q_section_h = len(lp_data.get('qs', [])) * 30 + 6
-    axes_bot  = avail_h + q_section_h
-    axes_h    = axes_top - axes_bot
+    q_top    = region_bot + PAD + q_section_h
+    axes_bot = q_top + LABEL_GAP
+    axes_h   = axes_top - axes_bot
 
     tmp_png = '/tmp/_lp_axes_tmp.png'
     ax_cfg  = lp_data.get('ax', {})
@@ -703,7 +715,7 @@ def draw_half_draw(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
     _place_image(c, tmp_png, Q_X, axes_bot, FULL_W, max(axes_h, 40))
 
     # ── Questions at bottom ────────────────────────────────────────────────────
-    cy2 = axes_bot - 3
+    cy2 = q_top
     for qi, (qt, ans) in enumerate(lp_data.get('qs', [])):
         qp = Paragraph(f'{qi+1}.  {qt}', Q_STYLE)
         _, qph = qp.wrap(FULL_W - 6, 200)
@@ -769,9 +781,10 @@ def draw_half_bar(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
     intro_p.drawOn(c, Q_X, intro_y - intro_h)
     axes_top = intro_y - intro_h - 4
 
-    avail_h = region_bot + PAD
+    LABEL_GAP   = 35
     q_section_h = len(lp_data.get('qs', [])) * 30 + 6
-    axes_bot = avail_h + q_section_h
+    q_top    = region_bot + PAD + q_section_h
+    axes_bot = q_top + LABEL_GAP
     axes_h   = axes_top - axes_bot
 
     tmp_png = '/tmp/_lp_axes_tmp.png'
@@ -780,7 +793,7 @@ def draw_half_bar(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
                     'bar', is_ms, ax_cfg, tmp_png)
     _place_image(c, tmp_png, Q_X, axes_bot, FULL_W, max(axes_h, 40))
 
-    cy2 = axes_bot - 3
+    cy2 = q_top
     for qi, (qt, ans) in enumerate(lp_data.get('qs', [])):
         qp = Paragraph(f'{qi+1}.  {qt}', Q_STYLE)
         _, qph = qp.wrap(FULL_W - 6, 200)
@@ -857,8 +870,10 @@ def draw_half_tally(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
     cy -= 4
 
     # ── Blank/completed bar chart ─────────────────────────────────────────────
+    LABEL_GAP   = 35
     q_section_h = len(lp_data.get('qs', [])) * 30 + 4
-    axes_bot = region_bot + PAD + q_section_h
+    q_top    = region_bot + PAD + q_section_h
+    axes_bot = q_top + LABEL_GAP
     axes_h   = cy - axes_bot
 
     tmp_png = '/tmp/_lp_axes_tmp.png'
@@ -868,7 +883,7 @@ def draw_half_tally(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
     _place_image(c, tmp_png, Q_X, axes_bot, FULL_W, max(axes_h, 40))
 
     # ── Questions ─────────────────────────────────────────────────────────────
-    cy2 = axes_bot - 3
+    cy2 = q_top
     for qi, (qt, ans) in enumerate(lp_data.get('qs', [])):
         qp = Paragraph(f'{qi+1}.  {qt}', Q_STYLE)
         _, qph = qp.wrap(FULL_W - 6, 200)
