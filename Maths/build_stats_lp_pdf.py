@@ -444,103 +444,134 @@ LP.update({
 },
 21: {
     'date': '08/07/2026', 'topic': 'Statistics',
-    'lf':   'LF: To answer reasoning questions using data from bar charts and tables.',
-    'ican': ['I can identify the correct calculation from a bar chart or table.',
-             'I can calculate sums and differences to answer multi-step questions.'],
+    'lf':   'LF: To draw an accurate bar chart from a given data set.',
+    'ican': ['I can choose a suitable scale and label both axes.',
+             'I can draw bars to the correct height and add a title.'],
     'lp1': {
-        'chart': 'c1_ido1_bar_chart.png',
-        'chart_label': 'WFA Sports Day — points by year group',
-        'intro': 'Use the bar chart to answer the questions.',
+        'lp_type': 'draw_bar',
+        'intro': 'Three bars have been drawn for you. Add the missing bars, then answer the questions.',
+        'table_headers': ['Minibeast', 'Number found'],
+        'table_rows': [['Worm', 8], ['Beetle', 5], ['Snail', 4], ['Spider', 12], ['Ant', 19]],
+        'ax': {
+            'categories': ['Worm', 'Beetle', 'Snail', 'Spider', 'Ant'],
+            'y_min': 0, 'y_max': 20, 'y_step': 2,
+            'x_label': 'Minibeast', 'y_label': 'Number found',
+            'title_prompt': 'Give your chart a title:',
+            'partial_values': [None, 5, 4, 12, None],
+            'ms_values':      [8,    5, 4, 12, 19],
+        },
         'qs': [
-            ('How many points did Year 4 and Year 5 score altogether?',
-             '34 + 31 = 65 points'),
-            ('How many fewer points did Year 3 score than Year 6?',
-             '37 − 28 = 9 fewer points'),
-            ('What is the total for all four year groups?',
-             '28 + 34 + 31 + 37 = 130 points'),
+            ('Which minibeast was found most often?',  'Ants — 19'),
+            ('How many more spiders than snails were found?', '12 \u2212 4 = 8 more'),
         ],
     },
     'lp2': {
-        'chart': 'c2_ido1_table.png',
-        'chart_label': 'Books borrowed from WFA library — Spring term',
-        'intro': 'Use the table to answer the questions.',
+        'lp_type': 'draw_bar',
+        'intro': 'Use the data table to draw the bar chart from scratch. Then answer the questions.',
+        'table_headers': ['How they travel', 'Number of pupils'],
+        'table_rows': [['Walk', 10], ['Cycle', 4], ['Car', 8], ['Bus', 3], ['Scooter', 1]],
+        'ax': {
+            'categories': ['Walk', 'Cycle', 'Car', 'Bus', 'Scooter'],
+            'y_min': 0, 'y_max': 12, 'y_step': 2,
+            'x_label': 'How they travel', 'y_label': 'Number of pupils',
+            'title_prompt': 'Give your chart a title:',
+            'partial_values': [None, None, None, None, None],
+            'ms_values':      [10,   4,    8,   3,    1],
+        },
         'qs': [
-            ('How many books did Maple class borrow altogether?',
-             '45 + 23 = 68 books'),
-            ('Which class borrowed more non-fiction — Hazel or Elm?',
-             'Elm — 42 vs 31'),
-            ('How many more fiction books were borrowed than non-fiction in total?',
-             '112 − 96 = 16 more fiction books'),
-            ('Write a statement comparing Maple and Hazel class totals.',
-             'Any valid statement using 68 and 69.'),
+            ('How many more pupils walk than travel by car?', '10 \u2212 8 = 2 more'),
+            ('How many pupils are in the class altogether?',  '10+4+8+3+1 = 26'),
         ],
     },
 },
 22: {
     'date': '09/07/2026', 'topic': 'Statistics',
-    'lf':   'LF: To describe trends and connect different data representations.',
-    'ican': ['I can describe the overall trend shown by a line graph or table.',
-             'I can compare what different representations show about the same data.'],
+    'lf':   'LF: To evaluate claims about data using evidence from charts and tables.',
+    'ican': ['I can decide whether a claim is true or false using values from a chart.',
+             'I can write a verdict with evidence: "I [agree/disagree] because…"'],
     'lp1': {
-        'chart': 'c1_ido1_line_graph.png',
-        'chart_label': 'Visitors to a city park — Jan to Jun',
-        'intro': 'Use the line graph to answer the questions.',
+        'chart': 'c1_ido1_double_bar.png',
+        'chart_label': 'Average monthly rainfall (mm) — Bristol vs Manaus',
+        'intro': 'For each claim: write Agree, Disagree or Not enough information. Then show your evidence.',
         'qs': [
-            ('How many visitors came in February?',
-             '140 visitors'),
-            ('Between which two months did visitor numbers increase the most?',
-             'March to April — increased by 90'),
-            ('Describe the overall trend from January to June.',
-             'Visitor numbers increased every month — a clear upward trend.'),
+            ('Claim: "Manaus gets more rain than Bristol in every month shown."\nAgree / Disagree / Not enough information?',
+             'Agree — every Manaus bar is taller. e.g. Jan: 260 > 89.'),
+            ('Claim: "Bristol and Manaus get a similar amount of rain in June."\nAgree / Disagree / Not enough information?',
+             'Disagree — Bristol 45mm, Manaus 100mm. 100 \u2212 45 = 55mm difference.'),
+            ('Claim: "Manaus gets more than 200mm of rain in every month from Jan to Jun."\nCheck using the chart.',
+             'Disagree — June is only 100mm, which is less than 200mm.'),
         ],
     },
     'lp2': {
         'chart': 'c2_ido1_table.png',
-        'chart_label': 'Park visitors — monthly data with changes',
-        'intro': 'Use the table to answer the questions.',
+        'chart_label': 'Hours of daylight — Bristol and S\u00e3o Paulo, by season',
+        'intro': 'For each claim: write Agree, Disagree or Not enough information. Show your evidence.',
         'qs': [
-            ('In which month did the change from the previous month first reach +70?',
-             'May — change was +70'),
-            ('What does the Change column tell you that the Visitors column alone does not?',
-             'Exactly how much numbers went up or down each month.'),
-            ('Could you describe the overall trend from this table?  How?',
-             'Yes — look at whether visitor numbers go up or down from row to row.'),
-            ('Which representation makes it easier to see the trend at a glance — the table or the line graph?  Explain.',
-             'The line graph — the rising line is instantly visible without reading every number.'),
+            ('Claim: "Bristol always has fewer hours of daylight than S\u00e3o Paulo."\nAgree / Disagree / Not enough information?',
+             'Disagree — in summer Bristol has 17h, S\u00e3o Paulo 11h. Bristol has MORE.'),
+            ('Claim: "The total daylight hours are the same for both cities."\nCalculate to check.',
+             'Disagree — Bristol: 8+12+17+12 = 49h. S\u00e3o Paulo: 11+12+11+12 = 46h.'),
+            ('Claim: "S\u00e3o Paulo has the same hours of daylight in spring and autumn."\nAgree / Disagree?',
+             'Agree — S\u00e3o Paulo: Spring 12h, Autumn 12h. They are the same.'),
         ],
     },
 },
 23: {
     'date': '11/07/2026', 'topic': 'Statistics',
-    'lf':   'LF: To solve mixed statistics problems across different chart types.',
-    'ican': ['I can read and interpret data from a range of chart types.',
-             'I can choose the right calculation to answer questions about data.'],
+    'lf':   'LF: To complete the full data cycle \u2014 tally, represent, draw and analyse.',
+    'ican': ['I can tally a list of data and choose a suitable representation.',
+             'I can draw a bar chart and answer questions from my own chart.'],
     'lp1': {
-        'chart': 'c1_ido1_double_bar.png',
-        'chart_label': 'Books read — Maple class, Term 5 vs Term 6',
-        'intro': 'Use the double bar chart to answer the questions.',
+        'lp_type': 'tally_draw',
+        'intro': 'Tally the responses below, then draw a bar chart and answer the questions.',
+        'raw_data': (
+            'Maths, Science, Maths, Art, Maths, English, Science, Maths, Art, English, '
+            'Maths, Science, Maths, Art, English, Maths, Science, English, Maths, Maths, '
+            'Science, Art, English, Maths, Science, Art'
+        ),
+        'tally_categories': ['Maths', 'Science', 'English', 'Art', 'PE'],
+        'ms_tallies': [8, 6, 5, 4, 3],
+        'ax': {
+            'categories': ['Maths', 'Science', 'English', 'Art', 'PE'],
+            'y_min': 0, 'y_max': 10, 'y_step': 2,
+            'x_label': 'Favourite subject', 'y_label': 'Number of pupils',
+            'title_prompt': 'Give your chart a title:',
+            'ms_values': [8, 6, 5, 4, 3],
+        },
         'qs': [
-            ('How many books were read in Term 6 altogether?',
-             '15 + 9 + 5 + 7 = 36 books'),
-            ('Which category increased the most from Term 5 to Term 6?',
-             'Fiction — increased by 4  (11 → 15)'),
-            ('Which category decreased from Term 5 to Term 6?',
-             'Comics — fell by 1  (8 → 7)'),
+            ('Which subject did the most pupils choose?',
+             'Maths \u2014 8 pupils'),
+            ('How many more pupils chose Maths than Art?',
+             '8 \u2212 4 = 4 more'),
+            ('Why is a bar chart a better choice than a line graph for this data?',
+             'Subjects are separate categories, not continuous over time.'),
         ],
     },
     'lp2': {
-        'chart': 'c2_ido1_bar_chart.png',
-        'chart_label': 'Tuck shop sales — items sold in one week',
-        'intro': 'Use the bar chart to answer the questions.',
+        'lp_type': 'tally_draw',
+        'intro': 'Tally the responses below, then draw a bar chart and answer the questions.',
+        'raw_data': (
+            'Football, Gymnastics, Football, Swimming, Football, Athletics, Gymnastics, '
+            'Football, Athletics, Swimming, Football, Gymnastics, Football, Athletics, '
+            'Swimming, Football, Gymnastics, Swimming, Football, Football, Gymnastics, '
+            'Athletics, Swimming, Football, Gymnastics, Cycling'
+        ),
+        'tally_categories': ['Football', 'Gymnastics', 'Swimming', 'Athletics', 'Cycling'],
+        'ms_tallies': [10, 6, 5, 4, 1],
+        'ax': {
+            'categories': ['Football', 'Gymnastics', 'Swimming', 'Athletics', 'Cycling'],
+            'y_min': 0, 'y_max': 12, 'y_step': 2,
+            'x_label': 'Favourite sport', 'y_label': 'Number of pupils',
+            'title_prompt': 'Give your chart a title:',
+            'ms_values': [10, 6, 5, 4, 1],
+        },
         'qs': [
-            ('How many items were sold in total across all five products?',
-             '32 + 18 + 25 + 14 + 41 = 130 items'),
-            ('How many more waters were sold than raisin pots?',
-             '41 − 14 = 27 more'),
-            ('Crackers cost 40p each.  How much money was taken from cracker sales?',
-             '18 × 40p = 720p = £7.20'),
-            ('Write one thing the bar chart tells you that surprises you.  Use data to support it.',
-             'Any valid observation with a data value.'),
+            ('Which sport did most pupils choose?',
+             'Football \u2014 10 pupils'),
+            ('How many pupils were surveyed in total?',
+             '10+6+5+4+1 = 26'),
+            ('If you used a pictogram with key = 2, how many symbols would Football need?',
+             '5 whole symbols  (10 \u00f7 2 = 5)'),
         ],
     },
 },
@@ -627,22 +658,82 @@ def draw_blank_axes_area(c, ax, x, y_bottom, w, h, is_ms):
     os.unlink(tmp)
 
 
-def draw_half_draw(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
-    """
-    Half-page LP for draw-graph lessons.
-    Left column: LL (if lp1), instructions, data table, 2 short questions.
-    Right column: blank graph paper (or completed graph for marking station).
-    """
-    PAD = 10
+def draw_blank_bar_chart_area(c, ax, x, y_bottom, w, h, is_ms):
+    """Blank (or completed) bar chart axes for pupil drawing."""
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import io, tempfile
 
-    # ── Learning Label (LP1 only) ────────────────────────────────────────────
+    cats     = ax['categories']
+    y_min    = ax.get('y_min', 0)
+    y_max    = ax['y_max']
+    y_step   = ax['y_step']
+    x_label  = ax.get('x_label', '')
+    y_label  = ax.get('y_label', '')
+    partial  = ax.get('partial_values', [None]*len(cats))
+    ms_vals  = ax.get('ms_values', [])
+    n = len(cats)
+
+    fig, ax_plt = plt.subplots(figsize=(3.2, 3.0), dpi=180)
+    ax_plt.set_facecolor('white')
+    fig.patch.set_facecolor('white')
+    ax_plt.set_ylim(y_min, y_max)
+    ax_plt.set_xticks(range(n))
+    ax_plt.set_xticklabels(cats, fontsize=6, rotation=15, ha='right')
+    ax_plt.set_yticks(range(y_min, y_max + 1, y_step))
+    ax_plt.tick_params(axis='both', labelsize=7)
+    ax_plt.set_xlabel(x_label, fontsize=7, labelpad=2)
+    ax_plt.set_ylabel(y_label, fontsize=7, labelpad=2)
+    ax_plt.grid(axis='y', linewidth=0.4, color='#AAAAAA', alpha=0.6)
+    ax_plt.spines['top'].set_visible(False)
+    ax_plt.spines['right'].set_visible(False)
+    ax_plt.spines['left'].set_linewidth(0.8)
+    ax_plt.spines['bottom'].set_linewidth(0.8)
+
+    if is_ms and ms_vals:
+        ax_plt.bar(range(n), ms_vals, color='#1798d3', alpha=0.85,
+                   edgecolor='#0f6fa0', linewidth=0.6, width=0.6)
+    else:
+        for i, v in enumerate(partial):
+            if v is not None:
+                ax_plt.bar(i, v, color='#1798d3', alpha=0.85,
+                           edgecolor='#0f6fa0', linewidth=0.6, width=0.6)
+
+    buf = io.BytesIO()
+    plt.tight_layout(pad=0.3)
+    fig.savefig(buf, format='png', dpi=180, bbox_inches='tight', facecolor='white')
+    plt.close(fig)
+    buf.seek(0)
+    tmp = tempfile.mktemp(suffix='.png')
+    with open(tmp, 'wb') as f:
+        f.write(buf.read())
+
+    img = PILImage.open(tmp)
+    iw, ih = img.size
+    aspect = iw / ih
+    draw_h = h
+    draw_w = h * aspect
+    if draw_w > w:
+        draw_w = w
+        draw_h = w / aspect
+    dx = (w - draw_w) / 2
+    dy = (h - draw_h) / 2
+    c.drawImage(tmp, x + dx, y_bottom + dy, draw_w, draw_h,
+                preserveAspectRatio=True, mask='auto')
+    os.unlink(tmp)
+
+
+def draw_half_bar(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
+    """Half-page LP for bar chart drawing lessons."""
+    PAD = 10
     q_top = region_top - PAD
     if show_ll:
         ll_h = draw_ll(c, LL_X, region_top - PAD,
                        meta['date'], meta['topic'], meta['lf'], meta['ican'])
         q_top = region_top - PAD - ll_h - 8
 
-    # ── Intro instruction line ────────────────────────────────────────────────
     intro_para = Paragraph(lp_data['intro'], INTRO_STYLE)
     _, intro_h = intro_para.wrap(Q_W, 200)
     intro_h += 4
@@ -650,86 +741,223 @@ def draw_half_draw(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
     intro_para.drawOn(c, Q_X, cy - intro_h)
     cy -= intro_h + 4
 
-    # ── Data table ────────────────────────────────────────────────────────────
+    # Data table
     hdrs = lp_data['table_headers']
     rows = lp_data['table_rows']
     ROW_H = 13
-    COL_W = [Q_W * 0.45, Q_W * 0.45]
+    COL_W = [Q_W * 0.55, Q_W * 0.35]
     TBL_W = sum(COL_W)
-    TBL_H = ROW_H * (1 + len(rows))
-    tbl_top = cy
-
-    # Header row
-    filled_rect(c, Q_X, tbl_top - ROW_H, TBL_W, ROW_H,
+    filled_rect(c, Q_X, cy - ROW_H, TBL_W, ROW_H,
                 fill_rgb=(0.09, 0.60, 0.83), stroke_rgb=None)
     for ci, hdr in enumerate(hdrs):
         x_off = Q_X + sum(COL_W[:ci])
-        c.setFont('LibSansBold', 7.5)
-        set_fill(c, (1, 1, 1))
-        c.drawString(x_off + 3, tbl_top - ROW_H + 3, hdr)
-    cy = tbl_top - ROW_H
-
-    # Data rows
+        c.setFont('LibSansBold', 7.5); set_fill(c, (1, 1, 1))
+        c.drawString(x_off + 3, cy - ROW_H + 3, hdr)
+    cy -= ROW_H
     for ri, row in enumerate(rows):
         fill = (0.93, 0.97, 1.0) if ri % 2 == 0 else (1, 1, 1)
         filled_rect(c, Q_X, cy - ROW_H, TBL_W, ROW_H,
                     fill_rgb=fill, stroke_rgb=(0.75, 0.75, 0.75), lw=0.4)
         for ci, val in enumerate(row):
             x_off = Q_X + sum(COL_W[:ci])
-            c.setFont('LibSans', 7.5)
-            set_fill(c, (0.1, 0.1, 0.1))
+            c.setFont('LibSans', 7.5); set_fill(c, (0.1, 0.1, 0.1))
             c.drawString(x_off + 3, cy - ROW_H + 3, str(val))
         cy -= ROW_H
-
     cy -= 6
 
-    # ── Step instructions ─────────────────────────────────────────────────────
-    steps = lp_data.get('instructions', [])
-    for step in steps:
-        p = Paragraph(step, ParagraphStyle('ST',
-            fontName='LibSans', fontSize=7, leading=10,
-            textColor=(0.2, 0.2, 0.2)))
-        _, ph = p.wrap(Q_W, 200)
-        p.drawOn(c, Q_X, cy - ph)
-        cy -= ph + 2
-
-    cy -= 4
-
-    # ── Short questions ───────────────────────────────────────────────────────
     for qi, (qt, ans) in enumerate(lp_data.get('qs', [])):
         qp = Paragraph(f'{qi+1}.  {qt}', Q_STYLE)
         _, qph = qp.wrap(Q_W - 6, 200)
         qbox_h = qph + 8
         filled_rect(c, Q_X, cy - qbox_h, Q_W, qbox_h,
                     fill_rgb=Q_BG, stroke_rgb=Q_BORDER, lw=0.6)
-        set_fill(c, (0, 0, 0))
-        qp.drawOn(c, Q_X + 3, cy - qbox_h + 4)
+        set_fill(c, (0, 0, 0)); qp.drawOn(c, Q_X + 3, cy - qbox_h + 4)
         cy -= qbox_h + 3
-
         ANS_H = 18
         if is_ms:
             filled_rect(c, Q_X, cy - ANS_H, Q_W, ANS_H,
                         fill_rgb=GRN_BG, stroke_rgb=GRN, lw=0.6)
-            ap = Paragraph(f'✓  {ans}', ANS_STYLE)
-            ap.wrap(Q_W - 6, ANS_H - 4)
-            ap.drawOn(c, Q_X + 3, cy - ANS_H + 3)
+            ap = Paragraph(f'\u2713  {ans}', ANS_STYLE)
+            ap.wrap(Q_W - 6, ANS_H - 4); ap.drawOn(c, Q_X + 3, cy - ANS_H + 3)
         else:
             outline_rect(c, Q_X, cy - ANS_H, Q_W, ANS_H, stroke_rgb=GREY, lw=0.5)
         cy -= ANS_H + 4
 
-    # ── Title box prompt ──────────────────────────────────────────────────────
     prompt = lp_data['ax'].get('title_prompt', 'Title:')
-    c.setFont('LibSans', 7)
-    set_fill(c, (0.3, 0.3, 0.3))
+    c.setFont('LibSans', 7); set_fill(c, (0.3, 0.3, 0.3))
     if cy > region_bot + 20:
         c.drawString(Q_X, cy - 8, prompt)
         outline_rect(c, Q_X, cy - 22, Q_W, 14, stroke_rgb=GREY, lw=0.5)
 
-    # ── Blank (or completed) graph area on right ──────────────────────────────
+    graph_h = region_top - region_bot - 2 * PAD
+    draw_blank_bar_chart_area(c, lp_data['ax'],
+                              CHART_X, region_bot + PAD,
+                              CHART_W, graph_h, is_ms)
+
+
+def draw_half_tally(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
+    """Half-page LP for tally+draw lessons."""
+    PAD = 10
+    q_top = region_top - PAD
+    if show_ll:
+        ll_h = draw_ll(c, LL_X, region_top - PAD,
+                       meta['date'], meta['topic'], meta['lf'], meta['ican'])
+        q_top = region_top - PAD - ll_h - 8
+
+    # Intro
+    intro_para = Paragraph(lp_data['intro'], INTRO_STYLE)
+    _, ih = intro_para.wrap(Q_W, 200)
+    intro_para.drawOn(c, Q_X, q_top - ih)
+    cy = q_top - ih - 4
+
+    # Raw data display
+    raw_p = Paragraph(
+        '<font size="7" color="#333333">' + lp_data['raw_data'] + '</font>',
+        ParagraphStyle('RD', fontName='LibSans', fontSize=7, leading=10,
+                       backColor=(0.95, 0.97, 1.0), borderPad=4,
+                       textColor=(0.1, 0.1, 0.1))
+    )
+    _, raw_h = raw_p.wrap(Q_W, 200)
+    raw_h = min(raw_h + 8, 60)
+    filled_rect(c, Q_X, cy - raw_h, Q_W, raw_h,
+                fill_rgb=(0.95, 0.97, 1.0), stroke_rgb=(0.8, 0.8, 0.8), lw=0.5)
+    raw_p.drawOn(c, Q_X + 3, cy - raw_h + 3)
+    cy -= raw_h + 5
+
+    # Tally table
+    cats  = lp_data['tally_categories']
+    ms_t  = lp_data.get('ms_tallies', [0]*len(cats))
+    ROW_H = 14
+    C1, C2, C3 = Q_W * 0.38, Q_W * 0.38, Q_W * 0.22
+    filled_rect(c, Q_X, cy - ROW_H, Q_W, ROW_H,
+                fill_rgb=(0.09, 0.60, 0.83), stroke_rgb=None)
+    for txt, x_off in [('Category', Q_X + 3),
+                       ('Tally', Q_X + C1 + 3),
+                       ('Total', Q_X + C1 + C2 + 3)]:
+        c.setFont('LibSansBold', 7); set_fill(c, (1, 1, 1))
+        c.drawString(x_off, cy - ROW_H + 3, txt)
+    cy -= ROW_H
+    for ri, (cat, mt) in enumerate(zip(cats, ms_t)):
+        fill = (0.93, 0.97, 1.0) if ri % 2 == 0 else (1, 1, 1)
+        filled_rect(c, Q_X, cy - ROW_H, Q_W, ROW_H,
+                    fill_rgb=fill, stroke_rgb=(0.75, 0.75, 0.75), lw=0.4)
+        c.setFont('LibSans', 7.5); set_fill(c, (0.1, 0.1, 0.1))
+        c.drawString(Q_X + 3, cy - ROW_H + 3, cat)
+        if is_ms:
+            tally_str = '\u2225 ' * (mt // 5) + '| ' * (mt % 5)
+            c.setFont('LibSans', 7)
+            c.drawString(Q_X + C1 + 3, cy - ROW_H + 3, tally_str.strip())
+            c.drawString(Q_X + C1 + C2 + 3, cy - ROW_H + 3, str(mt))
+        cy -= ROW_H
+    cy -= 5
+
+    # Questions
+    for qi, (qt, ans) in enumerate(lp_data.get('qs', [])):
+        qp = Paragraph(f'{qi+1}.  {qt}', Q_STYLE)
+        _, qph = qp.wrap(Q_W - 6, 200)
+        qbox_h = qph + 8
+        filled_rect(c, Q_X, cy - qbox_h, Q_W, qbox_h,
+                    fill_rgb=Q_BG, stroke_rgb=Q_BORDER, lw=0.6)
+        set_fill(c, (0, 0, 0)); qp.drawOn(c, Q_X + 3, cy - qbox_h + 4)
+        cy -= qbox_h + 3
+        ANS_H = 18
+        if is_ms:
+            filled_rect(c, Q_X, cy - ANS_H, Q_W, ANS_H,
+                        fill_rgb=GRN_BG, stroke_rgb=GRN, lw=0.6)
+            ap = Paragraph(f'\u2713  {ans}', ANS_STYLE)
+            ap.wrap(Q_W - 6, ANS_H - 4); ap.drawOn(c, Q_X + 3, cy - ANS_H + 3)
+        else:
+            outline_rect(c, Q_X, cy - ANS_H, Q_W, ANS_H, stroke_rgb=GREY, lw=0.5)
+        cy -= ANS_H + 4
+
+    prompt = lp_data['ax'].get('title_prompt', 'Title:')
+    c.setFont('LibSans', 7); set_fill(c, (0.3, 0.3, 0.3))
+    if cy > region_bot + 20:
+        c.drawString(Q_X, cy - 8, prompt)
+        outline_rect(c, Q_X, cy - 22, Q_W, 14, stroke_rgb=GREY, lw=0.5)
+
+    graph_h = region_top - region_bot - 2 * PAD
+    draw_blank_bar_chart_area(c, lp_data['ax'],
+                              CHART_X, region_bot + PAD,
+                              CHART_W, graph_h, is_ms)
+
+
+def draw_half_draw(c, lp_data, region_top, region_bot, meta, show_ll, is_ms):
+    """Half-page LP for draw-graph (line graph) lessons."""
+    PAD = 10
+    q_top = region_top - PAD
+    if show_ll:
+        ll_h = draw_ll(c, LL_X, region_top - PAD,
+                       meta['date'], meta['topic'], meta['lf'], meta['ican'])
+        q_top = region_top - PAD - ll_h - 8
+
+    intro_para = Paragraph(lp_data['intro'], INTRO_STYLE)
+    _, intro_h = intro_para.wrap(Q_W, 200)
+    intro_h += 4
+    cy = q_top
+    intro_para.drawOn(c, Q_X, cy - intro_h)
+    cy -= intro_h + 4
+
+    hdrs = lp_data['table_headers']
+    rows = lp_data['table_rows']
+    ROW_H = 13
+    COL_W = [Q_W * 0.45, Q_W * 0.45]
+    TBL_W = sum(COL_W)
+    filled_rect(c, Q_X, cy - ROW_H, TBL_W, ROW_H,
+                fill_rgb=(0.09, 0.60, 0.83), stroke_rgb=None)
+    for ci, hdr in enumerate(hdrs):
+        x_off = Q_X + sum(COL_W[:ci])
+        c.setFont('LibSansBold', 7.5); set_fill(c, (1, 1, 1))
+        c.drawString(x_off + 3, cy - ROW_H + 3, hdr)
+    cy -= ROW_H
+    for ri, row in enumerate(rows):
+        fill = (0.93, 0.97, 1.0) if ri % 2 == 0 else (1, 1, 1)
+        filled_rect(c, Q_X, cy - ROW_H, TBL_W, ROW_H,
+                    fill_rgb=fill, stroke_rgb=(0.75, 0.75, 0.75), lw=0.4)
+        for ci, val in enumerate(row):
+            x_off = Q_X + sum(COL_W[:ci])
+            c.setFont('LibSans', 7.5); set_fill(c, (0.1, 0.1, 0.1))
+            c.drawString(x_off + 3, cy - ROW_H + 3, str(val))
+        cy -= ROW_H
+    cy -= 6
+
+    for step in lp_data.get('instructions', []):
+        p = Paragraph(step, ParagraphStyle('ST', fontName='LibSans', fontSize=7,
+                      leading=10, textColor=(0.2, 0.2, 0.2)))
+        _, ph = p.wrap(Q_W, 200)
+        p.drawOn(c, Q_X, cy - ph)
+        cy -= ph + 2
+    cy -= 4
+
+    for qi, (qt, ans) in enumerate(lp_data.get('qs', [])):
+        qp = Paragraph(f'{qi+1}.  {qt}', Q_STYLE)
+        _, qph = qp.wrap(Q_W - 6, 200)
+        qbox_h = qph + 8
+        filled_rect(c, Q_X, cy - qbox_h, Q_W, qbox_h,
+                    fill_rgb=Q_BG, stroke_rgb=Q_BORDER, lw=0.6)
+        set_fill(c, (0, 0, 0)); qp.drawOn(c, Q_X + 3, cy - qbox_h + 4)
+        cy -= qbox_h + 3
+        ANS_H = 18
+        if is_ms:
+            filled_rect(c, Q_X, cy - ANS_H, Q_W, ANS_H,
+                        fill_rgb=GRN_BG, stroke_rgb=GRN, lw=0.6)
+            ap = Paragraph(f'\u2713  {ans}', ANS_STYLE)
+            ap.wrap(Q_W - 6, ANS_H - 4); ap.drawOn(c, Q_X + 3, cy - ANS_H + 3)
+        else:
+            outline_rect(c, Q_X, cy - ANS_H, Q_W, ANS_H, stroke_rgb=GREY, lw=0.5)
+        cy -= ANS_H + 4
+
+    prompt = lp_data['ax'].get('title_prompt', 'Title:')
+    c.setFont('LibSans', 7); set_fill(c, (0.3, 0.3, 0.3))
+    if cy > region_bot + 20:
+        c.drawString(Q_X, cy - 8, prompt)
+        outline_rect(c, Q_X, cy - 22, Q_W, 14, stroke_rgb=GREY, lw=0.5)
+
     graph_h = region_top - region_bot - 2 * PAD
     draw_blank_axes_area(c, lp_data['ax'],
                          CHART_X, region_bot + PAD,
                          CHART_W, graph_h, is_ms)
+
 
 # ── Build ─────────────────────────────────────────────────────────────────────
 def build(lesson_num):
@@ -743,6 +971,8 @@ def build(lesson_num):
     c.setTitle(f'{wk} {day} L{lesson_num} — Statistics LP')
 
     is_draw = d['lp1'].get('lp_type') == 'draw_graph'
+    is_bar   = d['lp1'].get('lp_type') == 'draw_bar'
+    is_tally = d['lp1'].get('lp_type') == 'tally_draw'
 
     for page_type in ['standard', 'adapted', 'marking']:
         is_ms = (page_type == 'marking')
@@ -753,13 +983,21 @@ def build(lesson_num):
         c.rect(0, 0, W, H, fill=1, stroke=0)
 
         if is_draw:
-            # Draw-graph format: blank axes + data table
             draw_half_draw(c, d['lp1'], H - M, CUT_Y + M, d,
                            show_ll=True, is_ms=is_ms)
             draw_half_draw(c, d['lp2'], CUT_Y - M, M, d,
                            show_ll=False, is_ms=is_ms)
+        elif is_bar:
+            draw_half_bar(c, d['lp1'], H - M, CUT_Y + M, d,
+                          show_ll=True, is_ms=is_ms)
+            draw_half_bar(c, d['lp2'], CUT_Y - M, M, d,
+                          show_ll=False, is_ms=is_ms)
+        elif is_tally:
+            draw_half_tally(c, d['lp1'], H - M, CUT_Y + M, d,
+                            show_ll=True, is_ms=is_ms)
+            draw_half_tally(c, d['lp2'], CUT_Y - M, M, d,
+                            show_ll=False, is_ms=is_ms)
         else:
-            # Standard format: chart + questions
             draw_half(c, d['lp1'], H - M, CUT_Y + M, d,
                       show_ll=True, is_ms=is_ms)
             draw_half(c, d['lp2'], CUT_Y - M, M, d,
