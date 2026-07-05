@@ -2423,98 +2423,83 @@
       "weekIndex": 6,
       "day": "Monday",
       "topic": "Statistics",
-      "li": "Pupils draw and label accurate line graphs from a given data set.",
-      "vocabularyFocus": [
-        "axis",
-        "axes",
-        "dataset",
-        "plot",
-        "scale",
-        "label",
-        "title",
-        "trend"
-      ],
-      "keyQuestion": "How do we turn a table of data into a clear and accurate line graph?",
+      "li": "Pupils draw an accurate line graph from a data table, choosing a suitable scale and labelling both axes.",
+      "keyQuestion": "How do we turn a table of numbers into a clear and accurate line graph?",
       "loText": {
-        "walt": "\u2026draw an accurate line graph from a given data set.",
-        "tiob": "\u2026a well-drawn line graph shows the same data as a table but makes trends visible at a glance.",
-        "iwstb": "\u2026setting up axes with a suitable scale, plotting each data point as a cross, and joining consecutive points with straight lines."
+        "walt": "\u2026draw an accurate line graph from a data table.",
+        "tiob": "\u2026a clear graph must have an appropriate scale and labelled axes before any data is plotted.",
+        "iwstb": "\u2026choosing a suitable scale from the data, labelling both axes correctly, plotting each point and joining with straight lines."
       },
       "cycle1": {
-        "focus": "Setting up axes and choosing a scale",
+        "focus": "Planning axes from a data table",
         "ido": [
-          "Model choosing a scale for Bristol monthly rainfall. Ask: what is the highest value? Round up to 100. Show labelling both axes with title and units.",
-          "Spot the Mistake \u2014 wrong scale (too small, data doesn\u2019t fit)."
+          "Show London January temperature data as a TABLE ONLY. Model: find the highest value, choose scale, decide step size. No graph drawn yet.",
+          "Spot the Mistake \u2014 y-axis with unequal intervals (0, 5, 10, 20, 25, 30)."
         ],
         "slideTitles": {
           "ido": [
-            "Setting up axes \u2014 choosing the right scale",
+            "What scale does this data need?",
             "Spot the mistake"
           ],
-          "wedo": [
-            "Together \u2014 check the scale"
-          ],
-          "trios": [
-            "Trios \u2014 plan your axes"
-          ],
+          "wedo": "We Do",
+          "trios": "We Do",
           "independent": [
-            "Independent \u2014 axes and scale check"
+            "Now you draw it : LP"
           ]
         },
         "slideCount": {
           "ido": 2,
           "wedo": 1,
-          "trios": 1,
+          "trios": 0,
           "independent": 0
         },
         "trios": {
-          "task": "Look at the Bristol rainfall data. Decide together: what scale will you use for the y-axis? What steps? Write your decisions and reasons before drawing anything.",
-          "challenge": "If you had to show both Bristol and Manaus rainfall on the same graph, what scale would you need? Would the Bristol data still be clear?"
+          "task": "Watch as I draw the Rio de Janeiro temperature graph on the board. Call out the scale, step size and labels as I go.",
+          "challenge": "The scale for Rio needs to be different from London. Why? What would happen if we used the same scale for both?"
         },
         "independent": {
-          "standard": "Complete LP1 \u2014 use the data table to draw the Bristol rainfall line graph.",
-          "supported": "Complete LP1 adapted \u2014 the scale is already labelled. Plot each cross and join the points.",
-          "stretch": "Going further \u2014 on the back, write three statements about the trend your graph shows."
+          "standard": "Move to your LP. Draw the Bristol July temperature graph from the data table. Choose your own scale.",
+          "supported": "LP adapted \u2014 the scale is partially labelled. Plot the points and join them.",
+          "stretch": "Going further \u2014 compare your Bristol graph with the London and Rio graphs. Write three differences."
         },
         "trios_charts": [
-          "c1_ido1"
+          "wedo_visual"
         ]
       },
       "cycle2": {
-        "focus": "Plotting points and joining with a line",
+        "focus": "Reading the graph you have drawn",
         "ido": [
-          "Model plotting Manaus rainfall: mark each point as a cross, then join consecutive points with straight lines one at a time.",
-          "Spot the Mistake \u2014 smooth curve instead of straight-line segments."
+          "Reveal the completed London January graph. Read values, calculate differences, describe the trend."
         ],
         "slideTitles": {
           "ido": [
-            "Plotting points and joining with a line",
+            "Reading your graph : what does it tell us?",
             "Spot the mistake"
           ],
           "wedo": [
-            "Together \u2014 plot and join"
+            "Compare your graph with the marking station"
           ],
           "trios": [
-            "Trios \u2014 draw and compare"
+            "Compare your graph with the marking station"
           ],
           "independent": [
-            "Independent \u2014 complete the graph"
+            "Write a sentence about your graph"
           ]
         },
         "slideCount": {
           "ido": 2,
           "wedo": 1,
-          "trios": 1,
+          "trios": 0,
           "independent": 0
         },
         "trios": {
-          "task": "Draw the Manaus rainfall graph on LP2. Then write two statements comparing the Bristol and Manaus trends. Which city has greater variation?",
-          "challenge": "In which months are Bristol and Manaus most similar in rainfall? Use your graph to support your answer."
+          "task": "Look at the marking station. Does your Bristol July graph show the same pattern? What is similar? What is different?",
+          "challenge": ""
         },
         "independent": {
-          "standard": "Complete LP2 \u2014 draw the Rio de Janeiro rainfall line graph and answer the questions.",
-          "supported": "Complete LP2 adapted \u2014 axes are provided. Plot the points and join them.",
-          "stretch": "Going further \u2014 compare Rio and Manaus. Which shows greater change across the six months?"
+          "standard": "Write one sentence describing the trend your graph shows.",
+          "supported": "Complete the sentence: \u2018The temperature in Bristol on a July day\u2026\u2019",
+          "stretch": ""
         },
         "trios_charts": [
           "c2_ido1"
@@ -2522,10 +2507,10 @@
       },
       "spotTheMistake": {
         "slideTitle": "Spot the mistake",
-        "concept": "Scale too small \u2014 highest data value does not fit on the y-axis",
-        "errorType": "scale_too_small",
-        "errorInstruction": "A pupil draws a y-axis from 0 to 50mm in steps of 10. Their highest data value is 89mm.",
-        "errorNote": "The scale ends at 50mm but the data reaches 89mm. The scale must go to at least 90mm \u2014 use 0\u2013100 in steps of 10.",
+        "concept": "Unequal intervals on y-axis",
+        "errorType": "unequal_intervals",
+        "errorInstruction": "Y-axis shows: 0, 5, 10, 20, 25, 30. What is wrong?",
+        "errorNote": "The gap from 10 to 20 is 10, but all other gaps are 5. Every interval must be equal.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -2534,23 +2519,24 @@
         "extraPoints": [],
         "calcDisplay": {
           "type": "word_problem",
-          "correctAnswer": "",
-          "errorAnswer": ""
+          "correctAnswer": "equal steps of 5",
+          "errorAnswer": "unequal intervals"
         }
       },
       "lp1": {
         "topic": "Statistics",
-        "task": "Draw a line graph from the Bristol rainfall data table.",
-        "questions": 2
+        "task": "Draw Bristol July temperature line graph from data table.",
+        "questions": 3,
+        "lp_type": "draw_graph"
       },
       "lp2": {
         "topic": "Statistics",
-        "task": "Draw a line graph from the Rio de Janeiro rainfall data table.",
+        "task": "Extension: read and describe your graph.",
         "questions": 2
       },
       "learningReviewStems": [
         "I chose my scale by\u2026",
-        "Joining points with straight lines matters because\u2026",
+        "I knew the step size was right because\u2026",
         "The trend my graph shows is\u2026"
       ]
     },
@@ -2560,88 +2546,83 @@
       "weekIndex": 6,
       "day": "Wednesday",
       "topic": "Statistics",
-      "li": "Pupils draw bar charts from raw data, choosing an appropriate scale.",
-      "keyQuestion": "How do we turn a set of data into a clear and accurate bar chart?",
+      "li": "Pupils draw an accurate bar chart from a data table, choosing a suitable scale.",
+      "keyQuestion": "How do we set up the axes for a bar chart when no scale is given?",
       "loText": {
-        "walt": "\u2026draw an accurate bar chart from a given data set.",
-        "tiob": "\u2026a well-drawn bar chart makes it easy to compare categories at a glance.",
-        "iwstb": "\u2026choosing a suitable scale, drawing bars to the correct height and labelling axes and title."
+        "walt": "\u2026draw an accurate bar chart from a data table.",
+        "tiob": "\u2026choosing the right scale before drawing any bars makes the chart accurate and easy to read.",
+        "iwstb": "\u2026finding the highest value, choosing a scale, drawing each bar to the correct height and labelling axes and title."
       },
       "cycle1": {
-        "focus": "Completing a partially drawn bar chart",
+        "focus": "Planning scale from a data table",
         "ido": [
-          "Minibeast survey bar chart. Model reading the scale, then model how to draw the missing bars (Worm and Ant). Stress: check highest value first, choose scale, draw bar to exact gridline.",
-          "Spot the Mistake \u2014 pupil draws a bar to the wrong gridline on a scale that goes up in 5s."
+          "Show litter pick data as a TABLE ONLY. Model: find the highest value, choose scale, decide step size. No bars drawn yet.",
+          "Spot the Mistake \u2014 bar drawn to wrong gridline on a scale of 5s."
         ],
         "slideTitles": {
           "ido": [
-            "Completing a bar chart \u2014 minibeasts survey",
+            "What scale does this data need?",
             "Spot the mistake"
           ],
-          "wedo": [
-            "Together \u2014 complete the chart"
-          ],
-          "trios": [
-            "Trios \u2014 check your bars"
-          ],
+          "wedo": "We Do",
+          "trios": "We Do",
           "independent": [
-            "Independent \u2014 LP1"
+            "Now you draw it : LP"
           ]
         },
         "slideCount": {
           "ido": 2,
           "wedo": 1,
-          "trios": 1,
+          "trios": 0,
           "independent": 0
         },
         "trios": {
-          "task": "Look at the minibeast bar chart. Two bars are missing. Agree on the scale, then draw the Worm and Ant bars. Check each other's work.",
-          "challenge": "If Beetles and Snails were combined into one category called 'Other insects', what would that bar's height be? Draw it."
+          "task": "Watch as I draw the library books bar chart. Call out the scale and step size as I go. Which bar will be tallest?",
+          "challenge": "Fantasy (24) sits between two gridlines. How do we draw a bar that reaches exactly 24 on a scale of 5s?"
         },
         "independent": {
-          "standard": "Complete LP1 \u2014 three bars are drawn, add the two missing bars then answer the questions.",
-          "supported": "Complete LP1 adapted \u2014 scale is pre-labelled, just draw the bars.",
-          "stretch": "Going further \u2014 write a question about the bar chart that needs two steps to answer. Swap with a partner."
+          "standard": "Move to your LP. Draw the after-school activities bar chart. Choose your own scale.",
+          "supported": "LP adapted \u2014 scale is partially labelled. Draw the bars.",
+          "stretch": "Going further \u2014 write two questions about your chart for a partner to answer."
         },
         "trios_charts": [
-          "c1_ido1"
+          "wedo_visual"
         ]
       },
       "cycle2": {
-        "focus": "Drawing a bar chart from scratch",
+        "focus": "Reading the chart you have drawn",
         "ido": [
-          "School travel data. Model setting up axes from scratch: check highest value, choose scale, draw all five bars, add title and axis labels.",
-          "Spot the Mistake \u2014 y-axis too small for the highest value."
+          "Reveal the completed litter pick bar chart. Read values, calculate differences, discuss what the data tells us."
         ],
         "slideTitles": {
           "ido": [
-            "Drawing from scratch \u2014 how Maple class travel to school",
+            "Reading your chart : what does it tell us?",
             "Spot the mistake"
           ],
           "wedo": [
-            "Together \u2014 set up the axes"
+            "Compare your chart with the marking station"
           ],
           "trios": [
-            "Trios \u2014 draw your chart"
+            "Compare your chart with the marking station"
           ],
           "independent": [
-            "Independent \u2014 LP2"
+            "Write a statement about your data"
           ]
         },
         "slideCount": {
           "ido": 2,
           "wedo": 1,
-          "trios": 1,
+          "trios": 0,
           "independent": 0
         },
         "trios": {
-          "task": "Use the travel-to-school data table on your LP. Agree on the scale, then each draw the bar chart independently. Compare your charts \u2014 do they match?",
-          "challenge": "If ten more pupils started walking to school (taken equally from car and bus), draw the new bar chart. How does it change?"
+          "task": "Look at the marking station. Does your activities chart look correct? Check your scale and bar heights.",
+          "challenge": ""
         },
         "independent": {
-          "standard": "Complete LP2 \u2014 draw all bars from the data table and answer two questions from your chart.",
-          "supported": "Complete LP2 adapted \u2014 axes and scale are provided, draw the bars.",
-          "stretch": "Going further \u2014 write a statement about how the school could reduce car journeys, using evidence from your chart."
+          "standard": "Write one statement about what your chart shows. Use at least one piece of data evidence.",
+          "supported": "",
+          "stretch": ""
         },
         "trios_charts": [
           "c2_ido1"
@@ -2649,10 +2630,10 @@
       },
       "spotTheMistake": {
         "slideTitle": "Spot the mistake",
-        "concept": "Misreading a scale \u2014 counting gridlines instead of reading their values",
+        "concept": "Bar drawn to wrong gridline on scale of 5s",
         "errorType": "scale_misread",
-        "errorInstruction": "Y-axis goes up in 5s. Bar drawn to the 2nd gridline, labelled 15.",
-        "errorNote": "2nd gridline on a scale of 5s = 10, not 15. 3rd gridline = 15.",
+        "errorInstruction": "Scale goes up in 5s. Bar for Sweet wrappers (22) drawn to the 4th gridline, labelled 22.",
+        "errorNote": "4th gridline on a scale of 5s = 20, not 22. Draw between 4th (20) and 5th (25) gridlines.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -2661,26 +2642,25 @@
         "extraPoints": [],
         "calcDisplay": {
           "type": "word_problem",
-          "correctAnswer": "3rd gridline",
-          "errorAnswer": "2nd gridline"
+          "correctAnswer": "between 4th and 5th gridlines",
+          "errorAnswer": "4th gridline = 22"
         }
       },
       "lp1": {
         "topic": "Statistics",
-        "task": "Complete partially drawn minibeast bar chart (add 2 bars).",
+        "task": "Draw after-school activities bar chart from data table.",
         "questions": 3,
         "lp_type": "draw_bar"
       },
       "lp2": {
         "topic": "Statistics",
-        "task": "Draw full school travel bar chart from data table.",
-        "questions": 2,
-        "lp_type": "draw_bar"
+        "task": "Extension: read and describe your chart.",
+        "questions": 2
       },
       "learningReviewStems": [
         "I chose my scale by\u2026",
-        "I knew my bar was the right height because\u2026",
-        "A bar chart is the best choice here because\u2026"
+        "I drew the bar for [category] by\u2026",
+        "My chart shows that\u2026"
       ]
     },
     {
@@ -2704,17 +2684,17 @@
         ],
         "slideTitles": {
           "ido": [
-            "Agree, disagree or not enough information?",
+            "Agree, disagree or not enough info?",
             "Spot the mistake"
           ],
           "wedo": [
-            "Together \u2014 evaluate the claim"
+            "Together : evaluate the claim"
           ],
           "trios": [
-            "Trios \u2014 your verdict"
+            "Trios: your verdict"
           ],
           "independent": [
-            "Independent \u2014 LP1"
+            "Independent : LP1"
           ]
         },
         "slideCount": {
@@ -2747,13 +2727,13 @@
             "Spot the mistake"
           ],
           "wedo": [
-            "Together \u2014 check the totals"
+            "Together : check the totals"
           ],
           "trios": [
-            "Trios \u2014 evaluate two claims"
+            "Trios: evaluate two claims"
           ],
           "independent": [
-            "Independent \u2014 LP2"
+            "Independent : LP2"
           ]
         },
         "slideCount": {
@@ -2815,87 +2795,83 @@
       "weekIndex": 6,
       "day": "Friday",
       "topic": "Statistics",
-      "li": "Pupils complete the full data cycle \u2014 tally, choose a representation, draw and analyse.",
-      "keyQuestion": "How do we go from a list of answers to a chart we can read and use?",
+      "li": "Pupils complete the full data cycle: collect, tally, represent and analyse.",
+      "keyQuestion": "How do we go from a question to a chart we can read and use?",
       "loText": {
-        "walt": "\u2026complete the full data cycle: tally, choose a representation, draw and analyse.",
-        "tiob": "\u2026data is only useful once it is organised and represented clearly.",
-        "iwstb": "\u2026tallying accurately, choosing a suitable representation and justifying the choice, drawing the chart and answering questions from it."
+        "walt": "\u2026complete the full data cycle: collect, tally, choose a representation, draw and analyse.",
+        "tiob": "\u2026data only becomes useful once it is organised, represented clearly and read accurately.",
+        "iwstb": "\u2026tallying accurately, choosing a bar chart and justifying why, setting up axes with a suitable scale, drawing the chart and answering questions from it."
       },
       "cycle1": {
-        "focus": "Modelling the full cycle \u2014 favourite subject survey",
+        "focus": "Modelling the full cycle with a worked example",
         "ido": [
-          "Show the unsorted list of 26 responses. Model tallying systematically. Choose bar chart (not line graph \u2014 discrete categories). Draw. Answer questions from the finished chart.",
-          "Spot the Mistake \u2014 pupil draws a line graph for categorical data."
+          "Show last year's Y4 class data as a table. Model: choose bar chart (not line graph), choose scale, draw, answer questions.",
+          "Spot the Mistake \u2014 line graph drawn for categorical data."
         ],
         "slideTitles": {
           "ido": [
-            "The full data cycle \u2014 from list to chart",
+            "The full data cycle",
             "Spot the mistake"
           ],
-          "wedo": [
-            "Together \u2014 tally and choose"
-          ],
-          "trios": [
-            "Trios \u2014 tally and draw"
-          ],
+          "wedo": "We Do",
+          "trios": "We Do",
           "independent": [
-            "Independent \u2014 LP1"
+            "Now you draw it : LP"
           ]
         },
         "slideCount": {
           "ido": 2,
           "wedo": 1,
-          "trios": 1,
+          "trios": 0,
           "independent": 0
         },
         "trios": {
-          "task": "Receive the Olympic sports unsorted list. Each person tallies independently, then compare totals \u2014 do they all match? Agree on the representation and draw it together.",
-          "challenge": "Could you use a pictogram for this data? What key would work? Draw the pictogram alongside the bar chart and compare."
+          "task": "Class survey time: How are you feeling about moving to Year 5? Tally the responses on your Learning Paper as I count the hands. Then draw your bar chart independently.",
+          "challenge": ""
         },
         "independent": {
-          "standard": "Complete LP1 \u2014 tally the list, draw the bar chart, answer three questions.",
-          "supported": "Complete LP1 adapted \u2014 tally table is partially complete, axes are provided.",
-          "stretch": "Going further \u2014 write a statement about what the data shows and explain what you would recommend based on it."
+          "standard": "Complete LP: tally the survey, choose scale, draw bar chart, answer three questions.",
+          "supported": "LP adapted \u2014 tally section partially complete, axes provided.",
+          "stretch": "Going further \u2014 write what your chart tells you about how the class feels about Year 5."
         },
         "trios_charts": [
-          "c1_ido1"
+          "wedo_visual"
         ]
       },
       "cycle2": {
-        "focus": "Pupils apply the full cycle independently",
+        "focus": "Reading and comparing charts",
         "ido": [
-          "Olympic sports data \u2014 already tallied. Model choosing between bar chart and pictogram. Draw bar chart. Evaluate claims."
+          "Reveal the completed worked example chart. Read values, calculate, discuss what it tells us about last year's class."
         ],
         "slideTitles": {
           "ido": [
-            "Choose your representation \u2014 Olympic sports survey",
+            "Reading our chart : what does it tell us?",
             "Spot the mistake"
           ],
           "wedo": [
-            "Together \u2014 draw and analyse"
+            "Compare your chart with a partner"
           ],
           "trios": [
-            "Trios \u2014 evaluate these claims"
+            "Compare your chart with a partner"
           ],
           "independent": [
-            "Independent \u2014 LP2"
+            "Write about what your data shows"
           ]
         },
         "slideCount": {
           "ido": 2,
           "wedo": 1,
-          "trios": 1,
+          "trios": 0,
           "independent": 0
         },
         "trios": {
-          "task": "Evaluate three claims about the Olympic sports chart. For each: agree/disagree, show evidence. Then set each other one new claim.",
-          "challenge": "If you redesigned the survey to include 5 new sports, which 5 would you add and why? How would this change your chart?"
+          "task": "Compare your Year 5 transition chart with a partner. Do your tallies match? If not, recount. What does your class chart tell you?",
+          "challenge": ""
         },
         "independent": {
-          "standard": "Complete LP2 \u2014 tally, draw, answer questions from your own chart.",
-          "supported": "Complete LP2 adapted \u2014 tallying and representation are provided, answer questions.",
-          "stretch": "Going further \u2014 compare your chart with a partner. Do you have the same chart? If not, why not?"
+          "standard": "Write one or two sentences about what your chart tells you about how Maple class feels about Year 5.",
+          "supported": "",
+          "stretch": ""
         },
         "trios_charts": [
           "c2_ido1"
@@ -2903,10 +2879,10 @@
       },
       "spotTheMistake": {
         "slideTitle": "Spot the mistake",
-        "concept": "Wrong key for a pictogram \u2014 chosen key does not allow exact representation",
-        "errorType": "pictogram_key",
-        "errorInstruction": "7 pupils chose Football. Pictogram key: each star = 5 pupils. Pupil draws 1 whole star and 2 halves.",
-        "errorNote": "1 whole + 2 halves = 10, not 7. With key of 5, 7 cannot be shown exactly. Use key of 1 or key of 2.",
+        "concept": "Line graph drawn for categorical data",
+        "errorType": "wrong_representation",
+        "errorInstruction": "Pupil draws a line graph connecting Maths, PE, Lunch, Art, Computing.",
+        "errorNote": "Line graphs are for continuous data over time. These are separate categories \u2014 use a bar chart.",
         "gridSize": 0,
         "startPoint": [
           0,
@@ -2915,26 +2891,25 @@
         "extraPoints": [],
         "calcDisplay": {
           "type": "word_problem",
-          "correctAnswer": "key = 2 (3 whole + half = 7)",
-          "errorAnswer": "1 whole + 2 halves with key 5 = 10"
+          "correctAnswer": "bar chart",
+          "errorAnswer": "line graph"
         }
       },
       "lp1": {
         "topic": "Statistics",
-        "task": "Full cycle \u2014 tally favourite subject list, draw bar chart, answer questions.",
+        "task": "Full data cycle: tally class survey, draw bar chart, answer questions.",
         "questions": 3,
         "lp_type": "tally_draw"
       },
       "lp2": {
         "topic": "Statistics",
-        "task": "Full cycle \u2014 tally Olympic sports list, draw bar chart, answer questions.",
-        "questions": 3,
-        "lp_type": "tally_draw"
+        "task": "Extension: write about what the data shows.",
+        "questions": 2
       },
       "learningReviewStems": [
         "I chose a bar chart because\u2026",
         "Tallying helped me because\u2026",
-        "From my chart I can see that\u2026"
+        "My chart tells me that\u2026"
       ]
     },
     {
