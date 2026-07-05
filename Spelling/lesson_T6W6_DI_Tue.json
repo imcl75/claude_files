@@ -1,0 +1,146 @@
+{
+  "code": "DI",
+  "rule": "Doubling the consonant before -ing",
+  "stage": "T6W6",
+  "objective": "To spell -ing forms that require doubling the final consonant",
+  "lpDay": "Tue",
+  "lpSideBType": "sc_dm",
+  "words": [
+    "forgetting","beginning","sitting","running","swimming",
+    "shopping","putting","dropping","skipping","hitting"
+  ],
+  "clozeOrder": [
+    "shopping","hitting","forgetting","skipping","running",
+    "beginning","dropping","sitting","putting","swimming"
+  ],
+  "defs": [
+    "failing to remember something",
+    "starting something",
+    "resting with your weight on your bottom",
+    "moving quickly on foot",
+    "moving through water using arms and legs",
+    "visiting shops to buy things",
+    "placing something in a particular spot",
+    "letting something fall",
+    "jumping lightly or leaving something out",
+    "striking something with force"
+  ],
+  "sentences": {
+    "forgetting": "He kept ____________________ his locker number, so he had to ask the caretaker every single morning.",
+    "beginning": "She was just ____________________ to understand why the magician refused to ever repeat a trick.",
+    "sitting": "The heron was ____________________ perfectly still at the edge of the lake, waiting for a fish to pass.",
+    "running": "The courier was ____________________ late and left parcels on every doorstep without knocking.",
+    "swimming": "The club was ____________________ lengths in the outdoor pool every weekend, even in November.",
+    "shopping": "They were ____________________ for ingredients when they realised the recipe called for twelve eggs.",
+    "putting": "She was ____________________ the finishing touches on the display when the headteacher walked in.",
+    "dropping": "The temperature was ____________________ rapidly as the sun disappeared behind the ridge.",
+    "skipping": "The pupil admitted to ____________________ the difficult questions and coming back to them at the end.",
+    "hitting": "The hail was ____________________ the greenhouse roof so hard that nobody could hold a conversation."
+  },
+  "syllableCounts": {
+    "forgetting": 3, "beginning": 3, "sitting": 2, "running": 2, "swimming": 2,
+    "shopping": 2, "putting": 2, "dropping": 2, "skipping": 2, "hitting": 2
+  },
+  "phonemes": {
+    "sitting": [
+      {"t":"dot","l":"s"},{"t":"dot","l":"i"},{"t":"dot","l":"tt"},{"t":"line","l":"ing"}
+    ],
+    "running": [
+      {"t":"dot","l":"r"},{"t":"dot","l":"u"},{"t":"dot","l":"nn"},{"t":"line","l":"ing"}
+    ],
+    "swimming": [
+      {"t":"dot","l":"s"},{"t":"dot","l":"w"},{"t":"dot","l":"i"},{"t":"dot","l":"mm"},{"t":"line","l":"ing"}
+    ],
+    "shopping": [
+      {"t":"line","l":"sh"},{"t":"dot","l":"o"},{"t":"dot","l":"pp"},{"t":"line","l":"ing"}
+    ],
+    "dropping": [
+      {"t":"dot","l":"d"},{"t":"dot","l":"r"},{"t":"dot","l":"o"},{"t":"dot","l":"pp"},{"t":"line","l":"ing"}
+    ],
+    "hitting": [
+      {"t":"dot","l":"h"},{"t":"dot","l":"i"},{"t":"dot","l":"tt"},{"t":"line","l":"ing"}
+    ]
+  },
+  "wordMaps": {
+    "words": ["sitting","running","swimming","shopping","dropping","hitting"],
+    "syllables": {
+      "sitting": "sit|ting",
+      "running": "run|ning",
+      "swimming": "swim|ming",
+      "shopping": "shop|ping",
+      "dropping": "drop|ping",
+      "hitting": "hit|ting"
+    }
+  },
+  "starter": {
+    "question": "Can you add -ing to these verbs? What must you do first?",
+    "words": ["sit","run","swim","shop","help","sleep"],
+    "answers": ["sitting","running","swimming","shopping","helping","sleeping"],
+    "answerLabel": "Add -ing:",
+    "ruleBox": "Short vowel + single consonant before -ing: double the final consonant (sit→sitting, run→running). Long vowel or consonant cluster: just add -ing (help→helping, sleep→sleeping).",
+    "perPairNote": ""
+  },
+  "thisWeeksWordsQ": "What do you notice about today's words?",
+  "thisWeeksWordsPrompt": "Look at each base verb. Why does the final consonant double?",
+  "thisWeeksWordsExplanation": "All today's words double the final consonant before -ing. The rule: short vowel + single consonant = double before a suffix (sit→sitting, run→running). If the vowel is long or ends in a cluster, no doubling is needed. This keeps the short vowel sound safe — without doubling, 'siting' would suggest a long vowel as in 'kite'.",
+  "etymology": {
+    "word": "beginning",
+    "baseForm": "beginnan",
+    "clicks": [
+      {"label":"Language","body":"Old English"},
+      {"label":"Base word","body":"beginnan — to begin or start"},
+      {"label":"Original meaning","body":"Possibly from be- (around, thoroughly) + ginnan (to open or start)."},
+      {"label":"Then","body":"Used throughout Middle English as biginnen; the spelling settled to begin by the 1400s."},
+      {"label":"Now","body":"We use beginning to mean the point at which something starts."},
+      {"label":"In today's words","body":"The final n in begin is short and single, so it doubles before -ing: begin → beginning."}
+    ]
+  },
+  "wordSortQ": "Can you sort these words into two groups?",
+  "wordSort": {
+    "box1label": "No doubling — long vowel or cluster",
+    "box1sub": "Just add -ing straight on",
+    "box2label": "Double — short vowel + single consonant",
+    "box2sub": "Double the final consonant first",
+    "hint": "Say the base verb. Is the vowel short (sit) or long (sleep)? Does it end in a cluster (help, jump)?",
+    "answerNote": "No doubling: helping, reading, jumping, starting, sleeping. Double: sitting, running, swimming, shopping, hitting.",
+    "verbOnly": ["helping","reading","jumping","starting","sleeping"],
+    "verbNoun": [
+      {"word":"sitting","eg":"sit → sit+t+ing"},
+      {"word":"running","eg":"run → run+n+ing"},
+      {"word":"swimming","eg":"swim → swim+m+ing"},
+      {"word":"shopping","eg":"shop → shop+p+ing"},
+      {"word":"hitting","eg":"hit → hit+t+ing"}
+    ],
+    "exampleLine": "help → helping (cluster, no double) | sit → sitting (short vowel + single consonant, double)"
+  },
+  "spellData": [
+    {"opts":["forgetting","forggeting","forgeting"],"correct":0},
+    {"opts":["begining","beginning","beginninng"],"correct":1},
+    {"opts":["runing","running","runnning"],"correct":1},
+    {"opts":["swiming","swimmming","swimming"],"correct":2},
+    {"opts":["skiping","skipping","skipppping"],"correct":1}
+  ],
+  "wordShed": {
+    "baseWord": "beginning",
+    "def": "the point at which something starts",
+    "sentence": "The beginning of the novel was so gripping that the librarian had to remind her the library was closing.",
+    "rhymes": "thinning, spinning, winning",
+    "morphology": "begin (v) → beginning (pres part / n) → began (past simple) → begun (past part) → beginner (n) → beginners (n pl)"
+  },
+  "morphMatrix": {
+    "baseWord": "run",
+    "def": "to move quickly on foot",
+    "suffixes": ["-ning","-ner","-s","out-","re-","over-"],
+    "answers": ["running","runner","runs","outrun","rerun","overrun"]
+  },
+  "lpDefMatchName": "Match the Meaning",
+  "lpDefMatchInstr": "Write the word that matches each meaning.",
+  "lpDefinitions": [
+    "moving quickly on foot",
+    "letting something fall",
+    "striking something with force",
+    "failing to remember something",
+    "jumping lightly or leaving something out"
+  ],
+  "lpDefMatchAnswers": ["running","dropping","hitting","forgetting","skipping"]
+}
