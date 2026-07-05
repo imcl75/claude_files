@@ -258,7 +258,8 @@ def inject_kq_slide(teaching_pptx_path):
 
     # ── Prepend KQ slide in presentation.xml (string manipulation — no etree) ──
     import re as _re
-    new_rId = 'rIdKQ'
+    existing_rIds = [int(m) for m in _re.findall(r'\brId(\d+)\b', t_files['ppt/_rels/presentation.xml.rels'].decode('utf-8'))]
+    new_rId = f'rId{max(existing_rIds) + 1}' if existing_rIds else 'rId1'
     prs_str = t_files['ppt/presentation.xml'].decode('utf-8')
     existing_ids = [int(m) for m in _re.findall(r'<p:sldId\b[^>]*\bid="(\d+)"', prs_str)]
     new_id = max(existing_ids) + 1
