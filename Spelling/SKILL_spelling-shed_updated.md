@@ -4,19 +4,39 @@ description: >
   Generates a complete Spelling Shed lesson for Innes McLean's Year 4 class at WFA. Produces
   two PPTX files per lesson: (1) a 23-slide animated teaching deck built with pptxgenjs and a
   Python animation post-processor, and (2) a 2-slide LP (Learning Paper) built with lp_builder.py.
-  Use this skill whenever Innes asks to prepare, plan, create or build a spelling lesson, spelling
-  slides, or a Spelling Shed lesson for any spelling rule or pattern. Also trigger when he mentions
-  spelling words, a spelling rule, or says things like "spelling for next week / this term /
-  double consonant / suffix" etc.
+  All files are packaged into a single zip with Teaching/ and LPs/ subfolders and renamed to the
+  TxWy - N - Day - filename convention. Use this skill whenever Innes asks to prepare, plan, create
+  or build a spelling lesson, spelling slides, or a Spelling Shed lesson for any spelling rule or
+  pattern. Also trigger when he mentions spelling words, a spelling rule, or says things like
+  "spelling for next week / this term / double consonant / suffix" etc.
 ---
 
 # Spelling Shed Lesson Generator
 
-Produces two files for every lesson:
-- **`{TxWy} - {N} - {Day} - SpellingTeaching.pptx`** — 23-slide animated teaching deck (21 base + 1 key spelling + 1 section slide)
-- **`{TxWy} - {N} - {Day} - SpellingLP.pptx`** — 2-slide LP (Learning Paper), half-A4 cut-and-fold format
+Produces two files per lesson, packaged into a single zip for the whole week.
 
-**File naming rule (non-negotiable):** always include term/week, day number and day name — e.g. `T6W3 - 2 - Tuesday - SpellingTeaching.pptx`, `T6W3 - 2 - Tuesday - SpellingLP.pptx`.
+**Zip name:** `TxWy_Spelling.zip` (e.g. `T6W6_Spelling.zip`)
+
+**Zip structure:**
+```
+T6W6_Spelling.zip
+├── Teaching/
+│   ├── T6W6 - 1 - Monday - spelling_shed_slides_EY.pptx
+│   ├── T6W6 - 2 - Tuesday - spelling_shed_slides_DI.pptx
+│   └── T6W6 - 3 - Wednesday - spelling_shed_slides_DE.pptx
+└── LPs/
+    ├── T6W6 - 1 - Monday - spelling_lp_EY.pptx
+    ├── T6W6 - 2 - Tuesday - spelling_lp_DI.pptx
+    └── T6W6 - 3 - Wednesday - spelling_lp_DE.pptx
+```
+
+**Naming convention:** `TxWy - N - [Full day] - [base filename].pptx`
+- `TxWy` = stage from `lesson.json` (e.g. `T6W6`)
+- `N` = lesson sequence within the week — 1 for the first lesson taught, 2 for the second, etc., regardless of which day that is
+- `[Full day]` = full day name: Monday, Tuesday, Wednesday
+- `[base filename]` = `spelling_shed_slides_<CODE>` or `spelling_lp_<CODE>`
+
+**Deliver only the zip.** Never present individual files alongside it.
 
 ---
 
@@ -35,10 +55,9 @@ Ask the following in a single message:
 
 1. **What are the 10 spelling words?**  
    Add: *"Say 'suggest' and I'll propose a set for you to confirm."*
-2. **Term and week reference?** (e.g. T6W3 — needed for the filename)
-3. **Which day is this lesson, and what day number?** (e.g. Tuesday = day 2 — Monday=1, Tuesday=2, Wednesday=3, Thursday=4, Friday=5)
-4. **Is there a Key Spelling word?** (a word from the class key list they are struggling with)
-5. **Any specific preferences?** (Word Shed word, Morphology Matrix word, starter format) — *Claude chooses if none given.*
+2. **Which day is this lesson?** (Mon / Tue / Wed — needed for the filename)
+3. **Is there a Key Spelling word?** (a word from the class key list they are struggling with)
+4. **Any specific preferences?** (Word Shed word, Morphology Matrix word, starter format) — *Claude chooses if none given.*
 
 ---
 
@@ -206,32 +225,90 @@ Skip `inject_key_spelling.py` only if no key spelling word was given. `post_proc
 
 ---
 
-### Step 5 — Verify, rename and deliver
+### Step 5 — Verify, package and deliver
 
-```bash
-python3 -c "
+#### Verify slide counts
+
+```python
 from pptx import Presentation
-CODE = 'XX'   # replace
-DAY  = 'Mon'  # replace
-for f, exp in [
-    (f'spelling_shed_slides_{CODE}.pptx', 23),
-    (f'spelling_lp_{CODE}_{DAY}.pptx', 2),
-]:
-    p = Presentation(f)
-    n = len(p.slides)
-    print(f'{f}: {n} slides', '✓' if n==exp else f'✗ expected {exp}')
-"
 
-# Rename teaching deck to include day
-WEEK=T6W3  # substitute actual week label
-DAY_NUM=2  # substitute actual day number
-DAY=Tuesday  # substitute actual day name
-mv spelling_shed_slides_<CODE>.pptx "${WEEK} - ${DAY_NUM} - ${DAY} - SpellingTeaching.pptx"
+# lessons = list of (code, day_short) for this build
+lessons = [('EY', 'Mon'), ('DI', 'Tue'), ('DE', 'Wed')]  # example — adjust to actual
 
-cp "${WEEK} - ${DAY_NUM} - ${DAY} - SpellingTeaching.pptx" /mnt/user-data/outputs/
-cp spelling_lp_<CODE>_<DAY>.pptx "${WEEK} - ${DAY_NUM} - ${DAY} - SpellingLP.pptx"
-cp "${WEEK} - ${DAY_NUM} - ${DAY} - SpellingLP.pptx"      /mnt/user-data/outputs/
+for code, day in lessons:
+    for fname, exp in [
+        (f'/home/claude/spelling_shed_slides_{code}_{day}.pptx', 23),
+        (f'/home/claude/spelling_lp_{code}_{day}.pptx', 2),
+    ]:
+        p = Presentation(fname)
+        n = len(p.slides)
+        print(f'{fname}: {n} slides', '✓' if n == exp else f'✗ expected {exp}')
 ```
+
+Also confirm no blank slides and no tiny files (<600 bytes):
+
+```python
+import zipfile, re
+
+for code, day in lessons:
+    path = f'/home/claude/spelling_shed_slides_{code}_{day}.pptx'
+    from pptx import Presentation
+    prs = Presentation(path)
+    blank = [i+1 for i, s in enumerate(prs.slides) if len(s.shapes) == 0]
+    if blank:
+        print(f'  WARNING — blank slides in {code} {day}: {blank}')
+    with zipfile.ZipFile(path) as z:
+        tiny = [(n, len(z.read(n))) for n in z.namelist()
+                if re.match(r'ppt/slides/slide\d+\.xml$', n) and len(z.read(n)) < 600]
+        if tiny:
+            print(f'  WARNING — tiny slide XML in {code} {day}: {tiny}')
+```
+
+#### Package into zip
+
+```python
+import zipfile, os, re
+from pptx import Presentation
+
+# Populate this from the actual build — code, short day, full day name, sequence number
+# Sequence = 1 for first lesson taught that week, 2 for second, 3 for third, regardless of day
+lesson_meta = [
+    ('EY', 'Mon', 'Monday',    1),
+    ('DI', 'Tue', 'Tuesday',   2),
+    ('DE', 'Wed', 'Wednesday', 3),
+]
+
+# Get stage from the last lesson.json used (all lessons in a week share the same stage)
+import json
+with open('/home/claude/lesson.json') as f:
+    stage = json.load(f).get('stage', 'TxWy')
+
+zip_name  = f'{stage}_Spelling.zip'
+zip_path  = f'/mnt/user-data/outputs/{zip_name}'
+
+with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
+    for code, day_short, day_full, seq in lesson_meta:
+        prefix = f'{stage} - {seq} - {day_full}'
+        
+        teach_src = f'/home/claude/spelling_shed_slides_{code}_{day_short}.pptx'
+        lp_src    = f'/home/claude/spelling_lp_{code}_{day_short}.pptx'
+        
+        if os.path.exists(teach_src):
+            zf.write(teach_src, f'Teaching/{prefix} - spelling_shed_slides_{code}.pptx')
+            print(f'  + Teaching/{prefix} - spelling_shed_slides_{code}.pptx')
+        else:
+            print(f'  MISSING: {teach_src}')
+        
+        if os.path.exists(lp_src):
+            zf.write(lp_src, f'LPs/{prefix} - spelling_lp_{code}.pptx')
+            print(f'  + LPs/{prefix} - spelling_lp_{code}.pptx')
+        else:
+            print(f'  MISSING: {lp_src}')
+
+print(f'\nZip: {zip_path}')
+```
+
+Then call `present_files` with the zip path only. Never present individual PPTX files alongside it.
 
 ---
 
@@ -251,9 +328,15 @@ The cloze activity has two independent columns:
 
 ### File naming (non-negotiable)
 
-Always include the day name in both output files:
+Working files in `/home/claude/` keep the short-form name (needed by scripts):
 - `spelling_shed_slides_CN_Mon.pptx`
 - `spelling_lp_CN_Mon.pptx`
+
+Final names inside the zip follow the full convention:
+- `Teaching/T6W2 - 1 - Monday - spelling_shed_slides_CN.pptx`
+- `LPs/T6W2 - 1 - Monday - spelling_lp_CN.pptx`
+
+Sequence numbers reflect the order lessons are taught that week — Mon=1, Tue=2, Wed=3 in a standard three-lesson week. If the first lesson is on Tuesday (e.g. after school closure), Tuesday gets sequence 1.
 
 ### LP vertical alignment
 
@@ -297,10 +380,12 @@ If for any reason the template is regenerated from scratch, these must be re-app
 
 ## Output Summary
 
-| File | Slides | Notes |
-|------|--------|-------|
-| `{TxWy} - {N} - {Day} - SpellingTeaching.pptx` | 23 | 21 base + 1 key spelling + 1 Independent Learning section slide |
-| `{TxWy} - {N} - {Day} - SpellingLP.pptx` | 2 | LP: Slide 1 = Side A (cloze), Slide 2 = Side B. Each slide = two identical half-A4 panels (cut line at 14.85cm). |
+Deliver a single zip file. Never present individual PPTX files alongside it.
+
+| Zip contents | Slides | Notes |
+|---|---|---|
+| `Teaching/TxWy - N - [Day] - spelling_shed_slides_<CODE>.pptx` | 23 | 21 base + 1 key spelling + 1 Independent Learning section slide |
+| `LPs/TxWy - N - [Day] - spelling_lp_<CODE>.pptx` | 2 | Slide 1 = Side A (cloze), Slide 2 = Side B. Each slide = two identical half-A4 panels (cut line at 14.85cm). |
 
 ---
 
