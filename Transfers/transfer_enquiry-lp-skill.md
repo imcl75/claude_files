@@ -125,3 +125,18 @@ The CLF curriculum progression document is in the project at `/mnt/project/CLF_C
 3. Confirm with Innes: which "other states of being" subjects need LP support, and whether adapted LP should be automatic or on request.
 4. Then design the skill structure (show Innes the proposed task type taxonomy for each subject before writing any code).
 5. Write the skill to `/mnt/skills/user/enquiry-lp/SKILL.md` and push to repo.
+
+## Additional requirement (added after initial transfer)
+
+**Teaching slide / LP alignment — modeling rule:**
+
+When the LP has a visual stimulus pupils work from (image, map, diagram, table, card sort), the corresponding teaching slide must show that same visual so Innes can model the task on screen. Two methods:
+
+1. **Same image embedded** — if the LP used a Higgsfield image, embed the same image (or the same job ID output) in the I Do or We Do slide at a suitable size. This is what was done correctly for L6 (before/after images appeared both on the slide and the LP).
+2. **LP snip** — render the relevant section of the LP as a PNG (`fitz` page render + crop, or a targeted `pdftoppm` region), then embed that PNG in the teaching slide. Useful when the LP task itself is the model (e.g. the partially-filled comparison table, the cloze sentences with blanks, the map with grid lines).
+
+**What was missed in L4 and L5 this session:**
+- L4 We Do 1: land use cards were on the pupil table but not on screen — should have shown 2–3 card images on the We Do 1 slide for modeling
+- L5 We Do 1: the schematic map was on the LP but not on the teaching slide — should have embedded a snip of the map section from the LP on the We Do 1 slide
+
+The skill must encode this check explicitly: before finalising any We Do slide, ask — is there a visual on the LP for this task? If yes, embed it on the slide.
