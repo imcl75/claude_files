@@ -1,0 +1,152 @@
+{
+  "code": "EY",
+  "rule": "Adding -ed to words ending in y",
+  "stage": "T6W6",
+  "objective": "To spell the past tense of verbs ending in y",
+  "lpDay": "Mon",
+  "lpSideBType": "vn_dm_sc",
+  "words": [
+    "played","enjoyed","stayed","copied","studied",
+    "tried","replied","obeyed","carried","delayed"
+  ],
+  "clozeOrder": [
+    "copied","delayed","played","obeyed","tried",
+    "stayed","carried","enjoyed","replied","studied"
+  ],
+  "defs": [
+    "spent time in a game or fun activity",
+    "got pleasure from something",
+    "remained in a place rather than leaving",
+    "reproduced something to match an original",
+    "learned carefully about a subject",
+    "made an effort to do something",
+    "responded to a question or message",
+    "followed a rule or instruction",
+    "held and moved something from one place to another",
+    "put something off or made it happen later"
+  ],
+  "sentences": {
+    "played": "The orchestra ____________________ the final movement so well that the audience rose to their feet.",
+    "enjoyed": "The whole class ____________________ the museum visit far more than they had expected.",
+    "stayed": "She ____________________ at her aunt's farmhouse for the entire half-term, feeding the chickens every morning.",
+    "copied": "He ____________________ the diagram so carefully that his teacher could not tell it from the original.",
+    "studied": "The scientist had ____________________ the same species of beetle for twenty years before making her discovery.",
+    "tried": "He ____________________ every flavour of ice cream on the menu before settling on the plain vanilla.",
+    "replied": "She ____________________ to every letter she received, even when it took her several weeks.",
+    "obeyed": "The crew ____________________ every instruction without question as the storm grew closer.",
+    "carried": "The removal men ____________________ the grand piano up four flights of stairs in under an hour.",
+    "delayed": "The verdict was ____________________ when new evidence arrived at the courthouse that morning."
+  },
+  "syllableCounts": {
+    "played": 1, "enjoyed": 2, "stayed": 1, "copied": 2, "studied": 3,
+    "tried": 1, "replied": 2, "obeyed": 2, "carried": 2, "delayed": 2
+  },
+  "phonemes": {
+    "played": [
+      {"t":"dot","l":"p"},{"t":"dot","l":"l"},{"t":"line","l":"ay"},{"t":"dot","l":"d"}
+    ],
+    "enjoyed": [
+      {"t":"dot","l":"e"},{"t":"dot","l":"n"},{"t":"dot","l":"j"},{"t":"line","l":"oy"},{"t":"dot","l":"d"}
+    ],
+    "copied": [
+      {"t":"dot","l":"c"},{"t":"dot","l":"o"},{"t":"dot","l":"p"},{"t":"dot","l":"i"},{"t":"line","l":"ed"}
+    ],
+    "studied": [
+      {"t":"dot","l":"s"},{"t":"dot","l":"t"},{"t":"dot","l":"u"},{"t":"dot","l":"d"},{"t":"dot","l":"i"},{"t":"line","l":"ed"}
+    ],
+    "carried": [
+      {"t":"dot","l":"c"},{"t":"dot","l":"a"},{"t":"dot","l":"rr"},{"t":"dot","l":"i"},{"t":"line","l":"ed"}
+    ],
+    "replied": [
+      {"t":"dot","l":"r"},{"t":"dot","l":"e"},{"t":"dot","l":"p"},{"t":"dot","l":"l"},{"t":"dot","l":"i"},{"t":"line","l":"ed"}
+    ]
+  },
+  "wordMaps": {
+    "words": ["played","enjoyed","copied","studied","carried","replied"],
+    "syllables": {
+      "played": "played",
+      "enjoyed": "en|joyed",
+      "copied": "cop|ied",
+      "studied": "stud|ied",
+      "carried": "car|ried",
+      "replied": "re|plied"
+    }
+  },
+  "starter": {
+    "question": "Can you add -ed to these verbs? What do you notice?",
+    "words": ["play","enjoy","copy","study","try","carry"],
+    "answers": ["played","enjoyed","copied","studied","tried","carried"],
+    "answerLabel": "Add -ed:",
+    "ruleBox": "Adding -ed to verbs ending in y: vowel before y — just add -d (play→played, enjoy→enjoyed). Consonant before y — change y to i, then add -ed (copy→copied, carry→carried).",
+    "perPairNote": ""
+  },
+  "thisWeeksWordsQ": "What do you notice about today's words?",
+  "thisWeeksWordsPrompt": "Look at each base verb. Does the y follow a vowel or a consonant?",
+  "thisWeeksWordsExplanation": "All today's words are past tenses of verbs ending in y. The rule splits in two. Vowel before y: just add -d (play→played, enjoy→enjoyed). Consonant before y: change y to i, then add -ed (copy→copied). This is the opposite of the -ing rule — with -ing, y never changes at all.",
+  "etymology": {
+    "word": "copied",
+    "baseForm": "kopia",
+    "clicks": [
+      {"label":"Language","body":"Greek, via Latin"},
+      {"label":"Base word","body":"kopia — abundance or plenty"},
+      {"label":"Original meaning","body":"Originally meant a large supply of something, particularly of writing material."},
+      {"label":"Then","body":"Latin copia came to mean a transcript or replica. By the 1300s, copy meant a written reproduction."},
+      {"label":"Now","body":"We use copied to mean reproduced something to match an original."},
+      {"label":"In today's words","body":"Copy ends in consonant + y, so y changes to i before -ed: copy → copied."}
+    ]
+  },
+  "wordSortQ": "Can you sort these words into two groups?",
+  "wordSort": {
+    "box1label": "Vowel + y: just add -d",
+    "box1sub": "The y follows a vowel — no change needed",
+    "box2label": "Consonant + y: change y to i, add -ed",
+    "box2sub": "The y follows a consonant — y changes to i",
+    "hint": "Look at the letter before y in the base verb. Is it a vowel or a consonant?",
+    "answerNote": "Vowel + y: played, enjoyed, stayed, obeyed, delayed. Consonant + y: copied, studied, tried, replied, carried.",
+    "verbOnly": ["played","enjoyed","stayed","obeyed","delayed"],
+    "verbNoun": [
+      {"word":"copied","eg":"cop-y → copi+ed"},
+      {"word":"studied","eg":"stud-y → studi+ed"},
+      {"word":"tried","eg":"tr-y → tri+ed"},
+      {"word":"replied","eg":"repl-y → repli+ed"},
+      {"word":"carried","eg":"carr-y → carri+ed"}
+    ],
+    "exampleLine": "play → played (vowel + y, just add -d) | copy → copied (consonant + y, y→i then +ed)"
+  },
+  "spellData": [
+    {"opts":["played","playyed","plaied"],"correct":0},
+    {"opts":["copyed","copyied","copied"],"correct":2},
+    {"opts":["studyed","studied","studiyed"],"correct":1},
+    {"opts":["carried","caried","carred"],"correct":0},
+    {"opts":["delaid","delayyed","delayed"],"correct":2}
+  ],
+  "wordShed": {
+    "baseWord": "carried",
+    "def": "transported something by holding it and moving it somewhere else",
+    "sentence": "The porter carried every suitcase up four flights of stairs without once asking for help.",
+    "rhymes": "married, harried, varied",
+    "morphology": "carry (v) → carried (past) → carrying (pres part) → carrier (n) → miscarried (past) → carriage (n)"
+  },
+  "morphMatrix": {
+    "baseWord": "copy",
+    "def": "to reproduce something to match an original",
+    "suffixes": ["-ied","-ying","-ies","photo-…-y","…-right","over-…-y"],
+    "answers": ["copied","copying","copies","photocopy","copyright","overcopy"]
+  },
+  "lpVerbNounName": "Find the Base",
+  "lpVerbNounInstr": "Remove -ed or -d. Write the base verb (remember: put the y back if needed).",
+  "lpVerbNoun": [
+    ["copied","copy"],["studied","study"],["tried","try"],
+    ["replied","reply"],["carried","carry"],["played","play"]
+  ],
+  "lpDefMatchName": "Match the Meaning",
+  "lpDefMatchInstr": "Write the word that matches each meaning.",
+  "lpDefinitions": [
+    "put something off or made it happen later",
+    "followed rules or instructions",
+    "remained in a place rather than leaving",
+    "got pleasure from something",
+    "learned carefully about a subject"
+  ],
+  "lpDefMatchAnswers": ["delayed","obeyed","stayed","enjoyed","studied"]
+}
