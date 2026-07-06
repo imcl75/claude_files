@@ -54,13 +54,13 @@ import argparse, base64, io, json, os, re, sys, zipfile, urllib.request
 PAGE_W, PAGE_H       = 11905, 16837          # A4
 MAR_TOP, MAR_BOT     = 1215, 820
 MAR_L, MAR_R         = 389, 446
-TBL_W                = 11376                 # outer table
-COL_CELL             = 5616                 # label column
+TBL_W                = 11070                 # outer table (exact text area width with original margins)
+COL_CELL             = 5463                 # label column (96.7mm — 99mm Avery, negligible reduction)
 COL_GAP              = 144                  # gap column
 ROW_H                = 2399                 # exact row height
 CELL_M_TOP           = 141
 CELL_M_LR            = 115
-INNER_W              = 5386                 # inner nested table
+INNER_W              = 5233                 # inner nested table (= COL_CELL - 2*CELL_M_LR)
 INNER_RGT_COL        = 1000                # icon column
 INNER_LFT_COL        = INNER_W - INNER_RGT_COL  # 4386
 
@@ -421,6 +421,7 @@ def _inner_tbl(left_xml, right_xml):
         f'<w:tblPr>'
         f'<w:tblW w:type="dxa" w:w="{INNER_W}"/>'
         f'{tbl_borders}'
+        '<w:tblLayout w:type="fixed"/>'
         f'</w:tblPr>'
         f'{grid}'
         f'<w:tr>{left_tc}{right_tc}</w:tr>'
@@ -527,6 +528,7 @@ def build_enquiry_docx(subject, date, question, lf, ican1, ican2, out_path):
         '<w:tblPr>'
         f'<w:tblW w:type="dxa" w:w="{TBL_W}"/>'
         f'{outer_tbl_borders}'
+        '<w:tblLayout w:type="fixed"/>'
         '</w:tblPr>'
         f'{outer_grid}'
         f'{rows_xml}'
