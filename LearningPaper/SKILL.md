@@ -7,147 +7,265 @@ description: Create a Year 4 learning paper as a PPTX file. Use this skill whene
 
 A learning paper (LP) is a printable worksheet used in Innes's Y4 class. It is always a **PPTX file** with **portrait A4 slides** (7.5" × 10.833").
 
-## Quick Start
+---
 
-1. **Read this file** to understand the structure
-2. **Determine the subject** to select the correct learning label type
-3. **Read `references/label-spec.md`** for exact label construction details
-4. **Run `scripts/generate_lp.js`** or build manually using the patterns below
+## ⚠️ MANDATORY: Learning Label Build Process
+
+**ALWAYS use `label_builder.py`** — never build the label by hand or from scratch.  
+Doing otherwise has repeatedly produced wrong labels (full-width blue bars, wrong fonts, vertical text, overlapping elements). The builder encodes the exact WFA spec. Use it.
+
+### Step 1 — Fetch the builder
+
+```python
+import re, os, urllib.request
+
+with open('/mnt/skills/user/github-sync/SKILL.md') as f:
+    TOKEN = re.search(r'GITHUB_TOKEN:\s*(\S+)', f.read()).group(1)
+
+if not os.path.exists('/home/claude/label_builder.py'):
+    url = 'https://raw.githubusercontent.com/imcl75/claude_files/main/Shared/label_builder.py'
+    req = urllib.request.Request(url, headers={'Authorization': f'token {TOKEN}'})
+    with urllib.request.urlopen(req, timeout=20) as r:
+        open('/home/claude/label_builder.py', 'wb').write(r.read())
+
+import sys; sys.path.insert(0, '/home/claude')
+from label_builder import build_enquiry_label, LL_W, LL_H
+```
+
+### Step 2 — Fetch the subject icon
+
+Icons live in `/home/claude/ll_icons/{subject_key}.png`. If missing, fetch them:
+
+```python
+import os, urllib.request, re, base64
+
+if not os.path.exists('/home/claude/ll_icons/geographer.png'):
+    # Fetch generate_wfa_labels.py, which contains fetch_icons_from_tool()
+    with open('/mnt/skills/user/github-sync/SKILL.md') as f:
+        TOKEN = re.search(r'GITHUB_TOKEN:\s*(\S+)', f.read()).group(1)
+    url = 'https://raw.githubusercontent.com/imcl75/claude_files/main/Shared/generate_wfa_labels.py'
+    req = urllib.request.Request(url, headers={'Authorization': f'token {TOKEN}'})
+    with urllib.request.urlopen(req, timeout=20) as r:
+        open('/home/claude/generate_wfa_labels.py', 'wb').write(r.read())
+    # Now run the fetch
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('gwl', '/home/claude/generate_wfa_labels.py')
+    gwl = importlib.util.module_from_spec(spec); spec.loader.exec_module(gwl)
+    gwl.fetch_icons_from_tool()
+
+ICON_PATH = '/home/claude/ll_icons/{subject_key}.png'
+# e.g. '/home/claude/ll_icons/geographer.png'
+```
+
+### Step 3 — Call the builder
+
+```python
+# Label position on the slide
+MARGIN = 0.25   # inches
+LBL_X = SW_IN - LL_W - MARGIN   # top-right
+LBL_Y = MARGIN
+
+build_enquiry_label(
+    slide,
+    x        = LBL_X,
+    y        = LBL_Y,
+    date_str = '06/07/2026',          # DD/MM/YYYY
+    key_q    = 'Are England and Brazil different?',
+    lf       = 'describe and compare land use in England and Brazil',
+    ican1    = 'describe land use in Brazil',
+    ican2    = 'compare land use using geographical vocabulary',
+    icon_path= ICON_PATH,
+)
+```
+
+### ⚠️ CRITICAL parameter rules
+
+| Parameter | What to pass | Builder prepends |
+|-----------|-------------|-----------------|
+| `lf`      | verb phrase only, **no leading "to"** — e.g. `'describe and compare...'` | `'LF: To '` |
+| `ican1`   | verb phrase only, **no leading "I can"** — e.g. `'describe land use...'` | `'I can '` |
+| `ican2`   | verb phrase only, **no leading "I can"** | `'I can '` |
+| `key_q`   | full question with `?` | nothing |
+| `date_str`| `'DD/MM/YYYY'` | nothing |
+
+Passing `'to describe...'` produces `'LF: To to describe...'`. Passing `'I can describe...'` produces `'I can I can describe...'`. Both are bugs. Do not do this.
+
+### Content starts below the label
+
+```python
+CONT_Y = LBL_Y + LL_H + 0.15   # first content element y position
+CONT_X = MARGIN
+CONT_W = SW_IN - 2 * MARGIN
+```
+
+---
+
+## Subject → Icon Map
+
+| State of being   | `subject_key`      | `icon_path` |
+|------------------|--------------------|-------------|
+| Geographer       | `geographer`       | `ll_icons/geographer.png` |
+| Historian        | `historian`        | `ll_icons/historian.png` |
+| Scientist        | `scientist`        | `ll_icons/scientist.png` |
+| Mathematician    | `mathematician`    | `ll_icons/mathematician.png` |
+| Reader           | `reader`           | `ll_icons/reader.png` |
+| Writer           | `writer`           | `ll_icons/writer.png` |
+| Artist           | `artist`           | `ll_icons/artist.png` |
+| Athlete          | `athlete`          | `ll_icons/athlete.png` |
+| Computer Scientist | `computer_scientist` | `ll_icons/computer_scientist.png` |
+| Linguist         | `linguist`         | `ll_icons/linguist.png` |
+| Musician         | `musician`         | `ll_icons/musician.png` |
+
+All icons are fetched from `https://staff.wallscourt-farm-academy.co.uk/learning-labels/index.html` via `fetch_icons_from_tool()`. They are cached at `/home/claude/ll_icons/`.
+
+---
+
+## What the label looks like (locked)
+
+```
+┌─────────────────────────────────────────────┐  2.338" wide
+│ 06/07/2026              [globe icon 0.26"]  │  ← top row: date NARROW_W, icon right
+│ Key Question            [geographer caption]│
+│ Are England and Brazil different?           │  ← bold underline, FULL_W
+│ LF: To describe and compare land use...     │  ← 7pt Calibri, FULL_W
+│ I can describe land use in Brazil           │  ← 6.5pt Calibri, FULL_W
+│ I can compare land use using geo vocabulary │  ← 6.5pt Calibri, FULL_W
+└─────────────────────────────────────────────┘  1.021" tall
+```
+
+- **Position**: top-right of slide with 0.25" margin
+- **Font**: Calibri throughout (NOT Aptos, NOT Twinkl Cursive Looped)
+- **No borders, no coloured boxes, no background fill** on the label
+- **Caption "geographer"** (or other subject): `word_wrap=False`, textbox width = `ICO_W + 0.30"`, offset left 0.15" from icon x to centre it
+
+---
+
+## Label spec constants (from label-spec.md)
+
+```python
+CM          = 1 / 2.54
+LABEL_SCALE = 0.72 * 0.85        # = 0.612
+LL_W        = 9.7 * CM * LABEL_SCALE   # = 2.338"
+LL_H        = 4.24 * CM * LABEL_SCALE  # = 1.021"
+PAD         = 0.04                # inches, all edges
+ICO_W       = 0.26                # icon width
+ICO_H       = ICO_W * (118/120)  # ≈ 0.257" (aspect ratio of actual PNGs)
+NARROW_W    = LL_W - ICO_W - PAD * 3  # text beside icon (date only)
+FULL_W      = LL_W - PAD * 2          # full label width
+
+# Row heights
+DATE_H  = 0.11    # date line
+KQ_H    = 0.12    # "Key Question" label
+Q_H     = 0.25    # question text (allows one wrap line)
+LF_H    = 0.22    # LF line
+ICAN_H  = 0.13    # each I can line
+```
+
+---
 
 ## Learning Label Types
 
-There are three learning label sets. The label type is determined by the subject:
-
-| Label Set | Subjects | Dimensions (at 72% scale) |
-|-----------|----------|---------------------------|
-| Set 1 (Enquiry) | geographer, scientist, historian, artist, musician, designer, citizen, linguist, computer scientist, reader | 2.75" × 1.20" |
+| Label Set | Subjects | Dimensions |
+|-----------|----------|------------|
+| Set 1 (Enquiry) | geographer, scientist, historian, artist, musician, designer, citizen, linguist, computer scientist, reader | 2.338" × 1.021" |
 | Set 2 (Writer) | Writer, Writing as a [subject] | 7.3" × 1.85" |
-| Set 3 (Mathematician) | All maths topics | 2.75" × 1.20" (rendered as PNG) |
+| Set 3 (Mathematician) | All maths topics | 2.338" × 1.021" (rendered as PNG) |
+
+Set 1 and Set 3 both use `label_builder.py`.  
+Set 2 (Writer) is a different format — see the writing-lesson-pptx skill.
+
+---
 
 ## Inputs to Gather
 
-Before generating, determine these (ask if not obvious from context):
+Before generating, confirm:
 
-### For all LPs:
-- **Subject** → determines the label set and icon
-- **Date** → DD/MM/YYYY format (default: today)
+- **Subject** → determines the icon and state of being caption
+- **Date** → DD/MM/YYYY
 - **Key Question** → the overarching enquiry question
-- **Learning Focus (LF)** → what they are learning
-- **I can statements** → exactly 2 success criteria starting with "I can..."
-- **Content** → the actual questions/tasks (generate if not provided)
-- **Whether an answer page is needed** → default yes
+- **LF** → verb phrase only (no leading "to")
+- **I can 1 and 2** → verb phrase only (no leading "I can")
+- **Content** → the actual questions/tasks (generate from lesson context if not provided)
+- **Adapted version needed?** → default no; ask if not stated
 
-### Additional for maths:
-- **Maths topic area** → from this fixed list: Addition, Algebra, Addition and Subtraction, Calculation, Division, Fractions, Fractions / Decimals / Percentages, Fractions and Decimals, Geometry, Geometry - Position / Direction, Indices, Measurement, Measurement - Time, Multiplication, Multiplicative Reasoning, Number and Place Value, Ratio and proportion, Revision, Statistics, Subtraction
-- **Number of copies per page** → 1, 2, 3, 4, or 8 (determined by content size)
-
-### Additional for writing:
-- **S-number** → optional (e.g. S1, S2, S3), only include if specified
-- **Version** → "Writer" (default) or "Writing as a [subject]" (rare, only when specified)
+---
 
 ## Content Rules
 
-- **Font**: Twinkl Cursive Looped for all content text. Aptos for maths symbols (÷, ×, etc.)
-- **Fractions**: Always rendered with numerator above denominator (stacked), never side-by-side
-- **Answer lines**: Solid lines, spaced 0.8cm apart (matches their writing books)
-- **Answer line gap**: Leave enough space between a question and its first answer line for writing. Questions needing longer answers (e.g. "explain why...") should have more lines.
-- **Answer boxes**: Use boxes (rectangles) for number answers in maths
-- **Answer page**: Titled "Marking Station" in green bold (#4FAD5B). Same layout as question page with answers in green bold replacing answer lines.
-- **No borders** on learning labels
-- **Dashed separators** between sections (grey, dash type)
-- **Dashed cut lines** between repeated copies of the same LP
-- **"Glue here"**: Rotated text on right margin for two-sided pages only
+- **Font**: Twinkl Cursive Looped for all content text. Calibri for label only.
+- **Answer lines**: solid grey lines, spaced 0.20" apart
+- **Answer boxes**: rectangles for number answers in maths
+- **Answer page**: titled "Marking Station" in green bold (#4FAD5B). Answers replace answer lines in green.
+- **Word bank**: cream fill (#FEF9E7), orange border (#E67E22), "Word bank:" bold orange
+- **Section headings**: blue (#1798d3) bold 12pt
+- **Instruction text**: dark, 9.5pt
+- **No borders on the learning label itself**
 
-## Layout Rules
+---
 
-- **Label consistency**: All labels on a page must have the same orientation (all normal OR all rotated, never mixed)
-- **Label rotation**: Only rotate when it creates more space for content. Non-rotated is the default.
-- **Repeated copies**: When the same LP appears multiple times on a page (to save paper), each copy needs its own learning label
-- **Continuation**: When a second section of the SAME lesson appears below a cut line (not a repeat), it does NOT get a learning label
-- **Set 1/3 labels**: Position top-right of the content area
-- **Set 2 labels**: Position across the top of the page, centred
+## Build Method (Python + python-pptx)
+
+The geography enquiry LPs use pure python-pptx (not pptxgenjs). The builder script is `Shared/build_geo_lps_pptx.py` or equivalent subject builder. All LP builders must:
+
+1. Import `build_enquiry_label`, `LL_W`, `LL_H` from `label_builder.py`
+2. Use `python-pptx` to create slides (`Presentation()`, `slide_layouts[6]`, clear default shapes)
+3. Inject all shapes via `slide.shapes.add_textbox()`, `add_picture()`, `add_shape()`, `add_connector()`
+4. Deliver as PPTX (not PDF, not DOCX)
+
+```python
+from pptx import Presentation
+from pptx.util import Emu
+
+def new_prs(sw_in=7.5, sh_in=10.833):
+    prs = Presentation()
+    prs.slide_width  = Emu(int(sw_in * 914400))
+    prs.slide_height = Emu(int(sh_in * 914400))
+    blank = prs.slide_layouts[6]
+    prs.slides.add_slide(blank)  # slide 1: pupil page
+    prs.slides.add_slide(blank)  # slide 2: marking station
+    return prs
+
+def clear_slide(slide):
+    sp_tree = slide.shapes._spTree
+    for child in list(sp_tree):
+        tag = child.tag.split('}')[-1] if '}' in child.tag else child.tag
+        if tag in ('sp','pic','graphicFrame','grpSp','cxnSp'):
+            sp_tree.remove(child)
+```
+
+---
 
 ## File Structure
 
 ```
 learning-paper/
 ├── SKILL.md (this file)
-├── assets/ (all icon PNGs, logos, ETIW banner)
-│   ├── geographer.png, scientist.png, historian.png, etc.
-│   ├── mathematician.png
-│   ├── writer.png
-│   ├── school_logo_LKS2.png, school_logo.png
-│   └── ETIW_LKS2.png
-├── scripts/
-│   └── generate_lp.js (the main generator)
 └── references/
-    └── label-spec.md (exact label construction details)
+    └── label-spec.md (measurement source of truth)
+
+GitHub imcl75/claude_files:
+├── Shared/label_builder.py       ← THE label builder (always fetch this)
+├── Shared/generate_wfa_labels.py ← icon fetcher (fetch_icons_from_tool)
+├── LearningPaper/label-spec.md   ← full measurement spec
+└── Geography/build_geo_lps_pptx.py ← example enquiry LP builder
 ```
 
-## How to Generate
+---
 
-### Sticker label sheets (DOCX, 12 Avery labels per sheet)
+## QA
 
-Use `generate_wfa_labels.py` (canonical LL tool replicator — always fetch from GitHub):
+Always QA render before delivery:
 ```python
-import re, urllib.request, os
-with open('/mnt/skills/user/github-sync/SKILL.md') as f:
-    skill_text = f.read()
-TOKEN = re.search(r'GITHUB_TOKEN:\s*(\S+)', skill_text).group(1)
-REPO  = re.search(r'GITHUB_REPO:\s*(\S+)',  skill_text).group(1)
-for filename, folder in [('generate_wfa_labels.py','Shared'), ('WFA_Labels_template.docx','Maths')]:
-    local = f'/home/claude/{filename}'
-    if not os.path.exists(local):
-        url = f'https://raw.githubusercontent.com/{REPO}/main/{folder}/{filename}'
-        req = urllib.request.Request(url, headers={'Authorization': f'token {TOKEN}'})
-        with urllib.request.urlopen(req, timeout=30) as r:
-            open(local, 'wb').write(r.read())
-        print(f'Fetched {filename}')
+import subprocess, fitz
+from PIL import Image
+import io
+
+subprocess.run(['libreoffice','--headless','--convert-to','pdf',
+    'output.pptx', '--outdir','/tmp/'], capture_output=True, timeout=60)
+doc = fitz.open('/tmp/output.pdf')
+pix = doc[0].get_pixmap(matrix=fitz.Matrix(2, 2))
+img = Image.open(io.BytesIO(pix.tobytes('png')))
+# Crop top-right to verify label, then full page for content
 ```
 
-Then generate (enquiry example):
-```bash
-python3 /home/claude/generate_wfa_labels.py --mode geographer \
-    --date "07/07/2026" \
-    --question "Are England and Brazil different?" \
-    --lf "compare human geography features." \
-    --ican1 "identify human geography features." \
-    --ican2 "compare two countries." \
-    --out T6W7_L4_Mon_Labels.docx
-```
-
-### Embedded label in PPTX slide (Option 1: preferred)
-Read `references/label-spec.md` for exact PPTX measurements (Section 2: Embedded label).
-These values come directly from the LL tool. Use pptxgenjs addText/addImage as in `injectLabel()`.
-
-### Option 2: Build manually with pptxgenjs
-Read `references/label-spec.md` for exact measurements, then build using the pptxgenjs code patterns in Section 2 of that file.
-
-### After building — fix OOXML issues (prevents PowerPoint repair dialog)
-
-Run over the generated PPTX before delivering. Addresses four problems introduced by pptxgenjs: non-standard media filenames, notesSlide back-references, empty `<a:r>` runs, and a missing theme2.xml reference.
-
-```python
-import re, urllib.request, os
-
-with open('/mnt/skills/user/github-sync/SKILL.md') as f:
-    TOKEN = re.search(r'GITHUB_TOKEN:\s*(\S+)', f.read()).group(1)
-
-if not os.path.exists('/home/claude/fix_pptx_ooxml.py'):
-    url = 'https://raw.githubusercontent.com/imcl75/claude_files/main/Shared/fix_pptx_ooxml.py'
-    req = urllib.request.Request(url, headers={'Authorization': f'token {TOKEN}'})
-    with urllib.request.urlopen(req, timeout=20) as r:
-        open('/home/claude/fix_pptx_ooxml.py', 'wb').write(r.read())
-
-import subprocess
-subprocess.run(['python3', '/home/claude/fix_pptx_ooxml.py', '/home/claude/learning_paper.pptx'], check=True)
-# Replace learning_paper.pptx with the actual output filename
-```
-
-## Key Technical Notes
-
-- **Slide dimensions**: 7.5" × 10.833" (portrait A4-ish, matching the school's existing files)
-- **Set 3 (maths) labels**: Must be rendered as PNG images using node-canvas first, then embedded. This allows rotation when needed.
-- **Set 1 icons**: Read PNG dimensions to preserve aspect ratio (some icons are landscape, some portrait). Use `iconImg.readUInt32BE(16)` for width and `readUInt32BE(20)` for height.
-- **Font availability**: Twinkl Cursive Looped won't be installed in the build environment. Specify it in the PPTX — it will render correctly on Innes's school machines.
-- **All measurements in inches** for pptxgenjs. Use `CM = 1/2.54` to convert.
+Use **PyMuPDF (fitz)** for rendering — not pdftoppm, not LibreOffice Draw.
