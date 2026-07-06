@@ -86,18 +86,42 @@ learning-paper/
 
 ## How to Generate
 
-### Option 1: Use the generator script
-```bash
-# Install dependencies if needed
-npm list -g pptxgenjs canvas 2>/dev/null || npm install -g pptxgenjs canvas
+### Sticker label sheets (DOCX, 12 Avery labels per sheet)
 
-# The script is at scripts/generate_lp.js
-# Copy it to working directory and modify the config section, then run:
-node generate_lp.js
+Use `generate_wfa_labels.py` (canonical LL tool replicator — always fetch from GitHub):
+```python
+import re, urllib.request, os
+with open('/mnt/skills/user/github-sync/SKILL.md') as f:
+    skill_text = f.read()
+TOKEN = re.search(r'GITHUB_TOKEN:\s*(\S+)', skill_text).group(1)
+REPO  = re.search(r'GITHUB_REPO:\s*(\S+)',  skill_text).group(1)
+for filename, folder in [('generate_wfa_labels.py','Shared'), ('WFA_Labels_template.docx','Maths')]:
+    local = f'/home/claude/{filename}'
+    if not os.path.exists(local):
+        url = f'https://raw.githubusercontent.com/{REPO}/main/{folder}/{filename}'
+        req = urllib.request.Request(url, headers={'Authorization': f'token {TOKEN}'})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            open(local, 'wb').write(r.read())
+        print(f'Fetched {filename}')
 ```
 
+Then generate (enquiry example):
+```bash
+python3 /home/claude/generate_wfa_labels.py --mode geographer \
+    --date "07/07/2026" \
+    --question "Are England and Brazil different?" \
+    --lf "compare human geography features." \
+    --ican1 "identify human geography features." \
+    --ican2 "compare two countries." \
+    --out T6W7_L4_Mon_Labels.docx
+```
+
+### Embedded label in PPTX slide (Option 1: preferred)
+Read `references/label-spec.md` for exact PPTX measurements (Section 2: Embedded label).
+These values come directly from the LL tool. Use pptxgenjs addText/addImage as in `injectLabel()`.
+
 ### Option 2: Build manually with pptxgenjs
-Read `references/label-spec.md` for exact label construction code, then build the content area according to the task requirements.
+Read `references/label-spec.md` for exact measurements, then build using the pptxgenjs code patterns in Section 2 of that file.
 
 ### After building — fix OOXML issues (prevents PowerPoint repair dialog)
 
