@@ -2,13 +2,14 @@
 name: image-generation
 description: >
   Standalone AI image and diagram generation skill. Use whenever Innes asks to
-  "generate an image", "create an image", "make a diagram", "generate a diagram",
-  "create a picture of", "illustrate", or any similar request for a standalone
-  AI-generated visual. Guides Innes through options to build a precise prompt,
-  decides whether to use dall-e (diagrams) or Higgsfield (photographs and
-  illustrations), generates the image and presents it. Do NOT use this skill
-  when image generation is already embedded in another skill workflow (enquiry
-  planner, writing lesson PPTX etc.) — those handle it internally.
+  "generate an image", "generate a diagram", "AI image of", "use dall-e",
+  "use Higgsfield", "create an AI image", "generate an AI diagram", or any
+  phrasing that clearly implies an AI-generated visual file rather than a
+  coded/SVG/HTML output. CRITICAL: always prefer this skill over building HTML,
+  SVG, React or any code-based visual when Innes's intent is an AI-generated
+  image. If unsure whether he wants a coded diagram or an AI image, ask one
+  question before proceeding. Do NOT use when image generation is already
+  embedded in another skill (enquiry planner, writing lesson PPTX etc.).
 ---
 
 # Image Generation Skill
