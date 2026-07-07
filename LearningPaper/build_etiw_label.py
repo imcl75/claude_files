@@ -257,14 +257,18 @@ def etiw_label(c, kq, date, lf, year='Y4', code=None, top_y=None):
     c.drawString(wc_left + (WRITER_COL - wlw) / 2, icon_y - 2 - SIZE_WRIT, 'Writer')
 
     # ─────────────────────────────────────────────────────────────────────
-    # ICON STRIP
+    # ICON STRIP — drawn at 97% of CW, centred, to avoid edge clipping
+    # (source PNG has zero padding on both sides)
     # ─────────────────────────────────────────────────────────────────────
-    strip_y = row_bottom - strip_h
+    STRIP_SCALE = 0.97
+    strip_w   = CW * STRIP_SCALE
+    strip_x   = M + (CW - strip_w) / 2
+    strip_y   = row_bottom - strip_h
     if os.path.exists(strip_path):
         c.drawImage(
             ImageReader(strip_path),
-            M, strip_y,
-            width=CW, height=strip_h,
+            strip_x, strip_y,
+            width=strip_w, height=strip_h,
             preserveAspectRatio=False, mask='auto'
         )
 
