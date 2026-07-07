@@ -3317,6 +3317,13 @@ def build_trios_slide(layout_num, title, trios_data, notes, chart_keys=None):
     for ph in sld.placeholders:
         if ph.placeholder_format.idx == 0:
             ph.text = title
+            # Explicitly set 32pt — without this, layout 4 inherits 44pt TwinklCursive
+            # from the master with no xfrm override, which LibreOffice renders as a
+            # single character. Setting size explicitly fixes the rendering.
+            from pptx.util import Pt as _Pt
+            for _para in ph.text_frame.paragraphs:
+                for _run in _para.runs:
+                    _run.font.size = _Pt(32)
         elif ph.placeholder_format.idx == 1:
             from pptx.oxml.ns import qn as _qn
             sp_elem = ph._element
