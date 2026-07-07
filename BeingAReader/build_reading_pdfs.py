@@ -44,16 +44,11 @@ def draw_header(c, lesson_type, date_str, key_q, lf, ican1, ican2, pupil_name=No
 
     y_start = H - MARGIN
 
-    # Day + date in top-left (outside the label area)
-    c.setFont("Helvetica", 8)
-    c.setFillColorRGB(*DARK)
-    c.drawString(MARGIN, y_start - 5*mm, f"{day}  {date_val}")
-
-    # Pupil name for adapted copies — below day/date on the left
+    # Pupil name for adapted copies — top-left (date is in the LL, not duplicated here)
     if pupil_name:
         c.setFont("Helvetica-Bold", 8)
         c.setFillColorRGB(*DARK)
-        c.drawString(MARGIN, y_start - 9.5*mm, pupil_name)
+        c.drawString(MARGIN, y_start - 5*mm, pupil_name)
 
     # Learning label — top-right using the unified confirmed function
     label_bottom = enquiry_label(
