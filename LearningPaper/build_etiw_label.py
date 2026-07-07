@@ -216,7 +216,7 @@ def etiw_label(c, kq, date, lf, year='Y4', code=None, top_y=None):
     # WRITER COLUMN
     # ─────────────────────────────────────────────────────────────────────
     wc_left  = W - M - WRITER_COL
-    wc_right = W - M
+    wc_right = W - M - 4      # 4pt inset: prevents right-edge clipping at PDF crop boundary
 
     # Icon: right-aligned within column, 1.25cm tall
     icon_x = wc_right - ICON_W - 2   # 2pt right padding
