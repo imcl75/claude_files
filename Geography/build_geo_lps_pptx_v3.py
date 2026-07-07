@@ -40,6 +40,7 @@ GREEN  = RGBColor(0x4F, 0xAD, 0x5B)
 ORANGE = RGBColor(0xE6, 0x7E, 0x22)
 WHITE  = RGBColor(0xFF, 0xFF, 0xFF)
 LGREY  = RGBColor(0xCC, 0xCC, 0xCC)
+EXBOOK = RGBColor(0xBD, 0xD7, 0xEE)  # pale blue exercise-book lines
 LTBLUE = RGBColor(0xEA, 0xF5, 0xFB)
 CREAM  = RGBColor(0xFE, 0xF9, 0xE7)
 
@@ -95,16 +96,39 @@ def set_para(para, text, bold=False, italic=False, size_pt=10,
         rf.color.rgb = color
     return run
 
-def add_line(slide, x, y, w, color=LGREY, width_pt=0.75):
-    """Horizontal rule."""
-    from pptx.util import Pt as Pts
-    connector = slide.shapes.add_connector(
-        1,  # MSO_CONNECTOR_TYPE.STRAIGHT
-        _i(x), _i(y), _i(x+w), _i(y)
+def add_line(slide, x, y, w, color=None, width_pt=1.0):
+    """Plain horizontal line injected as raw XML — no theme style, no shadow ever."""
+    from pptx.util import Inches as _In, Pt as _Pt
+    from lxml import etree as _et
+
+    c = color if color is not None else EXBOOK
+    hex_col = f'{c[0]:02X}{c[1]:02X}{c[2]:02X}'
+    lw = int(_Pt(width_pt))
+
+    sp_tree = slide.shapes._spTree
+    uid = max((int(el.get('id', 0))
+               for el in sp_tree.iter() if el.get('id') and el.get('id').isdigit()),
+              default=100) + 1
+
+    xml = (
+        f'<p:sp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+        f' xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+        f'<p:nvSpPr>'
+        f'<p:cNvPr id="{uid}" name="Line{uid}"/>'
+        f'<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>'
+        f'<p:nvPr/></p:nvSpPr>'
+        f'<p:spPr>'
+        f'<a:xfrm><a:off x="{int(_In(x))}" y="{int(_In(y))}"/>'
+        f'<a:ext cx="{int(_In(w))}" cy="0"/></a:xfrm>'
+        f'<a:prstGeom prst="line"><a:avLst/></a:prstGeom>'
+        f'<a:noFill/>'
+        f'<a:ln w="{lw}"><a:solidFill><a:srgbClr val="{hex_col}"/></a:solidFill></a:ln>'
+        f'<a:effectLst/>'
+        f'</p:spPr>'
+        f'<p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody>'
+        f'</p:sp>'
     )
-    connector.line.color.rgb = color
-    connector.line.width = Pts(width_pt)
-    return connector
+    sp_tree.append(_et.fromstring(xml))
 
 def add_rect(slide, x, y, w, h, fill_rgb=None, line_rgb=None, line_pt=0.75):
     from pptx.enum.shapes import MSO_SHAPE_TYPE
@@ -170,13 +194,14 @@ def body_text(slide, y, text, bold=False, sz=10, col=None, x=None, w=None):
     set_para(tf.paragraphs[0], text, bold=bold, size_pt=sz, color=col, font=FONT_BODY)
     return y + 0.28
 
-def write_lines(slide, y, n=3, w=None):
-    """n writing lines."""
+def write_lines(slide, y, n=3, w=None, x=None):
+    """n writing lines, exactly 8mm (0.315") apart."""
     w = w or CONT_W
+    x = x if x is not None else CONT_X
     for _ in range(n):
-        add_line(slide, CONT_X, y + 0.18, w, LGREY, 0.5)
-        y += 0.20
-    return y + 0.08
+        add_line(slide, x, y, w)
+        y += 0.315
+    return y + 0.10
 
 def word_bank(slide, y, words, w=None):
     """Orange word bank box."""
@@ -234,11 +259,13 @@ def table_header(slide, y):
     return y + 0.26
 
 def table_row(slide, y, row_text, even=True):
-    fill = RGBColor(0xF5, 0xF5, 0xF5) if even else WHITE
+    label_fill = RGBColor(0xF5, 0xF5, 0xF5) if even else WHITE
     x = CONT_X
     for i, (txt, cw) in enumerate(zip([row_text, '', ''], COL_WIDTHS_IN)):
-        box = add_rect(slide, x, y, cw, 0.22,
-                       fill_rgb=fill, line_rgb=LGREY, line_pt=0.5)
+        # Land use column keeps alternating fill; answer columns always white
+        cell_fill = label_fill if i == 0 else WHITE
+        add_rect(slide, x, y, cw, 0.22,
+                 fill_rgb=cell_fill, line_rgb=LGREY, line_pt=0.5)
         if txt:
             tb = add_textbox(slide, x + 0.04, y + 0.03, cw - 0.08, 0.16)
             tf = tb.text_frame
@@ -530,16 +557,22 @@ def build_lp6_standard():
     y = instruction(s1, y, 'Look at the images on the board. For each pair, record what you observe.')
 
     for pair in ['Image pair 1: Amazon rainforest', 'Image pair 2: English landscape']:
-        box = add_rect(s1, CONT_X, y, CONT_W, 0.65, fill_rgb=LTBLUE, line_rgb=BLUE, line_pt=0.75)
-        tb = add_textbox(s1, CONT_X + 0.06, y + 0.05, CONT_W - 0.12, 0.55)
-        tf = tb.text_frame
-        tf.word_wrap = True
-        set_para(tf.paragraphs[0], pair, bold=True, size_pt=9, color=BLUE, font=FONT_BODY)
-        p1 = tf.add_paragraph()
-        set_para(p1, 'What changed?  _____________________   What caused it?  _____________________', size_pt=8.5, color=DARK, font=FONT_BODY)
-        p2 = tf.add_paragraph()
-        set_para(p2, 'What might the geographical impact be?  _____________________________________', size_pt=8.5, color=DARK, font=FONT_BODY)
-        y += 0.70
+        # Title
+        tb = add_textbox(s1, CONT_X, y, CONT_W, 0.18)
+        set_para(tb.text_frame.paragraphs[0], pair, size_pt=9, color=DARK, font=FONT_BODY)
+        y += 0.26
+
+        for q_text, lw in [('What changed?', 1.3),
+                            ('What caused it?', 1.35),
+                            ('What might the geographical impact be?', 3.1)]:
+            tb = add_textbox(s1, CONT_X, y, lw, 0.18)
+            set_para(tb.text_frame.paragraphs[0], q_text, size_pt=8.5, color=DARK, font=FONT_BODY)
+            add_line(s1, CONT_X + lw + 0.05, y + 0.14, CONT_W - lw - 0.05, BLUE)
+            y += 0.315
+
+        # Extra line below for additional writing space
+        add_line(s1, CONT_X, y + 0.10, CONT_W, BLUE)
+        y += 0.50
 
     y += 0.10
     y = heading(s1, y, 'Part B   Geographical comparison')
@@ -572,7 +605,7 @@ def build_lp6_standard():
         body_text(s1, wy, prompt, bold=True, sz=9, w=WW)
         wy += 0.28
         for _ in range(nl):
-            add_line(s1, CONT_X, wy + 0.16, WW, RGBColor(0xAA, 0xCC, 0xDD), 0.5)
+            add_line(s1, CONT_X, wy + 0.16, WW, EXBOOK, 0.75)
             wy += 0.20
         wy += 0.06
 
@@ -622,7 +655,7 @@ def build_lp6_adapted():
 
     tick_items = ['Trees / vegetation removed', 'Buildings added', 'Farmland expanded', 'Roads or infrastructure built']
     for pair in ['Image pair 1: Amazon rainforest', 'Image pair 2: English landscape']:
-        box = add_rect(s1, CONT_X, y, CONT_W, 0.72, fill_rgb=LTBLUE, line_rgb=BLUE, line_pt=0.75)
+        box = add_rect(s1, CONT_X, y, CONT_W, 0.72, fill_rgb=WHITE, line_rgb=BLUE, line_pt=0.75)
         tb = add_textbox(s1, CONT_X + 0.06, y + 0.05, CONT_W - 0.12, 0.62)
         tf = tb.text_frame
         tf.word_wrap = True
