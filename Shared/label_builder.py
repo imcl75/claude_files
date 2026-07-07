@@ -80,6 +80,7 @@ def build_enquiry_label(slide, x, y,
 def build_writer_label(slide, x, y,
                        date_str, key_q, lf, code=None,
                        year='Y4',
+                       slide_w_in=7.5,
                        png_dest='/home/claude/etiw_label.png'):
     """
     Add WFA Set 2 Writer (ETIW) learning label to a python-pptx slide.
@@ -88,25 +89,24 @@ def build_writer_label(slide, x, y,
     Parameters
     ----------
     slide     : pptx.slide.Slide
-    x, y      : float — top-left position in inches (typically 0.25, 0.25)
+    x, y      : float — left margin of content area in inches (typically 0.25)
     date_str  : str   — e.g. '07/07/2025'
     key_q     : str   — key question text
     lf        : str   — verb phrase WITHOUT leading 'to' (builder prepends 'LF: To ')
     code      : str|None — session code e.g. 'S3' (None to omit)
     year      : str   — 'Y1'–'Y6' (selects phase gear logo and icon strip)
     png_dest  : str   — where to write the temporary PNG
+    slide_w_in : float — slide width in inches (default 7.5 for A4 portrait PPTX)
 
     Returns
     -------
     float — actual label height in inches
     """
-    from generate_label_png import etiw_label_png, ENQUIRY_LABEL_W_IN
-    from reportlab.lib.pagesizes import A4
-    import math
+    from generate_label_png import etiw_label_png
 
-    A4_W_pt = A4[0]
-    A4_M_pt = 35  # MARGIN in build_etiw_label.py
-    label_width_in = (A4_W_pt - 2 * A4_M_pt) / 72.0  # full content width in inches
+    # Label spans the full content width of the PPTX slide (not A4 PDF content width,
+    # which is slightly different). This ensures the label is centred with matching margins.
+    label_width_in = slide_w_in - 2 * x
 
     height_pt = etiw_label_png(
         dest=png_dest,
