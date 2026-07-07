@@ -75,3 +75,54 @@ def build_enquiry_label(slide, x, y,
     )
 
     return height_in
+
+
+def build_writer_label(slide, x, y,
+                       date_str, key_q, lf, code=None,
+                       year='Y4',
+                       png_dest='/home/claude/etiw_label.png'):
+    """
+    Add WFA Set 2 Writer (ETIW) learning label to a python-pptx slide.
+    Full-width label: gear logo | KQ + LF | session code + writer icon | skill icon strip.
+
+    Parameters
+    ----------
+    slide     : pptx.slide.Slide
+    x, y      : float — top-left position in inches (typically 0.25, 0.25)
+    date_str  : str   — e.g. '07/07/2025'
+    key_q     : str   — key question text
+    lf        : str   — verb phrase WITHOUT leading 'to' (builder prepends 'LF: To ')
+    code      : str|None — session code e.g. 'S3' (None to omit)
+    year      : str   — 'Y1'–'Y6' (selects phase gear logo and icon strip)
+    png_dest  : str   — where to write the temporary PNG
+
+    Returns
+    -------
+    float — actual label height in inches
+    """
+    from generate_label_png import etiw_label_png, ENQUIRY_LABEL_W_IN
+    from reportlab.lib.pagesizes import A4
+    import math
+
+    A4_W_pt = A4[0]
+    A4_M_pt = 35  # MARGIN in build_etiw_label.py
+    label_width_in = (A4_W_pt - 2 * A4_M_pt) / 72.0  # full content width in inches
+
+    height_pt = etiw_label_png(
+        dest=png_dest,
+        kq=key_q,
+        lf=lf,
+        date=date_str,
+        year=year,
+        code=code,
+    )
+    height_in = height_pt / 72.0
+
+    slide.shapes.add_picture(
+        png_dest,
+        Inches(x), Inches(y),
+        width=Inches(label_width_in),
+        height=Inches(height_in)
+    )
+
+    return height_in
