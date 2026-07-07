@@ -2719,8 +2719,9 @@ def draw_stats_chart_slide(sld, visual_key):
     chart_dir = os.path.join(tempfile.gettempdir(), 'wfa_stats_charts')
     os.makedirs(chart_dir, exist_ok=True)
     chart_path = os.path.join(chart_dir, f'{visual_key}_{chart_type}.png')
-    if not os.path.exists(chart_path):
-        render_stats_chart(chart_type, chart_data, chart_path, dpi=180)
+    # Always regenerate — different lessons reuse visual key names (e.g. wedo_visual)
+    # with different data, so caching by filename causes wrong charts to appear.
+    render_stats_chart(chart_type, chart_data, chart_path, dpi=180)
 
     # ── Shape ID counter ─────────────────────────────────────────────────
     SID = [900]
@@ -3376,8 +3377,8 @@ def build_trios_slide(layout_num, title, trios_data, notes, chart_keys=None):
             ct = v.get('chart_type', 'bar_chart')
             cd = v.get('chart_data', {})
             chart_path = os.path.join(chart_dir, f'{vk}_{ct}.png')
-            if not os.path.exists(chart_path):
-                render_stats_chart(ct, cd, chart_path, dpi=180)
+            # Always regenerate — different lessons share visual key names with different data
+            render_stats_chart(ct, cd, chart_path, dpi=180)
             cx = chart_xs[i] if n_charts > 1 else chart_x
             sld.shapes.add_picture(chart_path,
                                    emu(cx), emu(chart_y),
