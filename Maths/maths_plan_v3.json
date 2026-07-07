@@ -2441,8 +2441,12 @@
             "What scale does this data need?",
             "Spot the mistake"
           ],
-          "wedo": "Watch me draw",
-          "trios": "Watch me draw",
+          "wedo": [
+            "Now I draw"
+          ],
+          "trios": [
+            "Now I draw"
+          ],
           "independent": [
             "Now you draw it : LP"
           ]
@@ -2564,8 +2568,12 @@
             "What scale does this data need?",
             "Spot the mistake"
           ],
-          "wedo": "Watch me draw",
-          "trios": "Watch me draw",
+          "wedo": [
+            "Now I draw"
+          ],
+          "trios": [
+            "Now I draw"
+          ],
           "independent": [
             "Now you draw it : LP"
           ]
@@ -2813,8 +2821,12 @@
             "The full data cycle",
             "Spot the mistake"
           ],
-          "wedo": "Watch me draw",
-          "trios": "Watch me draw",
+          "wedo": [
+            "Now I draw"
+          ],
+          "trios": [
+            "Now I draw"
+          ],
           "independent": [
             "Now you draw it : LP"
           ]
