@@ -30,9 +30,102 @@ To plan your writing enquiry, I need a few details:
 7. NC links — specific objectives to flag? (I can infer these if you prefer)
 8. Why this text? — short rationale (optional)
 9. Any known lesson content — specific ideas for lessons, or generate the full sequence?
+10. Book cover image — please upload the front cover of the book (jpg or png).
+    This will be saved to GitHub and reused automatically in every lesson slide for this unit.
 ```
 
 Once inputs are gathered, **propose Key Question, Challenge outcome, and NC links** if not provided, and ask Innes to confirm before continuing.
+
+---
+
+## Step 1b: Save Book Cover to GitHub
+
+Once the book cover image has been uploaded, push it to GitHub immediately so it is available for all lesson builds in this unit. Run this before proceeding to Step 2.
+
+```python
+import re, urllib.request, os, base64, json
+
+# Read token
+with open('/mnt/skills/user/github-sync/SKILL.md') as f:
+    TOKEN = re.search(r'GITHUB_TOKEN:\s*(\S+)', f.read()).group(1)
+
+# Find the uploaded cover image
+import glob
+candidates = sorted(
+    glob.glob('/mnt/user-data/uploads/*.jpg') +
+    glob.glob('/mnt/user-data/uploads/*.jpeg') +
+    glob.glob('/mnt/user-data/uploads/*.png') +
+    glob.glob('/mnt/user-data/uploads/*.JPG') +
+    glob.glob('/mnt/user-data/uploads/*.PNG'),
+    key=os.path.getmtime, reverse=True
+)
+if not candidates:
+    raise FileNotFoundError("No image found in uploads — check the book cover was uploaded.")
+cover_path = candidates[0]
+print(f"Using cover: {cover_path}")
+
+with open(cover_path, 'rb') as f:
+    cover_bytes = f.read()
+
+# Determine file extension for GitHub path
+ext = os.path.splitext(cover_path)[1].lower()  # .jpg, .jpeg, or .png
+github_path = f'Writing/assets/book_cover{ext}'
+
+# Check if file already exists (need SHA to update)
+api_url = f'https://api.github.com/repos/imcl75/claude_files/contents/{github_path}'
+headers = {'Authorization': f'token {TOKEN}', 'Content-Type': 'application/json'}
+req = urllib.request.Request(api_url, headers=headers)
+try:
+    with urllib.request.urlopen(req) as r:
+        existing = json.loads(r.read())
+    sha = existing['sha']
+except Exception:
+    sha = None
+
+payload = {
+    'message': f'Update book cover ({os.path.basename(cover_path)})',
+    'content': base64.b64encode(cover_bytes).decode(),
+}
+if sha:
+    payload['sha'] = sha
+
+req = urllib.request.Request(
+    api_url,
+    data=json.dumps(payload).encode(),
+    headers=headers,
+    method='PUT'
+)
+with urllib.request.urlopen(req) as r:
+    result = json.loads(r.read())
+print(f"Book cover saved to GitHub: {github_path} ({len(cover_bytes)//1024}KB)")
+
+# Also write a manifest so the lesson builder knows the extension
+manifest_path = 'Writing/assets/book_cover_manifest.txt'
+manifest_api = f'https://api.github.com/repos/imcl75/claude_files/contents/{manifest_path}'
+req = urllib.request.Request(manifest_api, headers=headers)
+try:
+    with urllib.request.urlopen(req) as r:
+        existing = json.loads(r.read())
+    msha = existing['sha']
+except Exception:
+    msha = None
+
+mpayload = {
+    'message': 'Update book cover manifest',
+    'content': base64.b64encode(github_path.encode()).decode(),
+}
+if msha:
+    mpayload['sha'] = msha
+
+req = urllib.request.Request(
+    manifest_api,
+    data=json.dumps(mpayload).encode(),
+    headers=headers,
+    method='PUT'
+)
+with urllib.request.urlopen(req) as r:
+    print("Manifest updated.")
+```
 
 ---
 
@@ -199,6 +292,29 @@ if not os.path.exists('/home/claude/fix_pptx_ooxml.py'):
 # Replace output.pptx with the actual repacked filename
 subprocess.run(['python3', '/home/claude/fix_pptx_ooxml.py', '/home/claude/output.pptx'], check=True)
 ```
+
+---
+
+## ⚠ DELIVERY GATE — run before Step 5
+
+1. **fix_pptx_ooxml.py must have run** (Step 4b) — do not skip.
+
+2. **PPTX validator exits 0**:
+   ```bash
+   python3 /home/claude/validate_pptx_layout.py \
+       /home/claude/output.pptx --strict --warnings
+   ```
+   Fix any ERRORs before presenting.
+
+3. **validate_base_template.py** — if using the school PPTX template:
+   ```bash
+   python3 /home/claude/validate_base_template.py \
+       /home/claude/output.pptx --strict
+   ```
+
+4. **DOCX spot-check** — confirm every lesson has I Do / We Do / You Do
+   populated, no "[LESSON N]" placeholders remain, and the lesson count
+   matches what was agreed with Innes.
 
 ---
 
