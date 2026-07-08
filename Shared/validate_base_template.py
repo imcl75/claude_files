@@ -190,9 +190,39 @@ def check_layout(layout_xml, layout_name, layout_num):
     return issues
 
 
+def _check_slides_off_canvas(z, canvas_w, canvas_h):
+    """Check all slide files in zip for OFF-CANVAS shapes."""
+    import re as _re
+    PML2 = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+    DML2 = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+    issues = []
+    slide_files = sorted(
+        [n for n in z.namelist() if _re.match(r'ppt/slides/slide\d+\.xml$', n)],
+        key=lambda n: int(_re.search(r'(\d+)', n).group(1)))
+    for sf in slide_files:
+        root = ET.fromstring(z.read(sf).decode())
+        lbl  = os.path.basename(sf)
+        for sp in root.iter(f'{{{PML2}}}sp'):
+            xfrm = sp.find(f'.//{{{DML2}}}xfrm')
+            if xfrm is None: continue
+            off = xfrm.find(f'{{{DML2}}}off'); ext = xfrm.find(f'{{{DML2}}}ext')
+            if off is None or ext is None: continue
+            x  = int(off.get('x', 0)); cx = int(ext.get('cx', 0))
+            y  = int(off.get('y', 0)); cy = int(ext.get('cy', 0))
+            nm = sp.find(f'.//{{{PML2}}}cNvPr')
+            name = nm.get('name','?') if nm is not None else '?'
+            if x + cx > canvas_w + 36000:
+                issues.append({'severity':'ERROR','type':'OFF-CANVAS-RIGHT',
+                    'detail': f"[{lbl}] '{name}' right {round((x+cx)/360000,3)}cm > canvas {round(canvas_w/360000,3)}cm"})
+            if y + cy > canvas_h + 36000:
+                issues.append({'severity':'ERROR','type':'OFF-CANVAS-BOTTOM',
+                    'detail': f"[{lbl}] '{name}' bottom {round((y+cy)/360000,3)}cm > canvas {round(canvas_h/360000,3)}cm"})
+    return issues
+
+
 def validate_template(pptx_path, layout_filter=None):
     """
-    Validate all slide layouts in a template PPTX.
+    Validate all slide layouts in a template PPTX, plus slide OFF-CANVAS check.
     layout_filter: if set, only check that layout number (int).
     Returns list of issue dicts.
     """
@@ -200,6 +230,17 @@ def validate_template(pptx_path, layout_filter=None):
 
     with zipfile.ZipFile(pptx_path, 'r') as z:
         names = z.namelist()
+        # Check canvas size from presentation.xml
+        if 'ppt/presentation.xml' in names:
+            prs_xml = z.read('ppt/presentation.xml').decode()
+            prs_root = ET.fromstring(prs_xml)
+            PML3 = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+            sz = prs_root.find(f'{{{PML3}}}sldSz')
+            canvas_w = int(sz.get('cx')) if sz is not None else 12192000
+            canvas_h = int(sz.get('cy')) if sz is not None else 6858000
+        else:
+            canvas_w, canvas_h = 12192000, 6858000
+        all_issues += _check_slides_off_canvas(z, canvas_w, canvas_h)
         layout_files = sorted(
             [n for n in names if re.match(r'ppt/slideLayouts/slideLayout\d+\.xml', n)],
             key=lambda n: int(re.search(r'(\d+)', n).group(1))
