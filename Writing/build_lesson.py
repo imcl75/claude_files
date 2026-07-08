@@ -198,21 +198,41 @@ def build_kc(kc_img_dest_name):
     return xml, rels
 
 def build_lo(spec, base_unpacked):
-    """Copy slide2.xml from base and patch the three LO texts."""
-    xml = open(f'{base_unpacked}/ppt/slides/slide2.xml', encoding='utf-8').read()
-    rels = open(f'{base_unpacked}/ppt/slides/_rels/slide2.xml.rels', encoding='utf-8').read()
+    """Find the Learning Focus slide (Layout 5) by rels reference and patch LO texts.
 
-    # The LO slide has three body placeholders: idx 10 (WAL), 13 (TIB), 14 (ISB)
-    # Find and replace their text content
+    CRITICAL FIX 2026-07-07: previous version read slide2.xml by filename,
+    but slide2.xml in the base PPTX is the blank KC wheel (Layout 17/Blank).
+    The actual LO slide uses Layout 5 (Learning Focus). We scan by rels ref.
+    """
+    slides_dir = f'{base_unpacked}/ppt/slides'
+    rels_dir   = f'{base_unpacked}/ppt/slides/_rels'
+
+    lo_xml = lo_rels = None
+    for i in range(1, 50):
+        rp = os.path.join(rels_dir, f'slide{i}.xml.rels')
+        if not os.path.exists(rp): continue
+        rels_content = open(rp, encoding='utf-8').read()
+        if 'slideLayout5.xml' in rels_content:
+            lo_xml  = open(os.path.join(slides_dir, f'slide{i}.xml'), encoding='utf-8').read()
+            lo_rels = rels_content
+            break
+
+    if not lo_xml:
+        raise RuntimeError("Could not find Learning Focus slide (Layout 5) in base PPTX.")
+
+    for idx in ['10', '13', '14']:
+        if f'idx="{idx}"' not in lo_xml:
+            raise RuntimeError(f"LO slide (Layout 5) missing placeholder idx={idx}.")
+
     def replace_ph_text(x, target_idx, new_text):
-        pattern = (rf'(<p:ph type="body"[^>]*idx="{target_idx}"[^>]*/>'
+        pattern = (rf'(<p:ph type="body"[^>]*idx="{target_idx}"[^>]*/>' +
                    rf'.*?</p:nvSpPr>.*?<a:t>)[^<]*(</a:t>)')
         return re.sub(pattern, rf'\g<1>{_esc(new_text)}\g<2>', x, flags=re.DOTALL)
 
-    xml = replace_ph_text(xml, '10', spec.get('wal', ''))
-    xml = replace_ph_text(xml, '13', spec.get('tib', ''))
-    xml = replace_ph_text(xml, '14', spec.get('isb', ''))
-    return xml, rels
+    lo_xml = replace_ph_text(lo_xml, '10', spec.get('wal', ''))
+    lo_xml = replace_ph_text(lo_xml, '13', spec.get('tib', ''))
+    lo_xml = replace_ph_text(lo_xml, '14', spec.get('isb', ''))
+    return lo_xml, lo_rels
 
 def build_warmup(spec):
     """Three-card warm-up slide (Layout 9 — You Do)."""
@@ -391,8 +411,66 @@ def build_learning_review(spec, base_unpacked):
 
 # ── Main assembler ────────────────────────────────────────────────────
 
+
+# ── Preflight validator ─────────────────────────────────────────────────────
+import re as _re_pf
+
+_VISUAL_REF_RE = _re_pf.compile(
+    r'\b(the|this)\s+(bar\s+|line\s+)?'
+    r'(chart|graph|pictogram|table|diagram|image|picture)\b'
+    r'|\blooks?\s+at\s+the\b',
+    _re_pf.IGNORECASE
+)
+_LO_LIMITS = {'wal': 85, 'tib': 100, 'isb': 110}
+_IMAGE_TYPES = {'kc', 'book_page', 'context_image', 'image_with_task'}
+_VALID_TYPES = {
+    'cover', 'kc', 'lo', 'warmup', 'we_do', 'i_do',
+    'you_do', 'you_do_trio', 'book_page', 'rules',
+    'learning_review', 'context_image', 'image_with_task',
+}
+
+
+def preflight_validate(slide_specs):
+    errors = []
+    lo_count = sum(1 for s in slide_specs if s.get('type') == 'lo')
+    lr_count = sum(1 for s in slide_specs if s.get('type') == 'learning_review')
+    if lo_count != 1: errors.append(f"Must have exactly 1 'lo' slide, found {lo_count}")
+    if lr_count != 1: errors.append(f"Must have exactly 1 'learning_review' slide, found {lr_count}")
+    for i, spec in enumerate(slide_specs):
+        stype = spec.get('type', ''); label = f"Slide {i+1} ({stype!r})"
+        if stype not in _VALID_TYPES:
+            errors.append(f"{label}: unknown slide type"); continue
+        if stype == 'lo':
+            for key, limit in _LO_LIMITS.items():
+                val = spec.get(key, '')
+                if len(val) > limit:
+                    errors.append(f"{label}: '{key}' is {len(val)} chars (limit {limit})")
+                if not val.strip():
+                    errors.append(f"{label}: '{key}' is empty")
+        if stype == 'learning_review':
+            for q in ['q1', 'q2', 'q3']:
+                if not spec.get(q, '').strip():
+                    errors.append(f"{label}: missing '{q}'")
+        all_text = ' '.join(str(v) for k, v in spec.items()
+                             if isinstance(v, str) and k != 'type')
+        match = _VISUAL_REF_RE.search(all_text)
+        if match and stype not in _IMAGE_TYPES:
+            window    = slide_specs[max(0,i-2): min(len(slide_specs), i+3)]
+            if not any(s.get('type') in _IMAGE_TYPES for s in window):
+                errors.append(f"{label}: text references a visual but no image slide within 2 positions.")
+    return errors
+
+
 def assemble(args, slide_specs):
-    base_pptx   = args.base
+    # ── Preflight ──
+    _pf_errors = preflight_validate(slide_specs)
+    if _pf_errors:
+        import sys as _sys
+        print('\n❌  PREFLIGHT FAILED:\n', file=_sys.stderr)
+        for e in _pf_errors: print(f'  • {e}', file=_sys.stderr)
+        _sys.exit(2)
+
+        base_pptx   = args.base
     kc_img_path = args.kc
     cover_path  = args.cover
     out_dir     = args.out
@@ -510,6 +588,21 @@ def assemble(args, slide_specs):
                 z.write(p, os.path.relpath(p, build_tmp))
 
     shutil.rmtree(build_tmp)
+
+    # ── Post-build layout validation ──
+    import sys as _sys2
+    validator = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                             '..', '..', 'Shared', 'validate_pptx_layout.py')
+    if not os.path.exists(validator):
+        validator = '/home/claude/validate_pptx_layout.py'
+    if os.path.exists(validator):
+        import subprocess as _sp2
+        r2 = _sp2.run(['python3', validator, out_path, '--strict', '--warnings'],
+                      capture_output=True, text=True)
+        print(r2.stdout)
+        if r2.returncode != 0:
+            print('\n❌  LAYOUT VALIDATION FAILED — fix before delivering.', file=_sys2.stderr)
+            print(r2.stdout, file=_sys2.stderr)
     return out_path
 
 
