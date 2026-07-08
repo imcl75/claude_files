@@ -41,11 +41,11 @@ Ask for anything not already provided:
 | Planning document (`.docx`) | Already uploaded, or ask |
 | Which lesson(s) to build | Ask: "Which lesson(s) would you like — e.g. lesson 2, or lessons 2 and 3?" |
 | Term and week reference | Ask: "What's the term and week? (e.g. T5W1)" — infer from filename if obvious |
-| Book cover image | Ask: "Please upload the front cover image for this book." |
+| Book cover image | Fetch automatically from GitHub (`Writing/assets/book_cover.*`). Only ask for upload if the fetch fails (e.g. new unit where planning skill has not yet run). |
 | Carry-over slides | Ask: "Are there any slides from a previous lesson that need to appear in this one? If so, please upload the PPTX they come from and tell me which slide." |
 
 Do not proceed to Step 2 until you have the planning doc, lesson number(s),
-term/week reference, and book cover image. Carry-over slides are optional.
+and term/week reference. Book cover is fetched automatically (see Step 6). Carry-over slides are optional.
 
 ---
 
@@ -280,10 +280,44 @@ Copy assets to working directory:
 SKILL_DIR="/mnt/skills/user/writing-lesson-pptx"
 cp "$SKILL_DIR/assets/writing_lesson_base.pptx" /home/claude/
 cp "$SKILL_DIR/assets/kc_wheel.png" /home/claude/
+```
 
-# Cover image will already be at /mnt/user-data/uploads/<filename>
-# Identify it:
-ls /mnt/user-data/uploads/
+Fetch the book cover from GitHub (saved there by the planning skill):
+
+```python
+import re, urllib.request, os, json, base64, glob
+
+with open('/mnt/skills/user/github-sync/SKILL.md') as f:
+    TOKEN = re.search(r'GITHUB_TOKEN:\s*(\S+)', f.read()).group(1)
+
+# Read manifest to find the correct extension
+manifest_url = 'https://raw.githubusercontent.com/imcl75/claude_files/main/Writing/assets/book_cover_manifest.txt'
+req = urllib.request.Request(manifest_url, headers={'Authorization': f'token {TOKEN}'})
+try:
+    with urllib.request.urlopen(req, timeout=10) as r:
+        github_path = r.read().decode().strip()  # e.g. Writing/assets/book_cover.jpg
+    ext = os.path.splitext(github_path)[1]
+    cover_url = f'https://raw.githubusercontent.com/imcl75/claude_files/main/{github_path}'
+    req2 = urllib.request.Request(cover_url, headers={'Authorization': f'token {TOKEN}'})
+    with urllib.request.urlopen(req2, timeout=15) as r:
+        cover_bytes = r.read()
+    cover_local = f'/home/claude/book_cover{ext}'
+    with open(cover_local, 'wb') as f:
+        f.write(cover_bytes)
+    print(f"Book cover fetched from GitHub: {cover_local} ({len(cover_bytes)//1024}KB)")
+except Exception as e:
+    # Fallback: use most recently uploaded image file
+    print(f"GitHub fetch failed ({e}), falling back to uploads folder.")
+    candidates = sorted(
+        glob.glob('/mnt/user-data/uploads/*.jpg') +
+        glob.glob('/mnt/user-data/uploads/*.jpeg') +
+        glob.glob('/mnt/user-data/uploads/*.png'),
+        key=os.path.getmtime, reverse=True
+    )
+    if not candidates:
+        raise FileNotFoundError("No book cover found — please upload the book cover image.")
+    cover_local = candidates[0]
+    print(f"Using uploaded cover: {cover_local}")
 ```
 
 Run the build:
@@ -292,7 +326,7 @@ Run the build:
 python3 "$SKILL_DIR/scripts/build_lesson.py" \
   --base    /home/claude/writing_lesson_base.pptx \
   --kc      /home/claude/kc_wheel.png \
-  --cover   /mnt/user-data/uploads/<cover_image_filename> \
+  --cover   $cover_local \
   --term    <N>  \
   --week    <N>  \
   --lesson  <N>  \
@@ -427,3 +461,4 @@ every future writing lesson:
   shrink to fit; but keep content concise — a slide is a prompt, not a handout
 - **British English throughout**: spelling, vocabulary, punctuation conventions
 - **No em dashes in slide content** (use commas or restructure)
+
