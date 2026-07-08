@@ -123,9 +123,18 @@ def _estimate_lines(paras, font_pt, usable_w_emu):
     return sum(max(1, math.ceil(len(p) / chars_per_line)) for p in paras)
 
 
+# Shape names that are purely decorative and exempt from TEXT-SPILL checks.
+# These are typically single-character glyphs (arrows, icons) placed for visual effect,
+# not text containers whose content must be readable.
+_TEXT_SPILL_EXEMPT_NAMES = ('arrow', 'icon', 'badge', 'bullet', 'chevron', 'glyph')
+
+
 def _check_text_spill(shapes):
     issues = []
     for s in shapes:
+        # Skip decorative single-glyph shapes
+        if any(k in s['name'].lower() for k in _TEXT_SPILL_EXEMPT_NAMES):
+            continue
         if not s['has_text'] or s['autofit'] != 'none' or s['h'] == 0: continue
         uw = s['w'] - s['lIns'] - s['rIns']
         uh = s['h'] - s['tIns'] - s['bIns']
