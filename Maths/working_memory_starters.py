@@ -152,7 +152,7 @@ GREEN    = "92D050"   # answer bar / click to show
 
 # Exact positions from template analysis (inches)
 # Memory slide
-TITLE_X, TITLE_Y, TITLE_W, TITLE_H   = 2.454, 0.143, 9.039, 1.45
+TITLE_X, TITLE_Y, TITLE_W, TITLE_H   = 2.454, 0.143, 9.039, 1.15
 SHOW_X,  SHOW_Y,  SHOW_W,  SHOW_H    = 5.219, 1.347, 2.895, 0.679
 GOTO_X,  GOTO_Y,  GOTO_W,  GOTO_H    = 5.283, 5.887, 2.767, 0.679
 ITEM_W,  ITEM_H                       = 1.573, 1.4
@@ -163,7 +163,7 @@ ITEM_FIRST_X                          = 1.347
 
 # Q&A slide
 QA_TITLE_X, QA_TITLE_Y = 0.917, 0.11
-QA_TITLE_W, QA_TITLE_H = 11.5,  1.45
+QA_TITLE_W, QA_TITLE_H = 11.5,  1.15
 Q_W,  Q_H  = 6.0, 1.013
 A_W,  A_H  = 6.0, 0.747
 COL_L_X    = 0.373
