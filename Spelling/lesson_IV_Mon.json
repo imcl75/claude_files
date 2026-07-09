@@ -1,0 +1,136 @@
+{
+  "code": "IV",
+  "rule": "Irregular past tenses — vowel changes (ablaut)",
+  "stage": "T6W7",
+  "objective": "To spell irregular past-tense verbs that change their vowel",
+  "lpDay": "Mon",
+  "lpSideBType": "vn_dm_sc",
+  "words": [
+    "ran","sang","swam","drank","began","rang","sat","sprang","clung","stung"
+  ],
+  "clozeOrder": [
+    "sang","drank","stung","clung","ran","swam","sprang","began","sat","rang"
+  ],
+  "defs": [
+    "moved quickly on foot; past of run",
+    "made music with the voice; past of sing",
+    "moved through water using the body; past of swim",
+    "took liquid into the mouth; past of drink",
+    "started something; past of begin",
+    "made a clear bell sound; past of ring",
+    "rested on a surface; past of sit",
+    "jumped suddenly upward or forward; past of spring",
+    "held on tightly and would not let go; past of cling",
+    "pierced with a sharp point; past of sting"
+  ],
+  "sentences": {
+    "ran":    "She ____________________ all the way to the bus stop but arrived two seconds after it pulled away.",
+    "sang":   "The choir ____________________ so beautifully that three members of the audience started to cry.",
+    "swam":   "He ____________________ the full length of the pool without coming up for air until he touched the wall.",
+    "drank":  "After the long hike, they ____________________ the spring water as if they had never tasted anything so good.",
+    "began":  "The storm ____________________ quietly enough, but by midnight every tree in the garden was bending double.",
+    "rang":   "The school bell ____________________ just as the teacher was about to give out the results of the test.",
+    "sat":    "The cat ____________________ perfectly still on the windowsill, watching the birds on the lawn below.",
+    "sprang": "The goalkeeper ____________________ to the left and managed to push the penalty just past the post.",
+    "clung":  "The kitten ____________________ to the top branch with all four paws, refusing to come down for two hours.",
+    "stung":  "A bee ____________________ him on the finger as he reached into the lavender bush to smell the flowers."
+  },
+  "syllableCounts": {
+    "ran": 1, "sang": 1, "swam": 1, "drank": 1, "began": 2,
+    "rang": 1, "sat": 1, "sprang": 1, "clung": 1, "stung": 1
+  },
+  "phonemes": {
+    "sang":   [{"t":"dot","l":"s"},{"t":"dot","l":"a"},{"t":"line","l":"ng"}],
+    "swam":   [{"t":"dot","l":"s"},{"t":"dot","l":"w"},{"t":"dot","l":"a"},{"t":"dot","l":"m"}],
+    "drank":  [{"t":"dot","l":"d"},{"t":"dot","l":"r"},{"t":"dot","l":"a"},{"t":"dot","l":"n"},{"t":"dot","l":"k"}],
+    "began":  [{"t":"dot","l":"b"},{"t":"dot","l":"e"},{"t":"dot","l":"g"},{"t":"dot","l":"a"},{"t":"dot","l":"n"}],
+    "clung":  [{"t":"dot","l":"c"},{"t":"dot","l":"l"},{"t":"dot","l":"u"},{"t":"line","l":"ng"}],
+    "sprang": [{"t":"dot","l":"s"},{"t":"dot","l":"p"},{"t":"dot","l":"r"},{"t":"dot","l":"a"},{"t":"line","l":"ng"}]
+  },
+  "wordMaps": {
+    "words": ["sang","swam","drank","began","clung","sprang"],
+    "syllables": {
+      "sang":   "sang",
+      "swam":   "swam",
+      "drank":  "drank",
+      "began":  "be|gan",
+      "clung":  "clung",
+      "sprang": "sprang"
+    }
+  },
+  "starter": {
+    "question": "Can you change these verbs to the past tense? What do you notice?",
+    "words":   ["run","sing","swim","drink","ring","sit"],
+    "answers": ["ran","sang","swam","drank","rang","sat"],
+    "answerLabel": "Past tense:",
+    "ruleBox": "Ablaut: these verbs change their vowel to make the past tense — no -ed needed. i → a: sing→sang, ring→rang, swim→swam. u → a: run→ran. Two go i → u: cling→clung, sting→stung.",
+    "perPairNote": ""
+  },
+  "thisWeeksWordsQ": "What do you notice about today's words?",
+  "thisWeeksWordsPrompt": "Think of the base verb for each word. What happens to the vowel?",
+  "thisWeeksWordsExplanation": "All today's words are past tenses of irregular verbs. Instead of adding -ed, the vowel changes: sing→sang, swim→swam, ring→rang. Linguists call this ablaut — an ancient vowel shift inherited from Old English. Most follow i→a, but clung and stung go i→u, and run→ran goes u→a. No -ed is ever needed.",
+  "etymology": {
+    "word": "sang",
+    "baseForm": "singan",
+    "clicks": [
+      {"label":"Language","body":"Old English"},
+      {"label":"Base word","body":"singan — to sing; related to German singen"},
+      {"label":"Original meaning","body":"singan was the Old English infinitive. The past tense sang is one of the oldest verb forms in the language."},
+      {"label":"Then","body":"Old English strong verbs changed their vowel for the past tense. Singan → sang follows the i→a pattern of Class III strong verbs."},
+      {"label":"Now","body":"We still use sang as the simple past of sing: 'she sang a lullaby to the baby.'"},
+      {"label":"In today's words","body":"The i→a pattern runs through today's words: sing→sang, ring→rang, swim→swam, drink→drank. Linguists call this vowel change ablaut."}
+    ]
+  },
+  "wordSortQ": "Can you sort these words into two groups?",
+  "wordSort": {
+    "box1label": "Vowel changes to -a-",
+    "box1sub": "The vowel in the past tense becomes a short -a- sound",
+    "box2label": "Other vowel change",
+    "box2sub": "The vowel changes to -u- (i→u) or from u→a",
+    "hint": "Look at the vowel in each past-tense word. Is it an -a- sound or something different?",
+    "answerNote": "Vowel → -a-: sang, swam, drank, began, rang, sat, sprang. Other change: ran (u→a), clung (i→u), stung (i→u).",
+    "verbOnly": ["sang","swam","drank","began","rang","sat","sprang"],
+    "verbNoun": [
+      {"word":"ran",   "eg":"run → ran (u→a)"},
+      {"word":"clung", "eg":"cling → clung (i→u)"},
+      {"word":"stung", "eg":"sting → stung (i→u)"}
+    ],
+    "exampleLine": "sing → sang (i→a) | sting → stung (i→u) | run → ran (u→a)"
+  },
+  "spellData": [
+    {"opts":["runn","ran","rann"],    "correct":1},
+    {"opts":["sangg","sange","sang"], "correct":2},
+    {"opts":["drannk","drank","dranck"],"correct":1},
+    {"opts":["clung","clingg","clunn"],"correct":0},
+    {"opts":["spranng","sprangg","sprang"],"correct":2}
+  ],
+  "wordShed": {
+    "baseWord": "began",
+    "def": "started to do something for the first time",
+    "sentence": "The explorer began her journey in the dark, long before the rest of the village had woken up.",
+    "rhymes": "can, plan, span",
+    "morphology": "begin (v) → began (past) → begun (past part) → beginning (pres part) → beginner (n) → beginners (pl n)"
+  },
+  "morphMatrix": {
+    "baseWord": "begin",
+    "def": "to start doing something",
+    "suffixes": ["-an","-un","-ning","-nner","-ns","re-…"],
+    "answers": ["began","begun","beginning","beginner","begins","✗ not standard"]
+  },
+  "lpVerbNounName": "Find the Present",
+  "lpVerbNounInstr": "Write the present-tense base form of each verb.",
+  "lpVerbNoun": [
+    ["ran","run"],["sang","sing"],["swam","swim"],
+    ["drank","drink"],["rang","ring"],["sat","sit"]
+  ],
+  "lpDefMatchName": "Match the Meaning",
+  "lpDefMatchInstr": "Write the word that matches each meaning.",
+  "lpDefinitions": [
+    "jumped or leapt suddenly upward",
+    "held on tightly and would not let go",
+    "was pierced by a sharp point or venom",
+    "started something",
+    "moved quickly on foot"
+  ],
+  "lpDefMatchAnswers": ["sprang","clung","stung","began","ran"]
+}
