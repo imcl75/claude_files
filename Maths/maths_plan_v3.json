@@ -2949,7 +2949,8 @@
         ],
         "slideTitles": {
           "ido": [
-            "Reasoning \u2014 full method model"
+            "Reasoning \u2014 full method model",
+            "Spot the mistake"
           ],
           "wedo": [
             "Together \u2014 reason it through"
@@ -2966,6 +2967,15 @@
           "wedo": 1,
           "trios": 1,
           "independent": 1
+        },
+        "trios": {
+          "task": "Solve together: a school buys 2,547 books in summer and 1,836 in autumn. How many altogether? Discuss your method before you calculate.",
+          "challenge": "Can you find two different methods and check they give the same answer?"
+        },
+        "independent": {
+          "standard": "A supermarket sells 3,246 loaves on Monday and 1,978 on Tuesday. How many loaves are sold in total?",
+          "supported": "A baker makes 1,245 biscuits and then 836 more. How many biscuits altogether?",
+          "stretch": "A town has 4,382 adults, 2,167 children and 956 teenagers. What is the total population? Write a justification."
         }
       },
       "cycle2": {
@@ -2992,6 +3002,15 @@
           "wedo": 1,
           "trios": 1,
           "independent": 1
+        },
+        "trios": {
+          "task": "A stadium had 8,200 seats. 3,456 people arrived, then 1,247 more. How many seats are still empty? Agree on your method first.",
+          "challenge": "Is there more than one way to solve this? Which is most efficient?"
+        },
+        "independent": {
+          "standard": "A factory had 7,500 items. Workers packed 3,846 into boxes. How many items are left?",
+          "supported": "A shop had 4,300 books. It sold 1,456. How many are left?",
+          "stretch": "A school raised \u00a39,050 last year and \u00a37,836 this year. What is the difference? If they need \u00a315,000 altogether, how much more must they raise?"
         }
       },
       "spotTheMistake": {
@@ -3058,7 +3077,8 @@
         ],
         "slideTitles": {
           "ido": [
-            "Fractions of measurements"
+            "Multiplication \u2014 full method model",
+            "Spot the mistake"
           ],
           "wedo": [
             "Together \u2014 fraction + measurement"
@@ -3075,6 +3095,15 @@
           "wedo": 1,
           "trios": 1,
           "independent": 1
+        },
+        "trios": {
+          "task": "A cinema shows 3 films every day. Each film has 248 seats and runs for 7 days. How many tickets are sold altogether? Plan your steps before calculating.",
+          "challenge": "Estimate first. Is your answer reasonable?"
+        },
+        "independent": {
+          "standard": "A bookshop orders 175 books for each of 6 subjects. How many books does it order altogether?",
+          "supported": "A baker makes 124 cupcakes each day for 5 days. How many cupcakes?",
+          "stretch": "A factory makes 2,346 items per day for 4 days. On day 5 it makes 1,875 items. How many items in total? Justify your method."
         }
       },
       "cycle2": {
@@ -3084,7 +3113,7 @@
         ],
         "slideTitles": {
           "ido": [
-            "Full problem \u2014 measure, convert, justify"
+            "Larger multiplication \u2014 full method"
           ],
           "wedo": [
             "Together \u2014 work it through"
@@ -3101,6 +3130,15 @@
           "wedo": 1,
           "trios": 1,
           "independent": 1
+        },
+        "trios": {
+          "task": "A train carries 1,356 passengers per journey and runs 6 journeys per day. How many passengers in one day? Decide: one step or two?",
+          "challenge": "Find two ways to check your answer."
+        },
+        "independent": {
+          "standard": "A printer produces 2,145 pages per hour. How many pages in 4 hours?",
+          "supported": "A lorry carries 1,230 boxes per trip. It makes 5 trips. How many boxes?",
+          "stretch": "A concert hall seats 2,347 people. For a 6-night run every seat is filled. How many people attend in total? What is the total if tickets cost \u00a38 each?"
         }
       },
       "spotTheMistake": {
@@ -3168,7 +3206,8 @@
         ],
         "slideTitles": {
           "ido": [
-            "Statistics \u2014 full reasoning model"
+            "Division \u2014 full reasoning model",
+            "Spot the mistake"
           ],
           "wedo": [
             "Together \u2014 work through the table"
@@ -3185,6 +3224,15 @@
           "wedo": 1,
           "trios": 1,
           "independent": 1
+        },
+        "trios": {
+          "task": "3,672 tiles are laid equally across 8 rooms. How many tiles per room? If each room needs 6 more for the border, how many tiles altogether?",
+          "challenge": "Use inverse multiplication to check your division answer."
+        },
+        "independent": {
+          "standard": "4,956 stickers are shared equally among 6 classes. How many stickers per class?",
+          "supported": "864 books are shared equally across 4 shelves. How many books on each shelf?",
+          "stretch": "2,736 pupils are split into equal teams of 8. How many teams? If 3 teams join together, how many pupils are in that group?"
         }
       },
       "cycle2": {
@@ -3194,7 +3242,7 @@
         ],
         "slideTitles": {
           "ido": [
-            "Bar chart or line graph \u2014 which is better?"
+            "Division with remainder \u2014 full method"
           ],
           "wedo": [
             "Together \u2014 choose and justify"
@@ -3211,6 +3259,15 @@
           "wedo": 1,
           "trios": 1,
           "independent": 1
+        },
+        "trios": {
+          "task": "5,237 sweets are shared among 7 bags. How many per bag? What happens to the remainder? Discuss what the remainder means in this context.",
+          "challenge": "Change the divisor to 9. What difference does it make to the answer?"
+        },
+        "independent": {
+          "standard": "2,459 marbles are put into bags of 6. How many full bags? How many are left over?",
+          "supported": "756 biscuits are packed into boxes of 5. How many full boxes? How many left over?",
+          "stretch": "A florist has 3,847 flowers and makes bouquets of 8. How many bouquets? If she needs 500 complete bouquets, does she have enough?"
         }
       },
       "spotTheMistake": {
@@ -3256,7 +3313,7 @@
       "lesson": 27,
       "week": "T6W7",
       "weekIndex": 7,
-      "day": "Thursday",
+      "day": "Friday",
       "topic": "End of year consolidation",
       "li": "Pupils tackle mixed multi-step problems across all Y4 topics, justifying and explaining their answers.",
       "vocabularyFocus": [
@@ -3277,7 +3334,8 @@
         ],
         "slideTitles": {
           "ido": [
-            "End of year challenge \u2014 model method"
+            "End of year challenge \u2014 model method",
+            "Spot the mistake"
           ],
           "wedo": [
             "Together \u2014 tackle the challenge"
@@ -3294,6 +3352,15 @@
           "wedo": 1,
           "trios": 1,
           "independent": 1
+        },
+        "trios": {
+          "task": "A school has 6 classes. Each class gets 135 sheets of coloured paper. After an art day, each class has used 87 sheets. How many sheets are left altogether? Draw a bar model first.",
+          "challenge": "Is there a more efficient approach? Could you rearrange the steps?"
+        },
+        "independent": {
+          "standard": "A baker bakes 8 trays of 24 biscuits. She gives 48 biscuits to a neighbour. How many are left?",
+          "supported": "A shop has 4 boxes of 25 mugs. It sells 36 mugs. How many mugs are left?",
+          "stretch": "Year 4 has 4 classes of 28 pupils. Each pupil brings in 3 items for a food bank. After 47 items are collected from visitors, the school counts everything. How many items are there? Justify your method."
         }
       },
       "cycle2": {
@@ -3320,6 +3387,15 @@
           "wedo": 1,
           "trios": 1,
           "independent": 1
+        },
+        "trios": {
+          "task": "2,480 pencils are shared equally among 8 year groups. On day 1 each year group uses 38 pencils. How many does each have left? Draw a bar model, agree your steps, then calculate.",
+          "challenge": "What if pencils were shared among 5 year groups instead? How would the answer change?"
+        },
+        "independent": {
+          "standard": "1,440 sweets are shared equally among 6 classes. Each class eats 35 at break. How many are left per class?",
+          "supported": "120 books are split equally among 4 shelves. 12 books are taken away for reading. How many are left on each shelf?",
+          "stretch": "4,500 stickers are shared equally among 9 pupils. Each pupil gives 28 to their partner. How many stickers does each pupil have now?"
         }
       },
       "spotTheMistake": {

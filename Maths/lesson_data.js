@@ -616,3 +616,176 @@ module.exports[16] = {
     hint2: 'Working backwards:\nIf you know the fraction that is LEFT, find the whole part first.\nExample: 3/4 left = £180. So 1/4 = £60. Whole = 4 × £60 = £240.',
   },
 };
+
+// ─── T6W7 — End-of-year consolidation ─────────────────────────────────────────
+
+module.exports[24] = {
+  iCan: [
+    'I can use column addition to solve word problems.',
+    'I can use column subtraction to solve word problems.',
+  ],
+  lp1: {
+    title: 'Addition and Subtraction',
+    type: 'arithmetic',
+    date: '13/07/2026',
+    instruction: 'Use column addition to solve each problem. Show your working in your maths book.',
+    questions: [
+      { q: 'A theme park sells 3,428 tickets on Saturday and 2,675 tickets on Sunday. How many tickets were sold over the weekend?', answer: '6,103 tickets' },
+      { q: 'A builder uses 1,854 bricks for a wall and 2,736 bricks for a path. How many bricks does she use in total?', answer: '4,590 bricks' },
+      { q: 'A school library has 4,267 books. It receives a donation of 1,548 more. How many books does it have now?', answer: '5,815 books' },
+      { q: 'A town has 6,143 adults and 2,875 children. What is the total population?', answer: '9,018 people' },
+    ],
+    goingFurther: 'A factory makes 3,846 items in the morning and 2,758 in the afternoon. If it needs to make 7,000 items in total, how many more does it need? Explain your strategy.',
+  },
+  lp2: {
+    title: 'Addition and Subtraction',
+    type: 'arithmetic',
+    date: '13/07/2026',
+    instruction: 'Use column subtraction to solve each problem. Show your working in your maths book.',
+    questions: [
+      { q: 'A website has 8,305 users. 2,647 users log out. How many users are still online?', answer: '5,658 users' },
+      { q: 'A warehouse stored 7,200 items. A shop ordered 3,486. How many items are left?', answer: '3,714 items' },
+      { q: 'A sports stadium has 9,050 seats. 4,736 people are seated. How many seats are empty?', answer: '4,314 seats' },
+    ],
+    goingFurther: 'A farmer starts with 6,500 kg of grain. He sells 1,847 kg in the morning and 2,368 kg in the afternoon. How much grain is left? Which operation did you use and why?',
+  },
+  adaptedSupport: {
+    lp1Questions: [
+      { q: 'A cinema sold 1,245 tickets on Friday and 1,320 tickets on Saturday. How many tickets were sold in total?', answer: '2,565 tickets' },
+      { q: 'A baker baked 1,136 loaves in the morning and 843 in the afternoon. How many loaves altogether?', answer: '1,979 loaves' },
+    ],
+    lp2Questions: [
+      { q: 'A park had 3,200 visitors on Monday but only 1,845 on Tuesday. How many fewer visitors were there on Tuesday?', answer: '1,355 fewer visitors' },
+    ],
+    hint1: 'Steps to solve a word problem:\n1. Read the problem carefully.\n2. Decide: find a TOTAL (add) or a DIFFERENCE (subtract)?\n3. Set up column addition or subtraction.\n4. Start from the ones column.',
+    hint2: 'Key words to spot:\n"altogether", "total", "how many now" → ADD\n"how many left", "how many fewer", "difference" → SUBTRACT',
+  },
+};
+
+module.exports[25] = {
+  iCan: [
+    'I can use the compact method to multiply 3- and 4-digit numbers by a 1-digit number.',
+    'I can solve multiplication word problems and check using estimation.',
+  ],
+  lp1: {
+    title: 'Multiplication',
+    type: 'arithmetic',
+    date: '14/07/2026',
+    instruction: 'Use the compact (column) method to solve each problem. Show your working and estimate first.',
+    questions: [
+      { q: 'A bus carries 256 passengers per journey. It makes 6 journeys. How many passengers does it carry in total?', answer: '1,536 passengers' },
+      { q: 'A school uses 348 sheets of paper every week. How many sheets does it use in 5 weeks?', answer: '1,740 sheets' },
+      { q: 'A farmer plants 1,246 seeds in each field. She has 4 fields. How many seeds does she plant altogether?', answer: '4,984 seeds' },
+      { q: 'A factory produces 2,135 items per hour. How many items does it produce in 7 hours?', answer: '14,945 items' },
+    ],
+    goingFurther: 'A shop sells 1,347 items each day for 6 days. It then receives a delivery of 2,500 more items. How many items does it have in total? Show two methods to check your answer.',
+  },
+  lp2: {
+    title: 'Multiplication',
+    type: 'arithmetic',
+    date: '14/07/2026',
+    instruction: 'Estimate first, then solve using the compact method. Show your working.',
+    questions: [
+      { q: 'A printer prints 2,348 pages every hour. How many pages does it print in 4 hours?', answer: '9,392 pages' },
+      { q: 'There are 1,075 tiles in each box. A builder buys 8 boxes. How many tiles does she have altogether?', answer: '8,600 tiles' },
+      { q: 'A charity collects 3,246 donations each week. How many donations are collected in 6 weeks?', answer: '19,476 donations' },
+    ],
+    goingFurther: 'Estimate first: 2,847 × 5. Then calculate exactly. How close was your estimate? What would you round to next time?',
+  },
+  adaptedSupport: {
+    lp1Questions: [
+      { q: 'A box holds 36 oranges. How many oranges are in 7 boxes?', answer: '252 oranges' },
+      { q: 'A baker makes 124 biscuits each day. How many does she make in 6 days?', answer: '744 biscuits' },
+    ],
+    lp2Questions: [
+      { q: 'A shelf holds 48 books. How many books fit on 5 shelves?', answer: '240 books' },
+    ],
+    hint1: 'Steps for compact multiplication:\n1. Estimate first — round to the nearest 100.\n2. Start from the ones column.\n3. Write regrouped digits above the next column.\n4. Multiply the tens, then add any regrouped digit.',
+    hint2: 'Remember: multiply each digit starting from the RIGHT. If the answer is 10 or more, regroup into the next column.',
+  },
+};
+
+module.exports[26] = {
+  iCan: [
+    'I can use short division to divide 3- and 4-digit numbers by a 1-digit number.',
+    'I can find a quotient and remainder using short division.',
+  ],
+  lp1: {
+    title: 'Division',
+    type: 'arithmetic',
+    date: '15/07/2026',
+    instruction: 'Use short division to solve each problem. Show your working.',
+    questions: [
+      { q: '1,848 books are shared equally among 6 shelves. How many books are on each shelf?', answer: '308 books' },
+      { q: 'A farmer packs 2,736 eggs equally into boxes of 8. How many boxes does he fill?', answer: '342 boxes' },
+      { q: 'A school has 3,024 pupils split into 9 equal groups. How many pupils are in each group?', answer: '336 pupils' },
+      { q: '4,872 ml of juice is poured equally into 4 glasses. How much juice is in each glass?', answer: '1,218 ml' },
+    ],
+    goingFurther: '5,184 tiles are packed equally into 6 boxes, then 3 boxes are delivered. How many tiles are delivered? Use inverse multiplication to check your division.',
+  },
+  lp2: {
+    title: 'Division',
+    type: 'arithmetic',
+    date: '15/07/2026',
+    instruction: 'Use short division. Include any remainder in your answer.',
+    questions: [
+      { q: '1,357 apples are packed into bags of 4. How many full bags are made? How many apples are left over?', answer: '339 bags r 1' },
+      { q: '2,483 children are put into groups of 7. How many full groups are there? How many children are left?', answer: '354 groups r 5' },
+      { q: 'A baker has 3,950 biscuits. She packs them into boxes of 6. How many full boxes and how many spare biscuits?', answer: '658 boxes r 2' },
+    ],
+    goingFurther: 'A lorry carries 5 equal loads and the total weight is 3,875 kg. How heavy is each load? Is there a remainder? What would a remainder mean in this context?',
+  },
+  adaptedSupport: {
+    lp1Questions: [
+      { q: '672 stickers are shared equally among 6 friends. How many stickers each?', answer: '112 stickers' },
+      { q: '945 books are packed in boxes of 5. How many boxes?', answer: '189 boxes' },
+    ],
+    lp2Questions: [
+      { q: '380 sweets are put into bags of 4. How many full bags? How many left over?', answer: '95 bags r 0' },
+    ],
+    hint1: 'Steps for short division:\n1. Write the calculation using the bus-stop layout.\n2. Start with the HUNDREDS digit.\n3. How many times does the divisor go into that digit?\n4. Write the remainder above the next digit and continue.',
+    hint2: 'Remember: if the divisor is too big for the first digit, combine it with the next digit and try again.',
+  },
+};
+
+module.exports[27] = {
+  iCan: [
+    'I can identify when a problem needs more than one step.',
+    'I can use a bar model to plan and solve two-step word problems.',
+  ],
+  lp1: {
+    title: 'Calculation',
+    type: 'arithmetic',
+    date: '17/07/2026',
+    instruction: 'Use a bar model to plan each problem, then solve it step by step in your maths book.',
+    questions: [
+      { q: 'A garden centre has 7 boxes of plants. Each box holds 145 plants. The centre also has 236 plants in pots. How many plants are there altogether?', answer: 'Step 1: 7 × 145 = 1,015. Step 2: 1,015 + 236 = 1,251 plants' },
+      { q: 'A printer produces 256 pages each minute. After 5 minutes, 48 pages are found to have errors and thrown away. How many good pages remain?', answer: 'Step 1: 5 × 256 = 1,280. Step 2: 1,280 − 48 = 1,232 pages' },
+      { q: 'Each of 8 delivery vans carries 325 boxes. At the first stop, 147 boxes are unloaded from one van. How many boxes are left in that van?', answer: 'Step 1: 325 boxes in one van. Step 2: 325 − 147 = 178 boxes' },
+    ],
+    goingFurther: 'A school buys 6 packs of exercise books. Each pack has 125 books. Year 4 gets 380 and Year 5 gets 275. How many books are left? Write a full justification for your method.',
+  },
+  lp2: {
+    title: 'Calculation',
+    type: 'arithmetic',
+    date: '17/07/2026',
+    instruction: 'Use a bar model to plan each problem, then solve step by step.',
+    questions: [
+      { q: '1,260 chocolates are shared equally among 5 classes. Each class eats 36 chocolates at break. How many chocolates are left in each class?', answer: 'Step 1: 1,260 ÷ 5 = 252. Step 2: 252 − 36 = 216 chocolates' },
+      { q: 'A farmer picks 2,448 apples and packs them equally into 8 crates. Then 24 bruised apples are removed from one crate. How many apples are in that crate now?', answer: 'Step 1: 2,448 ÷ 8 = 306. Step 2: 306 − 24 = 282 apples' },
+      { q: '3,150 pupils at a sports day are split into 6 equal teams. Each team gains 35 extra supporters. How many people are with each team now?', answer: 'Step 1: 3,150 ÷ 6 = 525. Step 2: 525 + 35 = 560 people' },
+    ],
+    goingFurther: 'Class A has 4 packs of 167 stickers. Class B divides 1,500 stickers equally among 6 pupils. Which class has more stickers in total? How many more?',
+  },
+  adaptedSupport: {
+    lp1Questions: [
+      { q: 'A baker makes 4 trays of 24 cookies. She gives 15 to her neighbour. How many cookies are left?', answer: 'Step 1: 4 × 24 = 96. Step 2: 96 − 15 = 81 cookies' },
+      { q: 'A shop orders 3 boxes of 65 tins. It sells 47 tins on Monday. How many tins are left?', answer: 'Step 1: 3 × 65 = 195. Step 2: 195 − 47 = 148 tins' },
+    ],
+    lp2Questions: [
+      { q: '120 biscuits are shared equally among 4 classes. Each class eats 12. How many are left in each class?', answer: 'Step 1: 120 ÷ 4 = 30. Step 2: 30 − 12 = 18 biscuits' },
+    ],
+    hint1: 'Two-step problems:\nStep 1: What do I find FIRST?\nStep 2: What do I do with that answer?\n\nDraw a bar model:\n[ total ] = [ groups × amount ] then ± extra',
+    hint2: 'Remember: find the total or the equal share first, then read the second part of the problem carefully.',
+  },
+};
