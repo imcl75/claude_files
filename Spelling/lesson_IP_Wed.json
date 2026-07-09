@@ -1,0 +1,140 @@
+{
+  "code": "IP",
+  "rule": "Less predictable irregular past tenses — patterns in the group",
+  "stage": "T6W7",
+  "objective": "To spell irregular past-tense verbs by recognising vowel-pattern groups",
+  "lpDay": "Wed",
+  "lpSideBType": "vn_dm_sc",
+  "words": [
+    "knew","grew","flew","chose","froze","drove","woke","spoke","broke","wore"
+  ],
+  "clozeOrder": [
+    "grew","flew","knew","froze","drove","woke","chose","wore","spoke","broke"
+  ],
+  "defs": [
+    "was aware of or had information about; past of know",
+    "became bigger or developed; past of grow",
+    "moved through the air; past of fly",
+    "selected or decided on; past of choose",
+    "became solid with cold; past of freeze",
+    "controlled and steered a vehicle; past of drive",
+    "stopped sleeping; past of wake",
+    "used words to communicate; past of speak",
+    "split, cracked or smashed; past of break",
+    "had clothing or accessories on the body; past of wear"
+  ],
+  "sentences": {
+    "knew":  "She ____________________ the answer before the teacher had even finished asking the question.",
+    "grew":  "The tomato plants ____________________ so tall that summer that they reached the top of the greenhouse.",
+    "flew":  "The heron ____________________ low over the river, trailing its long legs just above the surface of the water.",
+    "chose": "After reading all four books in the series, she ____________________ the third one as her clear favourite.",
+    "froze": "The pond ____________________ solid overnight and by morning the ducks were sliding about on the ice.",
+    "drove": "He ____________________ across the entire country in three days, stopping only to sleep and refuel.",
+    "woke":  "She ____________________ to the smell of toast and found her brother had already made breakfast for everyone.",
+    "spoke": "The explorer ____________________ to the school about the six months she had spent in the Amazon rainforest.",
+    "broke": "The world record ____________________ for the third time that year when the sprinter crossed the finish line.",
+    "wore":  "The knight ____________________ armour so heavy that two squires were needed to help him mount his horse."
+  },
+  "syllableCounts": {
+    "knew":1,"grew":1,"flew":1,"chose":1,"froze":1,
+    "drove":1,"woke":1,"spoke":1,"broke":1,"wore":1
+  },
+  "phonemes": {
+    "knew":  [{"t":"line","l":"kn"},{"t":"line","l":"ew"}],
+    "grew":  [{"t":"dot","l":"g"},{"t":"dot","l":"r"},{"t":"line","l":"ew"}],
+    "chose": [{"t":"line","l":"ch"},{"t":"dot","l":"o"},{"t":"dot","l":"s"},{"t":"dot","l":"e"}],
+    "froze": [{"t":"dot","l":"f"},{"t":"dot","l":"r"},{"t":"dot","l":"o"},{"t":"dot","l":"z"},{"t":"dot","l":"e"}],
+    "broke": [{"t":"dot","l":"b"},{"t":"dot","l":"r"},{"t":"dot","l":"o"},{"t":"dot","l":"k"},{"t":"dot","l":"e"}],
+    "wore":  [{"t":"dot","l":"w"},{"t":"line","l":"or"},{"t":"dot","l":"e"}]
+  },
+  "wordMaps": {
+    "words": ["knew","grew","chose","froze","broke","wore"],
+    "syllables": {
+      "knew":  "knew",
+      "grew":  "grew",
+      "chose": "chose",
+      "froze": "froze",
+      "broke": "broke",
+      "wore":  "wore"
+    }
+  },
+  "starter": {
+    "question": "Can you write the past tense of each verb? What pattern do you spot?",
+    "words":   ["know","grow","fly","choose","freeze","break"],
+    "answers": ["knew","grew","flew","chose","froze","broke"],
+    "answerLabel": "Past tense:",
+    "ruleBox": "These verbs are irregular, but patterns emerge when grouped: know/knew, grow/grew, fly/flew all use -ew. Choose/chose, freeze/froze, drive/drove, wake/woke, speak/spoke, break/broke all use a long -o- sound. Wear/wore uses -ore. Group them and the pattern does half the work.",
+    "perPairNote": ""
+  },
+  "thisWeeksWordsQ": "What do you notice about today's words?",
+  "thisWeeksWordsPrompt": "Group today's words by their vowel sound. What do you spot?",
+  "thisWeeksWordsExplanation": "All today's words are irregular past tenses, but they fall into patterns. Knew, grew and flew all end in -ew (from know, grow, fly). Chose, froze, drove, woke, spoke and broke all have a long -o- sound. Wore has the -ore pattern. Grouping irregular verbs by vowel pattern makes them far easier to learn and remember.",
+  "etymology": {
+    "word": "chose",
+    "baseForm": "ceosan",
+    "clicks": [
+      {"label":"Language","body":"Old English"},
+      {"label":"Base word","body":"ceosan — to choose; the past form was ceas"},
+      {"label":"Original meaning","body":"ceosan meant to test, taste or pick out — related to German kiesen and Dutch kiezen."},
+      {"label":"Then","body":"Old English ceosan became Middle English chosen/chesen. The past tense ceas became chose by the 1300s."},
+      {"label":"Now","body":"We use chose as the simple past of choose: 'she chose the red one.'"},
+      {"label":"In today's words","body":"Chose, froze, drove, woke, spoke and broke all share the long -o- pattern in the past tense — even though their base verbs sound different."}
+    ]
+  },
+  "wordSortQ": "Can you sort these words into two groups?",
+  "wordSort": {
+    "box1label": "Past tense ends in -ew",
+    "box1sub": "Base verb changes vowel to -ew",
+    "box2label": "Past tense uses -o- or -ore pattern",
+    "box2sub": "Vowel changes to a long -o- sound",
+    "hint": "Look at the vowel in each past form. Does it end in -ew, or is there a long -o- sound?",
+    "answerNote": "-ew pattern: knew (know), grew (grow), flew (fly). Long -o- pattern: chose, froze, drove, woke, spoke, broke, wore.",
+    "verbOnly": ["knew","grew","flew"],
+    "verbNoun": [
+      {"word":"chose", "eg":"choose → chose"},
+      {"word":"froze", "eg":"freeze → froze"},
+      {"word":"drove", "eg":"drive → drove"},
+      {"word":"woke",  "eg":"wake → woke"},
+      {"word":"spoke", "eg":"speak → spoke"},
+      {"word":"broke", "eg":"break → broke"},
+      {"word":"wore",  "eg":"wear → wore"}
+    ],
+    "exampleLine": "know → knew (-ew pattern) | choose → chose (long -o- pattern)"
+  },
+  "spellData": [
+    {"opts":["new","knew","knoo"],         "correct":1},
+    {"opts":["groo","grewed","grew"],      "correct":2},
+    {"opts":["chosed","choze","chose"],    "correct":2},
+    {"opts":["woak","woke","wocked"],      "correct":1},
+    {"opts":["broke","brock","broaked"],   "correct":0}
+  ],
+  "wordShed": {
+    "baseWord": "knew",
+    "def": "had information or understanding about something",
+    "sentence": "He knew exactly where the treasure was buried, but he was not about to tell anyone else.",
+    "rhymes": "blew, crew, dew, flew, grew, new, through",
+    "morphology": "know (v) → knew (past) → known (past part) → knowing (pres part) → knowledge (n) → unknown (adj) → knowledgeable (adj)"
+  },
+  "morphMatrix": {
+    "baseWord": "know",
+    "def": "to have information or be aware of something",
+    "suffixes": ["-ew","-n","-ing","-ledge","un-…","✗ re-…"],
+    "answers": ["knew","known","knowing","knowledge","unknown","✗ not standard"]
+  },
+  "lpVerbNounName": "Find the Present",
+  "lpVerbNounInstr": "Write the present-tense base form of each verb.",
+  "lpVerbNoun": [
+    ["knew","know"],["grew","grow"],["flew","fly"],
+    ["chose","choose"],["froze","freeze"],["drove","drive"]
+  ],
+  "lpDefMatchName": "Match the Meaning",
+  "lpDefMatchInstr": "Write the word that matches each meaning.",
+  "lpDefinitions": [
+    "had clothing or accessories on the body",
+    "used words to communicate",
+    "stopped sleeping",
+    "selected or decided on",
+    "split, cracked or smashed"
+  ],
+  "lpDefMatchAnswers": ["wore","spoke","woke","chose","broke"]
+}
