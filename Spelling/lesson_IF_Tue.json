@@ -1,0 +1,138 @@
+{
+  "code": "IF",
+  "rule": "Fully irregular past tenses",
+  "stage": "T6W7",
+  "objective": "To spell past-tense forms that share no obvious spelling with the base verb",
+  "lpDay": "Tue",
+  "lpSideBType": "sc_dm",
+  "words": [
+    "went","was","had","said","did","made","told","bought","brought","caught"
+  ],
+  "clozeOrder": [
+    "bought","caught","went","was","had","said","did","made","told","brought"
+  ],
+  "defs": [
+    "moved or travelled to a place; past of go",
+    "existed or lived; past of be",
+    "owned or possessed; past of have",
+    "expressed in words; past of say",
+    "performed or carried out; past of do",
+    "created or produced; past of make",
+    "informed or narrated to someone; past of tell",
+    "paid for and received; past of buy",
+    "carried or took to a place; past of bring",
+    "seized or stopped something moving; past of catch"
+  ],
+  "sentences": {
+    "went":    "Last summer, the whole family ____________________ to the Brecon Beacons and climbed the highest peak.",
+    "was":     "The library ____________________ closed every Sunday, which annoyed the children who wanted to return their books.",
+    "had":     "By the time the rescue team arrived, the climbers ____________________ already found shelter behind a large boulder.",
+    "said":    "The judge ____________________ that no further evidence was needed and that the jury could now decide.",
+    "did":     "Nobody ____________________ more work that afternoon than the quietest girl in the back row.",
+    "made":    "The baker ____________________ a hundred loaves before six in the morning, each one shaped by hand.",
+    "told":    "She ____________________ her younger brother the same bedtime story every night, changing one detail each time.",
+    "bought":  "He ____________________ the last ticket available and arrived at the stadium with three minutes to spare.",
+    "brought": "The archaeologist ____________________ the ancient coin carefully to the surface, brushing away two thousand years of soil.",
+    "caught":  "The fielder ____________________ the ball one-handed at the boundary and the crowd roared in disbelief."
+  },
+  "syllableCounts": {
+    "went":1,"was":1,"had":1,"said":1,"did":1,
+    "made":1,"told":1,"bought":1,"brought":1,"caught":1
+  },
+  "phonemes": {
+    "bought":  [{"t":"dot","l":"b"},{"t":"line","l":"ough"},{"t":"dot","l":"t"}],
+    "brought": [{"t":"dot","l":"b"},{"t":"dot","l":"r"},{"t":"line","l":"ough"},{"t":"dot","l":"t"}],
+    "caught":  [{"t":"dot","l":"c"},{"t":"line","l":"augh"},{"t":"dot","l":"t"}],
+    "said":    [{"t":"dot","l":"s"},{"t":"line","l":"ai"},{"t":"dot","l":"d"}],
+    "went":    [{"t":"dot","l":"w"},{"t":"dot","l":"e"},{"t":"dot","l":"n"},{"t":"dot","l":"t"}],
+    "told":    [{"t":"dot","l":"t"},{"t":"dot","l":"o"},{"t":"dot","l":"l"},{"t":"dot","l":"d"}]
+  },
+  "wordMaps": {
+    "words": ["bought","brought","caught","said","went","told"],
+    "syllables": {
+      "bought":  "bought",
+      "brought": "brought",
+      "caught":  "caught",
+      "said":    "said",
+      "went":    "went",
+      "told":    "told"
+    }
+  },
+  "starter": {
+    "question": "Can you write the past tense of each verb? What do you notice?",
+    "words":   ["go","be","buy","bring","catch","say"],
+    "answers": ["went","was","bought","brought","caught","said"],
+    "answerLabel": "Past tense:",
+    "ruleBox": "These verbs are fully irregular — the past tense looks nothing like the base verb. Go → went, be → was, buy → bought. They must simply be memorised, but grouping them by sound can help: bought/brought/caught all share the -ough/-augh spelling for /ɔːt/.",
+    "perPairNote": ""
+  },
+  "thisWeeksWordsQ": "What do you notice about today's words?",
+  "thisWeeksWordsPrompt": "Think of the base verb for each word. How different does the past form look?",
+  "thisWeeksWordsExplanation": "All today's words are past tenses of fully irregular verbs. Some look nothing like their base: go→went, be→was, buy→bought. Others are still recognisable: have→had, say→said, tell→told. Three share the -ough/-augh spelling for the /ɔːt/ sound: bought, brought, caught. These must be memorised, but patterns in the group help.",
+  "etymology": {
+    "word": "bought",
+    "baseForm": "bohte",
+    "clicks": [
+      {"label":"Language","body":"Old English, via Germanic"},
+      {"label":"Base word","body":"bohte — past tense of bycgan (to buy)"},
+      {"label":"Original meaning","body":"bycgan meant to pay for or procure. The vowel change (y→o) is a remnant of the Germanic strong verb system."},
+      {"label":"Then","body":"By Middle English, bycgan had become buyen or buggen, but the past form bohte survived as boughte, then bought."},
+      {"label":"Now","body":"We use bought as the simple past and past participle of buy: 'she bought it yesterday.'"},
+      {"label":"In today's words","body":"Bought, brought and caught all share the -ough/-augh pattern for /ɔːt/. They look very different from their base verbs: buy, bring, catch."}
+    ]
+  },
+  "wordSortQ": "Can you sort these words into two groups?",
+  "wordSort": {
+    "box1label": "Completely different from the base verb",
+    "box1sub": "go → went, be → was, buy → bought...",
+    "box2label": "Still recognisable from the base verb",
+    "box2sub": "have → had, say → said, do → did...",
+    "hint": "Think of the base verb. Does the past form look like it, or nothing like it?",
+    "answerNote": "Completely different: went (go), was (be), bought (buy), brought (bring), caught (catch). Still recognisable: had (have), said (say), did (do), made (make), told (tell).",
+    "verbOnly": ["went","was","bought","brought","caught"],
+    "verbNoun": [
+      {"word":"had",   "eg":"have → had"},
+      {"word":"said",  "eg":"say → said"},
+      {"word":"did",   "eg":"do → did"},
+      {"word":"made",  "eg":"make → made"},
+      {"word":"told",  "eg":"tell → told"}
+    ],
+    "exampleLine": "go → went (completely different) | have → had (still recognisable)"
+  },
+  "spellData": [
+    {"opts":["bort","borght","bought"],   "correct":2},
+    {"opts":["caught","cort","cawt"],     "correct":0},
+    {"opts":["brort","brought","brorght"],"correct":1},
+    {"opts":["sayed","sayd","said"],      "correct":2},
+    {"opts":["told","tould","teld"],      "correct":0}
+  ],
+  "wordShed": {
+    "baseWord": "brought",
+    "def": "carried or took something to a place",
+    "sentence": "She brought her whole shell collection to school and spent the morning explaining where each one came from.",
+    "rhymes": "bought, caught, taught, thought",
+    "morphology": "bring (v) → brought (past) → bringing (pres part) → bringer (n) → brings (3rd person) → outbrought (archaic)"
+  },
+  "morphMatrix": {
+    "baseWord": "bring",
+    "def": "to carry or take something to a place",
+    "suffixes": ["-ought","-ing","-er","-s","out-…","✗ un-…"],
+    "answers": ["brought","bringing","bringer","brings","✗ not standard","✗ not standard"]
+  },
+  "lpVerbNounName": "Find the Base Verb",
+  "lpVerbNounInstr": "Write the present-tense base form of each verb.",
+  "lpVerbNoun": [
+    ["went","go"],["was","be"],["bought","buy"],
+    ["brought","bring"],["caught","catch"],["said","say"]
+  ],
+  "lpDefMatchName": "Match the Meaning",
+  "lpDefMatchInstr": "Write the word that matches each meaning.",
+  "lpDefinitions": [
+    "seized or stopped something moving",
+    "performed or carried out an action",
+    "informed or narrated to someone",
+    "owned or possessed something",
+    "paid for and received something"
+  ],
+  "lpDefMatchAnswers": ["caught","did","told","had","bought"]
+}
