@@ -198,35 +198,12 @@ def build_kc(kc_img_dest_name):
     return xml, rels
 
 def build_lo(spec, base_unpacked):
-    """
-    Find the LO slide in base by scanning rels for a Layout 5 reference,
-    then patch the three LO texts (idx 10 WAL, 13 TIB, 14 ISB).
-    Falls back to slide2.xml if no Layout 5 slide is found.
-    """
-    import glob as _glob
-
-    slide_dir  = f'{base_unpacked}/ppt/slides'
-    rels_dir   = f'{base_unpacked}/ppt/slides/_rels'
-    lo_slide   = None
-
-    # Scan rels files to find which slide references slideLayout5.xml
-    for rels_path in sorted(_glob.glob(f'{rels_dir}/slide*.xml.rels')):
-        content = open(rels_path, encoding='utf-8').read()
-        if 'slideLayout5.xml' in content:
-            slide_name = os.path.basename(rels_path).replace('.rels', '')
-            candidate  = f'{slide_dir}/{slide_name}'
-            if os.path.exists(candidate):
-                lo_slide = slide_name
-                break
-
-    if lo_slide is None:
-        # Fallback: slide2.xml (original behaviour)
-        lo_slide = 'slide2.xml'
-
-    xml  = open(f'{slide_dir}/{lo_slide}',       encoding='utf-8').read()
-    rels = open(f'{rels_dir}/{lo_slide}.rels', encoding='utf-8').read()
+    """Copy slide2.xml from base and patch the three LO texts."""
+    xml = open(f'{base_unpacked}/ppt/slides/slide2.xml', encoding='utf-8').read()
+    rels = open(f'{base_unpacked}/ppt/slides/_rels/slide2.xml.rels', encoding='utf-8').read()
 
     # The LO slide has three body placeholders: idx 10 (WAL), 13 (TIB), 14 (ISB)
+    # Find and replace their text content
     def replace_ph_text(x, target_idx, new_text):
         pattern = (rf'(<p:ph type="body"[^>]*idx="{target_idx}"[^>]*/>'
                    rf'.*?</p:nvSpPr>.*?<a:t>)[^<]*(</a:t>)')
