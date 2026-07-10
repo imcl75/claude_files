@@ -378,8 +378,12 @@ def edit_cover(path, lesson):
 
     if kq is not None:
         set_text(kq, lesson['key_question'])
+    challenge_text = lesson.get('challenge') or ''
     if challenge is not None:
-        set_text(challenge, 'Our Challenge is:\n' + lesson['challenge'])
+        if challenge_text:
+            set_text(challenge, 'Our Challenge is:\n' + challenge_text)
+        else:
+            clear_text(challenge)
     if day_box is not None:
         set_text(day_box, lesson['day'] + ' ' + lesson.get('session', ''))
 
@@ -488,7 +492,8 @@ def edit_misconception(path, slide_def):
         elif name in bubble_map:
             idx = bubble_map[name]
             if idx < len(learners):
-                set_text(sp, learners[idx]['statement'])
+                txt = learners[idx].get('view', learners[idx].get('statement', ''))
+                set_text(sp, txt)
         elif name in name_map:
             idx = name_map[name]
             if idx < len(learners):
