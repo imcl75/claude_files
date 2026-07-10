@@ -68,12 +68,12 @@ The images need to enhance understanding and stimulate discussion, not decorate 
 | GitHub `EnquiryBuilder/slide_layouts.py` | final | Fetch via github-sync |
 | GitHub `EnquiryBuilder/generate_mtp.py` | final | Fetch via github-sync |
 | GitHub `EnquiryBuilder/clean.py` | final | Fetch via github-sync |
-| `Being_a_Scientist_slide_deck.pptx` | sci_template source | **Yes — re-upload** |
-| `science-example.pptx` | sci_example source | **Yes — re-upload** |
-| `KQ_LO.pptx` | source for kq_lo_science_clean | **Yes — re-upload** |
+| GitHub `EnquiryBuilder/templates/Being_a_Scientist_slide_deck.pptx` | final | No — fetch from GitHub |
+| GitHub `EnquiryBuilder/templates/science-example.pptx` | final | No — fetch from GitHub |
+| GitHub `EnquiryBuilder/templates/KQ_LO.pptx` | final | No — fetch from GitHub |
 | `/mnt/skills/user/github-sync/SKILL.md` | has PAT | No (in skill folder) |
 
-Note: `kq_lo_science_clean.pptx` is generated at setup time by running the cleanup script on `KQ_LO.pptx`. It is NOT in GitHub (binary PPTX). Regenerate it at session start.
+Note: `kq_lo_science_clean.pptx` is generated at setup time from `KQ_LO.pptx` (both in GitHub). Regenerate at every session start.
 
 ---
 
@@ -90,7 +90,7 @@ python3 << 'SETUP'
 import zipfile, shutil, os
 from lxml import etree
 
-src = '/mnt/user-data/uploads/KQ_LO.pptx'
+src = '/home/claude/enquiry-builder/kq_lo_template.pptx'
 work = '/tmp/kqlo_clean'
 shutil.rmtree(work, ignore_errors=True)
 os.makedirs(work)
@@ -129,9 +129,7 @@ with zipfile.ZipFile(dst, 'w', zipfile.ZIP_DEFLATED) as z:
 print(f"Created: {dst}")
 SETUP
 
-# 3. Copy template PPTXs to working dir
-cp /mnt/user-data/uploads/Being_a_Scientist_slide_deck.pptx /home/claude/enquiry-builder/sci_template.pptx
-cp /mnt/user-data/uploads/science-example.pptx /home/claude/enquiry-builder/sci_example.pptx
+# Templates are already fetched from GitHub into /home/claude/enquiry-builder/ by the fetch step above
 
 # 4. Create assets directory and extract badge/pupil images
 # (build_science_lesson.py expects /home/claude/enquiry-builder/assets/)
@@ -166,4 +164,4 @@ The test lesson JSON is at GitHub `EnquiryBuilder/test_lesson.json` — do NOT u
 
 ## Immediate next step
 
-Fetch all scripts from GitHub, re-upload the three template PPTXs (Being_a_Scientist_slide_deck.pptx, science-example.pptx, KQ_LO.pptx), run setup to create kq_lo_science_clean.pptx and extract assets, then ask Innes to confirm the number of lessons for the States of Matter enquiry before generating the full MTP.
+Fetch all scripts AND template PPTXs from GitHub (all under EnquiryBuilder/ — scripts at root, templates in templates/ subfolder), run setup to create kq_lo_science_clean.pptx and extract assets, then ask Innes to confirm the number of lessons for the States of Matter enquiry before generating the full MTP.
