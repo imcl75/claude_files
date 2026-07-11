@@ -21,6 +21,7 @@ Usage as a module:
 import re
 import sys
 import zipfile
+from lxml import etree
 
 
 def fix_pptx(input_path, output_path=None):
@@ -190,6 +191,56 @@ def fix_pptx(input_path, output_path=None):
                         files[fkey] = files[fkey].decode('utf-8').replace(bad_id, new_id).encode('utf-8')
                 next_num += 1
             print(f'  [fix_pptx_ooxml] Fixed {len(non_std_ids)} non-numeric rId(s): {non_std_ids}')
+            any_fixed = True
+
+
+    # ------------------------------------------------------------------ #
+    # 6. SharePoint / Teams customXml metadata                            #
+    # Files saved to/from SharePoint or Teams carry customXml/ parts that #
+    # embed 23+ broken external schema references PowerPoint can never     #
+    # validate, causing persistent repair dialogs on every open.          #
+    # Strip the parts entirely — they carry no document content.          #
+    # ------------------------------------------------------------------ #
+    STRIP_PREFIX  = 'customXml/'
+    STRIP_RELTYPE = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml'
+    SHAREPOINT_MARKERS = [
+        'schemas.microsoft.com/sharepoint',
+        'schemas.microsoft.com/office/2006/metadata',
+        'schemas.microsoft.com/office/infopath',
+    ]
+    custom_parts = [n for n in files if n.startswith(STRIP_PREFIX)]
+    if custom_parts:
+        is_sharepoint = False
+        for part in custom_parts:
+            if part.endswith('.xml') and '_rels' not in part:
+                content_str = files[part].decode('utf-8', errors='ignore')
+                if any(m in content_str for m in SHAREPOINT_MARKERS):
+                    is_sharepoint = True
+                    break
+        if is_sharepoint:
+            for part in list(custom_parts):
+                del files[part]
+            # Remove customXml relationships from both _rels/.rels and ppt/_rels/presentation.xml.rels
+            for rels_key in ['_rels/.rels', 'ppt/_rels/presentation.xml.rels']:
+                if rels_key in files:
+                    root = etree.fromstring(files[rels_key])
+                    for rel in root.findall('{http://schemas.openxmlformats.org/package/2006/relationships}Relationship'):
+                        tgt = rel.get('Target', '')
+                        typ = rel.get('Type', '')
+                        if typ == STRIP_RELTYPE or 'customXml' in tgt:
+                            root.remove(rel)
+                    files[rels_key] = etree.tostring(root, xml_declaration=True,
+                                                     encoding='UTF-8', standalone=True)
+            # Remove from Content_Types
+            if '[Content_Types].xml' in files:
+                ct_root = etree.fromstring(files['[Content_Types].xml'])
+                CT = 'http://schemas.openxmlformats.org/package/2006/content-types'
+                for el in list(ct_root):
+                    if el.get('PartName', '').startswith('/customXml'):
+                        ct_root.remove(el)
+                files['[Content_Types].xml'] = etree.tostring(ct_root, xml_declaration=True,
+                                                               encoding='UTF-8', standalone=True)
+            print(f'  [fix_pptx_ooxml] Fix #6: Stripped SharePoint metadata ({len(custom_parts)} customXml parts)')
             any_fixed = True
 
     # ------------------------------------------------------------------ #
