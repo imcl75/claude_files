@@ -24,6 +24,7 @@ from pptx.enum.text import PP_ALIGN
 from lxml import etree
 
 ICON_PATH = os.path.join(WORK, 'll_icons', 'scientist.png')  # legacy param, ignored by builder
+PARTICLE_MODEL_IMG = os.path.join(WORK, 'particle_model.png')
 
 # ── Slide dimensions (A4 portrait, matches school LP files) ────────────────
 SW_IN, SH_IN = 7.5, 10.833
@@ -187,6 +188,23 @@ def word_bank(slide, y, words, w=None):
     r2.font.name = FONT_BODY; r2.font.size = Pt(9); r2.font.color.rgb = DARK
     return y + box_h + 0.06
 
+def add_reference_image(slide, y, img_path, max_w=None, max_h=1.35):
+    """Place a reference image at native aspect ratio, capped by max_h,
+    centred within CONT_W. If a task tells pupils to 'use X to help you',
+    X should be on the page, not just named - this exists for that."""
+    from PIL import Image as _PILImage
+    max_w = max_w or CONT_W
+    iw, ih = _PILImage.open(img_path).size
+    ratio = iw / ih
+    h = max_h
+    w = h * ratio
+    if w > max_w:
+        w = max_w
+        h = w / ratio
+    x = CONT_X + (CONT_W - w) / 2
+    slide.shapes.add_picture(img_path, _i(x), _i(y), width=_i(w), height=_i(h))
+    return y + h + 0.10
+
 def marking_heading(slide, y, text='Marking Station'):
     tb = add_textbox(slide, CONT_X, y, CONT_W, 0.40)
     set_para(tb.text_frame.paragraphs[0], text, bold=True, size_pt=16, color=GREEN)
@@ -289,11 +307,12 @@ def build_lp():
     y = CONT_Y
     y = heading(s1, y, 'Part A   Sort the materials')
     y = instruction(s1, y, 'Sort each material into solid, liquid or gas. Write one reason for '
-                            'each, using the particle model to help you.')
+                            'each, using the particle model below to help you.')
+    y = add_reference_image(s1, y, PARTICLE_MODEL_IMG, max_h=1.05)
 
     y = sort_table_header(s1, y)
     for i, m in enumerate(MATERIALS):
-        y = sort_table_row(s1, y, m, even=(i % 2 == 0))
+        y = sort_table_row(s1, y, m, even=(i % 2 == 0), row_h=0.36)
 
     y += 0.12
     y = heading(s1, y, 'Part B   Challenge')
