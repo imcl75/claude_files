@@ -39,3 +39,51 @@ before finalising.
 Implementation note: `Science/build_t6w7_l1_lp.py`'s `add_reference_image()`
 helper places an image at native aspect ratio capped by a max height,
 centred in the content width - a reusable pattern for this.
+
+---
+
+## Pupil-page readability pass (sizes, label scale, write-line spacing)
+
+Confirmed as standing rules by Innes (11 Jul 2026), same T6W7 L1 LP, after
+seeing a first readability pass in real PowerPoint. All four are
+mechanical/structural, not one-off content choices - apply to every LP.
+
+**Learning label must be scaled down from the pipeline's natural render.**
+`label_builder.build_enquiry_label()` always embeds the label at its fixed
+natural width (`LL_W`, ~3.9"). At that size, on an A4 LP, it reads as too
+large relative to the rest of the page. Innes's own resize landed on
+~70.7% of natural width/height (aspect ratio preserved) - resize the
+embedded picture after calling the builder (grab the shape it just added,
+scale `left`/`top`/`width`/`height` together) rather than assuming the
+natural size is correct. See `LABEL_SCALE` in `build_t6w7_l1_lp.py`.
+
+**Pupil-page text must be sized for children reading their own paper, not
+compressed to fit.** Marking station stays compact (it's for the teacher).
+Pupil page confirmed target sizes from Innes's own edit: section headings
+14-16pt, instructions 10.5-12pt, table header/cell text 10pt, word bank
+12pt. These aren't hard limits for every LP (content volume varies) but
+are the reference point - if a pupil-page LP is coming out smaller than
+this without a specific reason, it's probably wrong.
+
+**Any writing-line block needs a full line-gap of clearance before the
+first line, not just after it.** The gap between lines (0.8cm / 0.315")
+must also be the minimum gap between the preceding instruction text and
+the first line itself - otherwise there's no room to actually write on
+that first line, it sits directly under the text above it.
+
+**Fill the page - don't leave the bottom third blank.** If content ends
+partway down an A4 page with clear empty space below, that's a signal
+sizes are too small or spacing too tight, not that the LP is "done".
+Bigger pupil-page text and a bigger reference image (per the two rules
+above) should be the first things tried before adding more content just
+to fill space.
+
+**Table rows must grow for content that wraps, not clip it.** A fixed row
+height chosen for the common case (most material names fit one line) will
+clip a longer name's second line at the larger pupil-page font size (e.g.
+"Balloon (filled with air)" wrapping to two lines). Row height should be
+`max(base_row_height, wrap_line_count * line_height + padding)`, computed
+per row, not a single fixed value applied to every row. This is the same
+category of bug as `force_shrink_to_fit`'s original fontScale issue in
+`lib_ooxml.py` and the earlier heading/instruction/word-bank fixes in this
+same file - a fixed box size for text whose wrap count wasn't checked.
