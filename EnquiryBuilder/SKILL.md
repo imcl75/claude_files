@@ -800,3 +800,51 @@ comparing against ground truth, verify the comparison method against a
 raw count (element occurrences via simple string counting) before trusting
 its "MATCH" result, especially before telling Innes something is now
 confirmed correct.
+
+### Round 9 (11 Jul 2026, same day) — the actual repair-dialog cause, found
+
+Innes confirmed the animations and layouts from Round 8 now play back the
+same as his own working file - but the delivered file still triggered a
+repair dialog on open. Since content was now confirmed matching, the cause
+had to be in the package's own mechanics, not visible slide content.
+Checked `docProps/app.xml` - a part this skill had never touched or
+regenerated on any build - and found it stale: `<Slides>17</Slides>`,
+`<Notes>9</Notes>`, `<HiddenSlides>9</HiddenSlides>`, and a `TitlesOfParts`
+vector listing slide titles from an unrelated 17-slide deck (things like
+"Carrying out the investigation", "Watch: how we will carry out the
+test"). This is carried over unmodified from whichever source template's
+own `app.xml` `build_lesson()`'s working directory started from
+(`science-example.pptx`) and never regenerated to describe the actual
+11-slide assembled deck. Diffed against Innes's working file's own
+`app.xml` and confirmed: his has `<Slides>11</Slides>`, `<Notes>2</Notes>`,
+`<HiddenSlides>0</HiddenSlides>`, and a `TitlesOfParts` vector that exactly
+matches the real 11 slides (title text for slides with a real `<p:ph
+type="title"/>` placeholder, "PowerPoint Presentation" as PowerPoint's own
+fallback for slides without one). PowerPoint cross-validates this summary
+metadata against the actual package on open and flags a mismatch this
+severe as corruption requiring repair - a highly plausible, and the only
+concretely confirmed, cause found across every round of this
+investigation.
+
+Added Fix #7 to `Shared/fix_pptx_ooxml.py`: regenerates `docProps/app.xml`
+from the actual final package - real slide count, real notesSlide count,
+real hidden-slide count (checked via `show="0"` on `<p:sldId>`), and a
+correctly derived `TitlesOfParts`/`HeadingPairs` vector pair, keeping the
+same "Fonts Used" list already confirmed identical between this skill's
+output and Innes's working file. Rebuilt and confirmed the regenerated
+`TitlesOfParts` list matches his working file's exactly, slide for slide
+(one incidental difference found and separately fixed: T6W7's own content
+had an em dash in one title Innes's manual edit didn't - removed em dashes
+from `t6w7_l1.json` throughout, per Innes's standing style rule against
+them, not because it affected the repair dialog).
+
+Re-ran every check from Round 8 (SmartArt-free, full animation step diff,
+`verify_lesson.py`) plus the new app.xml check - all pass, all match.
+
+**Still open:** same as always - confirmation in real PowerPoint. This is
+the first round with a genuinely plausible, structurally confirmed cause
+for the repair dialog itself, rather than a visual/behavioural symptom
+that happened to also ship alongside an unexplained repair prompt. If it
+still repairs after this, the next diagnostic step is a byte-level diff of
+every remaining part between this build and a PowerPoint-native save of
+the same content, not another visual symptom hunt.

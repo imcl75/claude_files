@@ -33,14 +33,14 @@
         "type": "wedo_hook",
         "title": "What do you already know about materials?",
         "bullets": [
-          "Think about the objects around you \u2014 how would you describe them?",
+          "Think about the objects around you - how would you describe them?",
           "Which materials can you pour? Which ones keep their shape?",
           "Do you know what the words solid, liquid and gas mean?"
         ]
       },
       {
         "type": "wedo_grid",
-        "title": "Sort these \u2014 solid, liquid or gas?",
+        "title": "Sort these - solid, liquid or gas?",
         "items": [
           {
             "label": "Ice",
@@ -80,9 +80,9 @@
         "type": "ido_diagram",
         "title": "How are the particles arranged?",
         "bullets": [
-          "In a SOLID, particles are packed tightly in a fixed arrangement \u2014 the solid keeps its shape.",
-          "In a LIQUID, particles are close but can slide past each other \u2014 the liquid flows and takes the shape of its container.",
-          "In a GAS, particles move quickly and are spread far apart \u2014 the gas fills the entire space available."
+          "In a SOLID, particles are packed tightly in a fixed arrangement - the solid keeps its shape.",
+          "In a LIQUID, particles are close but can slide past each other - the liquid flows and takes the shape of its container.",
+          "In a GAS, particles move quickly and are spread far apart - the gas fills the entire space available."
         ],
         "image_path": "images/particle_model.png"
       },
@@ -97,7 +97,7 @@
         "bullets": [
           "Sort the material cards into three groups: solid, liquid or gas",
           "Record your decisions in the table on your LP",
-          "For each material, write one reason \u2014 use the particle model to help you",
+          "For each material, write one reason - use the particle model to help you",
           "Challenge: can you find one material that is difficult to classify? Why?"
         ]
       },
@@ -107,7 +107,7 @@
         "learners": [
           {
             "name": "Learner A",
-            "statement": "Sand is a liquid \u2014 you can pour it from one container to another, just like water."
+            "statement": "Sand is a liquid - you can pour it from one container to another, just like water."
           },
           {
             "name": "Learner B",

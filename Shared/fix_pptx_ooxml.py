@@ -244,6 +244,92 @@ def fix_pptx(input_path, output_path=None):
             any_fixed = True
 
     # ------------------------------------------------------------------ #
+    # 7. docProps/app.xml stale/wrong (Slides/Notes/HiddenSlides counts, #
+    #    TitlesOfParts) - carried over unmodified from whichever source  #
+    #    template's own app.xml the build's working directory started   #
+    #    from (e.g. science-example.pptx's own 17-slide app.xml), never #
+    #    regenerated to describe the actual assembled deck. Confirmed   #
+    #    11 Jul 2026 (Round 9) by diffing against a working, PowerPoint-#
+    #    native file: the working file's app.xml has Slides/Notes counts#
+    #    and a TitlesOfParts vector matching its real 11 slides exactly;#
+    #    this build's had <Slides>17</Slides>, <Notes>9</Notes> and a   #
+    #    TitlesOfParts vector describing a different, unrelated deck.   #
+    #    PowerPoint cross-validates this summary info against the       #
+    #    package and flags the mismatch as corruption on open.          #
+    # ------------------------------------------------------------------ #
+    app_key = 'docProps/app.xml'
+    pres_key = 'ppt/presentation.xml'
+    if app_key in files and pres_key in files:
+        slide_files = sorted(
+            (n for n in files if re.match(r'ppt/slides/slide\d+\.xml$', n)),
+            key=lambda n: int(re.search(r'\d+', n).group())
+        )
+        notes_files = [n for n in files if re.match(r'ppt/notesSlides/notesSlide\d+\.xml$', n)]
+        pres_xml = files[pres_key].decode('utf-8')
+        n_hidden = len(re.findall(r'<p:sldId\b[^>]*\bshow="0"', pres_xml))
+
+        P_NS = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+        A_NS = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+        titles = []
+        for sf in slide_files:
+            try:
+                sroot = etree.fromstring(files[sf])
+            except Exception:
+                titles.append('PowerPoint Presentation')
+                continue
+            title_text = None
+            for sp in sroot.iter(f'{{{P_NS}}}sp'):
+                ph = sp.find(f'.//{{{P_NS}}}nvSpPr/{{{P_NS}}}nvPr/{{{P_NS}}}ph')
+                if ph is not None and ph.get('type') == 'title':
+                    runs = sp.findall(f'.//{{{A_NS}}}t')
+                    title_text = ''.join(r.text or '' for r in runs).strip()
+                    break
+            titles.append(title_text if title_text else 'PowerPoint Presentation')
+
+        app_xml = files[app_key].decode('utf-8')
+        old_slides_m = re.search(r'<Slides>(\d+)</Slides>', app_xml)
+        old_notes_m = re.search(r'<Notes>(\d+)</Notes>', app_xml)
+        old_hidden_m = re.search(r'<HiddenSlides>(\d+)</HiddenSlides>', app_xml)
+        needs_fix = (
+            old_slides_m is None or int(old_slides_m.group(1)) != len(slide_files)
+            or old_notes_m is None or int(old_notes_m.group(1)) != len(notes_files)
+            or old_hidden_m is None or int(old_hidden_m.group(1)) != n_hidden
+        )
+        if needs_fix:
+            fonts = ['Aptos', 'Arial', 'Calibri', 'Sassoon Infant Rg', 'Sassoon Primary Rg',
+                     'Segoe UI', 'Twinkl Cursive Looped', 'Twinkl Cursive Looped Light']
+            vt = 'http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes'
+            heading_pairs = (
+                f'<HeadingPairs><vt:vector size="6" baseType="variant" xmlns:vt="{vt}">'
+                f'<vt:variant><vt:lpstr>Fonts Used</vt:lpstr></vt:variant><vt:variant><vt:i4>{len(fonts)}</vt:i4></vt:variant>'
+                f'<vt:variant><vt:lpstr>Theme</vt:lpstr></vt:variant><vt:variant><vt:i4>1</vt:i4></vt:variant>'
+                f'<vt:variant><vt:lpstr>Slide Titles</vt:lpstr></vt:variant><vt:variant><vt:i4>{len(titles)}</vt:i4></vt:variant>'
+                f'</vt:vector></HeadingPairs>'
+            )
+            total = len(fonts) + 1 + len(titles)
+            lpstrs = ''.join(f'<vt:lpstr>{esc}</vt:lpstr>' for esc in
+                              [f.replace('&', '&amp;').replace('<', '&lt;') for f in fonts]
+                              + ['office theme']
+                              + [t.replace('&', '&amp;').replace('<', '&lt;') for t in titles])
+            titles_of_parts = f'<TitlesOfParts><vt:vector size="{total}" baseType="lpstr" xmlns:vt="{vt}">{lpstrs}</vt:vector></TitlesOfParts>'
+
+            app_xml = re.sub(r'<Slides>\d+</Slides>', f'<Slides>{len(slide_files)}</Slides>', app_xml) \
+                if '<Slides>' in app_xml else app_xml.replace('</PresentationFormat>', f'</PresentationFormat><Slides>{len(slide_files)}</Slides>')
+            app_xml = re.sub(r'<Notes>\d+</Notes>', f'<Notes>{len(notes_files)}</Notes>', app_xml) \
+                if '<Notes>' in app_xml else app_xml.replace('</Slides>', f'</Slides><Notes>{len(notes_files)}</Notes>')
+            app_xml = re.sub(r'<HiddenSlides>\d+</HiddenSlides>', f'<HiddenSlides>{n_hidden}</HiddenSlides>', app_xml) \
+                if '<HiddenSlides>' in app_xml else app_xml.replace('</Notes>', f'</Notes><HiddenSlides>{n_hidden}</HiddenSlides>')
+            app_xml = re.sub(r'<HeadingPairs>.*?</HeadingPairs>', heading_pairs, app_xml, flags=re.S)
+            app_xml = re.sub(r'<TitlesOfParts>.*?</TitlesOfParts>', titles_of_parts, app_xml, flags=re.S)
+
+            files[app_key] = app_xml.encode('utf-8')
+            print(f'  [fix_pptx_ooxml] Fix #7: Regenerated docProps/app.xml '
+                  f'(Slides {old_slides_m.group(1) if old_slides_m else "?"}→{len(slide_files)}, '
+                  f'Notes {old_notes_m.group(1) if old_notes_m else "?"}→{len(notes_files)}, '
+                  f'HiddenSlides {old_hidden_m.group(1) if old_hidden_m else "?"}→{n_hidden})')
+            any_fixed = True
+
+    # ------------------------------------------------------------------ #
     # Write output                                                         #
     # ------------------------------------------------------------------ #
     with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as z:
