@@ -330,6 +330,63 @@ def fix_pptx(input_path, output_path=None):
             any_fixed = True
 
     # ------------------------------------------------------------------ #
+    # 8. Ghost slide IDs in p14:sectionLst (Sections panel data) —        #
+    #    presentation.xml carries a <p14:sectionLst> left over from       #
+    #    whichever source template the build started from, listing       #
+    #    section membership by sldId. When the working directory's       #
+    #    source template (e.g. science-example.pptx) had a different,    #
+    #    larger slide set at some point, its sectionLst references       #
+    #    sldIds that don't exist in the real, assembled <p:sldIdLst>.     #
+    #    PowerPoint validates every id in sectionLst against sldIdLst on  #
+    #    open and throws the repair dialog on any that don't resolve.    #
+    #    Confirmed 11 Jul 2026 (independently, via Claude Code diffing    #
+    #    Claude's v9 output against Innes's own PowerPoint-repaired      #
+    #    file): v9's sectionLst had 13 ghost ids (328, 326, 2079-2092)   #
+    #    none of which existed in the real 11-slide deck (ids 256-266);  #
+    #    the repaired file's sectionLst only listed the 11 real ids.     #
+    #    Fix: drop any <p14:sldId> in any section whose id isn't in the  #
+    #    real sldIdLst. Never invents or reorders — only removes ghosts. #
+    # ------------------------------------------------------------------ #
+    if pres_key in files:
+        pres_xml = files[pres_key].decode('utf-8')
+        real_ids_ordered = re.findall(r'<p:sldId\b[^>]*\bid="(\d+)"', pres_xml)
+        real_ids = set(real_ids_ordered)
+        sec_m = re.search(r'<p14:sectionLst.*?</p14:sectionLst>', pres_xml, re.S)
+        if sec_m and real_ids:
+            sec_xml = sec_m.group(0)
+            listed_ids = set(re.findall(r'<p14:sldId id="(\d+)"/>', sec_xml))
+            ghost_ids = listed_ids - real_ids
+            orphan_ids = [i for i in real_ids_ordered if i not in listed_ids]
+
+            new_sec_xml = sec_xml
+            for gid in ghost_ids:
+                new_sec_xml = new_sec_xml.replace(f'<p14:sldId id="{gid}"/>', '')
+
+            if orphan_ids:
+                # Real slides not claimed by any section (left behind once ghosts
+                # are removed, or never had a section entry at all) get appended
+                # to the last section's sldIdLst, in deck order, so every real
+                # slide is accounted for exactly once - matching how PowerPoint's
+                # own repair reconciles this list.
+                sections = list(re.finditer(r'<p14:sldIdLst>.*?</p14:sldIdLst>', new_sec_xml, re.S))
+                if sections:
+                    last = sections[-1].group(0)
+                    insert = ''.join(f'<p14:sldId id="{i}"/>' for i in orphan_ids)
+                    fixed_last = last.replace('</p14:sldIdLst>', insert + '</p14:sldIdLst>')
+                    new_sec_xml = new_sec_xml[:sections[-1].start()] + fixed_last + new_sec_xml[sections[-1].end():]
+
+            if new_sec_xml != sec_xml:
+                pres_xml = pres_xml.replace(sec_xml, new_sec_xml)
+                files[pres_key] = pres_xml.encode('utf-8')
+                msg = []
+                if ghost_ids:
+                    msg.append(f'removed {len(ghost_ids)} ghost id(s) {sorted(ghost_ids, key=int)}')
+                if orphan_ids:
+                    msg.append(f'reclaimed {len(orphan_ids)} orphaned real id(s) {orphan_ids} into last section')
+                print(f'  [fix_pptx_ooxml] Fix #8: p14:sectionLst — ' + '; '.join(msg))
+                any_fixed = True
+
+    # ------------------------------------------------------------------ #
     # Write output                                                         #
     # ------------------------------------------------------------------ #
     with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as z:

@@ -848,3 +848,49 @@ that happened to also ship alongside an unexplained repair prompt. If it
 still repairs after this, the next diagnostic step is a byte-level diff of
 every remaining part between this build and a PowerPoint-native save of
 the same content, not another visual symptom hunt.
+
+### Round 10 (11 Jul 2026, same day) — real cause found: ghost slide ids in p14:sectionLst
+
+The app.xml fix (Round 9) was confirmed correct but not sufficient - Innes
+still had to repair the file. Diffing every part of the delivered file
+against a second independent working reference turned up nothing new
+(media renumbering, notesSlide renumbering - same benign repackaging
+noise as every prior round). `diagnose.py`'s "BROKEN RELS" check flagged
+4 relationships, but running that same check against BOTH of Innes's own
+confirmed-working files produced the identical false positive - a bug in
+the checker's path resolution for the root `_rels/.rels` file (it
+computes a leading-slash base path that never matches real zip entry
+names), not a real defect. That check is unreliable for this specific
+case and should not be trusted going forward.
+
+The actual cause was found independently, via Claude Code diffing this
+skill's output against Innes's own repaired file directly: `presentation.xml`
+carries a `<p14:sectionLst>` (the Sections panel data) that lists slide
+membership by `sldId`. This skill's build starts from a working-directory
+source template whose own sectionLst was left over from an earlier,
+larger version of that template - so it references ids that don't exist
+in the assembled deck. Confirmed: this build's sectionLst had 13 ghost
+ids (328, 326, 2079-2092) against a real 11-slide deck (ids 256-266).
+PowerPoint validates every id in sectionLst against the real `sldIdLst`
+on open and throws the repair dialog on any that don't resolve - this is
+a real, structurally confirmed cause, not a guess.
+
+Added Fix #8 to `Shared/fix_pptx_ooxml.py`: strips any sectionLst id not
+present in the real sldIdLst, then reclaims any real slide id that's
+left with no section (a side effect of stripping ghosts interleaved with
+real ids) by appending it to the last section, in deck order. Rebuilt
+(v10) and confirmed the resulting sectionLst matches Innes's reference
+exactly: Resource Slides = [256, 257, 258], Lesson Slides = [259-266].
+
+Re-ran `verify_lesson.py` against v10: one pre-existing issue remains,
+unrelated to this fix - slide 3 (Chemistry discipline) has two text
+boxes overlapping by 29% of the smaller box's area. This is the same
+Chemistry slide template content/overlap issue flagged in an earlier
+round and previously deprioritised; not touched this round.
+
+**Still open:** confirmation in real PowerPoint. If it still repairs
+after this, sectionLst and app.xml are now both fixed and confirmed
+correct, so the next diagnostic step should look at parts not yet
+checked at all - relationship ID schemes beyond presentation.xml.rels,
+schema element ordering inside slide/layout XML, or embedded font
+references - rather than re-checking anything covered by Rounds 7-10.
