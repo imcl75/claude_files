@@ -153,7 +153,7 @@ _cache = {}
 def src_dir(pptx):
     k = str(pptx)
     if k not in _cache:
-        dst = f'/tmp/src_{Path(pptx).stem}'; unzip(pptx, dst); _cache[k] = dst
+        dst = f'/tmp/src_{os.getpid()}_{Path(pptx).stem}'; unzip(pptx, dst); _cache[k] = dst
     return _cache[k]
 
 def _slide_text(sd, sn):

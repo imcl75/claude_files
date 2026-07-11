@@ -39,7 +39,7 @@ def build_being_a_scientist(work, templates, spec):
     st.append(tbox(50, 'Being a Scientist', 400000, 100000, SW - 800000, 700000,
                     sz=3200, bold=True, color='1A3A5C', align='l', name='Title 50'))
     save(t, sp)
-    icon_tmp = '/tmp/scientist_icon.png'
+    icon_tmp = f'/tmp/scientist_icon_{os.getpid()}.png'
     extract_image_by_shape_name(pptx, REG.BEING_A_SCIENTIST_ICON_SOURCE_SLIDE,
                                  REG.BEING_A_SCIENTIST_ICON_SHAPE_NAME, icon_tmp)
     add_img(sp, rp, work, icon_tmp, 150000, SH - 1300000, 1100000, 1100000, 51)
@@ -52,15 +52,26 @@ def build_kq_challenge(work, templates, spec):
     sp, rp = clone(work, pptx, sn, copy_hdphoto=True)
     delete_shapes_by_id(sp, REG.KQ_CHALLENGE_STRIP_IDS)
     delete_shape_by_name(sp, REG.KQ_CHALLENGE_STRIP_NAME)
+    has_challenge = bool(spec.get('challenge'))
+    if not has_challenge:
+        # No investigation/written outcome this enquiry (confirmed against
+        # the MTP). Delete the whole challenge box rather than set_text() to
+        # an empty string - found by rendering that set_text() with an empty
+        # challenge still left "Our Challenge is:" showing on its own with
+        # nothing after it, which looks unfinished rather than genuinely
+        # absent. Removing the shape is what "not included in the cloud"
+        # (Innes's own words) actually requires.
+        delete_shape_by_name(sp, REG.KQ_CHALLENGE_TASK_SHAPE_NAME)
     tree = xr(sp)
     kq_shape = find_sp(tree, REG.KQ_CHALLENGE_KQ_SHAPE_NAME)
     if kq_shape is None:
         raise RuntimeError(f"kq_challenge: expected shape '{REG.KQ_CHALLENGE_KQ_SHAPE_NAME}' not found - template drift")
     set_text(kq_shape, spec['key_question'])
-    task_shape = find_sp(tree, REG.KQ_CHALLENGE_TASK_SHAPE_NAME)
-    if task_shape is None:
-        raise RuntimeError(f"kq_challenge: expected shape '{REG.KQ_CHALLENGE_TASK_SHAPE_NAME}' not found - template drift")
-    set_text(task_shape, f"Our Challenge is: \n{spec['challenge']}")
+    if has_challenge:
+        task_shape = find_sp(tree, REG.KQ_CHALLENGE_TASK_SHAPE_NAME)
+        if task_shape is None:
+            raise RuntimeError(f"kq_challenge: expected shape '{REG.KQ_CHALLENGE_TASK_SHAPE_NAME}' not found - template drift")
+        set_text(task_shape, f"Our Challenge is: \n{spec['challenge']}")
     xw(tree, sp)
     return sp
 
@@ -269,7 +280,10 @@ def build_lesson(mtp_path, templates_dir, out_path, manifest_path):
         if not os.path.exists(p):
             raise FileNotFoundError(f"Template '{k}' not found at {p}")
 
-    work = '/tmp/build_work'
+    # Was a fixed '/tmp/build_work' - collided with stale leftover directories
+    # from unrelated processes in some sandboxes (owned by a different user,
+    # un-removable). PID-scoped so each build gets a fresh, unique path.
+    work = f'/tmp/build_work_{os.getpid()}'
     unzip(templates['science_example'], work)
     clear_slides(work)
     build_layout_map(work)
