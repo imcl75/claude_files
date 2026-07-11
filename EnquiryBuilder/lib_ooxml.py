@@ -498,22 +498,87 @@ def find_pic_id_by_name(tree, name):
             return int(cNvPr.get('id'))
     return None
 
-def force_shrink_to_fit(s):
-    """Force PowerPoint to shrink text to fit its box (normAutofit) rather
-    than overflow it. Used when overriding cloned template text with content
-    of unknown length going into a fixed-size template shape (e.g. concept
-    cartoon speech bubbles) - the template box size is fixed and was sized
-    for its own original text, not for whatever the current lesson's
-    statement is."""
+def _wrap_line_count(text, chars_per_line):
+    """Word-wrap text at chars_per_line and return the number of lines -
+    used to estimate whether a given font size will fit a box, without a
+    real text-measurement engine."""
+    words = text.split()
+    if not words: return 1
+    lines = 1; cur = 0
+    for w in words:
+        add = len(w) + (1 if cur else 0)
+        if cur + add > chars_per_line and cur > 0:
+            lines += 1; cur = len(w)
+        else:
+            cur += add
+    return lines
+
+def force_shrink_to_fit(s, min_sz=1400, step=100):
+    """Shrink text to actually fit its box, computed directly rather than
+    left for PowerPoint to resolve at open time.
+    Found via the T6W7 crash-fix session: an earlier version of this
+    function only added an empty <a:normAutofit/> with no fontScale set,
+    which asks PowerPoint to auto-shrink but supplies no computed shrink
+    percentage - LibreOffice happened to lay it out without visible overflow
+    when rendered for QA, but real PowerPoint trusts the stored (absent)
+    scale and left the text overflowing the box edges, confirmed by a
+    screenshot of the concept cartoon slide with text spilling across
+    neighbouring shapes. Fixed by computing an explicit font size here
+    (word-wrap heuristic against the shape's actual box width/height) and
+    writing it onto every run directly, so the fit does not depend on the
+    renderer recalculating anything. normAutofit is still set afterwards
+    with a matching fontScale, as a hint for PowerPoint's own live-editing
+    behaviour if Innes later retypes the text by hand, but the delivered
+    file is never relying on it alone."""
+    spPr = s.find(f'{{{P}}}spPr')
+    xfrm = spPr.find(f'{{{A}}}xfrm') if spPr is not None else None
+    ext = xfrm.find(f'{{{A}}}ext') if xfrm is not None else None
+    if ext is None: return  # no geometry to compute against - leave as-is
+    box_w_emu = int(ext.get('cx')); box_h_emu = int(ext.get('cy'))
+    EMU_PER_PT = 12700
+    inset_pt = 14  # PowerPoint's default text box inset is 0.1in each side ~= 7.2pt; use a slightly
+                   # more conservative figure since speech-bubble shapes carry extra internal padding
+    usable_w_pt = max(10, box_w_emu / EMU_PER_PT - 2 * inset_pt)
+    usable_h_pt = max(10, box_h_emu / EMU_PER_PT - 2 * inset_pt)
+
+    tb = None
+    for ns in [P, A]:
+        tb = s.find(f'.//{{{ns}}}txBody')
+        if tb is not None: break
+    if tb is None: return
+    runs = tb.findall(f'.//{{{A}}}r')
+    if not runs: return
+    text = ''.join(r.find(f'{{{A}}}t').text or '' for r in runs if r.find(f'{{{A}}}t') is not None)
+    first_rpr = runs[0].find(f'{{{A}}}rPr')
+    start_sz = int(first_rpr.get('sz', '1800')) if first_rpr is not None else 1800
+
+    sz = start_sz
+    while sz > min_sz:
+        font_pt = sz / 100
+        chars_per_line = max(1, int(usable_w_pt / (font_pt * 0.52)))
+        lines = _wrap_line_count(text, chars_per_line)
+        line_height_pt = font_pt * 1.2
+        if lines * line_height_pt <= usable_h_pt:
+            break
+        sz -= step
+    sz = max(sz, min_sz)
+
+    for r in runs:
+        rpr = r.find(f'{{{A}}}rPr')
+        if rpr is not None:
+            rpr.set('sz', str(sz))
+
     bodyPr = None
     for ns in [P, A]:
         bodyPr = s.find(f'.//{{{ns}}}bodyPr')
         if bodyPr is not None: break
-    if bodyPr is None: return
-    for child_tag in ('spAutoFit', 'noAutofit', 'normAutofit'):
-        el = bodyPr.find(f'{{{A}}}{child_tag}')
-        if el is not None: bodyPr.remove(el)
-    etree.SubElement(bodyPr, f'{{{A}}}normAutofit')
+    if bodyPr is not None:
+        for child_tag in ('spAutoFit', 'noAutofit', 'normAutofit'):
+            el = bodyPr.find(f'{{{A}}}{child_tag}')
+            if el is not None: bodyPr.remove(el)
+        fit = etree.SubElement(bodyPr, f'{{{A}}}normAutofit')
+        if sz < start_sz:
+            fit.set('fontScale', str(int(round(sz / start_sz * 100000))))
 
 def strip_orphaned_media(work):
     """Remove any file in ppt/media/ that no relationship anywhere in the

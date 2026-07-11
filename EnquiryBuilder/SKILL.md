@@ -531,3 +531,72 @@ the gap that let the original crash ship. If any future SmartArt-bearing
 template slide is added to this pipeline, check its `.rels` for
 `diagramData` and treat that as a crash-risk flag requiring the same
 flatten-to-image treatment before it is ever cloned into a delivered file.
+
+### Round 6 (11 Jul 2026, same day) — repair dialog on open, plus two real bugs found from the repaired file
+
+Round 5's file still triggered PowerPoint's repair dialog. Innes sent the
+PowerPoint-repaired copy back plus two screenshots. Diffed the repaired
+file against what was actually delivered (same method as Round 2's
+diagnosis) and inspected both directly rather than guessing from the
+screenshots alone - two confirmed causes, one screenshot that could not be
+reproduced from the file itself:
+
+1. **Concept cartoon bubble text overflow - real bug, fixed.** The
+   screenshot showed lesson text spilling out of the speech bubbles and
+   across neighbouring shapes. `force_shrink_to_fit()` was only ever adding
+   an empty `<a:normAutofit/>` with no `fontScale` - that tells PowerPoint
+   "shrink this if needed" but supplies no computed shrink amount, so
+   nothing actually shrinks unless a user retypes the text by hand in the
+   app. LibreOffice's renderer happened to lay the same markup out without
+   visible overflow during QA, which is exactly why this wasn't caught
+   before delivery - another instance of the LibreOffice-vs-PowerPoint gap
+   first documented in Round 5. Rewritten to compute an actual font size
+   directly (word-wrap heuristic against the shape's real box width/height
+   in EMU, no external font-metrics dependency) and write it onto every run,
+   with `normAutofit`'s `fontScale` set to match as a secondary hint rather
+   than the only mechanism. Confirmed on rebuild: all three bubbles now
+   render fully inside their boxes with no overlap or spillover (18pt, down
+   from the template's 28pt, `fontScale` 64286 i.e. ~64%).
+
+2. **`wedo_hook` / `youdo_task` bundled all bullets under one click - real
+   inconsistency, fixed.** These two component types built a single
+   `body_sp()` content placeholder holding every bullet as separate
+   paragraphs, then called `animate(sp, [[3]])` - one shape, one click,
+   every bullet appears at once. `ido_diagram` already built one `tbox()`
+   per bullet with its own `animate()` group, giving a genuine one-bullet-
+   per-click sequence. This is very likely what Innes meant by "can't you
+   keep it the same from one set to another" - the animation behaviour
+   differed between content slide types with no reason for it to. Rewrote
+   both functions to match `ido_diagram`'s pattern exactly: one `tbox()` per
+   bullet, one `animate()` group per bullet. Confirmed on rebuild: both
+   slide types now produce one `clickEffect` per bullet, structurally
+   identical to `ido_diagram`, with zero `<p:bldP>` elements anywhere in the
+   file.
+
+3. **LO slide animation pane showing only one entry - could not reproduce,
+   not changed.** One screenshot showed PowerPoint's Animation Pane on the
+   LO slide with only a single numbered entry under "TRIGGER: UNNAMED",
+   which visually resembles the exact symptom an earlier session already
+   diagnosed and fixed (see the comment above `_anim_timing_xml()` in
+   `lib_ooxml.py`, dated the same day: a `<p:bldP>`-based paragraph build
+   wrongly applied to whole-shape visibility toggling, which produced this
+   precise pane behaviour). Checked directly: both the file actually
+   delivered and Innes's own PowerPoint-repaired copy of it contain three
+   separate, correctly-targeted `clickEffect` entries for the LO/TIB/ISB
+   boxes (`spid` 39/40/41), no `<p:bldP>` anywhere, matching the documented
+   correct pattern exactly - there is nothing in the XML that would produce
+   only one visible entry. Left unchanged rather than guessing at a further
+   "fix" with no confirmed fault to fix. If this recurs, the next diagnostic
+   step is a screenshot scrolled to confirm whether entries 2 and 3 are
+   truly absent from the pane or just below the fold, since "TRIGGER:
+   UNNAMED" itself is standard PowerPoint UI text for any click-triggered
+   animation group without a custom trigger name and is not on its own
+   evidence of a bug.
+
+**Still open, same as Round 5:** confirmation that this file now opens in
+real PowerPoint with no repair dialog. Root cause of the repair dialog
+itself was not conclusively identified this round (the two bugs found and
+fixed are visual/behavioural, not confirmed causes of the repair prompt) -
+if the repair dialog still appears after this round's fixes, the next step
+is the same diagnostic-file approach used in Round 5: isolate which
+specific slide triggers it by testing a reduced file.
