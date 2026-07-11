@@ -66,28 +66,39 @@ component type — decide with Innes based on what the lesson actually needs,
 referring to the CLF Curriculum Progression Summary for prior learning and
 cross-curricular links).
 
-**Never invent this content.** Round 3 audit (July 2026) found that
-`t6w7_l1.json`'s key question, LO/TIB/ISB, We Do grid, You Do provocation,
-particle-model diagram and concept-cartoon statements were all written by an
-earlier Claude session as placeholder content while the build pipeline was
-broken — then silently treated as ground truth by every session since,
-because nothing ever checked it against Innes's actual planning document.
-When Innes's real T6W7 document was finally compared against it, almost
-nothing matched. `generate_mtp.py` validates an MTP JSON's structure; it does
-not, and must not, author the content. Always get Innes's actual planning
-document first (or use one already saved under `EnquiryBuilder/mtp/` —
-`T6W7_States_of_Matter_Enquiry_Plan.md` is there now, all 5 lessons in full).
-If no planning document exists for the enquiry yet, say so and ask for one —
-do not draft plausible-sounding content and present it as the lesson.
+**Never invent this content without getting it confirmed by Innes.**
+Round 3 audit (July 2026) found that `t6w7_l1.json`'s key question,
+LO/TIB/ISB, We Do grid, You Do provocation, particle-model diagram and
+concept-cartoon statements were all written by an earlier Claude session as
+placeholder content while the build pipeline was broken, then silently
+treated as ground truth by every session since. A follow-up correction
+wrongly assumed a docx Innes then uploaded was his own external planning
+document and saved it as ground truth (`T6W7_draft_A_NOT_IN_USE.md`) — it
+turned out that document was *also* Claude-authored, from a different prior
+session, never confirmed by Innes either. A second Claude-authored plan
+(pasted from another chat) turned out to be the one Innes actually wanted,
+confirmed 2026-07-11, now saved at `EnquiryBuilder/mtp/T6W7_MTP.md`.
+
+The lesson: `generate_mtp.py` validates an MTP JSON's structure; it does not
+and must not author the content, and neither should Claude in chat without
+Innes explicitly signing off on it. A plan existing as a file, even one that
+looks authoritative, is not the same as Innes having confirmed it. Before
+building from any MTP: check whether Innes has explicitly confirmed it
+(ask if unclear), and check `EnquiryBuilder/mtp/` for one already marked
+CONFIRMED before assuming a new one is needed.
 
 ### Stage 2 — Write the MTP JSON
 One lesson = one JSON object matching the schema `t6w7_l1.json` uses (that
 file's structure — slide order and field names — is a valid worked example;
-its *content* is the placeholder text described above and needs a full
-rewrite against `EnquiryBuilder/mtp/T6W7_States_of_Matter_Enquiry_Plan.md`
-before it can be trusted as a regression fixture again). Validate every
-field the chosen component types require is present — the orchestrator will
-refuse to build otherwise, with a specific error naming the missing field.
+its *content* is placeholder text with no relation to the confirmed T6W7 MTP
+and needs a full rewrite against `EnquiryBuilder/mtp/T6W7_MTP.md` before it
+can be trusted as a regression fixture again). Note `T6W7_MTP.md` is a
+summary-level plan (LOs, phase headlines, image plan per lesson), not a
+full scripted lesson — slide bullet text and provocation wording need
+drafting from those headlines and should be checked with Innes before
+build, not invented wholesale. Validate every field the chosen component
+types require is present — the orchestrator will refuse to build otherwise,
+with a specific error naming the missing field.
 
 ### Stage 3 — Generate images
 For every slide with an `image_path` field: generate via Higgsfield
