@@ -245,11 +245,22 @@ timing XML of every slide and fails the build if the forbidden pattern or
 `restart="whenNotActive"` reappears.
 
 ## Repair dialog on open
-Caused by `customXml/` parts (SharePoint/Teams metadata) surviving in the
-package. `fix_pptx_ooxml.py` Fix #6 strips these — confirmed working: running
-it against the T6W7 L1 build removed 9 customXml parts that were genuinely
-present. `verify_lesson.py` checks the final zip for any stray `customXml/`
-entry and fails the build if Fix #6 was skipped.
+Multiple separate, confirmed causes have been found across this project's
+build-and-repair-loop investigation — not just one. Full list, with how
+each was confirmed and how it's fixed, lives in
+`Shared/OOXML_VALIDATION_NOTES.md` — read that file before writing any new
+hand-built XML, and before assuming a fresh repair-dialog report is a
+repeat of something already fixed. In order found: SharePoint/Teams
+`customXml/` metadata (Fix #6), stale `docProps/app.xml` summary counts
+(Fix #7), ghost slide ids in `p14:sectionLst` (Fix #8), a doubled
+`normAutofit fontScale` shrink (Fix #9), and two invalid OOXML constructs —
+`<a:masterClr/>` and `autofit="normAutofit"` as a bodyPr attribute — that
+don't exist in the schema at all (Fix #10). `fix_pptx_ooxml.py` applies
+all of these as a post-process; run it on every build before delivery.
+`verify_lesson.py` checks the final zip for any stray `customXml/` entry
+and fails the build if Fix #6 was skipped, but does not yet check for the
+others — treat a clean `verify_lesson.py` run as necessary, not sufficient,
+evidence the file will open cleanly.
 
 ---
 
