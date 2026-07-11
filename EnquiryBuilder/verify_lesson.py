@@ -9,6 +9,8 @@ Exits 0 and prints "VERIFY: PASS" only if every check passes.
 Exits 1 and prints every failure (slide + reason) otherwise.
 """
 import sys, json, zipfile, re
+from collections import Counter
+from lxml import etree
 from pptx import Presentation
 from pptx.util import Emu
 
@@ -107,31 +109,38 @@ def check_geometric_overlap(prs, failures):
             except Exception:
                 continue
             if None in (l, t, w, h): continue
-            # shape_type distinguishes "content label" (TEXT_BOX / PLACEHOLDER)
-            # from "background panel" (AUTO_SHAPE with a fill, e.g. a rounded
-            # rectangle a caption is deliberately layered on top of). Only
-            # compare shapes of the SAME kind - a panel-plus-label pairing is
-            # standard layered design, not a bug. Two panels or two labels
-            # stacked on each other is the real bug (this is exactly the LO
-            # duplicate-group pattern).
-            try:
-                kind = int(shape.shape_type) if shape.shape_type is not None else -1
-            except Exception:
-                kind = -1
-            boxes.append((shape.name, l, t, w, h, kind))
+            boxes.append((shape.name, l, t, w, h))
         for a in range(len(boxes)):
             for b in range(a + 1, len(boxes)):
-                n1, l1, t1, w1, h1, k1 = boxes[a]
-                n2, l2, t2, w2, h2, k2 = boxes[b]
-                if k1 != k2: continue
+                n1, l1, t1, w1, h1 = boxes[a]
+                n2, l2, t2, w2, h2 = boxes[b]
                 ix = max(0, min(l1 + w1, l2 + w2) - max(l1, l2))
                 iy = max(0, min(t1 + h1, t2 + h2) - max(t1, t2))
                 inter = ix * iy
                 if inter <= 0: continue
                 smaller = min(w1 * h1, w2 * h2)
-                if smaller > 0 and inter / smaller > TOLERANCE:
-                    fail(failures, f"Slide {i}: same-kind text shapes overlap ('{n1}' and '{n2}', "
-                                    f"{inter/smaller:.0%} of the smaller shape's area)")
+                if smaller <= 0: continue
+                overlap_frac = inter / smaller
+                if overlap_frac <= TOLERANCE: continue
+                # Distinguish TRUE CONTAINMENT (one box almost entirely inside
+                # the other, e.g. a caption text box deliberately placed inside
+                # a larger coloured panel shape - standard layered design, not
+                # a bug) from a PARTIAL/CROSSING overlap (two shapes competing
+                # for the same space at an angle or edge - a real collision,
+                # e.g. a name label sitting across a speech bubble's text).
+                # Containment: the smaller box's own edges are all within a
+                # small margin of the larger box's edges.
+                if w1 * h1 <= w2 * h2:
+                    sl, st_, sw, sh = l1, t1, w1, h1; ll, lt, lw, lh = l2, t2, w2, h2
+                else:
+                    sl, st_, sw, sh = l2, t2, w2, h2; ll, lt, lw, lh = l1, t1, w1, h1
+                margin = 0.05 * max(lw, lh)
+                fully_contained = (sl >= ll - margin and st_ >= lt - margin and
+                                    sl + sw <= ll + lw + margin and st_ + sh <= lt + lh + margin)
+                if fully_contained and overlap_frac > 0.9:
+                    continue  # caption-inside-panel pattern - allowed
+                fail(failures, f"Slide {i}: shapes overlap ('{n1}' and '{n2}', "
+                                f"{overlap_frac:.0%} of the smaller shape's area, not simple containment)")
 
 def check_animation_pattern(pptx_path, failures):
     """Forbidden pattern: an explicit hide-at-start <p:par> before the seq.
@@ -172,6 +181,75 @@ def check_images_present(prs, manifest, mtp, failures):
                 fail(failures, f"Slide {idx} ({spec['type']}): expected at least {expected_n} "
                                 f"image(s), found {len(pics)}")
 
+
+def check_duplicate_shape_ids(pptx_path, failures):
+    with zipfile.ZipFile(pptx_path) as z:
+        for n in z.namelist():
+            if not re.match(r'ppt/slides/slide\d+\.xml$', n): continue
+            root = etree.fromstring(z.read(n))
+            ids = [el.get('id') for el in root.xpath('.//*[local-name()="cNvPr"]')]
+            dupes = [k for k, v in Counter(ids).items() if v > 1]
+            if dupes:
+                fail(failures, f"{n}: duplicate shape id(s) within the slide: {dupes}")
+
+def check_sldidlst_matches_slide_count(pptx_path, failures):
+    with zipfile.ZipFile(pptx_path) as z:
+        names = z.namelist()
+        slides = [n for n in names if re.match(r'ppt/slides/slide\d+\.xml$', n)]
+        prs_root = etree.fromstring(z.read('ppt/presentation.xml'))
+        ns = {'p': 'http://schemas.openxmlformats.org/presentationml/2006/main'}
+        sld_id_count = len(prs_root.findall('.//p:sldIdLst/p:sldId', ns))
+    if sld_id_count != len(slides):
+        fail(failures, f"sldIdLst count ({sld_id_count}) does not match actual slide files ({len(slides)})")
+
+def check_animation_targets_exist(pptx_path, failures):
+    with zipfile.ZipFile(pptx_path) as z:
+        for n in z.namelist():
+            if not re.match(r'ppt/slides/slide\d+\.xml$', n): continue
+            root = etree.fromstring(z.read(n))
+            shape_ids = {el.get('id') for el in root.xpath('.//*[local-name()="cNvPr"]')}
+            for spid in root.xpath('.//*[local-name()="spTgt"]/@spid'):
+                if spid not in shape_ids:
+                    fail(failures, f"{n}: animation targets shape id={spid} which does not exist on this slide")
+
+def check_non_numeric_rids(pptx_path, failures):
+    with zipfile.ZipFile(pptx_path) as z:
+        if 'ppt/_rels/presentation.xml.rels' not in z.namelist(): return
+        content = z.read('ppt/_rels/presentation.xml.rels').decode('utf-8')
+    non_numeric = re.findall(r'Id="(rId[A-Za-z][A-Za-z0-9]*)"', content)
+    if non_numeric:
+        fail(failures, f"presentation.xml.rels has non-numeric rId(s) (known repair-dialog cause): {non_numeric}")
+
+def check_orphaned_media(pptx_path, failures):
+    """A media file present in the archive but referenced by no relationship
+    anywhere. Found via the T6W7 investigation: replace_image() left the
+    original (replaced) image physically in the file even though nothing
+    pointed to it any more - in one case that was the exact banned concept-
+    cartoon image. Not itself a known repair-dialog trigger, but content that
+    was supposed to be fully replaced should not still be sitting in the
+    package, referenced or not."""
+    with zipfile.ZipFile(pptx_path) as z:
+        names = z.namelist()
+        referenced = set()
+        for n in names:
+            if not n.endswith('.rels'): continue
+            content = z.read(n).decode('utf-8', errors='ignore')
+            part_dir = '/'.join(n.replace('_rels/', '').split('/')[:-1])
+            for tgt in re.findall(r'Target="([^"]+)"', content):
+                if tgt.startswith('http') or tgt.startswith('#'): continue
+                segs = (part_dir.split('/') if part_dir else []) + tgt.split('/')
+                out = []
+                for s in segs:
+                    if s == '..':
+                        if out: out.pop()
+                    elif s and s != '.':
+                        out.append(s)
+                referenced.add('/'.join(out))
+        media = [n for n in names if n.startswith('ppt/media/')]
+        orphaned = [m for m in media if m not in referenced]
+    if orphaned:
+        fail(failures, f"Orphaned media file(s) present but unreferenced by any relationship: {orphaned}")
+
 def main():
     pptx_path, mtp_path, manifest_path = sys.argv[1:4]
     with open(mtp_path) as f: mtp = json.load(f)
@@ -188,6 +266,11 @@ def main():
     check_geometric_overlap(prs, failures)
     check_animation_pattern(pptx_path, failures)
     check_images_present(prs, manifest, mtp, failures)
+    check_duplicate_shape_ids(pptx_path, failures)
+    check_sldidlst_matches_slide_count(pptx_path, failures)
+    check_animation_targets_exist(pptx_path, failures)
+    check_non_numeric_rids(pptx_path, failures)
+    check_orphaned_media(pptx_path, failures)
 
     if failures:
         print(f"VERIFY: FAIL ({len(failures)} issue(s))\n")

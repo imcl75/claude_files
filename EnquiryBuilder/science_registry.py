@@ -93,10 +93,11 @@ CONTENT_LAYOUTS = {
 #   least once), optional (may be omitted by the lesson plan), repeatable
 #   (may appear 0-N times, in any position the lesson plan specifies).
 COMPONENTS = {
-    'cover': {
-        'presence': 'required', 'mode': 'fresh_cover',
-        'fields': ['key_question'],
-    },
+    # Innes: "no cover, slide 1 is the KQ slide" - there is no separate
+    # title/cover slide. The 'lo' component (built from KQ_LO.pptx, which
+    # already carries "Key Question" as its own heading) IS slide 1. Do not
+    # reintroduce a standalone cover - this was tried and explicitly rejected
+    # 11 Jul 2026.
     'being_a_scientist': {
         'presence': 'required', 'mode': 'clone_verbatim',
         'template': 'being_a_scientist_deck', 'anchor': BEING_A_SCIENTIST_ANCHOR, 'hint': BEING_A_SCIENTIST_HINT,

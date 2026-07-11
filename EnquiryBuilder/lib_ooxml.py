@@ -487,3 +487,55 @@ def find_pic_id_by_name(tree, name):
         if cNvPr is not None and cNvPr.get('name') == name:
             return int(cNvPr.get('id'))
     return None
+
+def force_shrink_to_fit(s):
+    """Force PowerPoint to shrink text to fit its box (normAutofit) rather
+    than overflow it. Used when overriding cloned template text with content
+    of unknown length going into a fixed-size template shape (e.g. concept
+    cartoon speech bubbles) - the template box size is fixed and was sized
+    for its own original text, not for whatever the current lesson's
+    statement is."""
+    bodyPr = None
+    for ns in [P, A]:
+        bodyPr = s.find(f'.//{{{ns}}}bodyPr')
+        if bodyPr is not None: break
+    if bodyPr is None: return
+    for child_tag in ('spAutoFit', 'noAutofit', 'normAutofit'):
+        el = bodyPr.find(f'{{{A}}}{child_tag}')
+        if el is not None: bodyPr.remove(el)
+    etree.SubElement(bodyPr, f'{{{A}}}normAutofit')
+
+def strip_orphaned_media(work):
+    """Remove any file in ppt/media/ that no relationship anywhere in the
+    package actually points to. Found via the T6W7 repair investigation:
+    replace_image() swaps a <p:pic>'s embedded image by re-pointing its
+    relationship Target at a new file, but never deleted the old one - so a
+    replaced template image (in one case, the exact banned concept-cartoon
+    cat photo) was still physically sitting in the delivered file, just
+    unreferenced. Harmless to PowerPoint on its own, but it's dead weight
+    and, worse, means content that was supposed to be fully replaced is
+    still technically present in the archive. Run this as the last step
+    before rezip."""
+    referenced = set()
+    for root_dir, _, files in os.walk(work):
+        for f in files:
+            if not f.endswith('.rels'): continue
+            path = os.path.join(root_dir, f)
+            with open(path, encoding='utf-8') as fh:
+                content = fh.read()
+            for m in re.finditer(r'Target="([^"]+)"', content):
+                tgt = m.group(1)
+                if tgt.startswith('http') or tgt.startswith('#'): continue
+                # resolve relative to the part's own directory (parent of _rels/)
+                part_dir = os.path.dirname(os.path.dirname(path))
+                resolved = os.path.normpath(os.path.join(part_dir, tgt))
+                referenced.add(resolved)
+    media_dir = os.path.join(work, 'ppt', 'media')
+    removed = []
+    if os.path.isdir(media_dir):
+        for f in os.listdir(media_dir):
+            full = os.path.normpath(os.path.join(media_dir, f))
+            if full not in referenced:
+                os.remove(full)
+                removed.append(f)
+    return removed

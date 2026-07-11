@@ -38,7 +38,7 @@ run it as a second step.
    orchestrator (`build_science_lesson.py`) validates the lesson plan against
    this registry BEFORE building anything: unknown types are rejected,
    missing required fields are rejected, missing required component types
-   (cover / being_a_scientist / discipline / lo / learning_review) are
+   (being_a_scientist / discipline / lo / learning_review) are
    rejected. This is what lets a lesson plan compose a different-shaped deck
    — omit the concept cartoon, run two `wedo_grid` slides back to back,
    whatever the lesson actually calls for — instead of always producing one
@@ -101,12 +101,19 @@ after the fact.
 
 ## Component registry (`science_registry.py`)
 
+There is no separate cover/title slide. Slide 1 of every lesson is the `lo`
+component — its source (`KQ_LO.pptx`) already carries "Key Question" as its
+own heading above the three learning panels. A standalone cover was built
+and then explicitly rejected by Innes (11 Jul 2026, see Architecture history)
+— do not reintroduce one.
+
 | type | presence | source |
 |---|---|---|
-| `cover` | required | built fresh (see below — original template is lost) |
+| `lo` | required | clone, anchor `"What am I learning?"` — this is slide 1 |
 | `being_a_scientist` | required | clone, anchor `"Being a Scientist"` |
 | `discipline` | required | clone, anchor = `"What is {strand}?"` |
 | `lo` | required | clone, anchor `"What am I learning?"` |
+| `discipline` | required | clone, anchor = `"What is {strand}?"` |
 | `wedo_hook` | repeatable | fresh, layout `We do` |
 | `wedo_grid` | repeatable | fresh, layout `We do - Blank` |
 | `ido_diagram` | repeatable | fresh, layout `I Do - Blank` |
@@ -144,16 +151,6 @@ actual text content for a known anchor string and only uses the hardcoded
 resolves correctly anyway and prints a loud warning so the drift gets fixed
 at the source (`science_registry.py`) instead of silently working around it
 forever.
-
-## The cover slide has no template
-`sci_template.pptx`, the file `build_cover()` used to clone from, was never
-committed to the repo — a prior session had it locally and it did not
-survive to this one. Rather than depend on Innes re-uploading it (the same
-failure mode as `missing-sci.pptx`), the cover is now built fresh
-(`build_cover()` in `build_science_lesson.py`): a WFA-blue accent band with
-the key question centred on it. If Innes wants the exact original cover
-design restored, get the file from him once and commit it to the repo
-permanently — but the skill does not depend on that happening.
 
 ## Concept cartoon
 The template's central image is a cat-in-a-doorway illustration (a leftover
@@ -272,3 +269,52 @@ Not done yet, deliberately out of scope for this pass (Innes asked to
 concentrate on Science first): History and Geography component registries,
 and wiring the `enquiry-lp` learning-paper skill into Stage 5 so the full
 resource set (deck + LP) comes out of one workflow.
+
+### Round 2 (same day) — real bugs found only by rendering and by testing
+
+The first rebuild above passed its own verifier but still failed for Innes in
+real PowerPoint. Two mistakes:
+
+1. **A self-designed cover slide was built and shown to Innes without
+   asking first.** Rejected outright — "NEVER add a slide of your own
+   design, use my template." Fixed by removing the `cover` type entirely.
+   There is no cover: `lo` (KQ_LO.pptx, which already carries "Key Question"
+   as its own heading) is slide 1.
+2. **Nothing had been rendered and looked at before delivery** — the
+   verifier checks structure and text, not what a slide actually looks like.
+   Rendering via LibreOffice (`soffice --headless --convert-to pdf` then
+   `pdftoppm`) and viewing the output caught: concept-cartoon speech-bubble
+   text overflowing its box (the template's bubbles are sized for their
+   original short text; a longer lesson-specific statement needs
+   `force_shrink_to_fit()` applied after `set_text()` — now done
+   automatically for concept cartoon bubbles), and confirmed that the
+   speech-bubble/label near-touch on that same slide and a text-frame overlap
+   on the Chemistry discipline slide are both present in the **untouched
+   original template file** — proven by rendering `Being_a_Scientist_slide_
+   deck.pptx` slide 11 directly with zero changes and finding the same
+   overlap. These two are template-authoring tightness, not build defects,
+   and are not fixable from the build script.
+
+Innes separately supplied `PPTX_Repair_Diagnosis_Guide.md` — a diagnostic
+script from a prior session that catalogues 7 known repair-dialog causes
+with a working detector for each, plus checks for duplicate shape ids,
+`sldIdLst`/slide-count mismatches, animation targets pointing at shapes that
+don't exist, and non-numeric relationship ids. Running it against this
+skill's output found none of the 7 known causes present (confirmed
+`fix_pptx_ooxml.py` already implements all 7, including the SharePoint
+customXml strip). It did surface one real, different issue via a
+`python-pptx` resave diff: `replace_image()` was leaving the old image
+physically in the package after swapping it for a new one — in one case,
+the exact cat/light image the concept cartoon was supposed to fully replace
+was still sitting in the file, just unreferenced. Fixed with
+`strip_orphaned_media()`, now run as the last step before every build is
+zipped. The entire diagnostic script (`EnquiryBuilder/diagnose.py`, kept
+verbatim from Innes's file) has been folded into `verify_lesson.py` as five
+permanent checks so this whole class of bug is checked on every build, not
+run manually when something goes wrong.
+
+**Still open:** whether this actually stops PowerPoint's repair dialog has
+not been confirmed in real PowerPoint — nothing in this sandbox can trigger
+it. If it still happens, the next step is the repaired file back from Innes
+to diff against what was delivered, per the diagnosis guide's own
+recommended next step when the known-cause checklist comes back clean.

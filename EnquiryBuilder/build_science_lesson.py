@@ -15,31 +15,10 @@ from lib_ooxml import (
     find_slide_by_anchor, clone, fresh, get_spTree, save,
     title_sp, body_sp, tbox, add_img, grid_geometry, animate,
     find_sp, get_sp_id, set_text, delete_shapes_by_id, delete_shape_by_name,
-    replace_image, find_pic_id_by_name, xr, xw, xp, ex, SW, SH,
+    replace_image, find_pic_id_by_name, force_shrink_to_fit, strip_orphaned_media,
+    xr, xw, xp, ex, SW, SH,
 )
 import science_registry as REG
-
-
-def build_cover(work, spec):
-    sp, rp = fresh(work, 'Blank')
-    t, st = get_spTree(sp)
-    # WFA blue accent band (fill) + centred title text. Built fresh (not
-    # cloned) because the original cover template file (sci_template.pptx)
-    # was never committed to the repo and is not recoverable this session -
-    # see the audit note in SKILL.md. This has no external dependency, so it
-    # can never go missing again.
-    band = xp(f'<p:sp xmlns:p="{P}" xmlns:a="{A}"><p:nvSpPr><p:cNvPr id="2" name="Accent Band"/>'
-              f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="0" y="2400000"/>'
-              f'<a:ext cx="{SW}" cy="1400000"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
-              f'<a:solidFill><a:srgbClr val="{REG.WFA_Y4_BLUE}"/></a:solidFill></p:spPr>'
-              f'<p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>')
-    st.append(band)
-    st.append(tbox(3, "Key Question", 600000, 1500000, SW - 1200000, 700000,
-                    sz=2400, bold=True, color='1A3A5C', align='ctr', name='Cover Label'))
-    st.append(tbox(4, spec['key_question'], 600000, 2550000, SW - 1200000, 1100000,
-                    sz=3200, bold=True, color='FFFFFF', align='ctr', name='Cover KQ'))
-    save(t, sp)
-    return sp
 
 
 def build_being_a_scientist(work, templates, spec):
@@ -100,6 +79,10 @@ def build_concept_cartoon(work, templates, spec):
         if s is None:
             raise RuntimeError(f"concept_cartoon: expected speech bubble '{bubble_name}' not found - template drift")
         set_text(s, learner['statement'])
+        # The bubble box size is fixed (sized for the template's own text) -
+        # a longer lesson-specific statement must shrink to fit, not overflow
+        # past the bubble edge into whatever sits below it.
+        force_shrink_to_fit(s)
     xw(tree, sp)
     # Replace the central scene image - this is the one part of the template
     # that is always topic-specific (it ships as a cat/light illustration).
@@ -204,7 +187,6 @@ def build_youdo_task(work, spec):
 
 
 DISPATCH = {
-    'cover':              lambda work, templates, layouts, spec: build_cover(work, spec),
     'being_a_scientist':  lambda work, templates, layouts, spec: build_being_a_scientist(work, templates, spec),
     'discipline':         lambda work, templates, layouts, spec: build_discipline(work, templates, spec),
     'lo':                 lambda work, templates, layouts, spec: build_lo(work, templates, spec),
@@ -270,6 +252,10 @@ def build_lesson(mtp_path, templates_dir, out_path, manifest_path):
                         capture_output=True, text=True)
     if r.returncode != 0 and r.stderr.strip():
         print(f"  clean.py stderr (non-fatal, continuing): {r.stderr.strip()[:300]}")
+
+    removed = strip_orphaned_media(work)
+    if removed:
+        print(f"  stripped {len(removed)} orphaned media file(s) no relationship referenced: {removed}")
 
     rezip(work, out_path)
     with open(manifest_path, 'w') as f:

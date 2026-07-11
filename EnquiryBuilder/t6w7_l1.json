@@ -14,62 +14,115 @@
     "tib": "I understand how the three states of matter help scientists explain how most substances in the world around us behave",
     "isb": "creating a sorting table with at least six materials correctly grouped and one written reason for each",
     "slides": [
-      {"type": "cover", "key_question": "Can materials change their state?"},
-      {"type": "being_a_scientist"},
-      {"type": "discipline", "strand": "Chemistry"},
-      {"type": "lo"},
-      {"type": "wedo_hook",
+      {
+        "type": "lo"
+      },
+      {
+        "type": "being_a_scientist"
+      },
+      {
+        "type": "discipline",
+        "strand": "Chemistry"
+      },
+      {
+        "type": "wedo_hook",
         "title": "What do you already know about materials?",
         "bullets": [
-          "Think about the objects around you — how would you describe them?",
+          "Think about the objects around you \u2014 how would you describe them?",
           "Which materials can you pour? Which ones keep their shape?",
           "Do you know what the words solid, liquid and gas mean?"
-        ]},
-      {"type": "wedo_grid",
-        "title": "Sort these — solid, liquid or gas?",
+        ]
+      },
+      {
+        "type": "wedo_grid",
+        "title": "Sort these \u2014 solid, liquid or gas?",
         "items": [
-          {"label": "Ice", "image_path": "images/ice.png"},
-          {"label": "Water", "image_path": "images/water.png"},
-          {"label": "Steam (water vapour)", "image_path": "images/steam.png"},
-          {"label": "Wood", "image_path": "images/wood.png"},
-          {"label": "Sand", "image_path": "images/sand.png"},
-          {"label": "Milk", "image_path": "images/milk.png"},
-          {"label": "Balloon (filled with air)", "image_path": "images/balloon.png"},
-          {"label": "Honey", "image_path": "images/honey.png"}
-        ]},
-      {"type": "ido_diagram",
+          {
+            "label": "Ice",
+            "image_path": "images/ice.png"
+          },
+          {
+            "label": "Water",
+            "image_path": "images/water.png"
+          },
+          {
+            "label": "Steam (water vapour)",
+            "image_path": "images/steam.png"
+          },
+          {
+            "label": "Wood",
+            "image_path": "images/wood.png"
+          },
+          {
+            "label": "Sand",
+            "image_path": "images/sand.png"
+          },
+          {
+            "label": "Milk",
+            "image_path": "images/milk.png"
+          },
+          {
+            "label": "Balloon (filled with air)",
+            "image_path": "images/balloon.png"
+          },
+          {
+            "label": "Honey",
+            "image_path": "images/honey.png"
+          }
+        ]
+      },
+      {
+        "type": "ido_diagram",
         "title": "How are the particles arranged?",
         "bullets": [
-          "In a SOLID, particles are packed tightly in a fixed arrangement — the solid keeps its shape.",
-          "In a LIQUID, particles are close but can slide past each other — the liquid flows and takes the shape of its container.",
-          "In a GAS, particles move quickly and are spread far apart — the gas fills the entire space available."
+          "In a SOLID, particles are packed tightly in a fixed arrangement \u2014 the solid keeps its shape.",
+          "In a LIQUID, particles are close but can slide past each other \u2014 the liquid flows and takes the shape of its container.",
+          "In a GAS, particles move quickly and are spread far apart \u2014 the gas fills the entire space available."
         ],
-        "image_path": "images/particle_model.png"},
-      {"type": "youdo_provocation",
+        "image_path": "images/particle_model.png"
+      },
+      {
+        "type": "youdo_provocation",
         "title": "Is this a solid or a liquid?",
-        "image_path": "images/oobleck.png"},
-      {"type": "youdo_task",
+        "image_path": "images/oobleck.png"
+      },
+      {
+        "type": "youdo_task",
         "title": "Sort the materials",
         "bullets": [
           "Sort the material cards into three groups: solid, liquid or gas",
           "Record your decisions in the table on your LP",
-          "For each material, write one reason — use the particle model to help you",
+          "For each material, write one reason \u2014 use the particle model to help you",
           "Challenge: can you find one material that is difficult to classify? Why?"
-        ]},
-      {"type": "concept_cartoon",
+        ]
+      },
+      {
+        "type": "concept_cartoon",
         "title": "Who do you agree with and why?",
         "learners": [
-          {"name": "Learner A", "statement": "Sand is a liquid — you can pour it from one container to another, just like water."},
-          {"name": "Learner B", "statement": "Sand is a solid, but when there are lots of grains together they can act a bit like a liquid."},
-          {"name": "Learner C", "statement": "Each grain of sand is a solid. Even when you pour sand, every single grain keeps its own shape."}
+          {
+            "name": "Learner A",
+            "statement": "Sand is a liquid \u2014 you can pour it from one container to another, just like water."
+          },
+          {
+            "name": "Learner B",
+            "statement": "Sand is a solid, but when there are lots of grains together they can act a bit like a liquid."
+          },
+          {
+            "name": "Learner C",
+            "statement": "Each grain of sand is a solid. Even when you pour sand, every single grain keeps its own shape."
+          }
         ],
-        "image_path": "images/concept_cartoon_sand.png"},
-      {"type": "learning_review",
+        "image_path": "images/concept_cartoon_sand.png"
+      },
+      {
+        "type": "learning_review",
         "starters": [
-          "I can now explain the difference between a solid, liquid and gas because…",
-          "Something that surprised me was…",
-          "I am still wondering…"
-        ]}
+          "I can now explain the difference between a solid, liquid and gas because\u2026",
+          "Something that surprised me was\u2026",
+          "I am still wondering\u2026"
+        ]
+      }
     ]
   }
 }
