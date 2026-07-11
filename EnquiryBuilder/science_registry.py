@@ -21,9 +21,10 @@ WFA_Y4_BLUE = '1798D3'   # school colour spec: Year 4 / Maple Learning Zone
 # (Confirmed by direct inspection 11 Jul 2026 - do not trust old commit
 # messages or old SKILL.md prose, both have drifted from reality before.)
 TEMPLATE_FILES = {
-    'being_a_scientist_deck': 'Being_a_Scientist_slide_deck.pptx',  # Being a Scientist + 4 discipline slides + concept cartoon template
+    'being_a_scientist_deck': 'Being_a_Scientist_slide_deck.pptx',  # 4 discipline slides + concept cartoon template only now - see kq_being_scientist below for why kq_challenge/being_a_scientist moved out
     'science_example':        'science-example.pptx',               # I do/We do/You do layouts + Learning Review source
     'kq_lo':                  'KQ_LO.pptx',                         # LO panel source
+    'kq_being_scientist':     'KQ_and_BeingAScientist.pptx',        # 2-slide, SmartArt-free source for kq_challenge + being_a_scientist - see note below
 }
 
 DISCIPLINE_ANCHORS = {
@@ -75,46 +76,65 @@ BANNED_TEMPLATE_TEXT = [
     "Text box",  # literal unfilled "Text box" placeholder runs in KQ_LO Group B if ever left unset
 ]
 
-# CORRECTED 11 Jul 2026: the wheel diagrams (Areas of Study circles + Skills
-# pie wheel - the actual "Being a Scientist" visual Innes expects) are on
-# slide 3, NOT slide 2. The original anchor 'Being a Scientist' matched
-# slide 2 because that literal string happens to appear there too (as a
-# small caption near an unrelated icon), but slide 2's real content is a
-# completely different KQ+Challenge intro block (see kq_challenge below).
-# Slide 3 carries no title of its own - one must be added, plus the
-# scientist icon, per SKILL.md's long-standing (and previously unimplemented)
-# decision: "'Being a Scientist' has title added at top and scientist icon
-# bottom left".
-BEING_A_SCIENTIST_ANCHOR = 'Areas of Study'
-BEING_A_SCIENTIST_HINT = 3
-BEING_A_SCIENTIST_ICON_SOURCE_SLIDE = 2   # Picture 18 on slide 2 is the reusable scientist icon
-BEING_A_SCIENTIST_ICON_SHAPE_NAME = 'Picture 18'
+# SUPERSEDED 11 Jul 2026 (Round 5) - kept only as a historical note, no
+# longer read by build_being_a_scientist(). The wheel diagrams on
+# Being_a_Scientist_slide_deck.pptx slide 3 (Areas of Study circles + Skills
+# pie wheel) are genuine PowerPoint SmartArt (ppt/diagrams/, confirmed the
+# only slide in that file with a diagramData relationship). A delivered L1
+# built from this slide crashed Innes's real PowerPoint (EXC_BAD_INSTRUCTION
+# in SmartArt/OfficeArt frames, per the crash log he sent) - LibreOffice
+# rendering did NOT catch this, it silently mis-renders SmartArt instead of
+# crashing, so the QA pipeline had a blind spot for this whole defect class.
+# Innes had already solved this in a previous session by converting the two
+# diagrams to flat images and rebuilding both this slide and kq_challenge as
+# a clean 2-slide file - that file (KQ_and_BeingAScientist.pptx, see
+# kq_being_scientist below) is now the source for both components. Do not
+# revert to Being_a_Scientist_slide_deck.pptx for either of these two
+# components - it still contains the crash-causing SmartArt on slide 3, only
+# the discipline slides and concept_cartoon slide are safe to keep sourcing
+# from it (confirmed 11 Jul 2026: no diagramData relationship on slides
+# 4-12).
+BEING_A_SCIENTIST_ANCHOR_OLD_UNUSED = 'Areas of Study'
+BEING_A_SCIENTIST_HINT_OLD_UNUSED = 3
 
-# kq_challenge (Innes calls this slide "KQ_cloud"): a KQ-in-a-cloud +
-# "Our Challenge is: ..." block, bundled on slide 2 alongside unrelated
-# content (a "21st Century Learning Skills" 2x2 icon grid, and the same
-# stray editor's note found on the old being_a_scientist slide). The
-# template's own placeholder content is a Planets/Earth-Science example
-# ("How does our planet compare to other planets?" / "Design a new planet")
-# left over from a different unit - always replace the KQ text box. The
-# challenge text box should only be filled when the enquiry has an
-# investigation/written outcome to work towards - leave it empty for
-# knowledge-and-skills-focus enquiries like T6W7 (no challenge/investigation
-# this unit, confirmed against T6W7_MTP.md). The nested group's own
-# "Key Question" icon and the character avatars are generic and reusable,
-# keep them. This slide is ALWAYS slide 1 - confirmed 11 Jul 2026, see the
-# ORDER note above the COMPONENTS dict.
-KQ_CHALLENGE_ANCHOR = 'Being a Scientist'   # unique to slide 2 (a caption near the bottom icon)
-KQ_CHALLENGE_HINT = 2
+# kq_challenge + being_a_scientist (Round 5, 11 Jul 2026): both now sourced
+# from KQ_and_BeingAScientist.pptx, the SmartArt-free 2-slide file Innes
+# prepared and uploaded. Confirmed by direct inspection - zero
+# ppt/diagrams/ content in this file at all.
+#   Slide 1 = kq_challenge ("KQ_cloud"): Cloud 1 (background), a "21st
+#     Century Learning Skills" 2x2 icon group (Group 3 / TextBox 10 +
+#     pictures) which Innes's own reference screenshot confirms DOES belong
+#     on this slide (Round 3/4's assumption that this content should be
+#     stripped was wrong - nothing is stripped from this source now, see
+#     KQ_CHALLENGE_STRIP_IDS below), a "Being a Scientist" caption
+#     (TextBox 8), and the KQ text itself in TextBox 16 inside a nested
+#     group, with TextBox 17 as the (currently empty) challenge box -
+#     these two shape names happen to match the constants already used by
+#     build_kq_challenge(), so that function needed no code change.
+#   Slide 2 = being_a_scientist: now just 4 shapes total - two flat
+#     pictures (AreasOfStudy, Skills) replacing the old SmartArt, a
+#     ScientistIcon picture, and a TitleBeing text box already reading
+#     "Being a Scientist". The title and icon are baked in, so
+#     build_being_a_scientist() no longer needs to synthesise a title
+#     textbox or extract/copy an icon from another slide - it now just
+#     clones this slide directly, the same pattern as build_discipline().
+# Anchor note: both slides contain the text "Being a Scientist" (slide 1 via
+# TextBox 8, slide 2 via TitleBeing), so being_a_scientist's anchor relies on
+# its hint (2) rather than uniqueness - find_slide_by_anchor() checks the
+# hinted slide first and only falls back to a full search (with a loud
+# warning) if the hint is wrong. kq_challenge instead anchors on "21st
+# Century Learning Skills", which is unique to slide 1, so it doesn't depend
+# on the hint being correct.
+BEING_A_SCIENTIST_ANCHOR = 'Being a Scientist'
+BEING_A_SCIENTIST_HINT = 2
+
+KQ_CHALLENGE_ANCHOR = '21st Century Learning Skills'   # unique to slide 1
+KQ_CHALLENGE_HINT = 1
 KQ_CHALLENGE_KQ_SHAPE_NAME = 'TextBox 16'
 KQ_CHALLENGE_TASK_SHAPE_NAME = 'TextBox 17'
-KQ_CHALLENGE_STRIP_IDS = [4, 11, 12, 13, 14]   # "21st Century Learning Skills" content: id4 is
-    # 'Group 3', a grpSp of 4 individual skill-icon images (Independence/
-    # Collaboration/Curiosity and Imagination/Resilience - confirmed by opening
-    # image2.png, the 'Collaboration' one) that renders as a 2x2 grid top-right.
-    # ids 11-14 (TextBox 10 + 3 pictures) are a second, smaller 21st-century-
-    # skills cluster near it. Neither belongs on the KQ+Challenge slide.
-KQ_CHALLENGE_STRIP_NAME = 'TextBox 19'      # stray editor's note, same one found on the old being_a_scientist source
+KQ_CHALLENGE_STRIP_IDS = []   # nothing to strip from this source - the 21st
+    # Century Learning Skills content is meant to stay (see note above)
+KQ_CHALLENGE_STRIP_NAME = ''  # no stray editor's note on this source
 
 LEARNING_REVIEW_ANCHOR = 'Learning Review'
 LEARNING_REVIEW_HINT = 17
@@ -146,12 +166,12 @@ COMPONENTS = {
     # `challenge` empty/omitted so no challenge text renders in the cloud.
     'being_a_scientist': {
         'presence': 'required', 'mode': 'clone_being_a_scientist',
-        'template': 'being_a_scientist_deck', 'anchor': BEING_A_SCIENTIST_ANCHOR, 'hint': BEING_A_SCIENTIST_HINT,
+        'template': 'kq_being_scientist', 'anchor': BEING_A_SCIENTIST_ANCHOR, 'hint': BEING_A_SCIENTIST_HINT,
         'fields': [],
     },
     'kq_challenge': {
         'presence': 'required', 'mode': 'clone_kq_challenge',
-        'template': 'being_a_scientist_deck', 'anchor': KQ_CHALLENGE_ANCHOR, 'hint': KQ_CHALLENGE_HINT,
+        'template': 'kq_being_scientist', 'anchor': KQ_CHALLENGE_ANCHOR, 'hint': KQ_CHALLENGE_HINT,
         'fields': ['key_question', 'challenge'],
     },
     'discipline': {

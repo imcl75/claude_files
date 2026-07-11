@@ -147,8 +147,8 @@ lesson's pedagogy calls for — see "Repeatable content types" below) →
 
 | type | presence | source |
 |---|---|---|
-| `kq_challenge` (KQ_cloud) | required | clone, anchor `"Being a Scientist"` (a caption unique to this donor slide) — this is always slide 1 |
-| `being_a_scientist` | required | clone, anchor `"Areas of Study"` — always slide 2 |
+| `kq_challenge` (KQ_cloud) | required | clone from `KQ_and_BeingAScientist.pptx`, anchor `"21st Century Learning Skills"` (unique to this slide) — always slide 1 |
+| `being_a_scientist` | required | clone from `KQ_and_BeingAScientist.pptx`, anchor `"Being a Scientist"` + hint 2 — always slide 2 (see "Round 5" — this moved off `Being_a_Scientist_slide_deck.pptx` after it crashed real PowerPoint) |
 | `discipline` | required | clone, anchor = `"What is {strand}?"` |
 | `lo` | required | clone, anchor `"What am I learning?"` |
 | `wedo_hook` | repeatable | fresh, layout `We do` |
@@ -178,11 +178,20 @@ Template files, as they actually exist in `EnquiryBuilder/templates/` (verified
 11 Jul 2026 — do not trust older commit messages, they refer to filenames
 that no longer exist):
 
-- `Being_a_Scientist_slide_deck.pptx` — Being a Scientist wheel (slide 2),
-  four discipline slides (slides 4-7: Biology/Physics/Chemistry/Earth&Space),
-  concept cartoon template (slide 11). This is the file previous sessions
-  called `missing-sci.pptx` and asked Innes to re-upload every session —
-  **it is already committed to the repo under this name; stop asking him to
+- `KQ_and_BeingAScientist.pptx` — 2 slides, SmartArt-free, source for
+  `kq_challenge` (slide 1) and `being_a_scientist` (slide 2). Prepared by
+  Innes himself and uploaded 11 Jul 2026 after the previous source (see
+  below) crashed his real PowerPoint — see "Round 5".
+- `Being_a_Scientist_slide_deck.pptx` — still the source for the four
+  discipline slides (slides 4-7: Biology/Physics/Chemistry/Earth&Space) and
+  the concept cartoon template (slide 11), confirmed safe (no SmartArt
+  diagram relationship on any of those slides). No longer used for
+  `kq_challenge` or `being_a_scientist` — slide 3 of this file (the old
+  Areas of Study / Skills wheel) contains genuine PowerPoint SmartArt that
+  crashed a real PowerPoint open; do not route either of those two
+  components back to this file. This is the file previous sessions called
+  `missing-sci.pptx` and asked Innes to re-upload every session — **it is
+  already committed to the repo under this name; stop asking him to
   re-upload it.**
 - `science-example.pptx` — carries every named content layout (`I do`,
   `We do`, `You do Ind`, `*-Blank` variants, `Blank`) plus the Learning
@@ -461,3 +470,64 @@ needing heavy scaffolding, more short `youdo_task` slides for quick-fire
 whiteboard checking — rather than treating "one of each" as the default
 shape. See "Repeatable content types" above, added this session, for the
 resulting Stage 1 guidance.
+
+### Round 5 (11 Jul 2026, later same day) — delivered file crashed real PowerPoint
+
+The L1 file built and delivered under Round 4's fixes rendered fine in
+LibreOffice but crashed Innes's actual Microsoft PowerPoint on open
+(`EXC_BAD_INSTRUCTION`, crash log showing the fault inside `mbukernel` →
+`SmartArt` (x4) → `OfficeArt` (x2) → PowerPoint app code). This is a real
+gap this skill's QA never covered: LibreOffice does not crash on broken or
+unusual SmartArt, it silently mis-renders it as scattered ungrouped icons
+with no colour or labels (this was already noted as a rendering limitation
+in Round 3, but at the time it read as a cosmetic gap, not a sign of a
+crash risk).
+
+Root cause, confirmed by direct inspection rather than guessed: of every
+slide in `Being_a_Scientist_slide_deck.pptx`, only slide 3 (the Areas of
+Study circles + Skills wheel — the `being_a_scientist` source slide) has a
+`diagramData` relationship, i.e. genuine PowerPoint SmartArt. The four
+discipline slides and the concept cartoon slide, which also come from this
+file, do not — confirmed by grepping every slide's `.rels` file for
+`diagramData`, only `slide3.xml.rels` matched. So the crash risk was
+narrow and specific to `being_a_scientist`, not the whole file.
+
+Innes had already solved this in a separate, earlier session by manually
+converting both SmartArt diagrams (Areas of Study circles, Skills pie
+wheel) to flat images and rebuilding the KQ_cloud slide alongside it as a
+clean 2-slide file — that fix had never been carried into this repo. He
+uploaded the file (`KQ_and_BeingAScientist.pptx`) this session. Confirmed
+by inspection: zero `ppt/diagrams/` content anywhere in it. Slide 1 (KQ
+_cloud, `kq_challenge`) keeps the same shape names the build code already
+expected (`TextBox 16` = KQ text, `TextBox 17` = challenge text, currently
+empty for T6W7) plus the 21st Century Learning Skills icon group, which
+Innes's own reference screenshot confirms belongs on this slide — Round
+3/4's assumption that this content should be stripped (`KQ_CHALLENGE_STRIP
+_IDS`) was itself wrong; nothing is stripped from this source now. Slide 2
+(`being_a_scientist`) is now just 4 shapes: two flat pictures replacing the
+SmartArt, a `ScientistIcon` picture, and a `TitleBeing` text box already
+reading "Being a Scientist" - so `build_being_a_scientist()` no longer
+needs to synthesise a title textbox or copy an icon in from another slide
+(both of which Round 3 added specifically because the old SmartArt slide
+carried neither) - it now just clones the slide directly, the same pattern
+as `build_discipline()`.
+
+`science_registry.py` and `build_science_lesson.py` were updated
+accordingly (new `TEMPLATE_FILES['kq_being_scientist']` entry, both
+components repointed at it, `build_being_a_scientist()` simplified). Rebuilt
+L1, confirmed by unzipping the delivered file directly that no
+`ppt/diagrams/` folder and no `diagramData` relationship exist anywhere in
+it, ran `verify_lesson.py` (only the pre-existing, already-documented
+Chemistry discipline slide overlap remains — unrelated, not a regression),
+and rendered both affected slides to PNG - both match Innes's confirmed
+reference images exactly.
+
+**Still not fully closed:** this sandbox cannot open real Microsoft
+PowerPoint, so the fix is structurally and visually confirmed but not yet
+confirmed crash-free by Innes actually opening the delivered file in
+PowerPoint. Treat that confirmation as the real gate before calling this
+resolved, not the verifier or LibreOffice render alone — that is exactly
+the gap that let the original crash ship. If any future SmartArt-bearing
+template slide is added to this pipeline, check its `.rels` for
+`diagramData` and treat that as a crash-risk flag requiring the same
+flatten-to-image treatment before it is ever cloned into a delivered file.

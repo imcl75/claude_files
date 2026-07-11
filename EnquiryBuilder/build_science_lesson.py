@@ -23,26 +23,20 @@ import science_registry as REG
 
 
 def build_being_a_scientist(work, templates, spec):
+    # Round 5 (11 Jul 2026): now sourced from KQ_and_BeingAScientist.pptx, a
+    # SmartArt-free file Innes prepared himself (converted the fragile Areas
+    # of Study / Skills wheel SmartArt diagrams to flat images). That source
+    # slide already carries its own title ("Being a Scientist", TitleBeing
+    # shape) and its own scientist icon (ScientistIcon shape) baked in, so
+    # unlike the old Being_a_Scientist_slide_deck.pptx slide 3 this needs no
+    # synthesised title textbox and no icon copied in from elsewhere - a
+    # plain clone is enough, the same pattern as build_discipline(). See
+    # science_registry.py's BEING_A_SCIENTIST_* comments for the full
+    # history of why this changed (it was the cause of a real PowerPoint
+    # crash on the old source).
     pptx = templates[REG.COMPONENTS['being_a_scientist']['template']]
     sn = find_slide_by_anchor(pptx, REG.BEING_A_SCIENTIST_ANCHOR, REG.BEING_A_SCIENTIST_HINT)
     sp, rp = clone(work, pptx, sn, copy_hdphoto=True)
-    # This source slide (the Areas of Study / Skills wheel diagrams) carries
-    # no title of its own and no icon - both need adding, per SKILL.md's
-    # long-standing decision that was never actually implemented until now.
-    # A placeholder title_sp() inherits its position from whatever layout
-    # this slide's own source uses, which is NOT necessarily clear of the
-    # diagram content - confirmed by render: it landed directly on top of
-    # the "Areas of Study" label. Use an explicit fixed position at the very
-    # top of the slide instead, well above where either diagram starts
-    # (diagrams begin around y=2.3in / 2119651 EMU on this source slide).
-    t, st = get_spTree(sp)
-    st.append(tbox(50, 'Being a Scientist', 400000, 100000, SW - 800000, 700000,
-                    sz=3200, bold=True, color='1A3A5C', align='l', name='Title 50'))
-    save(t, sp)
-    icon_tmp = f'/tmp/scientist_icon_{os.getpid()}.png'
-    extract_image_by_shape_name(pptx, REG.BEING_A_SCIENTIST_ICON_SOURCE_SLIDE,
-                                 REG.BEING_A_SCIENTIST_ICON_SHAPE_NAME, icon_tmp)
-    add_img(sp, rp, work, icon_tmp, 150000, SH - 1300000, 1100000, 1100000, 51)
     return sp
 
 
