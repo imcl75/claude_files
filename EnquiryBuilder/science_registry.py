@@ -90,14 +90,20 @@ BEING_A_SCIENTIST_HINT = 3
 BEING_A_SCIENTIST_ICON_SOURCE_SLIDE = 2   # Picture 18 on slide 2 is the reusable scientist icon
 BEING_A_SCIENTIST_ICON_SHAPE_NAME = 'Picture 18'
 
-# kq_challenge: a KQ-in-a-cloud + "Our Challenge is: ..." block, bundled on
-# slide 2 alongside unrelated content (a "21st Century Learning Skills" 2x2
-# icon grid, and the same stray editor's note found on the old
-# being_a_scientist slide). The template's own placeholder content is a
-# Planets/Earth-Science example ("How does our planet compare to other
-# planets?" / "Design a new planet") left over from a different unit - always
-# replace both text boxes. The nested group's own "Key Question" icon and the
-# character avatars are generic and reusable, keep them.
+# kq_challenge (Innes calls this slide "KQ_cloud"): a KQ-in-a-cloud +
+# "Our Challenge is: ..." block, bundled on slide 2 alongside unrelated
+# content (a "21st Century Learning Skills" 2x2 icon grid, and the same
+# stray editor's note found on the old being_a_scientist slide). The
+# template's own placeholder content is a Planets/Earth-Science example
+# ("How does our planet compare to other planets?" / "Design a new planet")
+# left over from a different unit - always replace the KQ text box. The
+# challenge text box should only be filled when the enquiry has an
+# investigation/written outcome to work towards - leave it empty for
+# knowledge-and-skills-focus enquiries like T6W7 (no challenge/investigation
+# this unit, confirmed against T6W7_MTP.md). The nested group's own
+# "Key Question" icon and the character avatars are generic and reusable,
+# keep them. This slide is ALWAYS slide 1 - confirmed 11 Jul 2026, see the
+# ORDER note above the COMPONENTS dict.
 KQ_CHALLENGE_ANCHOR = 'Being a Scientist'   # unique to slide 2 (a caption near the bottom icon)
 KQ_CHALLENGE_HINT = 2
 KQ_CHALLENGE_KQ_SHAPE_NAME = 'TextBox 16'
@@ -126,11 +132,18 @@ CONTENT_LAYOUTS = {
 #   least once), optional (may be omitted by the lesson plan), repeatable
 #   (may appear 0-N times, in any position the lesson plan specifies).
 COMPONENTS = {
-    # Innes: "no cover, slide 1 is the KQ slide" turned out to mean the
-    # kq_challenge slide below (a simple KQ + challenge statement), not the
-    # detailed lo panel - confirmed 11 Jul 2026 after being shown the correct
-    # slide order directly: being_a_scientist, kq_challenge, discipline, lo,
-    # then content.
+    # ORDER — corrected 11 Jul 2026, superseding an earlier same-day "fix"
+    # that had this backwards. Confirmed directly against two screenshots
+    # Innes sent of his own reference deck: slide 1 is the KQ + Skills-icon
+    # slide (kq_challenge below - Innes calls it "KQ_cloud"), slide 2 is the
+    # Areas of Study / Skills wheel (being_a_scientist below). Correct order:
+    # kq_challenge (KQ_cloud), being_a_scientist, discipline, lo, then
+    # content. Do not trust the previous comment here or Architecture
+    # History "Round 3" below, which both stated the reverse - see "Round 4"
+    # in SKILL.md for the correction record.
+    # kq_challenge's `challenge` field is only used when the enquiry has an
+    # investigation/written outcome. When it doesn't (as in T6W7), leave
+    # `challenge` empty/omitted so no challenge text renders in the cloud.
     'being_a_scientist': {
         'presence': 'required', 'mode': 'clone_being_a_scientist',
         'template': 'being_a_scientist_deck', 'anchor': BEING_A_SCIENTIST_ANCHOR, 'hint': BEING_A_SCIENTIST_HINT,

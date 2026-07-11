@@ -61,10 +61,12 @@ run it as a second step.
 ### Stage 1 — Gather MTP inputs
 Ask for: key question, science strand, number of lessons, disciplinary focus
 per lesson, LO/TIB/ISB per lesson, day/session per lesson, and for each
-lesson which content slides it needs (a lesson doesn't have to include every
-component type — decide with Innes based on what the lesson actually needs,
-referring to the CLF Curriculum Progression Summary for prior learning and
-cross-curricular links).
+lesson which content slides it needs and how many of each (a lesson doesn't
+have to include every component type, and repeatable types aren't capped at
+one — decide the shape with Innes based on what the lesson actually needs
+pedagogically, see "Repeatable content types" under Component registry
+below, referring to the CLF Curriculum Progression Summary for prior
+learning and cross-curricular links).
 
 **Never invent this content without getting it confirmed by Innes.**
 Round 3 audit (July 2026) found that `t6w7_l1.json`'s key question,
@@ -129,26 +131,48 @@ after the fact.
 
 ## Component registry (`science_registry.py`)
 
-There is no separate cover/title slide. Slide 1 of every lesson is the `lo`
-component — its source (`KQ_LO.pptx`) already carries "Key Question" as its
-own heading above the three learning panels. A standalone cover was built
-and then explicitly rejected by Innes (11 Jul 2026, see Architecture history)
-— do not reintroduce one.
+There is no separate title/decorative cover slide with no content of its
+own — but there is always a KQ slide, and it is always slide 1. Innes calls
+it **KQ_cloud**; internally it's the `kq_challenge` component (a KQ-in-a-
+cloud plus an optional "Our Challenge is…" box — leave the challenge text
+empty for knowledge-and-skills-focus enquiries with no investigation
+outcome, as in T6W7). Confirmed twice now by two different same-day
+"corrections" that disagreed with each other — see "Round 4" in Architecture
+history below for why this table is the one to trust.
+
+Standard order: `kq_challenge` (KQ_cloud) → `being_a_scientist` → `discipline`
+→ `lo` → content slides (repeatable types, in whatever shape and number the
+lesson's pedagogy calls for — see "Repeatable content types" below) →
+`concept_cartoon` → `learning_review`.
 
 | type | presence | source |
 |---|---|---|
-| `lo` | required | clone, anchor `"What am I learning?"` — this is slide 1 |
-| `being_a_scientist` | required | clone, anchor `"Being a Scientist"` |
+| `kq_challenge` (KQ_cloud) | required | clone, anchor `"Being a Scientist"` (a caption unique to this donor slide) — this is always slide 1 |
+| `being_a_scientist` | required | clone, anchor `"Areas of Study"` — always slide 2 |
 | `discipline` | required | clone, anchor = `"What is {strand}?"` |
 | `lo` | required | clone, anchor `"What am I learning?"` |
-| `discipline` | required | clone, anchor = `"What is {strand}?"` |
 | `wedo_hook` | repeatable | fresh, layout `We do` |
 | `wedo_grid` | repeatable | fresh, layout `We do - Blank` |
 | `ido_diagram` | repeatable | fresh, layout `I Do - Blank` |
 | `youdo_provocation` | repeatable | fresh, layout `You do Ind - Blank` |
 | `youdo_task` | repeatable | fresh, layout `You do Ind` |
-| `concept_cartoon` | optional | clone, anchor `"turn on the light"` |
+| `concept_cartoon` | optional (Innes wants it in every T6W7 lesson — treat as required for this enquiry even though the registry marks it optional generally) | clone, anchor `"turn on the light"` |
 | `learning_review` | required | clone, anchor `"Learning Review"` |
+
+### Repeatable content types — this is a pedagogy decision, not a slide-filling one
+
+`wedo_hook`, `wedo_grid`, `ido_diagram`, `youdo_provocation` and `youdo_task`
+can each appear zero, one, or several times, in any order the lesson plan
+specifies — the registry doesn't cap them at one. Don't default to "one of
+each" out of habit. When drafting the MTP JSON's slide list in Stage 1,
+actively decide the shape from what the lesson needs to teach: a concept
+that needs heavy scaffolding might need two or three `ido_diagram` slides
+building on each other rather than one crowded slide; a lesson built around
+quick-fire whiteboard checking might need two or three short `youdo_task`
+slides instead of one long one. This is exactly the kind of judgement Innes
+means when he says Claude needs to think about pedagogy, not just slides and
+content — decide the content shape first, explain the reasoning, and confirm
+it with Innes in Stage 1 alongside the wording itself, before it gets built.
 
 Template files, as they actually exist in `EnquiryBuilder/templates/` (verified
 11 Jul 2026 — do not trust older commit messages, they refer to filenames
@@ -395,3 +419,45 @@ confirmed correct — only structurally confirmed. Also: the `kq_challenge`
 slide only has one avatar image available from the donor slide, not four
 like Innes's reference example, which likely drew its extra avatars from
 different source material not present in this deck's templates.
+
+### Round 4 (11 Jul 2026, following session) — Round 3's own order was backwards
+
+Round 3 above states "Correct L1 order is `being_a_scientist` first,
+`kq_challenge` second... not `lo` first" and left it at that — nobody
+checked that order against an actual reference image, so it silently
+carried a second ordering mistake forward. In this session Innes sent two
+screenshots of his real reference deck, labelled explicitly: "slide one"
+is the KQ-in-a-cloud slide with the 21st Century Learning Skills icons and
+"Being a Scientist" caption/characters at the bottom — this is the
+`kq_challenge` component, which Innes calls **KQ_cloud**. "This is slide 2"
+is the Areas of Study circles + Skills wheel — the `being_a_scientist`
+component. So the correct order is `kq_challenge` (KQ_cloud) **first**,
+`being_a_scientist` **second** — the reverse of what Round 3 recorded.
+
+Root cause of the repeated flip: `kq_challenge` and `being_a_scientist` are
+both cloned from the same donor file (`Being_a_Scientist_slide_deck.pptx`,
+slides 2 and 3 respectively) and both slides visually reference "Being a
+Scientist" in some form — the KQ_cloud slide via a small caption, the
+Areas-of-Study slide via its actual title — so it's easy to eyeball the
+wrong one as "the Being a Scientist slide" without checking the anchor
+text or a real reference image. `science_registry.py`'s `COMPONENTS` dict
+comment and this file's component table have both been corrected
+(11 Jul 2026) to state `kq_challenge` first, `being_a_scientist` second, and
+this is now cross-referenced from both edit points so a future correction
+to one side doesn't drift from the other again.
+
+This session also confirmed the `challenge` field on `kq_challenge` is
+enquiry-specific, not always required: T6W7 has no investigation/written
+outcome (confirmed against `T6W7_MTP.md`), so its KQ_cloud slide carries the
+key question only, no challenge text. `t6w7_l1.json`'s `challenge` field
+has been cleared accordingly — don't reintroduce challenge text for this
+enquiry.
+
+Separately, Innes flagged that this skill's whole value is the ability to
+shape a lesson's repeatable content slides (`wedo_hook`, `wedo_grid`,
+`ido_diagram`, `youdo_provocation`, `youdo_task`) to what the lesson
+actually needs pedagogically — more `ido_diagram` slides for a concept
+needing heavy scaffolding, more short `youdo_task` slides for quick-fire
+whiteboard checking — rather than treating "one of each" as the default
+shape. See "Repeatable content types" above, added this session, for the
+resulting Stage 1 guidance.
