@@ -351,8 +351,20 @@ def grid_geometry(n_cols, n_rows, margin_x=150000, top_y=1750000, label_h=400000
 def _anim_timing_xml(steps):
     """
     steps: list of lists of shape ids that should appear together on one click.
-    Produces the pattern documented in SKILL.md as correct: clean p:seq,
-    restart="never", no explicit hide-at-start block.
+    Matches the SKILL.md-documented pattern EXACTLY, structurally, with no
+    deviation: clean p:seq, restart="never", no hide-at-start block, and
+    critically NO <p:bldLst>. A previous version of this function added a
+    <p:bldP .../> per shape, copied from the OLD anim_body() pattern without
+    noticing that pattern is for paragraph-level builds WITHIN one shape
+    (revealing bullet points one at a time inside a single text box) - it
+    does not apply to whole-shape visibility toggling between SEPARATE
+    shapes, which is what every current use of animate() actually does.
+    Declaring bldP="build by paragraph" on a shape whose only behaviour is a
+    whole-shape visibility <p:set> is a genuine contradiction, and it is what
+    was producing "TRIGGER: UNNAMED" with only the first shape's entry
+    showing in PowerPoint's Animation Pane - confirmed by a screenshot of the
+    real Animation Pane on 11 Jul 2026 (LO slide: only TextBox 38 appeared,
+    under an unnamed trigger, with TextBox 39/40 missing entirely).
     """
     c = 3; par_blocks = ''
     for step in steps:
@@ -369,14 +381,12 @@ def _anim_timing_xml(steps):
         oid = c; c += 1
         par_blocks += (f'<p:par><p:cTn id="{oid}" fill="hold"><p:stCondLst><p:cond evt="onBegin" delay="indefinite"/>'
                         f'</p:stCondLst><p:childTnLst>{inner}</p:childTnLst></p:cTn></p:par>')
-    bld_targets = [sid for step in steps for sid in step]
-    bld = ''.join(f'<p:bldP spid="{sid}" grpId="0" build="p"/>' for sid in bld_targets)
     return (f'<p:timing xmlns:p="{P}"><p:tnLst><p:par><p:cTn id="1" dur="indefinite" restart="never" '
             f'nodeType="tmRoot"><p:childTnLst><p:seq concurrent="1" nextAc="seek">'
             f'<p:cTn id="2" dur="indefinite" nodeType="mainSeq"><p:childTnLst>{par_blocks}</p:childTnLst></p:cTn>'
             f'<p:prevCondLst><p:cond evt="onPrevClick" delay="0"/></p:prevCondLst>'
             f'<p:nextCondLst><p:cond evt="onNextClick" delay="0"/></p:nextCondLst></p:seq></p:childTnLst></p:cTn>'
-            f'</p:par></p:tnLst><p:bldLst>{bld}</p:bldLst></p:timing>')
+            f'</p:par></p:tnLst></p:timing>')
 
 def animate(sp, steps):
     """steps: list of lists of shape-ids, one list per click."""
@@ -538,4 +548,47 @@ def strip_orphaned_media(work):
             if full not in referenced:
                 os.remove(full)
                 removed.append(f)
+    return removed
+
+def clamp_callout_tail(sp, shape_name, max_abs=30000):
+    """wedgeRoundRectCallout shapes (speech bubbles) point their tail via
+    adj1/adj2 (roughly -100000..100000, permille of shape width/height from
+    centre). The concept cartoon template's bubbles were authored with very
+    large adj1 offsets (confirmed: -56873, -3351, -65727 across the three
+    bubbles) so the tail reaches a long way across the bubble toward its
+    character - on the two bubbles with large offsets, that reach is long
+    enough to visually cross the text in some renderers. Never touched by
+    set_text(), so this is template geometry, not build-introduced - but
+    clamping the reach is a cheap defensive fix that removes the risk
+    regardless of which renderer is displaying it."""
+    t = xr(sp); root = t.getroot()
+    for s in root.iter(f'{{{P}}}sp'):
+        cNvPr = s.find(f'.//{{{P}}}cNvPr')
+        if cNvPr is None or cNvPr.get('name') != shape_name: continue
+        for gd in s.iter(f'{{{A}}}gd'):
+            if gd.get('name') != 'adj1': continue
+            m = re.match(r'val (-?\d+)', gd.get('fmla', ''))
+            if not m: continue
+            v = int(m.group(1))
+            clamped = max(-max_abs, min(max_abs, v))
+            if clamped != v:
+                gd.set('fmla', f'val {clamped}')
+    xw(t, sp)
+
+def strip_timing(sp):
+    """Remove any pre-existing <p:timing> from a cloned slide. Found via the
+    T6W7 investigation: the discipline slides in Being_a_Scientist_slide_
+    deck.pptx carry a pre-existing animation with 11 clickEffect blocks
+    against 37 spTgt targets - a mismatch that was already broken in the
+    source artwork, independent of anything this skill builds. A malformed
+    animation is worse than no animation, so clone_discipline (and any other
+    clone_verbatim source found to have the same problem) strips it rather
+    than deliver broken click behaviour."""
+    t = xr(sp); root = t.getroot()
+    removed = False
+    for el in list(root):
+        if el.tag == f'{{{P}}}timing':
+            root.remove(el); removed = True
+    if removed:
+        xw(t, sp)
     return removed

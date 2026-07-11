@@ -164,6 +164,20 @@ def check_animation_pattern(pptx_path, failures):
             if 'restart="whenNotActive"' in timing:
                 fail(failures, f"{name}: animation root uses restart=\"whenNotActive\" "
                                 f"(should be restart=\"never\" per SKILL.md)")
+            if '<p:bldLst>' in timing or '<p:bldP' in timing:
+                fail(failures, f"{name}: has a <p:bldLst>/<p:bldP> paragraph-build declaration on a "
+                                f"whole-shape visibility animation - this contradiction is what produced "
+                                f"'TRIGGER: UNNAMED' with missing entries in PowerPoint's Animation Pane "
+                                f"(confirmed 11 Jul 2026). None of this skill's current animations are "
+                                f"paragraph-level builds; bldLst should never appear.")
+            # every clickEffect block must have exactly one spTgt - if the
+            # count of clickEffect nodeType blocks doesn't match the count of
+            # spTgt targets, some shapes silently got no click assigned
+            n_click_effects = timing.count('nodeType="clickEffect"')
+            n_sp_targets = len(re.findall(r'<p:spTgt spid="[^"]+"\s*/?>', timing))
+            if n_click_effects != n_sp_targets:
+                fail(failures, f"{name}: {n_click_effects} clickEffect block(s) but {n_sp_targets} "
+                                f"spTgt target(s) - mismatch means some shapes have no working click animation")
 
 def check_images_present(prs, manifest, mtp, failures):
     """Every slide type whose spec declared an image_path must actually have

@@ -16,7 +16,7 @@ from lib_ooxml import (
     title_sp, body_sp, tbox, add_img, grid_geometry, animate,
     find_sp, get_sp_id, set_text, delete_shapes_by_id, delete_shape_by_name,
     replace_image, find_pic_id_by_name, force_shrink_to_fit, strip_orphaned_media,
-    xr, xw, xp, ex, SW, SH,
+    clamp_callout_tail, strip_timing, xr, xw, xp, ex, SW, SH,
 )
 import science_registry as REG
 
@@ -37,6 +37,11 @@ def build_discipline(work, templates, spec):
     pptx = templates[REG.COMPONENTS['discipline']['template']]
     sn = find_slide_by_anchor(pptx, REG.DISCIPLINE_ANCHORS[strand], REG.DISCIPLINE_HINTS[strand])
     sp, rp = clone(work, pptx, sn, copy_hdphoto=True)
+    # The source discipline slides carry a pre-existing animation with a
+    # clickEffect/spTgt count mismatch (confirmed on the Chemistry slide:
+    # 11 vs 37) - broken in the original artwork, not introduced here.
+    # Strip it rather than deliver malformed click behaviour.
+    strip_timing(sp)
     return sp
 
 
@@ -84,6 +89,8 @@ def build_concept_cartoon(work, templates, spec):
         # past the bubble edge into whatever sits below it.
         force_shrink_to_fit(s)
     xw(tree, sp)
+    for bubble_name in REG.CONCEPT_CARTOON_BUBBLE_NAMES:
+        clamp_callout_tail(sp, bubble_name)
     # Replace the central scene image - this is the one part of the template
     # that is always topic-specific (it ships as a cat/light illustration).
     tree = xr(sp)
