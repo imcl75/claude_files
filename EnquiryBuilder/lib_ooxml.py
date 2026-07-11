@@ -262,6 +262,17 @@ def clone(work, pptx, sn, copy_hdphoto=True):
     return sp, rp
 
 def fresh(work, layout_name):
+    # Round 11 (11 Jul 2026): the clrMapOvr below used to write
+    # <a:masterClr/>, which is not a real OOXML element - the correct
+    # empty element for "use the master's own colour map" is
+    # <a:masterClrMapping/> (confirmed correct by its use, unmodified,
+    # in every slideLayout and notesSlide in this same package). Found
+    # via a normalised diff against Innes's own PowerPoint-repaired
+    # file on wedo_hook/youdo_task/ido_diagram slides (every slide this
+    # function builds), which showed PowerPoint's repair silently
+    # rewriting <a:masterClr/> to <a:masterClrMapping/> on every one -
+    # a strong sign PowerPoint's schema validation was rejecting the
+    # original element outright, not just disagreeing with a value.
     if layout_name not in _work_layouts:
         raise KeyError(f"Layout '{layout_name}' not found in work presentation. "
                         f"Known layouts: {sorted(_work_layouts)}")
@@ -272,7 +283,7 @@ def fresh(work, layout_name):
              f'''    <p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>\n'''
              f'''    <p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>\n'''
              f'''  </p:spTree></p:cSld>\n'''
-             f'''  <p:clrMapOvr><a:masterClr/></p:clrMapOvr>\n'''
+             f'''  <p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr>\n'''
              f'''</p:sld>''')
     rels = (f"<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\n<Relationships xmlns=\"{PKG}\">\n"
             f"  <Relationship Id=\"rId1\" Type=\"{R}/slideLayout\" Target=\"../slideLayouts/{lf}\"/>\n</Relationships>")
@@ -304,12 +315,19 @@ def body_sp(sid, bullets, sz=2200):
               f'<p:spPr/><p:txBody><a:bodyPr/><a:lstStyle/>{paras}</p:txBody></p:sp>')
 
 def tbox(sid, text, x, y, cx, cy, sz=1800, bold=False, color='1A3A5C', align='l', name=None):
+    # Round 11 (11 Jul 2026): bodyPr used to carry an attribute
+    # autofit="normAutofit" - there is no such attribute in the OOXML
+    # schema for CT_TextBodyProperties; autofit is only ever expressed
+    # via a child element (<a:normAutofit/>, <a:noAutofit/> or
+    # <a:spAutoFit/>). Found the same way as the masterClr bug above -
+    # PowerPoint's own repair silently stripped the attribute entirely
+    # on every affected slide rather than reinterpreting it.
     b = ' b="1"' if bold else ''
     nm = name or f'TextBox {sid}'
     return xp(f'<p:sp xmlns:p="{P}" xmlns:a="{A}"><p:nvSpPr><p:cNvPr id="{sid}" name="{ex(nm)}"/>'
               f'<p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="{x}" y="{y}"/>'
               f'<a:ext cx="{cx}" cy="{cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr>'
-              f'<p:txBody><a:bodyPr wrap="square" autofit="normAutofit"/><a:lstStyle/><a:p><a:pPr algn="{align}"/>'
+              f'<p:txBody><a:bodyPr wrap="square"><a:normAutofit/></a:bodyPr><a:lstStyle/><a:p><a:pPr algn="{align}"/>'
               f'<a:r><a:rPr lang="en-GB" sz="{sz}"{b} dirty="0"><a:solidFill><a:srgbClr val="{color}"/></a:solidFill></a:rPr>'
               f'<a:t>{ex(text)}</a:t></a:r></a:p></p:txBody></p:sp>')
 
@@ -556,10 +574,24 @@ def force_shrink_to_fit(s, min_sz=1400, step=100):
     neighbouring shapes. Fixed by computing an explicit font size here
     (word-wrap heuristic against the shape's actual box width/height) and
     writing it onto every run directly, so the fit does not depend on the
-    renderer recalculating anything. normAutofit is still set afterwards
-    with a matching fontScale, as a hint for PowerPoint's own live-editing
-    behaviour if Innes later retypes the text by hand, but the delivered
-    file is never relying on it alone."""
+    renderer recalculating anything. normAutofit is left present (empty,
+    no fontScale) purely so PowerPoint's own live-editing auto-shrink can
+    still kick in if Innes later retypes the text by hand.
+
+    Round 11 (11 Jul 2026) correction: this function used to also set
+    fontScale on the normAutofit element, computed as sz/start_sz. That
+    was wrong - rPr/sz above is already the final, fitting size, and
+    PowerPoint renders text at sz * fontScale, not sz alone. Setting both
+    meant the shrink was applied twice: a shape whose fitting size was
+    correctly computed as 18pt (down from a 28pt template default) was
+    ALSO scaled by the 18/28 ratio again at render time, displaying at
+    ~11.5pt (PowerPoint's UI rounds this to size 12) even though the box
+    had visible room for something closer to 20pt. Confirmed on all three
+    concept-cartoon speech bubbles in T6W7 L1, all showing sz=1800 with
+    fontScale=64286 (=1800/2800), i.e. the same double shrink on every
+    one. Fix: never set fontScale - rPr/sz alone carries the computed
+    size, and an unscaled normAutofit is enough to enable live-editing
+    autofit without re-applying a shrink that's already baked in."""
     spPr = s.find(f'{{{P}}}spPr')
     xfrm = spPr.find(f'{{{A}}}xfrm') if spPr is not None else None
     ext = xfrm.find(f'{{{A}}}ext') if xfrm is not None else None
@@ -606,9 +638,10 @@ def force_shrink_to_fit(s, min_sz=1400, step=100):
         for child_tag in ('spAutoFit', 'noAutofit', 'normAutofit'):
             el = bodyPr.find(f'{{{A}}}{child_tag}')
             if el is not None: bodyPr.remove(el)
-        fit = etree.SubElement(bodyPr, f'{{{A}}}normAutofit')
-        if sz < start_sz:
-            fit.set('fontScale', str(int(round(sz / start_sz * 100000))))
+        etree.SubElement(bodyPr, f'{{{A}}}normAutofit')
+        # No fontScale here - rPr/sz (set above) already IS the fitting
+        # size. Setting fontScale too would scale that already-fitting
+        # size down again at render time. See Round 11 note above.
 
 def strip_orphaned_media(work):
     """Remove any file in ppt/media/ that no relationship anywhere in the

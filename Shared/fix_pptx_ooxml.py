@@ -387,6 +387,91 @@ def fix_pptx(input_path, output_path=None):
                 any_fixed = True
 
     # ------------------------------------------------------------------ #
+    # 9. Double-applied normAutofit fontScale on shrink-to-fit text.      #
+    #    lib_ooxml.force_shrink_to_fit computes an exact fitting font sz  #
+    #    and writes it directly onto every run's rPr - that alone is the #
+    #    complete fix. An earlier version of that function ALSO wrote a  #
+    #    fontScale onto the shape's normAutofit (sz/original_sz), not    #
+    #    realising PowerPoint renders text at sz * fontScale, not sz     #
+    #    alone - so the shrink got applied twice. Confirmed 11 Jul 2026  #
+    #    (Round 11) on T6W7 L1's three concept-cartoon speech bubbles:    #
+    #    all had sz="1800" (the correct, already-fitting size) AND       #
+    #    fontScale="64286", rendering at ~11.5pt (PowerPoint's Font Size #
+    #    box shows this as "12") even though the box had visible room    #
+    #    for ~20pt. Strip fontScale from every normAutofit; the rPr sz   #
+    #    already carries the fit, and an unscaled normAutofit is enough  #
+    #    to keep PowerPoint's live-editing auto-shrink available if the  #
+    #    text is retyped by hand later.                                  #
+    # ------------------------------------------------------------------ #
+    fontscale_pat = re.compile(r'<a:normAutofit fontScale="\d+"\s*/>')
+    fixed_scale = 0
+    for name in list(files.keys()):
+        if not re.match(r'ppt/slides/slide\d+\.xml$', name):
+            continue
+        content = files[name].decode('utf-8')
+        new_content, n = fontscale_pat.subn('<a:normAutofit/>', content)
+        if n:
+            files[name] = new_content.encode('utf-8')
+            fixed_scale += n
+
+    if fixed_scale:
+        print(f'  [fix_pptx_ooxml] Fix #9: Removed double-applied fontScale from '
+              f'{fixed_scale} normAutofit element(s)')
+        any_fixed = True
+
+    # ------------------------------------------------------------------ #
+    # 10. Two invalid OOXML constructs from lib_ooxml.py's slide/tbox     #
+    #     builders, found 11 Jul 2026 (Round 11) via a normalised diff    #
+    #     against Innes's own PowerPoint-repaired file that showed        #
+    #     PowerPoint's repair silently rewriting/stripping these on       #
+    #     every affected slide - not a value disagreement, an invalid     #
+    #     construct:                                                      #
+    #       a) <a:masterClr/> is not a real OOXML element. The correct    #
+    #          empty element for "use the master's own colour map" is     #
+    #          <a:masterClrMapping/> - confirmed by its correct,          #
+    #          unmodified use elsewhere in the same package (every        #
+    #          slideLayout and notesSlide).                               #
+    #       b) autofit="normAutofit" is not a valid attribute of          #
+    #          CT_TextBodyProperties (<a:bodyPr>) - autofit is only ever  #
+    #          expressed via a child element (<a:normAutofit/> etc).      #
+    #     Both are fixed at source in lib_ooxml.py's fresh()/tbox() for   #
+    #     future builds; this reaches already-built files.                #
+    # ------------------------------------------------------------------ #
+    fixed_clrmap = 0
+    fixed_bodypr_attr = 0
+    for name in list(files.keys()):
+        if not re.match(r'ppt/slides/slide\d+\.xml$', name):
+            continue
+        content = files[name].decode('utf-8')
+        new_content = content
+
+        n1 = new_content.count('<a:masterClr/>')
+        if n1:
+            new_content = new_content.replace('<a:masterClr/>', '<a:masterClrMapping/>')
+            fixed_clrmap += n1
+
+        n2 = len(re.findall(r'<a:bodyPr wrap="square" autofit="normAutofit"/>', new_content))
+        if n2:
+            new_content = re.sub(
+                r'<a:bodyPr wrap="square" autofit="normAutofit"/>',
+                '<a:bodyPr wrap="square"><a:normAutofit/></a:bodyPr>',
+                new_content
+            )
+            fixed_bodypr_attr += n2
+
+        if new_content != content:
+            files[name] = new_content.encode('utf-8')
+
+    if fixed_clrmap:
+        print(f'  [fix_pptx_ooxml] Fix #10a: Corrected {fixed_clrmap} invalid '
+              f'<a:masterClr/> element(s) to <a:masterClrMapping/>')
+        any_fixed = True
+    if fixed_bodypr_attr:
+        print(f'  [fix_pptx_ooxml] Fix #10b: Corrected {fixed_bodypr_attr} invalid '
+              f'bodyPr autofit="normAutofit" attribute(s) to a child <a:normAutofit/> element')
+        any_fixed = True
+
+    # ------------------------------------------------------------------ #
     # Write output                                                         #
     # ------------------------------------------------------------------ #
     with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as z:
