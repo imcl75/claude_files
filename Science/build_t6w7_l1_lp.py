@@ -143,22 +143,22 @@ def _wrap_line_count(text, width_in, size_pt):
             cur = w
     return max(1, lines)
 
-def heading(slide, y, text, w=None):
+def heading(slide, y, text, w=None, size_pt=12):
     w = w or CONT_W
-    n = _wrap_line_count(text, w, 12)
-    h = 0.24 * n
+    n = _wrap_line_count(text, w, size_pt)
+    h = (size_pt / 12) * 0.24 * n
     tb = add_textbox(slide, CONT_X, y, w, h)
     tb.text_frame.word_wrap = True
-    set_para(tb.text_frame.paragraphs[0], text, bold=True, size_pt=12, color=BLUE)
+    set_para(tb.text_frame.paragraphs[0], text, bold=True, size_pt=size_pt, color=BLUE)
     return y + h + 0.06
 
-def instruction(slide, y, text, w=None):
+def instruction(slide, y, text, w=None, size_pt=9.5):
     w = w or CONT_W
-    n = _wrap_line_count(text, w, 9.5)
-    h = 0.19 * n
+    n = _wrap_line_count(text, w, size_pt)
+    h = (size_pt / 9.5) * 0.19 * n
     tb = add_textbox(slide, CONT_X, y, w, h)
     tb.text_frame.word_wrap = True
-    set_para(tb.text_frame.paragraphs[0], text, size_pt=9.5, color=DARK)
+    set_para(tb.text_frame.paragraphs[0], text, size_pt=size_pt, color=DARK)
     return y + h + 0.08
 
 def body_text(slide, y, text, bold=False, sz=10, col=None, x=None, w=None):
@@ -174,18 +174,18 @@ def write_lines(slide, y, n=3, w=None, x=None):
         add_line(slide, x, y, w); y += 0.315
     return y + 0.10
 
-def word_bank(slide, y, words, w=None):
+def word_bank(slide, y, words, w=None, size_pt=9):
     w = w or CONT_W
-    n = _wrap_line_count('Word bank: ' + words, w - 0.1, 9)
-    box_h = 0.20 * n + 0.14
+    n = _wrap_line_count('Word bank: ' + words, w - 0.1, size_pt)
+    box_h = (size_pt / 9) * 0.20 * n + 0.14
     add_rect(slide, CONT_X, y, w, box_h, fill_rgb=CREAM, line_rgb=ORANGE, line_pt=1.0)
     tb = add_textbox(slide, CONT_X + 0.05, y + 0.05, w - 0.1, box_h - 0.08)
     tf = tb.text_frame; tf.word_wrap = True
     p = tf.paragraphs[0]
     r1 = p.add_run(); r1.text = 'Word bank: '
-    r1.font.name = FONT_BODY; r1.font.bold = True; r1.font.size = Pt(9); r1.font.color.rgb = ORANGE
+    r1.font.name = FONT_BODY; r1.font.bold = True; r1.font.size = Pt(size_pt); r1.font.color.rgb = ORANGE
     r2 = p.add_run(); r2.text = words
-    r2.font.name = FONT_BODY; r2.font.size = Pt(9); r2.font.color.rgb = DARK
+    r2.font.name = FONT_BODY; r2.font.size = Pt(size_pt); r2.font.color.rgb = DARK
     return y + box_h + 0.06
 
 def add_reference_image(slide, y, img_path, max_w=None, max_h=1.35):
@@ -231,19 +231,25 @@ COL_LABELS = ['Material', 'State?', 'Reason (use the particle model)']
 COL_W_RATIO = [0.26, 0.14, 0.60]
 COL_WIDTHS_IN = [CONT_W * r for r in COL_W_RATIO]
 
-def sort_table_header(slide, y):
-    n = max(_wrap_line_count(lbl, cw - 0.08, 8) for lbl, cw in zip(COL_LABELS, COL_WIDTHS_IN))
-    row_h = 0.18 * n + 0.10
+def sort_table_header(slide, y, size_pt=8):
+    n = max(_wrap_line_count(lbl, cw - 0.08, size_pt) for lbl, cw in zip(COL_LABELS, COL_WIDTHS_IN))
+    row_h = (size_pt / 8) * 0.18 * n + 0.10
     x = CONT_X
     for lbl, cw in zip(COL_LABELS, COL_WIDTHS_IN):
         add_rect(slide, x, y, cw, row_h, fill_rgb=BLUE)
         tb = add_textbox(slide, x + 0.04, y + 0.03, cw - 0.08, row_h - 0.06)
         tb.text_frame.word_wrap = True
-        set_para(tb.text_frame.paragraphs[0], lbl, bold=True, size_pt=8, color=WHITE)
+        set_para(tb.text_frame.paragraphs[0], lbl, bold=True, size_pt=size_pt, color=WHITE)
         x += cw
     return y + row_h
 
-def sort_table_row(slide, y, material, even=True, row_h=0.42):
+def sort_table_row(slide, y, material, even=True, row_h=0.42, size_pt=8.5):
+    # row_h is a floor, not a fixed value - a wrapping material name (e.g.
+    # "Balloon (filled with air)" at the larger pupil-page font) needs a
+    # taller row or its second line gets clipped against the row below.
+    n = _wrap_line_count(material, COL_WIDTHS_IN[0] - 0.08, size_pt)
+    needed_h = (size_pt / 8.5) * 0.20 * n + 0.16
+    row_h = max(row_h, needed_h)
     fill = RGBColor(0xF5, 0xF5, 0xF5) if even else WHITE
     x = CONT_X
     for i, cw in enumerate(COL_WIDTHS_IN):
@@ -251,7 +257,7 @@ def sort_table_row(slide, y, material, even=True, row_h=0.42):
         if i == 0:
             tb = add_textbox(slide, x + 0.04, y + 0.04, cw - 0.08, row_h - 0.08)
             tb.text_frame.word_wrap = True
-            set_para(tb.text_frame.paragraphs[0], material, size_pt=8.5, color=DARK)
+            set_para(tb.text_frame.paragraphs[0], material, size_pt=size_pt, color=DARK)
         x += cw
     return y + row_h
 
@@ -294,33 +300,53 @@ def build_lp():
         s1, LBL_X, LBL_Y,
         date_str='13/07/2026',
         key_q='Can materials change their state?',
-        lf='compare and group materials as solids, liquids or gases using their observable properties',
-        ican1='sort materials into solid, liquid or gas using their properties',
+        lf='compare and group materials',
+        ican1='sort materials based on their properties',
         ican2='explain my sorting using the particle model',
         icon_path=ICON_PATH,
         subject='scientist',
         year='Y4',
         png_dest=os.path.join(WORK, 'lp_label.png'),
     )
+    # Innes: label was too big - shrink it (matches his manual resize,
+    # ~70.7% of natural render size, aspect ratio preserved) rather than
+    # embedding at the label pipeline's fixed natural width.
+    LABEL_SCALE = 0.707
+    label_pic = s1.shapes[-1]
+    new_w, new_h = LL_W * LABEL_SCALE, label_h * LABEL_SCALE
+    label_pic.left = _i(SW_IN - new_w - MARGIN)
+    label_pic.top = _i(LBL_Y)
+    label_pic.width, label_pic.height = _i(new_w), _i(new_h)
+    label_h = new_h
     CONT_Y = LBL_Y + label_h + 0.15
 
+    # Innes: pupil-page text was too small for children to read - sizes
+    # below (16/12/10/10/14/10.5/12) match his own edit exactly. Marking
+    # station (slide 2, below) is unchanged - it's for the teacher, not
+    # read from across the room, so stays compact.
     y = CONT_Y
-    y = heading(s1, y, 'Part A   Sort the materials')
+    y = heading(s1, y, 'Part A   Sort the materials', size_pt=16)
     y = instruction(s1, y, 'Sort each material into solid, liquid or gas. Write one reason for '
-                            'each, using the particle model below to help you.')
-    y = add_reference_image(s1, y, PARTICLE_MODEL_IMG, max_h=1.05)
+                            'each, using the particle model below to help you.', size_pt=12)
+    y = add_reference_image(s1, y, PARTICLE_MODEL_IMG, max_h=1.37)
 
-    y = sort_table_header(s1, y)
+    y = sort_table_header(s1, y, size_pt=10)
     for i, m in enumerate(MATERIALS):
-        y = sort_table_row(s1, y, m, even=(i % 2 == 0), row_h=0.36)
+        y = sort_table_row(s1, y, m, even=(i % 2 == 0), row_h=0.36, size_pt=10)
 
     y += 0.12
-    y = heading(s1, y, 'Part B   Challenge')
-    y = instruction(s1, y, 'Can you find one material that is difficult to classify? Why?')
+    y = heading(s1, y, 'Part B   Challenge', size_pt=14)
+    y = instruction(s1, y, 'Can you find one material that is difficult to classify? Why?', size_pt=10.5)
+    # Innes: gap before the first write-line must be at least the same
+    # 0.8cm (0.315") used between the lines themselves, so there's
+    # actually room to write on that first line - instruction() only
+    # leaves 0.08" by default, top up to the full 0.315".
+    y += 0.315 - 0.08
     y = write_lines(s1, y, 3)
     y += 0.05
     word_bank(s1, y, 'solid  •  liquid  •  gas  •  particles  •  '
-                      'closely packed  •  slide past  •  spread out  •  fixed shape  •  flows')
+                      'closely packed  •  slide past  •  spread out  •  fixed shape  •  flows',
+              size_pt=12)
 
     # ── Marking station ──
     s2 = prs.slides[1]
