@@ -75,8 +75,41 @@ BANNED_TEMPLATE_TEXT = [
     "Text box",  # literal unfilled "Text box" placeholder runs in KQ_LO Group B if ever left unset
 ]
 
-BEING_A_SCIENTIST_ANCHOR = 'Being a Scientist'
-BEING_A_SCIENTIST_HINT = 2
+# CORRECTED 11 Jul 2026: the wheel diagrams (Areas of Study circles + Skills
+# pie wheel - the actual "Being a Scientist" visual Innes expects) are on
+# slide 3, NOT slide 2. The original anchor 'Being a Scientist' matched
+# slide 2 because that literal string happens to appear there too (as a
+# small caption near an unrelated icon), but slide 2's real content is a
+# completely different KQ+Challenge intro block (see kq_challenge below).
+# Slide 3 carries no title of its own - one must be added, plus the
+# scientist icon, per SKILL.md's long-standing (and previously unimplemented)
+# decision: "'Being a Scientist' has title added at top and scientist icon
+# bottom left".
+BEING_A_SCIENTIST_ANCHOR = 'Areas of Study'
+BEING_A_SCIENTIST_HINT = 3
+BEING_A_SCIENTIST_ICON_SOURCE_SLIDE = 2   # Picture 18 on slide 2 is the reusable scientist icon
+BEING_A_SCIENTIST_ICON_SHAPE_NAME = 'Picture 18'
+
+# kq_challenge: a KQ-in-a-cloud + "Our Challenge is: ..." block, bundled on
+# slide 2 alongside unrelated content (a "21st Century Learning Skills" 2x2
+# icon grid, and the same stray editor's note found on the old
+# being_a_scientist slide). The template's own placeholder content is a
+# Planets/Earth-Science example ("How does our planet compare to other
+# planets?" / "Design a new planet") left over from a different unit - always
+# replace both text boxes. The nested group's own "Key Question" icon and the
+# character avatars are generic and reusable, keep them.
+KQ_CHALLENGE_ANCHOR = 'Being a Scientist'   # unique to slide 2 (a caption near the bottom icon)
+KQ_CHALLENGE_HINT = 2
+KQ_CHALLENGE_KQ_SHAPE_NAME = 'TextBox 16'
+KQ_CHALLENGE_TASK_SHAPE_NAME = 'TextBox 17'
+KQ_CHALLENGE_STRIP_IDS = [4, 11, 12, 13, 14]   # "21st Century Learning Skills" content: id4 is
+    # 'Group 3', a grpSp of 4 individual skill-icon images (Independence/
+    # Collaboration/Curiosity and Imagination/Resilience - confirmed by opening
+    # image2.png, the 'Collaboration' one) that renders as a 2x2 grid top-right.
+    # ids 11-14 (TextBox 10 + 3 pictures) are a second, smaller 21st-century-
+    # skills cluster near it. Neither belongs on the KQ+Challenge slide.
+KQ_CHALLENGE_STRIP_NAME = 'TextBox 19'      # stray editor's note, same one found on the old being_a_scientist source
+
 LEARNING_REVIEW_ANCHOR = 'Learning Review'
 LEARNING_REVIEW_HINT = 17
 
@@ -93,15 +126,20 @@ CONTENT_LAYOUTS = {
 #   least once), optional (may be omitted by the lesson plan), repeatable
 #   (may appear 0-N times, in any position the lesson plan specifies).
 COMPONENTS = {
-    # Innes: "no cover, slide 1 is the KQ slide" - there is no separate
-    # title/cover slide. The 'lo' component (built from KQ_LO.pptx, which
-    # already carries "Key Question" as its own heading) IS slide 1. Do not
-    # reintroduce a standalone cover - this was tried and explicitly rejected
-    # 11 Jul 2026.
+    # Innes: "no cover, slide 1 is the KQ slide" turned out to mean the
+    # kq_challenge slide below (a simple KQ + challenge statement), not the
+    # detailed lo panel - confirmed 11 Jul 2026 after being shown the correct
+    # slide order directly: being_a_scientist, kq_challenge, discipline, lo,
+    # then content.
     'being_a_scientist': {
-        'presence': 'required', 'mode': 'clone_verbatim',
+        'presence': 'required', 'mode': 'clone_being_a_scientist',
         'template': 'being_a_scientist_deck', 'anchor': BEING_A_SCIENTIST_ANCHOR, 'hint': BEING_A_SCIENTIST_HINT,
         'fields': [],
+    },
+    'kq_challenge': {
+        'presence': 'required', 'mode': 'clone_kq_challenge',
+        'template': 'being_a_scientist_deck', 'anchor': KQ_CHALLENGE_ANCHOR, 'hint': KQ_CHALLENGE_HINT,
+        'fields': ['key_question', 'challenge'],
     },
     'discipline': {
         'presence': 'required', 'mode': 'clone_discipline',

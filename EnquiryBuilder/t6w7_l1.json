@@ -15,14 +15,19 @@
     "isb": "creating a sorting table with at least six materials correctly grouped and one written reason for each",
     "slides": [
       {
-        "type": "lo"
+        "type": "being_a_scientist"
       },
       {
-        "type": "being_a_scientist"
+        "type": "kq_challenge",
+        "key_question": "Can materials change their state?",
+        "challenge": "Sort a box of mystery materials into solids, liquids and gases \u2014 and prove it!"
       },
       {
         "type": "discipline",
         "strand": "Chemistry"
+      },
+      {
+        "type": "lo"
       },
       {
         "type": "wedo_hook",

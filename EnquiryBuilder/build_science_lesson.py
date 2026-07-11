@@ -16,7 +16,8 @@ from lib_ooxml import (
     title_sp, body_sp, tbox, add_img, grid_geometry, animate,
     find_sp, get_sp_id, set_text, delete_shapes_by_id, delete_shape_by_name,
     replace_image, find_pic_id_by_name, force_shrink_to_fit, strip_orphaned_media,
-    clamp_callout_tail, strip_timing, xr, xw, xp, ex, SW, SH,
+    clamp_callout_tail, strip_timing, extract_image_by_shape_name,
+    xr, xw, xp, ex, SW, SH,
 )
 import science_registry as REG
 
@@ -25,8 +26,42 @@ def build_being_a_scientist(work, templates, spec):
     pptx = templates[REG.COMPONENTS['being_a_scientist']['template']]
     sn = find_slide_by_anchor(pptx, REG.BEING_A_SCIENTIST_ANCHOR, REG.BEING_A_SCIENTIST_HINT)
     sp, rp = clone(work, pptx, sn, copy_hdphoto=True)
-    # Strip the stray editor's note left in the template - not real content.
-    delete_shape_by_name(sp, 'TextBox 19')
+    # This source slide (the Areas of Study / Skills wheel diagrams) carries
+    # no title of its own and no icon - both need adding, per SKILL.md's
+    # long-standing decision that was never actually implemented until now.
+    # A placeholder title_sp() inherits its position from whatever layout
+    # this slide's own source uses, which is NOT necessarily clear of the
+    # diagram content - confirmed by render: it landed directly on top of
+    # the "Areas of Study" label. Use an explicit fixed position at the very
+    # top of the slide instead, well above where either diagram starts
+    # (diagrams begin around y=2.3in / 2119651 EMU on this source slide).
+    t, st = get_spTree(sp)
+    st.append(tbox(50, 'Being a Scientist', 400000, 100000, SW - 800000, 700000,
+                    sz=3200, bold=True, color='1A3A5C', align='l', name='Title 50'))
+    save(t, sp)
+    icon_tmp = '/tmp/scientist_icon.png'
+    extract_image_by_shape_name(pptx, REG.BEING_A_SCIENTIST_ICON_SOURCE_SLIDE,
+                                 REG.BEING_A_SCIENTIST_ICON_SHAPE_NAME, icon_tmp)
+    add_img(sp, rp, work, icon_tmp, 150000, SH - 1300000, 1100000, 1100000, 51)
+    return sp
+
+
+def build_kq_challenge(work, templates, spec):
+    pptx = templates[REG.COMPONENTS['kq_challenge']['template']]
+    sn = find_slide_by_anchor(pptx, REG.KQ_CHALLENGE_ANCHOR, REG.KQ_CHALLENGE_HINT)
+    sp, rp = clone(work, pptx, sn, copy_hdphoto=True)
+    delete_shapes_by_id(sp, REG.KQ_CHALLENGE_STRIP_IDS)
+    delete_shape_by_name(sp, REG.KQ_CHALLENGE_STRIP_NAME)
+    tree = xr(sp)
+    kq_shape = find_sp(tree, REG.KQ_CHALLENGE_KQ_SHAPE_NAME)
+    if kq_shape is None:
+        raise RuntimeError(f"kq_challenge: expected shape '{REG.KQ_CHALLENGE_KQ_SHAPE_NAME}' not found - template drift")
+    set_text(kq_shape, spec['key_question'])
+    task_shape = find_sp(tree, REG.KQ_CHALLENGE_TASK_SHAPE_NAME)
+    if task_shape is None:
+        raise RuntimeError(f"kq_challenge: expected shape '{REG.KQ_CHALLENGE_TASK_SHAPE_NAME}' not found - template drift")
+    set_text(task_shape, f"Our Challenge is: \n{spec['challenge']}")
+    xw(tree, sp)
     return sp
 
 
@@ -195,6 +230,7 @@ def build_youdo_task(work, spec):
 
 DISPATCH = {
     'being_a_scientist':  lambda work, templates, layouts, spec: build_being_a_scientist(work, templates, spec),
+    'kq_challenge':       lambda work, templates, layouts, spec: build_kq_challenge(work, templates, spec),
     'discipline':         lambda work, templates, layouts, spec: build_discipline(work, templates, spec),
     'lo':                 lambda work, templates, layouts, spec: build_lo(work, templates, spec),
     'wedo_hook':          lambda work, templates, layouts, spec: build_wedo_hook(work, spec),

@@ -592,3 +592,25 @@ def strip_timing(sp):
     if removed:
         xw(t, sp)
     return removed
+
+def extract_image_by_shape_name(pptx_path, slide_number, shape_name, dest_path):
+    """Pull a single embedded image out of a specific slide by shape name and
+    write it to dest_path. Used to reuse a generic icon (e.g. the scientist
+    magnifying-glass icon) that lives on one template slide onto a
+    differently-sourced slide, without cloning the whole donor slide."""
+    sd = src_dir(pptx_path)
+    sp = f'{sd}/ppt/slides/slide{slide_number}.xml'
+    rp = f'{sd}/ppt/slides/_rels/slide{slide_number}.xml.rels'
+    tree = xr(sp); root = tree.getroot()
+    rels = xr(rp).getroot()
+    rid_to_target = {rel.get('Id'): rel.get('Target') for rel in rels}
+    for pic in root.iter(f'{{{P}}}pic'):
+        cNvPr = pic.find(f'.//{{{P}}}cNvPr')
+        if cNvPr is None or cNvPr.get('name') != shape_name: continue
+        blip = pic.find(f'.//{{{A}}}blip')
+        rid = blip.get(f'{{{R}}}embed')
+        target = rid_to_target[rid]
+        src_media = os.path.normpath(os.path.join(sd, 'ppt', 'slides', target))
+        shutil.copy(src_media, dest_path)
+        return dest_path
+    raise RuntimeError(f"extract_image_by_shape_name: shape '{shape_name}' not found on slide {slide_number} of {pptx_path}")
