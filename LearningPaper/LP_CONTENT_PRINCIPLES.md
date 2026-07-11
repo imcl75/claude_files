@@ -87,3 +87,43 @@ per row, not a single fixed value applied to every row. This is the same
 category of bug as `force_shrink_to_fit`'s original fontScale issue in
 `lib_ooxml.py` and the earlier heading/instruction/word-bank fixes in this
 same file - a fixed box size for text whose wrap count wasn't checked.
+
+**12pt is the default reading size on a pupil-facing LP.** Confirmed by
+Innes (11 Jul 2026): 12pt is comfortable for a Y4 pupil reading their own
+paper. Smaller sizes are fine for short/compact content (table headers,
+brief cell labels) where space genuinely requires it, but never for
+extended instructional text or prose - those default to 12pt, not
+whatever happens to fit. `instruction()` in `build_t6w7_l1_lp.py` defaults
+to `size_pt=12` for exactly this reason - don't override it smaller
+without a real space constraint forcing it.
+
+---
+
+## QA limitation: no real Twinkl Cursive Looped font in this environment
+
+Found 11 Jul 2026, same T6W7 L1 LP session. There is no Twinkl Cursive
+Looped font file anywhere in the repo, and it isn't installed on the
+sandbox system either (`fc-list` finds nothing). Every LibreOffice-based
+QA render (`libreoffice --headless --convert-to pdf` then screenshot) is
+therefore rendering LP body text in a substitute font, not the real one -
+and the substitute has been observed to be wider, causing text to appear
+to wrap when it doesn't in Innes's actual PowerPoint.
+
+Confirmed directly: "Balloon (filled with air)" (25 characters) wraps to
+two lines in every LibreOffice QA render of the T6W7 L1 LP's material
+column (10pt, 1.74" wide), but Innes's own PowerPoint screenshot shows it
+fitting on one line. The wrap-estimate heuristic in `_wrap_line_count()`
+was recalibrated against this real evidence (ratio 0.52 -> 0.46), but the
+LibreOffice screenshots themselves will keep showing the old, wider
+wrapping regardless of that fix, because the substitute font hasn't
+changed.
+
+**Practical implication**: LibreOffice QA screenshots remain useful for
+checking gross layout - are things positioned sensibly, is there an
+obvious overlap, does the page fill reasonably - but are NOT reliable
+evidence for whether a specific line of Twinkl Cursive Looped text fits
+in a specific box width. For that specific question, real evidence from
+Innes's own PowerPoint (a screenshot, or a file he's edited) is the only
+trustworthy source. Don't re-litigate a wrap/fit call based on a
+LibreOffice render alone if Innes has already shown real-PowerPoint
+evidence to the contrary - the render is wrong, not his evidence.
