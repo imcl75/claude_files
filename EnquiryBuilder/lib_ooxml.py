@@ -347,46 +347,60 @@ def grid_geometry(n_cols, n_rows, margin_x=150000, top_y=1750000, label_h=400000
         cells.append((cx, cy, cw, ch, iw, ih, label_h))
     return cells
 
-# -- Animation (FIXED: clean <p:seq> only, no hide-at-start pars) -----------
+# -- Animation (matches native PowerPoint output exactly - see Round 7) -----
 def _anim_timing_xml(steps):
     """
     steps: list of lists of shape ids that should appear together on one click.
-    Matches the SKILL.md-documented pattern EXACTLY, structurally, with no
-    deviation: clean p:seq, restart="never", no hide-at-start block, and
-    critically NO <p:bldLst>. A previous version of this function added a
-    <p:bldP .../> per shape, copied from the OLD anim_body() pattern without
-    noticing that pattern is for paragraph-level builds WITHIN one shape
-    (revealing bullet points one at a time inside a single text box) - it
-    does not apply to whole-shape visibility toggling between SEPARATE
-    shapes, which is what every current use of animate() actually does.
-    Declaring bldP="build by paragraph" on a shape whose only behaviour is a
-    whole-shape visibility <p:set> is a genuine contradiction, and it is what
-    was producing "TRIGGER: UNNAMED" with only the first shape's entry
-    showing in PowerPoint's Animation Pane - confirmed by a screenshot of the
-    real Animation Pane on 11 Jul 2026 (LO slide: only TextBox 38 appeared,
-    under an unnamed trigger, with TextBox 39/40 missing entirely).
+
+    Rewritten 11 Jul 2026 (Round 7) against real ground truth: Innes applied
+    "Appear, on click" natively in PowerPoint to 3 separate shapes and sent
+    the file back. Diffing that against every previous version of this
+    function found it was wrong in two ways at once, not one:
+
+    1. An earlier version used <p:bldP> for paragraph-level builds inside a
+       single shape and was blamed for producing "TRIGGER: UNNAMED" with
+       entries missing from the Animation Pane.
+    2. The "fix" for that (the version this replaces) removed <p:bldP>
+       entirely and used a flatter two-level <p:par> nesting. That was ALSO
+       wrong: native PowerPoint always emits a <p:bldP spid="X" grpId="0"/>
+       per animated shape in <p:bldLst>, even for plain whole-shape "Appear"
+       - removing it doesn't match what PowerPoint itself writes. The actual
+       missing piece was never bldP, it was a THIRD level of <p:par> nesting
+       (an outer wrapper with a bare <p:cond delay="indefinite"/>, no evt
+       attribute) around the click effect, plus a matching <p:stCondLst> on
+       the <p:cBhvr>'s own <p:cTn>, plus prevCondLst/nextCondLst using
+       evt="onPrev"/"onNext" with an explicit <p:sldTgt/> rather than the
+       bare onPrevClick/onNextClick this function used before. Confirmed by
+       diffing the ground-truth file's slide 4 timing XML directly against
+       this function's own output, byte for byte structure.
     """
-    c = 3; par_blocks = ''
+    c = 3; outer_pars = ''; bld_entries = ''
     for step in steps:
+        outer_id = c; c += 1
+        middle_id = c; c += 1
         inner = ''
         for sid in step:
-            c1, c2 = c, c + 1
-            inner += (f'<p:par><p:cTn id="{c1}" presetID="1" presetClass="entr" presetSubtype="0" '
+            click_id, cbhvr_id = c, c + 1
+            inner += (f'<p:par><p:cTn id="{click_id}" presetID="1" presetClass="entr" presetSubtype="0" '
                       f'fill="hold" grpId="0" nodeType="clickEffect"><p:stCondLst><p:cond delay="0"/></p:stCondLst>'
-                      f'<p:childTnLst><p:set><p:cBhvr><p:cTn id="{c2}" dur="1" fill="hold"/>'
+                      f'<p:childTnLst><p:set><p:cBhvr><p:cTn id="{cbhvr_id}" dur="1" fill="hold">'
+                      f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
                       f'<p:tgtEl><p:spTgt spid="{sid}"/></p:tgtEl>'
                       f'<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst></p:cBhvr>'
                       f'<p:to><p:strVal val="visible"/></p:to></p:set></p:childTnLst></p:cTn></p:par>')
-            c += 3
-        oid = c; c += 1
-        par_blocks += (f'<p:par><p:cTn id="{oid}" fill="hold"><p:stCondLst><p:cond evt="onBegin" delay="indefinite"/>'
-                        f'</p:stCondLst><p:childTnLst>{inner}</p:childTnLst></p:cTn></p:par>')
+            bld_entries += f'<p:bldP spid="{sid}" grpId="0"/>'
+            c += 2
+        middle = (f'<p:par><p:cTn id="{middle_id}" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+                  f'<p:childTnLst>{inner}</p:childTnLst></p:cTn></p:par>')
+        outer_pars += (f'<p:par><p:cTn id="{outer_id}" fill="hold"><p:stCondLst><p:cond delay="indefinite"/>'
+                        f'</p:stCondLst><p:childTnLst>{middle}</p:childTnLst></p:cTn></p:par>')
     return (f'<p:timing xmlns:p="{P}"><p:tnLst><p:par><p:cTn id="1" dur="indefinite" restart="never" '
             f'nodeType="tmRoot"><p:childTnLst><p:seq concurrent="1" nextAc="seek">'
-            f'<p:cTn id="2" dur="indefinite" nodeType="mainSeq"><p:childTnLst>{par_blocks}</p:childTnLst></p:cTn>'
-            f'<p:prevCondLst><p:cond evt="onPrevClick" delay="0"/></p:prevCondLst>'
-            f'<p:nextCondLst><p:cond evt="onNextClick" delay="0"/></p:nextCondLst></p:seq></p:childTnLst></p:cTn>'
-            f'</p:par></p:tnLst></p:timing>')
+            f'<p:cTn id="2" dur="indefinite" nodeType="mainSeq"><p:childTnLst>{outer_pars}</p:childTnLst></p:cTn>'
+            f'<p:prevCondLst><p:cond evt="onPrev" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>'
+            f'<p:nextCondLst><p:cond evt="onNext" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
+            f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
+            f'<p:bldLst>{bld_entries}</p:bldLst></p:timing>')
 
 def animate(sp, steps):
     """steps: list of lists of shape-ids, one list per click."""

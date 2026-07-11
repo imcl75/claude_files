@@ -161,26 +161,25 @@ def build_learning_review(work, templates, spec):
 
 
 def build_wedo_hook(work, spec):
-    # Round 5 (11 Jul 2026): was body_sp() + animate(sp, [[3]]) - one bundled
-    # placeholder shape holding every bullet, revealed all at once on the
-    # first click. Inconsistent with ido_diagram, which already gives each
-    # bullet its own click - Innes flagged this exact inconsistency ("keep
-    # it the same from one set to another") after finding all-bullets-at-
-    # once behaviour on this slide type. Switched to the same per-bullet
-    # tbox()-per-line + one animate() group per bullet pattern ido_diagram
-    # already used correctly, so every repeatable content slide type now
-    # reveals bullets one at a time on separate clicks, consistently.
+    # Round 7 (11 Jul 2026): Round 5's fix (per-bullet tbox() shapes instead
+    # of the real Content Placeholder) was itself wrong in a different way -
+    # Innes flagged it directly ("throwing text boxes at a slide... use the
+    # templates"). The 'We do' layout (unlike its '-Blank' sibling) carries
+    # a real title placeholder and a real Content Placeholder (idx 1) with
+    # its own bullet character, indent, position and font inherited from
+    # the slide master - none of that is available to a freehand tbox().
+    # Reverted to filling the actual placeholder via body_sp() and revealing
+    # it as one shape on one click, which is what the master's own
+    # placeholder design is for. The timing XML itself is what was actually
+    # malformed before (see _anim_timing_xml() in lib_ooxml.py) - that's
+    # fixed at the source now, so this doesn't need per-bullet shapes to get
+    # correct animation.
     sp, rp = fresh(work, 'We do')
     t, st = get_spTree(sp)
     st.append(title_sp(2, spec['title'], REG.TITLE_FONT))
+    st.append(body_sp(3, spec['bullets']))
     save(t, sp)
-    sid = 10; groups = []
-    for i, bullet in enumerate(spec['bullets']):
-        by = 1750000 + i * 1350000
-        t2, st2 = get_spTree(sp)
-        st2.append(tbox(sid, bullet, 700000, by, SW - 1400000, 1250000, sz=2200, color='1A3A5C', align='l'))
-        save(t2, sp); groups.append([sid]); sid += 1
-    animate(sp, groups)
+    animate(sp, [[3]])
     return sp
 
 
@@ -238,19 +237,14 @@ def build_youdo_provocation(work, spec):
 
 
 def build_youdo_task(work, spec):
-    # Round 5: same fix as build_wedo_hook() above - per-bullet click reveal
-    # instead of one bundled placeholder shown all at once.
+    # Round 7: same reversion as build_wedo_hook() above - 'You do Ind' (not
+    # the '-Blank' variant) has a real title + Content Placeholder, use it.
     sp, rp = fresh(work, 'You do Ind')
     t, st = get_spTree(sp)
     st.append(title_sp(2, spec['title'], REG.TITLE_FONT))
+    st.append(body_sp(3, spec['bullets']))
     save(t, sp)
-    sid = 10; groups = []
-    for i, bullet in enumerate(spec['bullets']):
-        by = 1750000 + i * 1150000
-        t2, st2 = get_spTree(sp)
-        st2.append(tbox(sid, bullet, 700000, by, SW - 1400000, 1050000, sz=2000, color='1A3A5C', align='l'))
-        save(t2, sp); groups.append([sid]); sid += 1
-    animate(sp, groups)
+    animate(sp, [[3]])
     return sp
 
 

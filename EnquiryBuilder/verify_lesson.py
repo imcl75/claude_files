@@ -164,12 +164,23 @@ def check_animation_pattern(pptx_path, failures):
             if 'restart="whenNotActive"' in timing:
                 fail(failures, f"{name}: animation root uses restart=\"whenNotActive\" "
                                 f"(should be restart=\"never\" per SKILL.md)")
-            if '<p:bldLst>' in timing or '<p:bldP' in timing:
-                fail(failures, f"{name}: has a <p:bldLst>/<p:bldP> paragraph-build declaration on a "
-                                f"whole-shape visibility animation - this contradiction is what produced "
-                                f"'TRIGGER: UNNAMED' with missing entries in PowerPoint's Animation Pane "
-                                f"(confirmed 11 Jul 2026). None of this skill's current animations are "
-                                f"paragraph-level builds; bldLst should never appear.")
+            # Round 7 (11 Jul 2026) correction: an earlier version of this
+            # check banned <p:bldLst>/<p:bldP> outright, on the theory that
+            # bldP always means a paragraph-level build and is therefore
+            # always wrong for whole-shape animation. That was wrong -
+            # confirmed against a file Innes built natively in PowerPoint
+            # ("Appear, on click" applied to 3 separate shapes) and sent
+            # back: real PowerPoint always emits a <p:bldP spid="X"
+            # grpId="0"/> per animated shape, even for plain whole-shape
+            # builds. What actually matters is that bldLst's shape ids match
+            # the shapes actually being animated - check that instead of
+            # banning the element.
+            bld_spids = set(re.findall(r'<p:bldP spid="(\d+)"', timing))
+            click_spids = set(re.findall(r'<p:spTgt spid="(\d+)"', timing))
+            if bld_spids != click_spids:
+                fail(failures, f"{name}: <p:bldLst> shape ids {sorted(bld_spids)} don't match the "
+                                f"shapes actually animated by clickEffect {sorted(click_spids)} - "
+                                f"a real mismatch, not just bldLst's presence")
             # every clickEffect block must have exactly one spTgt - if the
             # count of clickEffect nodeType blocks doesn't match the count of
             # spTgt targets, some shapes silently got no click assigned
