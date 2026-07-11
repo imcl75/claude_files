@@ -723,3 +723,80 @@ file Innes has already opened successfully. If this delivery still
 prompts a repair dialog, the discipline slide's animation (the most
 complex one added this round, built from a source with a genuinely
 malformed original animation) is the most likely place to look first.
+
+### Round 8 continued (same day) — the diff itself was incomplete, plus a systematic layout mistake
+
+The fixes above were shipped and Innes immediately found they were still
+wrong, with screenshots proving it. Root cause: the diffing script used to
+extract ground-truth animation steps used `<p:cTn>.find('.//p:spTgt')`
+(returns the FIRST match only) instead of `.findall()`. Every animated step
+that has more than one shape uses a second/third `<p:cTn nodeType=
+"withEffect">` sibling inside the same click wrapper (PowerPoint's "Start:
+With Previous", used when several shapes should appear together on one
+click rather than needing separate clicks) - `.find()` silently returned
+only the first shape and dropped the rest, so the diff reported "MATCH" or
+"10 steps found" when the real file had significantly more content per
+step. This was caught by cross-checking raw string counts (`spTgt` count
+vs `clickEffect` count didn't match 1:1, which should have been a red flag
+the first time).
+
+Re-extracted properly this time (`.findall()`, every `clickEffect` AND
+`withEffect` node, grouped by their shared outer `<p:par>` "step"):
+
+- `discipline` (Chemistry): 10 steps, but 6 of them reveal 2-3 shapes
+  together (a wheel-label Group plus its matching Group and the coloured
+  bar TextBox), not one shape each as the first pass assumed.
+  `DISCIPLINE_ANIMATION_SHAPE_NAMES` is now a list of steps (each step a
+  list of names), not a flat list.
+- `concept_cartoon`: each learner's avatar picture reveals its speech
+  bubble AND its "Learner X" label at the same time, not just the avatar
+  alone. `CONCEPT_CARTOON_ANIMATION_STEPS` replaces the old flat
+  `CONCEPT_CARTOON_AVATAR_NAMES`.
+
+`_anim_timing_xml()` in `lib_ooxml.py` was extended to support this: the
+first shape id in a step's list is tagged `nodeType="clickEffect"`
+(triggers on click), any further ids in the same step are tagged
+`nodeType="withEffect"` (start together with the first, no extra click).
+The structural nesting itself (all shapes in one step sharing one middle
+wrapper) was already correct from the earlier Round 7/8 work - only the
+node-type tagging needed to change. `verify_lesson.py`'s clickEffect/spTgt
+count check was updated to count both node types together, since it
+previously assumed 1:1 clickEffect-to-spTgt and would have failed every
+multi-shape step.
+
+**Separately, a bigger and more basic mistake:** Innes's second and third
+screenshots showed an empty "Click to add text" placeholder ghost visible
+on the particle-diagram slide in his file, next to insert-picture/video
+icon prompts - evidence of an unused Content/Media placeholder still
+present on that slide. Checked which slide layout his `ido_diagram`
+(particle diagram) slide actually points at: `slideLayout2.xml` ("I do"),
+not `slideLayout6.xml` ("I Do - Blank") as this skill's build has always
+used for that component. Checked wedo_grid and youdo_provocation the same
+way and found the same pattern: `slideLayout3.xml` ("We do") and
+`slideLayout5.xml` ("You do Ind") respectively - every content slide type
+in Innes's real deck uses the non-blank layout variant, none use the
+`-Blank` layouts this skill assumed were needed for image-heavy slides.
+`build_wedo_grid()`, `build_ido_diagram()` and `build_youdo_provocation()`
+now use `We do` / `I do` / `You do Ind` (matching `build_wedo_hook()` and
+`build_youdo_task()`, which already did). The non-blank layout's Content
+and Media placeholders stay empty on these slides (never filled), which is
+harmless in Slide Show or printed/exported output but shows as an
+edit-time-only prompt in PowerPoint's Normal view - that visible prompt in
+Innes's screenshot was the actual smoking gun for this whole
+misunderstanding, not a rendering defect.
+
+After both fixes, re-diffed every animated slide exhaustively (not a spot
+check) using the corrected `.findall()`-based extraction, comparing full
+click-by-click, shape-by-shape, node-type-by-node-type: all 11 slides
+report an exact structural match against Innes's ground-truth file. Also
+re-confirmed every content slide's `slideLayout` relationship matches his
+file exactly (5→3, 6→3, 7→2, 8→5, 9→5).
+
+**Lesson for future sessions, stated plainly because it cost real trust
+twice today:** "I diffed it and it matches" is only true if the diff
+itself is exhaustive - `.find()` vs `.findall()` is exactly the kind of
+silent, plausible-looking bug that produces false confidence. When
+comparing against ground truth, verify the comparison method against a
+raw count (element occurrences via simple string counting) before trusting
+its "MATCH" result, especially before telling Innes something is now
+confirmed correct.

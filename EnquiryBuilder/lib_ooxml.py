@@ -350,39 +350,38 @@ def grid_geometry(n_cols, n_rows, margin_x=150000, top_y=1750000, label_h=400000
 # -- Animation (matches native PowerPoint output exactly - see Round 7) -----
 def _anim_timing_xml(steps):
     """
-    steps: list of lists of shape ids that should appear together on one click.
+    steps: list of lists of shape ids that should appear together on one
+    click. Within a step, the FIRST shape id is the one that triggers the
+    click (nodeType="clickEffect"); any further shape ids in the same step
+    ride along simultaneously without needing their own click
+    (nodeType="withEffect") - this is PowerPoint's own "Start: With
+    Previous" behaviour applied to a second/third shape in the same build
+    step, e.g. a speech bubble and a "Learner A" label appearing together
+    with the avatar picture that triggers them.
 
-    Rewritten 11 Jul 2026 (Round 7) against real ground truth: Innes applied
-    "Appear, on click" natively in PowerPoint to 3 separate shapes and sent
-    the file back. Diffing that against every previous version of this
-    function found it was wrong in two ways at once, not one:
-
-    1. An earlier version used <p:bldP> for paragraph-level builds inside a
-       single shape and was blamed for producing "TRIGGER: UNNAMED" with
-       entries missing from the Animation Pane.
-    2. The "fix" for that (the version this replaces) removed <p:bldP>
-       entirely and used a flatter two-level <p:par> nesting. That was ALSO
-       wrong: native PowerPoint always emits a <p:bldP spid="X" grpId="0"/>
-       per animated shape in <p:bldLst>, even for plain whole-shape "Appear"
-       - removing it doesn't match what PowerPoint itself writes. The actual
-       missing piece was never bldP, it was a THIRD level of <p:par> nesting
-       (an outer wrapper with a bare <p:cond delay="indefinite"/>, no evt
-       attribute) around the click effect, plus a matching <p:stCondLst> on
-       the <p:cBhvr>'s own <p:cTn>, plus prevCondLst/nextCondLst using
-       evt="onPrev"/"onNext" with an explicit <p:sldTgt/> rather than the
-       bare onPrevClick/onNextClick this function used before. Confirmed by
-       diffing the ground-truth file's slide 4 timing XML directly against
-       this function's own output, byte for byte structure.
+    Round 7 (11 Jul 2026) rewrote this against ground truth for the simple
+    single-shape-per-step case and confirmed a byte-exact match. Round 8
+    extended it to multi-shape steps after discovering (again from ground
+    truth, this time checked exhaustively with .findall() instead of
+    .find() - the earlier single-shape check silently missed that half of
+    real animated slides use this) that several slides pair a withEffect
+    shape with the clickEffect one. Structurally a multi-shape step was
+    already nested correctly by this function before this change (all
+    shapes in one step already shared one middle wrapper, so timing/click
+    grouping was already right) - the only fix needed was tagging shapes
+    after the first as nodeType="withEffect" instead of "clickEffect", to
+    match what PowerPoint itself writes.
     """
     c = 3; outer_pars = ''; bld_entries = ''
     for step in steps:
         outer_id = c; c += 1
         middle_id = c; c += 1
         inner = ''
-        for sid in step:
+        for idx, sid in enumerate(step):
+            node_type = 'clickEffect' if idx == 0 else 'withEffect'
             click_id, cbhvr_id = c, c + 1
             inner += (f'<p:par><p:cTn id="{click_id}" presetID="1" presetClass="entr" presetSubtype="0" '
-                      f'fill="hold" grpId="0" nodeType="clickEffect"><p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+                      f'fill="hold" grpId="0" nodeType="{node_type}"><p:stCondLst><p:cond delay="0"/></p:stCondLst>'
                       f'<p:childTnLst><p:set><p:cBhvr><p:cTn id="{cbhvr_id}" dur="1" fill="hold">'
                       f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
                       f'<p:tgtEl><p:spTgt spid="{sid}"/></p:tgtEl>'

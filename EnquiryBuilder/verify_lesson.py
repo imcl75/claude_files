@@ -181,13 +181,16 @@ def check_animation_pattern(pptx_path, failures):
                 fail(failures, f"{name}: <p:bldLst> shape ids {sorted(bld_spids)} don't match the "
                                 f"shapes actually animated by clickEffect {sorted(click_spids)} - "
                                 f"a real mismatch, not just bldLst's presence")
-            # every clickEffect block must have exactly one spTgt - if the
-            # count of clickEffect nodeType blocks doesn't match the count of
-            # spTgt targets, some shapes silently got no click assigned
-            n_click_effects = timing.count('nodeType="clickEffect"')
+            # every clickEffect/withEffect block must have exactly one spTgt.
+            # Round 8 correction: this used to count only clickEffect blocks,
+            # which broke as soon as a step had more than one shape (the
+            # 2nd+ shape in a step is nodeType="withEffect", not
+            # "clickEffect" - a legitimate multi-shape-per-click pattern,
+            # not a bug). Count both node types together against spTgt.
+            n_effects = timing.count('nodeType="clickEffect"') + timing.count('nodeType="withEffect"')
             n_sp_targets = len(re.findall(r'<p:spTgt spid="[^"]+"\s*/?>', timing))
-            if n_click_effects != n_sp_targets:
-                fail(failures, f"{name}: {n_click_effects} clickEffect block(s) but {n_sp_targets} "
+            if n_effects != n_sp_targets:
+                fail(failures, f"{name}: {n_effects} clickEffect/withEffect block(s) but {n_sp_targets} "
                                 f"spTgt target(s) - mismatch means some shapes have no working click animation")
 
 def check_images_present(prs, manifest, mtp, failures):

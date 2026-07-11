@@ -84,16 +84,19 @@ def build_discipline(work, templates, spec):
     # he rebuilt a clean, working animation on this slide rather than leaving
     # it silent. Replace the stripped timing with the confirmed shape list
     # for this strand, where one exists.
-    shape_names = REG.DISCIPLINE_ANIMATION_SHAPE_NAMES.get(strand)
-    if shape_names:
+    steps = REG.DISCIPLINE_ANIMATION_SHAPE_NAMES.get(strand)
+    if steps:
         tree = xr(sp)
-        ids = []
-        for name in shape_names:
-            sid = get_shape_id_by_name(tree, name)
-            if sid is None:
-                raise RuntimeError(f"discipline ({strand}): expected animated shape '{name}' not found - template drift")
-            ids.append(sid)
-        animate(sp, [[i] for i in ids])
+        id_steps = []
+        for step_names in steps:
+            ids = []
+            for name in step_names:
+                sid = get_shape_id_by_name(tree, name)
+                if sid is None:
+                    raise RuntimeError(f"discipline ({strand}): expected animated shape '{name}' not found - template drift")
+                ids.append(sid)
+            id_steps.append(ids)
+        animate(sp, id_steps)
     return sp
 
 
@@ -153,18 +156,21 @@ def build_concept_cartoon(work, templates, spec):
         raise RuntimeError(f"concept_cartoon: image_path '{spec.get('image_path')}' missing - "
                             f"refusing to deliver a concept cartoon with the template's cat/light image still showing")
     replace_image(sp, rp, work, pic_id, spec['image_path'])
-    # Round 8 (11 Jul 2026): click-reveal each learner's avatar in turn
-    # (A, then B, then C) - found missing entirely by diffing Innes's
-    # ground-truth repaired file, which has this animation and this build
-    # never did. See REG.CONCEPT_CARTOON_AVATAR_NAMES.
+    # Round 8 (11 Jul 2026): click-reveal each learner's avatar, speech
+    # bubble and "Learner X" label together, one learner at a time (A, then
+    # B, then C) - found missing entirely by diffing Innes's ground-truth
+    # repaired file. See REG.CONCEPT_CARTOON_ANIMATION_STEPS.
     tree = xr(sp)
-    avatar_ids = []
-    for name in REG.CONCEPT_CARTOON_AVATAR_NAMES:
-        aid = find_pic_id_by_name(tree, name)
-        if aid is None:
-            raise RuntimeError(f"concept_cartoon: expected avatar picture '{name}' not found - template drift")
-        avatar_ids.append(aid)
-    animate(sp, [[i] for i in avatar_ids])
+    id_steps = []
+    for step_names in REG.CONCEPT_CARTOON_ANIMATION_STEPS:
+        ids = []
+        for name in step_names:
+            sid = get_shape_id_by_name(tree, name)
+            if sid is None:
+                raise RuntimeError(f"concept_cartoon: expected animated shape '{name}' not found - template drift")
+            ids.append(sid)
+        id_steps.append(ids)
+    animate(sp, id_steps)
     return sp
 
 
@@ -209,7 +215,17 @@ def build_wedo_hook(work, spec):
 
 
 def build_wedo_grid(work, spec):
-    sp, rp = fresh(work, 'We do - Blank')
+    # Round 8 (11 Jul 2026): switched from 'We do - Blank' to 'We do' - a
+    # much bigger finding than it looks. Checking which layout each of
+    # Innes's ground-truth slides actually points at (not just its shapes)
+    # showed every content slide type uses the NON-blank layout variant,
+    # including the grid/image ones this skill had assumed needed '-Blank'.
+    # The non-blank layout's unused Content/Media placeholders stay empty
+    # (they show as "Click to add text" prompts only in PowerPoint's Normal
+    # edit view, never in Slide Show or print/PDF output) - cosmetic in the
+    # editor, not a rendering bug, but matching Innes's actual file exactly
+    # rather than my own assumption about which layout "should" be used.
+    sp, rp = fresh(work, 'We do')
     t, st = get_spTree(sp)
     st.append(title_sp(2, spec['title'], REG.TITLE_FONT))
     save(t, sp)
@@ -232,7 +248,10 @@ def build_wedo_grid(work, spec):
 
 
 def build_ido_diagram(work, spec):
-    sp, rp = fresh(work, 'I Do - Blank')
+    # Round 8: switched from 'I Do - Blank' to 'I do' - see build_wedo_grid()
+    # for why (confirmed against Innes's ground-truth slide 7's own layout
+    # relationship, not assumed).
+    sp, rp = fresh(work, 'I do')
     t, st = get_spTree(sp)
     st.append(title_sp(2, spec['title'], REG.TITLE_FONT, bold=True))
     save(t, sp)
@@ -251,7 +270,10 @@ def build_ido_diagram(work, spec):
 
 
 def build_youdo_provocation(work, spec):
-    sp, rp = fresh(work, 'You do Ind - Blank')
+    # Round 8: switched from 'You do Ind - Blank' to 'You do Ind' - see
+    # build_wedo_grid() for why (confirmed against Innes's ground-truth
+    # slide 8's own layout relationship).
+    sp, rp = fresh(work, 'You do Ind')
     t, st = get_spTree(sp)
     st.append(title_sp(2, spec['title'], REG.TITLE_FONT))
     save(t, sp)
