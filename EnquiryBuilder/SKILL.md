@@ -318,3 +318,52 @@ not been confirmed in real PowerPoint — nothing in this sandbox can trigger
 it. If it still happens, the next step is the repaired file back from Innes
 to diff against what was delivered, per the diagnosis guide's own
 recommended next step when the known-cause checklist comes back clean.
+
+### Round 3 (same day) — wrong source slide and a missing slide type
+
+Innes sent two screenshots proving two more concrete defects, both traced
+back to the same class of mistake as Round 1: trusting an anchor match
+without checking it landed on the right slide.
+
+1. **`being_a_scientist` was cloning the wrong slide.** The anchor text
+   `'Being a Scientist'` matched slide 2 of `Being_a_Scientist_slide_
+   deck.pptx` — a caption sitting next to a small icon — instead of slide 3,
+   which holds the actual Areas of Study / Skills wheel diagrams Innes
+   wanted. Fixed by re-anchoring to `'Areas of Study'`, text unique to
+   slide 3. Slide 3 carries no title or icon of its own, so
+   `build_being_a_scientist()` now adds both: a title via `tbox()` at fixed
+   safe coordinates (an initial attempt used `title_sp()`, which inherits
+   the layout's placeholder position and landed directly on top of the
+   "Areas of Study" label — caught by rendering, fixed by switching to
+   explicit coordinates) and the scientist icon, extracted from slide 2 via
+   a new `extract_image_by_shape_name()` helper since slide 3 doesn't carry
+   its own copy.
+2. **A whole slide type was missing.** Nested inside slide 2's "Group 14"
+   sat a KQ + Challenge intro slide with its own key question and challenge
+   text boxes, never surfaced as a component because slide 2 had only ever
+   been read for its caption. Added as a new `kq_challenge` component,
+   cloned from slide 2, with the leftover 21st-Century-Skills content
+   removed and `TextBox 16` / `TextBox 17` overridden with the lesson's key
+   question and challenge. First strip attempt only removed part of that
+   content — a second, separate icon grid (`Group 3`, four nested pictures)
+   was still showing in the render, only found by opening the rendered
+   PNG and reading "Collaboration" off one of the icons. The strip list now
+   includes that group's id.
+3. **Deck order was wrong.** Correct L1 order is `being_a_scientist` first,
+   `kq_challenge` second, `discipline` third, `lo` fourth, then content
+   slides — not `lo` first as Round 2 had it. `t6w7_l1.json` and
+   `REQUIRED_TYPES` updated accordingly.
+
+**Confirmed by rendering:** slide 1 has a clean title and icon with no
+overlap; slide 2 matches Innes's reference format with the icon grid fully
+removed. **Not confirmed:** the Areas of Study / Skills wheel diagrams on
+slide 1 are SmartArt, and LibreOffice cannot render SmartArt reliably — it
+shows as scattered icons with no colour or labels even though all ten
+underlying diagram XML parts (`data1.xml`, `layout1.xml`, `colors1.xml`,
+`quickStyle1.xml`, `drawing1.xml` and their `2` variants) are present and
+correctly copied by `clone()`. This is a rendering-tool limitation, not a
+data-loss bug, but it means the wheel diagrams have not been visually
+confirmed correct — only structurally confirmed. Also: the `kq_challenge`
+slide only has one avatar image available from the donor slide, not four
+like Innes's reference example, which likely drew its extra avatars from
+different source material not present in this deck's templates.
