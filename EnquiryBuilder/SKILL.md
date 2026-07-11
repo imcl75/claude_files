@@ -600,3 +600,64 @@ fixed are visual/behavioural, not confirmed causes of the repair prompt) -
 if the repair dialog still appears after this round's fixes, the next step
 is the same diagnostic-file approach used in Round 5: isolate which
 specific slide triggers it by testing a reduced file.
+
+### Round 7 (11 Jul 2026, same day) — real ground truth, not another guess
+
+Innes applied "Appear, on click" natively in PowerPoint to the LO slide's 3
+boxes himself and sent the file back, saying so directly: use my animations
+to build your code. Diffed that file's slide 4 timing XML against this
+function's own output byte-for-byte rather than pattern-matching by eye.
+Two things were wrong at once, and Round 6's own diagnosis of the "TRIGGER:
+UNNAMED, entries missing" symptom (which blamed `<p:bldP>`) was itself
+incorrect:
+
+1. **`<p:bldP>` was never the problem.** Native PowerPoint always emits a
+   `<p:bldP spid="X" grpId="0"/>` per animated shape in `<p:bldLst>`, even
+   for a plain whole-shape "Appear" build - removing it (Round 4-era fix)
+   doesn't match what PowerPoint itself writes and was the wrong fix for
+   whatever the real Round 3-era bug was.
+2. **The real structural gap was a missing third `<p:par>` nesting level.**
+   Ground truth wraps each click's `clickEffect` in a middle `<p:par>`
+   (`<p:cond delay="0"/>`, no `evt`) inside an outer `<p:par>` (`<p:cond
+   delay="indefinite"/>`, no `evt` - critically NOT `evt="onBegin"`, which
+   is what this function emitted before), and the `<p:cBhvr>`'s own
+   `<p:cTn>` also carries a matching `<p:stCondLst><p:cond delay="0"/>
+   </p:stCondLst>`, which this function's `<p:cTn id={cBhvr}>` lacked
+   before. `prevCondLst`/`nextCondLst` use `evt="onPrev"`/`"onNext"` with an
+   explicit `<p:tgtEl><p:sldTgt/></p:tgtEl>`, not the bare `onPrevClick`/
+   `onNextClick` conditions used before.
+
+`_anim_timing_xml()` in `lib_ooxml.py` was rewritten to this exact
+structure and verified to produce byte-identical XML to the ground-truth
+file for the 3-shape LO case (whitespace and the `xmlns:p` declaration
+aside). `verify_lesson.py`'s animation check, which previously *failed* any
+build containing `<p:bldLst>`/`<p:bldP>` at all (encoding the wrong Round 6
+diagnosis as a hard gate), was corrected to instead check that `bldLst`'s
+shape ids match the shapes actually targeted by `clickEffect` blocks - a
+real structural check rather than a ban on a legitimate element.
+
+Separately, Innes flagged (with a second screenshot) that most content
+slides were "throwing text boxes at a slide" instead of using the
+template. Checked directly: the `-Blank` layout variants (`We do - Blank`,
+`I Do - Blank`, `You do Ind - Blank`) genuinely have zero placeholder
+shapes of their own - freehand placement is unavoidable there and is what
+`wedo_grid`/`ido_diagram`/`youdo_provocation` already correctly do. But the
+non-`-Blank` layouts (`We do`, `You do Ind`) DO carry a real title
+placeholder and a real Content Placeholder (idx 1) inherited from the
+slide master, with its own bullet character, indent, position and font -
+and Round 5's fix of `build_wedo_hook()`/`build_youdo_task()` (switching
+from `body_sp()` to per-bullet `tbox()` shapes, to get per-bullet click
+animation) had abandoned that real placeholder in favour of freehand boxes
+with none of that inherited formatting. Reverted both functions back to
+`body_sp()` (the real placeholder, one shape, one combined reveal per
+slide) now that the timing XML itself - not shape-per-bullet - was the
+actual fix needed for animation correctness. `ido_diagram`'s per-bullet
+`tbox()` shapes were left as they are: that layout has no placeholder to
+use instead, so freehand shapes are the only option there and were never
+part of this complaint.
+
+**Lesson for future sessions:** two rounds in a row (6 and then this one)
+diagnosed an animation symptom from a screenshot and "fixed" the wrong
+mechanism first. When Innes provides an actual PowerPoint-produced ground
+truth file, diff against it directly before touching the animation code
+again - don't re-guess from a Pane screenshot a third time.
