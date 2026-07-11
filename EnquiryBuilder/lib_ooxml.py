@@ -429,6 +429,23 @@ def get_sp_id(tree, name):
     if s is None: return None
     c = s.find(f'.//{{{P}}}cNvPr'); return int(c.get('id', 0)) if c is not None else None
 
+def get_shape_id_by_name(tree, name):
+    """Resolve a cNvPr id by shape name across ANY container type (sp, pic,
+    grpSp, graphicFrame) - get_sp_id()/find_sp() only search <p:sp> and miss
+    grouped shapes entirely, which matters for e.g. the discipline wheel's
+    <p:grpSp> elements (Round 8, 11 Jul 2026)."""
+    root = tree.getroot()
+    for el in root.iter():
+        tag = etree.QName(el).localname
+        if tag not in ('sp', 'pic', 'grpSp', 'graphicFrame'): continue
+        for nv_path in (f'{{{P}}}nvSpPr/{{{P}}}cNvPr', f'{{{P}}}nvPicPr/{{{P}}}cNvPr',
+                         f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr', f'{{{P}}}nvGraphicFramePr/{{{P}}}cNvPr'):
+            nv = el.find(nv_path)
+            if nv is not None:
+                if nv.get('name') == name: return int(nv.get('id'))
+                break
+    return None
+
 def set_text(s, text):
     tb = None
     for ns in [P, A]:

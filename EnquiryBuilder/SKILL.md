@@ -661,3 +661,65 @@ diagnosed an animation symptom from a screenshot and "fixed" the wrong
 mechanism first. When Innes provides an actual PowerPoint-produced ground
 truth file, diff against it directly before touching the animation code
 again - don't re-guess from a Pane screenshot a third time.
+
+### Round 8 (11 Jul 2026, same day) — Round 7 over-corrected, plus two missing animations found
+
+Round 7's own fix was itself partly wrong, and incomplete. Diffed Innes's
+ground-truth file's timing XML slide-by-slide against the actual delivery
+this time (every animated slide, not just the LO slide) - the only
+reliable way to catch this after two rounds of guessing from screenshots:
+
+1. **`wedo_hook`/`youdo_task` should NOT have been reverted to
+   `body_sp()`.** Round 7 guessed that Innes's "use the templates"
+   complaint meant these two slide types should fill the real Content
+   Placeholder instead of per-bullet `tbox()` shapes. Wrong: diffing his
+   ground-truth file's slide 5 and slide 9 directly shows the exact same
+   per-bullet `TextBox 10/11/12` structure Round 6 built - same shape
+   names, same positions and sizes down to the EMU, same font size - with
+   only the animation *timing* fixed. Reverted back to Round 6's per-bullet
+   `tbox()` approach. Whatever "use the templates" was actually about, it
+   was not this.
+2. **`concept_cartoon` was missing an animation entirely.** Ground truth
+   has a `<p:timing>` block on this slide that this skill never generated -
+   the three learner avatar pictures (found by name, confirmed by position
+   against each Learner A/B/C label) click-revealed one at a time, A then B
+   then C. Added via `REG.CONCEPT_CARTOON_AVATAR_NAMES` and a new
+   `animate()` call in `build_concept_cartoon()`.
+3. **`discipline` was also missing an animation.** This skill has stripped
+   the discipline slides' animation on every build since Round 2, because
+   the raw source template's own animation has a genuine clickEffect/spTgt
+   mismatch (11 clicks covering 37 targets, confirmed again this round).
+   That diagnosis was correct, but ground truth shows Innes didn't leave it
+   silently stripped - he rebuilt a clean 10-click, 10-target animation on
+   the Chemistry discipline slide by hand (four discipline ovals, six
+   wheel-label groups). `build_discipline()` now replaces the stripped
+   timing with this confirmed shape list for Chemistry
+   (`REG.DISCIPLINE_ANIMATION_SHAPE_NAMES`) - added a new
+   `get_shape_id_by_name()` to `lib_ooxml.py` since the existing
+   `get_sp_id()`/`find_sp()` only search `<p:sp>` and miss the `<p:grpSp>`
+   wheel-label groups this needed. Only Chemistry is confirmed (the only
+   strand T6W7 uses) - Biology/Physics/Earth & Space still fall back to
+   `strip_timing()`, silence rather than a guess, until each is confirmed
+   the same way against real ground truth.
+
+After all three fixes, every animated slide's click sequence (shapes and
+order) now matches Innes's ground-truth file exactly, confirmed by direct
+XML diff. Two slides (`discipline`, `concept_cartoon`) still show a
+`<p:bldLst>` content difference from ground truth - investigated directly:
+ground truth's `bldLst` on both slides lists shape ids that don't
+correspond to the shapes actually being click-animated (on the concept
+cartoon slide, for example, it lists the speech bubbles and labels, not
+the avatar pictures that are actually animated). This looks like leftover
+UI metadata from Innes editing a slide that already had other animation
+history, not a deliberate pattern - `bldLst` is descriptive metadata for
+PowerPoint's own animation UI, not part of what drives playback, so this
+skill's own consistent version (bldLst always matching the shapes actually
+animated) was kept rather than reproducing an inconsistency that doesn't
+appear to be intentional.
+
+**Still open:** confirmation in real PowerPoint, same as every round since
+5 - this sandbox cannot open PowerPoint, only match structure against a
+file Innes has already opened successfully. If this delivery still
+prompts a repair dialog, the discipline slide's animation (the most
+complex one added this round, built from a source with a genuinely
+malformed original animation) is the most likely place to look first.

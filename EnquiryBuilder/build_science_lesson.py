@@ -14,7 +14,7 @@ from lib_ooxml import (
     P, A, unzip, rezip, clear_slides, build_layout_map, src_dir,
     find_slide_by_anchor, clone, fresh, get_spTree, save,
     title_sp, body_sp, tbox, add_img, grid_geometry, animate,
-    find_sp, get_sp_id, set_text, delete_shapes_by_id, delete_shape_by_name,
+    find_sp, get_sp_id, get_shape_id_by_name, set_text, delete_shapes_by_id, delete_shape_by_name,
     replace_image, find_pic_id_by_name, force_shrink_to_fit, strip_orphaned_media,
     clamp_callout_tail, strip_timing, extract_image_by_shape_name,
     xr, xw, xp, ex, SW, SH,
@@ -77,11 +77,23 @@ def build_discipline(work, templates, spec):
     pptx = templates[REG.COMPONENTS['discipline']['template']]
     sn = find_slide_by_anchor(pptx, REG.DISCIPLINE_ANCHORS[strand], REG.DISCIPLINE_HINTS[strand])
     sp, rp = clone(work, pptx, sn, copy_hdphoto=True)
-    # The source discipline slides carry a pre-existing animation with a
-    # clickEffect/spTgt count mismatch (confirmed on the Chemistry slide:
-    # 11 vs 37) - broken in the original artwork, not introduced here.
-    # Strip it rather than deliver malformed click behaviour.
     strip_timing(sp)
+    # Round 8 (11 Jul 2026): the raw source's own animation genuinely has a
+    # clickEffect/spTgt mismatch (11:37 on Chemistry) so strip_timing() above
+    # is still correct as a first step - but Innes's ground-truth file shows
+    # he rebuilt a clean, working animation on this slide rather than leaving
+    # it silent. Replace the stripped timing with the confirmed shape list
+    # for this strand, where one exists.
+    shape_names = REG.DISCIPLINE_ANIMATION_SHAPE_NAMES.get(strand)
+    if shape_names:
+        tree = xr(sp)
+        ids = []
+        for name in shape_names:
+            sid = get_shape_id_by_name(tree, name)
+            if sid is None:
+                raise RuntimeError(f"discipline ({strand}): expected animated shape '{name}' not found - template drift")
+            ids.append(sid)
+        animate(sp, [[i] for i in ids])
     return sp
 
 
@@ -141,6 +153,18 @@ def build_concept_cartoon(work, templates, spec):
         raise RuntimeError(f"concept_cartoon: image_path '{spec.get('image_path')}' missing - "
                             f"refusing to deliver a concept cartoon with the template's cat/light image still showing")
     replace_image(sp, rp, work, pic_id, spec['image_path'])
+    # Round 8 (11 Jul 2026): click-reveal each learner's avatar in turn
+    # (A, then B, then C) - found missing entirely by diffing Innes's
+    # ground-truth repaired file, which has this animation and this build
+    # never did. See REG.CONCEPT_CARTOON_AVATAR_NAMES.
+    tree = xr(sp)
+    avatar_ids = []
+    for name in REG.CONCEPT_CARTOON_AVATAR_NAMES:
+        aid = find_pic_id_by_name(tree, name)
+        if aid is None:
+            raise RuntimeError(f"concept_cartoon: expected avatar picture '{name}' not found - template drift")
+        avatar_ids.append(aid)
+    animate(sp, [[i] for i in avatar_ids])
     return sp
 
 
@@ -161,25 +185,26 @@ def build_learning_review(work, templates, spec):
 
 
 def build_wedo_hook(work, spec):
-    # Round 7 (11 Jul 2026): Round 5's fix (per-bullet tbox() shapes instead
-    # of the real Content Placeholder) was itself wrong in a different way -
-    # Innes flagged it directly ("throwing text boxes at a slide... use the
-    # templates"). The 'We do' layout (unlike its '-Blank' sibling) carries
-    # a real title placeholder and a real Content Placeholder (idx 1) with
-    # its own bullet character, indent, position and font inherited from
-    # the slide master - none of that is available to a freehand tbox().
-    # Reverted to filling the actual placeholder via body_sp() and revealing
-    # it as one shape on one click, which is what the master's own
-    # placeholder design is for. The timing XML itself is what was actually
-    # malformed before (see _anim_timing_xml() in lib_ooxml.py) - that's
-    # fixed at the source now, so this doesn't need per-bullet shapes to get
-    # correct animation.
+    # Round 8 (11 Jul 2026): Round 7 reverted this to body_sp() (the real
+    # Content Placeholder) based on a guess about what "use the templates"
+    # meant. Wrong guess, confirmed by diffing Innes's own ground-truth
+    # repaired file directly: its slide 5 keeps exactly this function's
+    # Round-6 per-bullet TextBox structure (same shape names, same
+    # positions/sizes/font size down to the EMU) and only ever had its
+    # animation timing fixed. Reverted back to per-bullet tbox() - this is
+    # what "use the templates" was NOT about, at least not on this slide
+    # type. See SKILL.md Round 8 for the full correction record.
     sp, rp = fresh(work, 'We do')
     t, st = get_spTree(sp)
     st.append(title_sp(2, spec['title'], REG.TITLE_FONT))
-    st.append(body_sp(3, spec['bullets']))
     save(t, sp)
-    animate(sp, [[3]])
+    sid = 10; groups = []
+    for i, bullet in enumerate(spec['bullets']):
+        by = 1750000 + i * 1350000
+        t2, st2 = get_spTree(sp)
+        st2.append(tbox(sid, bullet, 700000, by, SW - 1400000, 1250000, sz=2200, color='1A3A5C', align='l'))
+        save(t2, sp); groups.append([sid]); sid += 1
+    animate(sp, groups)
     return sp
 
 
@@ -237,14 +262,20 @@ def build_youdo_provocation(work, spec):
 
 
 def build_youdo_task(work, spec):
-    # Round 7: same reversion as build_wedo_hook() above - 'You do Ind' (not
-    # the '-Blank' variant) has a real title + Content Placeholder, use it.
+    # Round 8: same reversion as build_wedo_hook() above - confirmed against
+    # Innes's ground-truth file that slide 9 also keeps the per-bullet
+    # TextBox structure, positions matching exactly.
     sp, rp = fresh(work, 'You do Ind')
     t, st = get_spTree(sp)
     st.append(title_sp(2, spec['title'], REG.TITLE_FONT))
-    st.append(body_sp(3, spec['bullets']))
     save(t, sp)
-    animate(sp, [[3]])
+    sid = 10; groups = []
+    for i, bullet in enumerate(spec['bullets']):
+        by = 1750000 + i * 1150000
+        t2, st2 = get_spTree(sp)
+        st2.append(tbox(sid, bullet, 700000, by, SW - 1400000, 1050000, sz=2000, color='1A3A5C', align='l'))
+        save(t2, sp); groups.append([sid]); sid += 1
+    animate(sp, groups)
     return sp
 
 

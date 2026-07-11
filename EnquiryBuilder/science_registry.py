@@ -35,6 +35,30 @@ DISCIPLINE_ANCHORS = {
 }
 DISCIPLINE_HINTS = {'Biology': 4, 'Physics': 5, 'Chemistry': 6, 'Earth and Space Science': 7}
 
+# Round 8 (11 Jul 2026): the discipline slides carry a genuine, working
+# animation in the source template (confirmed on the Chemistry slide: 10
+# ovals/groups, single click each). An earlier session's Round 2 diagnosis
+# found the raw source's clickEffect count (11) didn't match its spTgt
+# count (37) and concluded the animation was malformed, so build_discipline
+# stripped it entirely on every build. Diffing Innes's ground-truth repaired
+# file showed a clean 10-click, 10-target animation on this slide, which he
+# must have rebuilt by hand in PowerPoint rather than the raw source being
+# fixable by just leaving it alone (the 11:37 mismatch is real - some
+# clicks in the raw source group multiple shapes together). Rather than
+# reproduce that complexity, this list gives one shape per click, matching
+# Innes's own simplified version exactly (order matters - this is click
+# order: the two Areas-of-Study ring shapes, the two Skills-wheel shapes,
+# then the labelled groups). Confirmed the shape names/ids are identical
+# between the raw source and Innes's fixed file (both trace back to this
+# skill's own clone() output), so resolving by name is safe.
+# Only confirmed for Chemistry so far (the only strand T6W7 needs) - other
+# strands fall back to strip_timing() (silence, not guesswork) until each
+# is confirmed the same way.
+DISCIPLINE_ANIMATION_SHAPE_NAMES = {
+    'Chemistry': ['Oval 27', 'Oval 44', 'Oval 26', 'Oval 8',
+                  'Group 305', 'Group 5', 'Group 11', 'Group 14', 'Group 17', 'Group 22'],
+}
+
 # KQ_LO.pptx slide 1 carries TWO complete, pixel-identical-position LO panels
 # stacked on top of each other (confirmed via shape coordinates 11 Jul 2026 -
 # ids 6-22 sit at the exact same left/top/w/h as ids 23-41). Group A (ids
@@ -63,6 +87,13 @@ CONCEPT_CARTOON_BUBBLE_NAMES = [
     'Speech Bubble: Rectangle with Corners Rounded 21',  # near Learner B
     'Speech Bubble: Rectangle with Corners Rounded 20',  # near Learner C
 ]
+# Round 8 (11 Jul 2026): the three learner avatar portraits, click-animated
+# one at a time (A, then B, then C) - found missing entirely from this
+# skill's build by diffing Innes's ground-truth repaired file, which has a
+# <p:timing> block on this slide that this skill never generated. Confirmed
+# by position (each picture sits directly above its matching Learner A/B/C
+# label) which picture is which learner's avatar.
+CONCEPT_CARTOON_AVATAR_NAMES = ['Picture 8', 'Picture 16', 'Picture 14']  # order: Learner A, B, C
 
 # Text that must NEVER survive into a delivered file, from ANY template on
 # ANY subject. If the override logic has a bug, this is the last line of
