@@ -894,3 +894,68 @@ correct, so the next diagnostic step should look at parts not yet
 checked at all - relationship ID schemes beyond presentation.xml.rels,
 schema element ordering inside slide/layout XML, or embedded font
 references - rather than re-checking anything covered by Rounds 7-10.
+
+### Round 11 (11 Jul 2026, same day) — two invalid OOXML constructs, plus a font-size bug found from a direct question
+
+Innes uploaded another repaired file and separately asked why concept
+cartoon speech-bubble text was displaying at size 12 in PowerPoint's Font
+Size box when he could comfortably enlarge it to 20. Checked the shape's
+own XML directly rather than guessing: `<a:rPr sz="1800"/>` (18pt, the
+size `force_shrink_to_fit` had correctly computed to fit the box) sat
+alongside `<a:normAutofit fontScale="64286"/>`. PowerPoint renders text
+at `sz * fontScale`, not `sz` alone - so the already-fitting 18pt size
+was being scaled down again by 64.286%, landing at ~11.5pt (PowerPoint's
+UI rounds this display to "12"). `force_shrink_to_fit` was writing the
+correct final size onto every run AND writing the shrink ratio onto
+fontScale, applying the same shrink twice. All three concept-cartoon
+speech bubbles had the identical pattern (sz=1800, fontScale=64286).
+Fixed in `lib_ooxml.py`: fontScale is no longer set - `rPr/sz` already
+carries the fit, and `<a:normAutofit/>` is left empty so PowerPoint's
+own live-editing auto-shrink still works if text is retyped by hand.
+Added Fix #9 to `fix_pptx_ooxml.py` to strip any fontScale left over
+from earlier builds.
+
+Went back to the repair-dialog investigation with a full normalised diff
+(rId renumbering and xml-declaration quoting ignored) of every slide
+against Innes's newly uploaded repaired file, rather than re-checking
+anything already confirmed clean. Two real, structural schema violations
+turned up, both confined to the wedo_hook/youdo_task/ido_diagram-style
+content slides (5, 6, 7, 9):
+
+- `<p:clrMapOvr><a:masterClr/></p:clrMapOvr>` - `masterClr` is not a
+  real OOXML element. The correct empty element for "use the master's
+  own colour map" is `<a:masterClrMapping/>`, confirmed correct by its
+  own unmodified use elsewhere in the same package (every slideLayout
+  and notesSlide). PowerPoint's repair silently rewrote this on every
+  affected slide.
+- `<a:bodyPr wrap="square" autofit="normAutofit"/>` - `autofit` is not a
+  valid attribute of `CT_TextBodyProperties`; autofit can only be
+  expressed via a child element (`<a:normAutofit/>` etc). PowerPoint's
+  repair silently stripped the attribute on every affected slide rather
+  than reinterpreting it.
+
+Both are genuinely invalid content, not values PowerPoint merely
+disagreed with - the first case found this investigation where
+PowerPoint's own repair behaviour (silent rewrite/strip, not just a
+count correction) points at real schema rejection. Fixed at source in
+`lib_ooxml.py`'s `fresh()` and `tbox()` (used by every wedo_hook/
+youdo_task/ido_diagram-family slide). Added Fix #10 to
+`fix_pptx_ooxml.py` (10a for masterClr, 10b for the bodyPr attribute) so
+already-built files can be corrected without a full rebuild.
+
+Rebuilt (v12) and re-ran the full normalised slide-by-slide diff against
+Innes's reference: both constructs now match exactly on every affected
+slide. Remaining differences are either expected (v12's fontScale fix is
+ahead of his reference, which was repaired before that fix existed) or
+cosmetic repackaging noise already established as harmless in earlier
+rounds (xmlns attribute order, bldLst entry order). `verify_lesson.py`:
+same single pre-existing Chemistry slide-3 overlap, nothing new.
+
+**Still open:** confirmation in real PowerPoint. sectionLst, app.xml,
+fontScale, masterClr and the bodyPr autofit attribute are all now fixed
+and confirmed structurally matching. If it still repairs after this, the
+next step is checking parts genuinely untouched by any round so far -
+slideMaster/slideLayout XML content itself (not just their Content_Types
+overrides), theme XML, or the notesMaster/handoutMaster parts - since
+every content slide type and every previously-suspected package-level
+part has now been checked.
