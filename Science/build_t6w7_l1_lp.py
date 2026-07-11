@@ -124,14 +124,37 @@ def add_rect(slide, x, y, w, h, fill_rgb=None, line_rgb=None, line_pt=0.75):
     return shape
 
 def _wrap_line_count(text, width_in, size_pt):
-    """Estimate wrapped line count for Twinkl Cursive Looped, same 0.52
-    chars-per-pt-width ratio already established empirically in
-    EnquiryBuilder/lib_ooxml.py's force_shrink_to_fit for this font -
-    fixed single-line heights for text that actually wraps is exactly
-    the bug found and fixed there; apply the same lesson here rather
-    than hardcoding heights and hoping."""
+    """Estimate wrapped line count for Twinkl Cursive Looped.
+
+    Round 12 (11 Jul 2026) correction: this used the 0.52 chars-per-pt-width
+    ratio from EnquiryBuilder/lib_ooxml.py's force_shrink_to_fit, on the
+    assumption it was a safe, already-proven value. It wasn't safe here -
+    Twinkl Cursive Looped isn't installed anywhere in this sandbox (no font
+    file in the repo, not on the system), so every QA render in this file
+    used a LibreOffice substitute font to check wrapping, and that
+    substitute is wider than the real thing. Innes confirmed directly from
+    his own PowerPoint: "Balloon (filled with air)" (25 chars) fits on ONE
+    line in the real font at 10pt in a 1.74" column - this function's old
+    ratio estimated 24 chars/line there, one short, and wrongly forced a
+    2-line row. Corrected to 0.46 chars-per-pt-width ratio (chars_per_line
+    26 for that same case - a small margin past the confirmed-fitting 25,
+    not a razor's-edge match to a single data point).
+
+    This is still a heuristic, not a measurement - there's no real Twinkl
+    Cursive Looped font file anywhere to measure against directly, and
+    0.46 is calibrated from exactly one confirmed real-PowerPoint example.
+    Do not assume it's precise; if a future LP shows text overflowing a
+    box that this function said would fit, or wrapping unnecessarily
+    when Innes's real PowerPoint shows it fitting, that's another real
+    data point - adjust the ratio again rather than re-guessing from
+    scratch, and note the correction here.
+
+    NOT shared with lib_ooxml.py's force_shrink_to_fit - that function's
+    0.52 ratio is calibrated for OOXML slide runs (confirmed working
+    there, e.g. the concept cartoon speech bubbles) and is left alone;
+    this is a separate, LP-table-cell-specific calibration."""
     usable_w_pt = width_in * 72
-    chars_per_line = max(1, int(usable_w_pt / (size_pt * 0.52)))
+    chars_per_line = max(1, int(usable_w_pt / (size_pt * 0.46)))
     words = text.split()
     lines, cur = 1, ''
     for w in words:
@@ -152,7 +175,11 @@ def heading(slide, y, text, w=None, size_pt=12):
     set_para(tb.text_frame.paragraphs[0], text, bold=True, size_pt=size_pt, color=BLUE)
     return y + h + 0.06
 
-def instruction(slide, y, text, w=None, size_pt=9.5):
+def instruction(slide, y, text, w=None, size_pt=12):
+    # Innes: 12pt is the comfortable reading size on a pupil-facing LP -
+    # default to it. Only go smaller for content that genuinely needs the
+    # space and isn't extended prose (short table labels etc, handled by
+    # their own functions below, not this one).
     w = w or CONT_W
     n = _wrap_line_count(text, w, size_pt)
     h = (size_pt / 9.5) * 0.19 * n
@@ -244,12 +271,17 @@ def sort_table_header(slide, y, size_pt=8):
     return y + row_h
 
 def sort_table_row(slide, y, material, even=True, row_h=0.42, size_pt=8.5):
-    # row_h is a floor, not a fixed value - a wrapping material name (e.g.
-    # "Balloon (filled with air)" at the larger pupil-page font) needs a
-    # taller row or its second line gets clipped against the row below.
+    # row_h is a floor, not a fixed value - a genuinely wrapping material
+    # name needs a taller row or its second line gets clipped against the
+    # row below. Only grow past the floor when the corrected wrap estimate
+    # (see _wrap_line_count) actually says it needs more than one line -
+    # a single-line estimate must not push the row taller than the floor,
+    # which is already sized generously for handwriting room in the blank
+    # State/Reason cells.
     n = _wrap_line_count(material, COL_WIDTHS_IN[0] - 0.08, size_pt)
-    needed_h = (size_pt / 8.5) * 0.20 * n + 0.16
-    row_h = max(row_h, needed_h)
+    if n > 1:
+        needed_h = 0.08 + n * (size_pt * 1.3 / 72)
+        row_h = max(row_h, needed_h)
     fill = RGBColor(0xF5, 0xF5, 0xF5) if even else WHITE
     x = CONT_X
     for i, cw in enumerate(COL_WIDTHS_IN):
@@ -336,7 +368,7 @@ def build_lp():
 
     y += 0.12
     y = heading(s1, y, 'Part B   Challenge', size_pt=14)
-    y = instruction(s1, y, 'Can you find one material that is difficult to classify? Why?', size_pt=10.5)
+    y = instruction(s1, y, 'Can you find one material that is difficult to classify? Why?', size_pt=12)
     # Innes: gap before the first write-line must be at least the same
     # 0.8cm (0.315") used between the lines themselves, so there's
     # actually room to write on that first line - instruction() only
