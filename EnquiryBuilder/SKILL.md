@@ -1,105 +1,230 @@
+---
+name: enquiry-lesson-builder
+description: >
+  Builds complete Being a Scientist lesson PPTXs from an enquiry description.
+  Use when Innes says "build my science enquiry", "make my science lessons",
+  "plan a science unit", "science enquiry for [topic]", "build lessons for
+  [topic]", or describes a science enquiry unit. Produces one PPTX per lesson
+  with flexible, pedagogy-driven slide layouts and AI-generated images.
+  Triggers: "build my science enquiry", "make science lessons", "plan a
+  science unit", "science enquiry", "build lessons for".
+---
+
 # Enquiry Lesson Builder Skill
 
 Builds complete Being a Scientist lesson PPTXs from an enquiry description.
-Produces one PPTX per lesson with flexible, pedagogy-driven slide layouts
-and AI-generated images embedded throughout.
 
 ---
 
-## Trigger phrases
+## CRITICAL RULES — do not deviate from these
 
-"build my science enquiry", "make my science lessons", "plan a science unit",
-"science enquiry for [topic]", "build lessons for [topic]", or any description
-of a science enquiry unit.
+These were all learned through hard QA failure. Violating any of them will cause crashes, broken animations, or wrong content.
 
----
+### PPTX structure rules
+- **Never clone content slides** — I Do, We Do, You Do, discussion, activity slides must be built from scratch using `fresh_slide(work, layout_name)`. Cloning pulls in media and shapes from the source enquiry.
+- **Badges come from slide layouts** — never add I do / We do / You do badges programmatically.
+- **Layout resolution by name, not filename** — `slideLayout3.xml` means different things in different template files. Always resolve by layout NAME against the work directory.
+- **Atomic rId replacement** — use a single regex pass: `re.sub(r'(r:(?:embed|id|link))="([^"]+)"', sub, xml)`. Never use sequential `.replace()` calls — cascading replacement corrupts image mapping.
+- **No matplotlib for scientific illustrations** — use Higgsfield (`nano_banana_pro`) for all objects, scenes, and people. Matplotlib is only for particle model diagrams and charts.
+- **Images need background removal** if placed on coloured slide backgrounds — use `rembg` or Higgsfield background removal.
+- **fix_pptx_ooxml must run on every output before delivery** — especially Fix #6 (SharePoint metadata strip). Files saved via SharePoint/Teams carry `customXml/` parts that cause persistent repair dialogs. Also check `ppt/_rels/presentation.xml.rels` for stray customXml refs (not just `_rels/.rels`).
 
-## Workflow (four stages)
+### Animation rules
+- **Clean `<p:seq>` only** — no hide-at-start `<p:par>` blocks. PowerPoint handles initial hiding of `clickEffect` entry animations automatically. Explicit hide-at-start pars create "TRIGGER: UNNAMED" in PowerPoint's animation pane.
+- Correct root node: `<p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot">`
+- Each click step: outer par with `<p:cond evt="onBegin" delay="indefinite"/>`, inner par with `nodeType="clickEffect"`
+- For body paragraph animation: use `<p:bldLst><p:bldP spid="ID" grpId="0" build="p"/></p:bldLst>`
 
-### Stage 1 — Dialogue
-
-Ask Innes for the following if not already provided:
-
-- **Key question** — e.g. "Can materials change their state?"
-- **Challenge** — the enquiry outcome, e.g. "Create a scientific report about how materials change"
-- **Number of lessons** — typically 4–6
-- **Science strand** — materials / physics / biology / chemistry / earth science
-- **Disciplinary focus** — which Working Scientifically skills this enquiry emphasises
-- **Writing outcome** — what pupils write at the end (report, explanation, argument, etc.)
-
-Do NOT ask what slides to include. Claude decides that.
-
----
-
-### Stage 2 — Generate the MTP
-
-Generate the Medium Term Plan as a JSON object following the schema below.
-Present it to Innes as a readable summary (not raw JSON) — lesson titles, LOs,
-and a brief description of each slide's purpose and layout.
-
-**Before presenting:** check the CLF Curriculum Progression Summary (project knowledge)
-for prior learning and cross-curricular links. Reference these in recall slides
-and tib statements.
+### Image generation
+- Use **Higgsfield** (`nano_banana_pro` model) for all educational illustrations and photorealistic content.
+- Use **dall-e** only if Higgsfield is unavailable — dall-e times out frequently.
+- Images do not persist between sessions. Re-download via `job_display` CDN URLs while the session is open, or regenerate fresh next session.
+- Never use placeholder coloured boxes in delivered files.
 
 ---
 
-### Stage 3 — Image generation
+## Slide structure for L1 of a new enquiry
 
-For every slide in the MTP that has a layout other than `text_only`:
-1. Determine the correct tool: **dall-e** for diagrams, particle models,
-   labelled science illustrations; **Higgsfield** for photographic scenes,
-   real-world contexts, atmospheric images.
-2. Generate each image using the appropriate tool.
-3. Download the image URL to disk:
-   ```bash
-   curl -L "<url>" -o /tmp/enquiry_images/L{lesson_num}_S{slide_num}_I{img_num}.png
-   ```
-4. Add the local path to the JSON: `"path": "/tmp/enquiry_images/L1_S3_I0.png"`
+Every L1 follows this exact order:
 
-Generate all images before presenting the MTP for confirmation. Show Innes
-a summary of what was generated. He can request regenerations before confirming.
+| # | Slide type | Source |
+|---|-----------|--------|
+| 1 | KQ Cover | Clone sci_template slide 2, remove TextBox 19, set TextBox 16 to KQ |
+| 2 | Being a Scientist | Clone from missing-sci.pptx slide 1 (Areas of Study + Skills wheel) |
+| 3 | Discipline slide | Clone from missing-sci.pptx: slide 2 = Biology, slide 3 = Physics, slide 4 = Chemistry, slide 5 = Earth & Space. Show ONLY the one matching the enquiry strand |
+| 4 | LO | Clone KQ_LO.pptx slide 1, set TextBox 38/39/40, animate each on click |
+| 5–N | Content slides | Build fresh from layouts (see below) |
+| N-1 | Concept cartoon | Clone from missing-sci.pptx slide 6 as a TEMPLATE, then update text and central image for this specific enquiry's misconception |
+| N | Learning review | Clone sci_example slide 17, set Bubble1/2/3 |
 
-**Image prompt rules:**
-- Every prompt ends with: `no watermarks, no borders, no decorative frames,
-  no text overlaid, suitable for primary school classroom display`
-- For dall-e: `educational diagram for children aged 8–9, clear and accurate`
-- For Higgsfield: `children's illustration style` or `photorealistic` as appropriate
-- For grids (image_grid layout): all prompts in a grid share a consistent
-  style suffix so the grid looks like a coherent set
-- Never generate images of identifiable real people or children
+**Note:** The concept cartoon from missing-sci slide 6 contains a light/cat example — this is a template. ALWAYS replace learner statements and the central image with content relevant to the current enquiry. Do not leave the cat/light content in a States of Matter or any other non-Light enquiry.
+
+### Content slide order (within L5–N)
+Standard L1 sequence after LO:
+1. We Do — recall/hook (text_only layout)
+2. We Do — image grid (we_do_blank layout + 2×4 images)
+3. I Do — particle/diagram slide (i_do_blank layout)
+4. You Do — provocation image (you_do_ind_blank layout)
+5. You Do — task instructions (you_do_ind layout)
+
+Varies for later lessons per MTP.
 
 ---
+
+## Workflow
+
+### Stage 1 — Gather MTP inputs
+Ask for:
+- Key question
+- Science strand (Biology / Physics / Chemistry / Earth and Space Science)
+- Number of lessons
+- Disciplinary focus for each lesson
+- LO, TIB, ISB per lesson
+- Day and session (a.m./p.m.) per lesson
+
+Do NOT ask what slides to include — decide based on MTP.
+
+### Stage 2 — Generate MTP JSON
+Generate the full MTP as JSON (schema below). Present as readable summary. Check CLF Curriculum Progression Summary for prior learning and cross-curricular links.
+
+### Stage 3 — Generate images
+For every slide requiring images:
+1. Generate via Higgsfield (`nano_banana_pro` model), 1:1 aspect ratio for grid items, 16:9 for provocation/full-slide images.
+2. Download CDN URLs immediately after generation — they do not persist across sessions.
+3. Remove backgrounds where needed (rembg or Higgsfield background removal).
+4. Never deliver a file with placeholder boxes.
 
 ### Stage 4 — Build
+1. Fetch `build_l1_final.py` from GitHub repo (`EnquiryBuilder/` folder).
+2. Run build — each lesson becomes one PPTX.
+3. Run `fix_pptx_ooxml.py` on every output.
+4. Validate with `/mnt/skills/public/pptx/scripts/office/validate.py`.
+5. Render QA via LibreOffice → PyMuPDF. Check every slide.
+6. Deliver as zip.
 
-Once Innes confirms the MTP:
+---
 
-```bash
-cd /home/claude/enquiry-builder
+## Slide layout map (sci_example.pptx)
 
-# Save the confirmed MTP JSON
-python3 -c "import json; json.dump(<mtp>, open('confirmed_mtp.json','w'), indent=2)"
+| Layout name | File | Use for |
+|-------------|------|---------|
+| `I do` | slideLayout2.xml | I Do with title + body text |
+| `We do` | slideLayout3.xml | We Do with title + body text |
+| `You do Ind` | slideLayout5.xml | You Do with title + body text |
+| `I Do - Blank` | slideLayout6.xml | I Do with custom image/text layout |
+| `We do - Blank` | slideLayout7.xml | We Do with custom image/text layout |
+| `You do Ind - Blank` | slideLayout9.xml | You Do with custom image/text layout |
+| `Blank` | slideLayout15.xml | No badge — use for cover and LO |
 
-# Validate
-python3 generate_mtp.py confirmed_mtp.json --check-images
+**Always resolve layouts by name, not filename.** sci_template.pptx and KQ_LO.pptx have different layout numbering.
 
-# Build each lesson
-for lesson in confirmed_mtp['lessons']:
-    python3 << 'EOF'
-import json
-lesson = <lesson_data>
-with open(f'/tmp/lesson_{lesson["number"]}.json', 'w') as f:
-    json.dump(lesson, f, indent=2)
-EOF
-    python3 build_science_lesson.py /tmp/lesson_N.json /tmp/lesson_N.pptx /tmp/enquiry_images
-done
+---
 
-# Package
-zip -j /mnt/user-data/outputs/TxWy_Science_[Topic]_Lessons.zip /tmp/lesson_*.pptx
+## Clone vs fresh slide decision
+
+| Slide | Approach | Source |
+|-------|----------|--------|
+| KQ cover | Clone | sci_template slide 2 |
+| Being a Scientist | Clone (full — handles hdphoto + diagrams) | missing-sci slide 1 |
+| Discipline slide | Clone (full) | missing-sci slide 2/3/4/5 |
+| LO | Clone (image rels only) | KQ_LO slide 1 |
+| Concept cartoon | Clone (full), then update text + image | missing-sci slide 6 |
+| Learning review | Clone (image rels only) | sci_example slide 17 |
+| All content slides | Fresh from layout | — |
+
+The "full" clone copies image, hdphoto, diagram, and notesSlide rels. The "image only" clone skips hdphoto and notes (avoids LibreOffice rendering issues from .wdp files, and avoids broken notesSlide back-references).
+
+---
+
+## LO slide animation
+
+TextBox 38 (LO), 39 (TIB), 40 (ISB) each appear on a separate click.
+Shape IDs in the repaired file: id=39, id=40, id=41 respectively.
+Use clean appear animation (no hide-at-start pars):
+
+```xml
+<p:timing>
+  <p:tnLst>
+    <p:par>
+      <p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot">
+        <p:childTnLst>
+          <p:seq concurrent="1" nextAc="seek">
+            <p:cTn id="2" dur="indefinite" nodeType="mainSeq">
+              <p:childTnLst>
+                <!-- repeat for each shape: -->
+                <p:par>
+                  <p:cTn id="N" fill="hold">
+                    <p:stCondLst><p:cond evt="onBegin" delay="indefinite"/></p:stCondLst>
+                    <p:childTnLst>
+                      <p:par>
+                        <p:cTn id="N+1" presetID="1" presetClass="entr" presetSubtype="0"
+                               fill="hold" grpId="0" nodeType="clickEffect">
+                          <p:stCondLst><p:cond delay="0"/></p:stCondLst>
+                          <p:childTnLst>
+                            <p:set>
+                              <p:cBhvr>
+                                <p:cTn id="N+2" dur="1" fill="hold"/>
+                                <p:tgtEl><p:spTgt spid="SP_ID"/></p:tgtEl>
+                                <p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst>
+                              </p:cBhvr>
+                              <p:to><p:strVal val="visible"/></p:to>
+                            </p:set>
+                          </p:childTnLst>
+                        </p:cTn>
+                      </p:par>
+                    </p:childTnLst>
+                  </p:cTn>
+                </p:par>
+              </p:childTnLst>
+            </p:cTn>
+            <p:prevCondLst><p:cond evt="onPrevClick" delay="0"/></p:prevCondLst>
+            <p:nextCondLst><p:cond evt="onNextClick" delay="0"/></p:nextCondLst>
+          </p:seq>
+        </p:childTnLst>
+      </p:cTn>
+    </p:par>
+  </p:tnLst>
+</p:timing>
 ```
 
-Render and QA all slides via LibreOffice + PyMuPDF before delivering.
-Deliver as a single zip via present_files.
+---
+
+## LO grammar rules
+
+- **LO** (TextBox 38): infinitive verb phrase — "compare and group materials…"
+- **TIB** (TextBox 39): first person present — "I understand how…" / "I know that…"
+- **ISB** (TextBox 40): progressive "-ing" — "creating a sorting table…"
+
+---
+
+## Concept cartoon rules
+
+- ALWAYS specific to the current enquiry's science content.
+- Three learner views: one common misconception, one partially correct, one scientifically accurate.
+- Central image: relevant photorealistic stimulus from Higgsfield.
+- The missing-sci.pptx slide 6 is a TEMPLATE ONLY — always replace all content.
+
+---
+
+## fix_pptx_ooxml.py
+
+Run on every PPTX before delivery. Now includes Fix #6: SharePoint metadata strip.
+Located at `Shared/fix_pptx_ooxml.py` in the GitHub repo.
+
+Fix #6 strips `customXml/` parts and their relationships from both `_rels/.rels` AND `ppt/_rels/presentation.xml.rels`. Files saved via SharePoint/Teams carry these parts; they cause persistent repair dialogs in PowerPoint that no other fix resolves.
+
+---
+
+## Source files
+
+All scripts at `imcl75/claude_files` on GitHub. Fetch fresh at session start.
+
+- `EnquiryBuilder/build_l1_final.py` — L1 builder (current working version from T6W7 session)
+- `Shared/fix_pptx_ooxml.py` — post-processing fixer including Fix #6
+- `EnquiryBuilder/templates/sci_template.pptx` — cover, recall source
+- `EnquiryBuilder/templates/sci_example.pptx` — I Do, We Do, You Do, learning review source
+- `EnquiryBuilder/templates/KQ_LO.pptx` — LO slide source
+- `missing-sci.pptx` — Being a Scientist, discipline slides, concept cartoon template (Innes must re-upload each session; not in repo)
 
 ---
 
@@ -108,100 +233,50 @@ Deliver as a single zip via present_files.
 ```json
 {
   "enquiry": {
-    "subject": "science",
     "key_question": "Can materials change their state?",
-    "challenge": "Create a scientific report about how materials change",
+    "science_strand": "Chemistry",
     "year_group": "Y4",
     "num_lessons": 5,
-    "science_strand": "materials",
-    "disciplinary_focus": ["observe_and_measure", "record_and_present"],
-    "writing_outcome": "scientific report"
+    "disciplinary_focus": ["observe_measure", "record_present", "conclude"]
   },
   "lessons": [
     {
       "number": 1,
       "day": "Monday",
       "session": "a.m.",
-      "title": "What are the three states of matter?",
-      "disciplinary_skill": "observe_and_measure",
-      "lo": "identify and describe the properties of solids, liquids and gases",
-      "tib": "...",
-      "isb": "...",
+      "lo": "infinitive verb phrase",
+      "tib": "I understand/I know that…",
+      "isb": "progressive -ing verb phrase",
+      "concept_cartoon": {
+        "title": "Who do you agree with and why?",
+        "learners": [
+          {"name": "Learner A", "statement": "common misconception"},
+          {"name": "Learner B", "statement": "partially correct"},
+          {"name": "Learner C", "statement": "scientifically accurate"}
+        ],
+        "image_prompt": "relevant states of matter stimulus image"
+      },
       "slides": [
-        { "type": "cover" },
-        { "type": "lo" },
-        {
-          "type": "recall",
-          "left": ["Materials can be sorted by their properties"],
-          "right": ["I remember that water can be a solid, liquid or gas"],
-          "wonder": "I wonder if all materials can be melted"
-        },
-        {
-          "type": "teaching",
-          "mode": "wedo",
-          "layout": "image_grid",
-          "title": "What do these six substances have in common?",
-          "grid": {
-            "rows": 2,
-            "cols": 3,
-            "items": [
-              { "label": "Ice",    "prompt": "ice cube, macro photography, white background", "path": "" },
-              { "label": "Water",  "prompt": "glass of clear water, white background", "path": "" },
-              { "label": "Steam",  "prompt": "steam rising from cup, white background", "path": "" },
-              { "label": "Rock",   "prompt": "granite rock, macro, white background", "path": "" },
-              { "label": "Honey",  "prompt": "golden honey dripping, white background", "path": "" },
-              { "label": "Oxygen", "prompt": "clear glass sphere representing gas, white background", "path": "" }
-            ]
-          }
-        },
-        {
-          "type": "teaching",
-          "mode": "ido",
-          "layout": "diagram_annotated",
-          "title": "What makes a solid different from a liquid?",
-          "images": [
-            {
-              "prompt": "particle diagram showing solid on left (regular grid of touching circles), liquid in middle (irregular loose circles), gas on right (widely spaced circles), clear labels, white background, educational diagram, primary school",
-              "path": ""
-            }
-          ],
-          "bullets": [
-            "In a SOLID, particles are packed tightly together and cannot move freely",
-            "In a LIQUID, particles are close but can slide past each other",
-            "In a GAS, particles move quickly and are spread far apart"
-          ]
-        },
-        {
-          "type": "discussion",
-          "mode": "wedo",
-          "layout": "provocation",
-          "title": "Is this a solid, a liquid, or something else?",
-          "images": [
-            {
-              "prompt": "cornflour and water oobleck mixture being squeezed in a hand, dramatic close-up, non-newtonian fluid behaviour visible, white background, photorealistic",
-              "path": ""
-            }
-          ]
-        },
-        {
-          "type": "activity",
-          "mode": "youdo",
-          "layout": "text_only",
-          "title": "Sort the materials",
-          "bullets": [
-            "Sort the material cards into solid, liquid or gas",
-            "Record your sorting in the table on your LP",
-            "For each one: give ONE reason for your decision"
-          ]
-        },
-        {
-          "type": "learning_review",
-          "starters": [
-            "I can now explain the difference between a solid and a liquid because…",
-            "The most surprising thing I found out today was…",
-            "Something I am still wondering about is…"
-          ]
-        }
+        {"type": "cover"},
+        {"type": "being_a_scientist"},
+        {"type": "discipline", "strand": "Chemistry"},
+        {"type": "lo"},
+        {"type": "wedo_hook", "title": "…", "bullets": ["…"]},
+        {"type": "wedo_grid", "title": "…", "items": [
+          {"label": "Ice", "path": ""},
+          {"label": "Water", "path": ""},
+          {"label": "Steam (water vapour)", "path": ""},
+          {"label": "Wood", "path": ""},
+          {"label": "Sand", "path": ""},
+          {"label": "Milk", "path": ""},
+          {"label": "Balloon (filled with air)", "path": ""},
+          {"label": "Honey", "path": ""}
+        ]},
+        {"type": "ido_diagram", "title": "…", "bullets": ["…", "…", "…"], "image_path": ""},
+        {"type": "youdo_provocation", "title": "…", "image_path": ""},
+        {"type": "youdo_task", "title": "…", "bullets": ["…"]},
+        {"type": "concept_cartoon"},
+        {"type": "learning_review", "starters": ["…", "…", "…"]}
       ]
     }
   ]
@@ -210,57 +285,10 @@ Deliver as a single zip via present_files.
 
 ---
 
-## Slide type reference
+## Outstanding issues from T6W7 session (July 2026)
 
-| Type | Always clone from | Key shapes to edit |
-|------|------------------|-------------------|
-| `cover` | sci_template slide 2 | TextBox 16 (KQ), TextBox 17 (challenge), TextBox 19 (day) |
-| `lo` | kq_lo_science_clean.pptx slide 1 | Title 27 (KQ), TextBox 38/39/40 (lo/tib/isb) |
-| `recall` | sci_template slide 9 | Text Placeholder 5 (right), Text Placeholder 12 ×2 (left, wonder) |
-| `teaching` / `discussion` / `activity` text_only | sci_example slides 13/15/12 | Title ph, body ph |
-| `teaching` / `discussion` / `activity` with layout | Fresh blank slide | Via slide_layouts.py |
-| `misconception` | sci_example slide 16 | Round Corners 2 (title), Speech Bubbles 19/20/21, TextBox 23/24/25 |
-| `fed_in_facts` | sci_template slide 13 | Keep header, add text |
-| `quiz` | sci_template slide 14 | Title ph, body ph |
-| `learning_review` | sci_example slide 17 | Bubble1, Bubble2, Bubble3 |
-
----
-
-## Layout variants and when to use them
-
-| Layout | Use when | N images | Tool |
-|--------|----------|----------|------|
-| `text_only` | Complex multi-point instruction; no visual needed | 0 | — |
-| `image_grid` | "What do these X things have in common?" / sorting / classification opener | 4–9 | dall-e or Higgsfield |
-| `provocation` | Discussion starter; hook; "What is happening here?"; surprising/striking image | 1 | Higgsfield preferred |
-| `comparison` | Before/after; two materials side by side; two learner outcomes; two states | 2–3 | dall-e or Higgsfield |
-| `image_right` | Teacher explanation with supporting diagram right | 1 | dall-e |
-| `image_left` | Visual leads, supporting text right | 1 | Higgsfield |
-| `diagram_annotated` | Scientific diagram with annotation questions around it | 1 | dall-e |
-
----
-
-## Source files
-
-All at `/home/claude/enquiry-builder/`:
-- `build_science_lesson.py` — main builder
-- `slide_layouts.py` — flexible layout system
-- `generate_mtp.py` — MTP validator
-- `sci_template.pptx` — source for cover, recall, quiz, fed_in_facts
-- `sci_example.pptx` — source for I Do, We Do, You Do, misconception, learning review
-- `kq_lo_science_clean.pptx` — source for LO slide (accent1 removed)
-- `assets/` — badge images, pupil images, subject icons
-
----
-
-## Rules
-
-- The cover slide is ALWAYS first. The LO is ALWAYS second. Learning Review is ALWAYS last.
-- Never use sci_template slide 8 (vertical WWH slide) for anything.
-- The recall slide only appears when there is genuine prior learning to activate.
-- Misconception slides require three clearly distinct learner views — one correct, one partially correct, one common misconception.
-- Every enquiry needs at least one `image_grid` or `provocation` slide somewhere in the sequence — lessons with only text slides are not acceptable.
-- Image prompts are specific and purposeful. "Science image" is not a prompt.
-- For image grids, all items share a consistent visual style directive in the prompt.
-- The `tib` statement explains WHY the learning matters in the world, not just in school.
-- The `isb` statement describes a concrete, observable success product — not abstract qualities.
+1. **Concept cartoon on slide 10** still has light/cat content from missing-sci template. Needs States of Matter learner statements and a relevant image (sand pouring, oobleck, etc.) — quick text edit in PowerPoint or request update.
+2. **Skill needs a proper `build_science_lesson.py`** that reads the MTP JSON and generates all lessons. `build_l1_final.py` only handles L1 structure. L2–L5 not yet built.
+3. **Discipline slide selection** must be driven by `science_strand` in MTP — only the relevant discipline slide should appear, not all four.
+4. **Dynamic concept cartoon** generation from MTP `concept_cartoon` data not yet implemented.
+5. **Repair dialog** (PowerPoint on open) was traced to SharePoint customXml metadata. Fix #6 in `fix_pptx_ooxml.py` strips this. However the repaired PPTX Innes provided still shows the dialog — another session is exploring root cause further.
