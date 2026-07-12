@@ -1,0 +1,259 @@
+{
+  "enquiry": {
+    "key_question": "Can materials change their state?",
+    "science_strand": "Chemistry",
+    "year_group": "Y4",
+    "week": "T6W7"
+  },
+  "lesson": {
+    "number": 4,
+    "day": "Thursday",
+    "session": "a.m.",
+    "key_question": "Can materials change their state?",
+    "lo": "use a thermometer to take accurate temperature readings and collect, record and present data as a line graph",
+    "tib": "I understand how scientists measure and record changes in temperature, and how to present data clearly",
+    "isb": "recording temperature data accurately in a table and plotting a line graph with a written conclusion",
+    "slides": [
+      {
+        "type": "kq_challenge",
+        "key_question": "Can materials change their state?",
+        "challenge": ""
+      },
+      {
+        "type": "being_a_scientist"
+      },
+      {
+        "type": "discipline",
+        "strand": "Chemistry"
+      },
+      {
+        "type": "lo"
+      },
+      {
+        "type": "wedo_hook",
+        "title": "Vocabulary check \u2014 what do these mean?",
+        "bullets": [
+          "At what temperature does water melt from ice? At what temperature does it boil?",
+          "What is the difference between evaporating and boiling?",
+          "Can you remember the four words for the state changes? (melting, freezing, evaporating, condensing)"
+        ]
+      },
+      {
+        "type": "ido_diagram",
+        "title": "How do we read a thermometer accurately?",
+        "image_path": "/tmp/t6w7/images/thermometer_diagram.png",
+        "bullets": [
+          "Always hold the thermometer upright and wait for the reading to stabilise before recording.",
+          "Read at eye level \u2014 looking from above or below gives a false reading.",
+          "Record the temperature to the nearest degree and include the unit: \u00b0C."
+        ]
+      },
+      {
+        "type": "wedo_hook",
+        "title": "How will we set up the ice-melting investigation?",
+        "bullets": [
+          "Place ice in a beaker. Record the starting temperature. Start your timer.",
+          "Take a temperature reading every 2 minutes. Record each reading in the table on your LP.",
+          "After 10 minutes, plot your results as a line graph \u2014 time on the x-axis, temperature on the y-axis."
+        ]
+      },
+      {
+        "type": "youdo_task",
+        "title": "Carry out the investigation",
+        "bullets": [
+          "Record the temperature every 2 minutes in the table on your LP.",
+          "Plot each reading on the line graph axes \u2014 join the points with a smooth line.",
+          "Write a conclusion: what happened to the temperature as the ice melted?",
+          "Challenge: explain why the temperature stayed at 0\u00b0C for a time before rising."
+        ]
+      },
+      {
+        "type": "learning_review",
+        "starters": [
+          "I can now explain how to record and present scientific data because\u2026",
+          "Something I noticed in my results was\u2026",
+          "I am still wondering\u2026"
+        ]
+      }
+    ],
+    "lp": {
+      "date": "16/07/2026",
+      "lf": "use a thermometer accurately and record data in a table and line graph",
+      "ican1": "take temperature readings every 2 minutes and record them in a table",
+      "ican2": "plot a line graph from my results and write a conclusion",
+      "sections": [
+        {
+          "type": "heading",
+          "text": "Results table \u2014 ice-melting investigation",
+          "size_pt": 16
+        },
+        {
+          "type": "instruction",
+          "text": "Record the temperature of the water every 2 minutes as the ice melts.",
+          "size_pt": 12
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "text": "Time (minutes)",
+              "frac": 0.35,
+              "align": "center"
+            },
+            {
+              "text": "Temperature (\u00b0C)",
+              "frac": 0.65,
+              "align": "center"
+            }
+          ],
+          "rows": [
+            [
+              "0",
+              ""
+            ],
+            [
+              "2",
+              ""
+            ],
+            [
+              "4",
+              ""
+            ],
+            [
+              "6",
+              ""
+            ],
+            [
+              "8",
+              ""
+            ],
+            [
+              "10",
+              ""
+            ]
+          ],
+          "row_height": 0.38,
+          "body_size_pt": 11
+        },
+        {
+          "type": "spacer",
+          "h": 0.14
+        },
+        {
+          "type": "heading",
+          "text": "Plot your results \u2014 line graph",
+          "size_pt": 14
+        },
+        {
+          "type": "instruction",
+          "text": "Plot each temperature reading with a cross (x). Join the crosses with a smooth line.",
+          "size_pt": 12
+        },
+        {
+          "type": "graph_template",
+          "filename": "l4_graph_template.png",
+          "title": "Temperature of ice as it warms up",
+          "xlabel": "Time (minutes)",
+          "ylabel": "Temperature (degrees C)",
+          "xlim": [
+            -0.3,
+            11
+          ],
+          "ylim": [
+            -5,
+            105
+          ],
+          "xticks": [
+            0,
+            2,
+            4,
+            6,
+            8,
+            10
+          ],
+          "yticks": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ],
+          "max_h": 2.0
+        },
+        {
+          "type": "heading",
+          "text": "Conclusion",
+          "size_pt": 14
+        },
+        {
+          "type": "instruction",
+          "text": "What happened to the temperature while the ice was melting? What does your graph show?",
+          "size_pt": 12
+        },
+        {
+          "type": "write_lines",
+          "n": 3
+        },
+        {
+          "type": "marking_station"
+        },
+        {
+          "type": "answer_text",
+          "text": "Expected readings (approximate):",
+          "bold": true
+        },
+        {
+          "type": "answer_text",
+          "text": "0 min: 0\u00b0C (or below \u2014 starting temperature of ice)"
+        },
+        {
+          "type": "answer_text",
+          "text": "2 min: 0\u00b0C (ice still melting \u2014 temperature stays flat)"
+        },
+        {
+          "type": "answer_text",
+          "text": "4 min: 0\u00b0C (still melting)"
+        },
+        {
+          "type": "answer_text",
+          "text": "6 min: 2-8\u00b0C (ice fully melted, water starting to warm)"
+        },
+        {
+          "type": "answer_text",
+          "text": "8 min: 5-15\u00b0C (water warming)"
+        },
+        {
+          "type": "answer_text",
+          "text": "10 min: 8-20\u00b0C (water warming)"
+        },
+        {
+          "type": "spacer",
+          "h": 0.12
+        },
+        {
+          "type": "answer_text",
+          "text": "Key pattern: temperature stays near 0\u00b0C while ice melts (heat energy goes into breaking the solid structure, not raising temperature), then rises once all the ice has melted."
+        },
+        {
+          "type": "spacer",
+          "h": 0.12
+        },
+        {
+          "type": "answer_text",
+          "text": "Model conclusion:",
+          "bold": true
+        },
+        {
+          "type": "answer_text",
+          "text": "As the ice melted, the temperature stayed at 0\u00b0C for the first few minutes. Once all the ice had melted, the temperature began to rise steadily. This shows that the heat energy was being used to melt the ice rather than to warm the water."
+        }
+      ]
+    }
+  }
+}
