@@ -50,51 +50,35 @@ STATIC_ASSETS = {
     'progression':  f'{ASSETS_ROOT}/geo-progression.png',   # Progression slide image
 }
 
-# ── Puzzle piece EMF mapping ──────────────────────────────────────────────────
-# Each puzzle piece shape in the template references one of these EMF files
-# via its r:embed rId.  rId values are from the ORIGINAL Geographer.pptx
-# puzzle-pieces slide rels file (confirmed by visual inspection, 2026-07-12).
-# After clone(), these rIds are remapped — use the emf/icon filenames to
-# re-identify them in the work directory.
+# ── Puzzle piece EMF reference ────────────────────────────────────────────────
+# Reference data only — the builder does NOT swap EMFs.
+# Puzzle pieces are cloned as a group from slide PUZZLE_SOURCE_SLIDE of the
+# template; unneeded groups are deleted.  These entries map skill_focus to the
+# EMF filename in geographers_template.pptx and are kept for documentation.
 #
-# 'emf_src' is the path to the EMF file ON INNES'S MAC (from the template).
-# The builder uses Geographer.pptx as the source; these paths are only
-# needed when embedding fresh copies (e.g. for a non-template build path).
+# Companion icon PNGs in the template (image11–16.png) don't match the names
+# used in geography-example.pptx (image13–22.png) — they were renamed when
+# the file was packaged.  Confirmed by XML inspection 2026-07-12.
 PUZZLE_PIECE_EMF = {
     'questioning_predicting': {
-        'src_rId':  'rId6',
-        'src_emf':  'image12.emf',
-        'src_icon': 'image13.png',
-        'colour':   'Orange',
-        'emf_src':  f'{ASSETS_ROOT}/puzzle/piece_questioning_predicting.emf',
+        'emf':    'image42.emf',  # in geographers_template.pptx
+        'colour': 'Orange',
     },
     'observing_recording': {
-        'src_rId':  'rId8',
-        'src_emf':  'image14.emf',
-        'src_icon': 'image15.png',
-        'colour':   'Yellow',
-        'emf_src':  f'{ASSETS_ROOT}/puzzle/piece_observing_recording.emf',
+        'emf':    'image55.emf',  # companion icon: image15.png (confirmed)
+        'colour': 'Yellow',
     },
     'field_work': {
-        'src_rId':  'rId10',
-        'src_emf':  'image16.emf',
-        'src_icon': 'image17.svg',
-        'colour':   'Purple',
-        'emf_src':  f'{ASSETS_ROOT}/puzzle/piece_field_work.emf',
+        'emf':    'image43.emf',
+        'colour': 'Purple',
     },
     'map_skills': {
-        'src_rId':  'rId12',
-        'src_emf':  'image18.emf',
-        'src_icon': 'image20.png',
-        'colour':   'Green',
-        'emf_src':  f'{ASSETS_ROOT}/puzzle/piece_map_skills.emf',
+        'emf':    'image56.emf',
+        'colour': 'Green',
     },
     'concluding_communicating': {
-        'src_rId':  'rId15',
-        'src_emf':  'image21.emf',
-        'src_icon': 'image22.png',
-        'colour':   'Blue',
-        'emf_src':  f'{ASSETS_ROOT}/puzzle/piece_concluding_communicating.emf',
+        'emf':    'image57.emf',
+        'colour': 'Blue',
     },
 }
 
@@ -107,27 +91,41 @@ SKILL_DISPLAY_NAMES = {
 }
 
 # ── Puzzle piece layout ───────────────────────────────────────────────────────
-# 15 pieces total arranged in three rows: 5 (bottom), 6 (middle), 4 (top).
-# This matches the arrangement confirmed from the Geographer.pptx template.
-PUZZLE_PIECE_ROWS = [5, 6, 4]   # pieces per row, bottom → top
+# The template (geographers_template.pptx) has exactly 5 puzzle piece groups,
+# confirmed by XML inspection 2026-07-12.  Each group (<p:grpSp>) contains one
+# EMF (coloured puzzle-piece background), an icon, and a TextBox for the lesson
+# focus text.
+#
+# Build strategy: clone slide PUZZLE_SOURCE_SLIDE (the complete 5-piece slide),
+# delete groups for lessons beyond the current one, update TextBox text in each
+# kept group with the lesson's focus.  No EMF swapping is needed.
 
-# Shape names for the 15 puzzle pieces in the template's puzzle-pieces slide,
-# ordered from piece 1 (bottom-left) across and up.
-# TODO: verify these names by inspecting Geographer.pptx slide XML directly.
-# Typical naming convention based on PowerPoint's default auto-naming:
-PUZZLE_PIECE_SHAPE_NAMES = [
-    # Row 0 (bottom, 5 pieces) — pieces 1-5
-    'Piece1', 'Piece2', 'Piece3', 'Piece4', 'Piece5',
-    # Row 1 (middle, 6 pieces) — pieces 6-11
-    'Piece6', 'Piece7', 'Piece8', 'Piece9', 'Piece10', 'Piece11',
-    # Row 2 (top, 4 pieces) — pieces 12-15
-    'Piece12', 'Piece13', 'Piece14', 'Piece15',
+# Slide number (1-based) in the template to clone for the puzzle pieces slide.
+# Slide 10 = the complete enquiry summary slide with all 5 pieces.
+PUZZLE_SOURCE_SLIDE = 10
+
+# Groups on the puzzle pieces slide that are NOT puzzle pieces.
+# These are decorative/photo elements kept on every lesson's slide.
+# Group 14 = decorative graphic + speech bubble.
+# Group 38 = photo collage (4 JPEG images).
+PUZZLE_NON_PIECE_GROUPS = {'Group 14', 'Group 38'}
+
+# Puzzle piece group names in reveal order (piece 1 → piece 5).
+# Ordered left-to-right across the bottom row (y≈4 in), then the upper piece.
+# Positions confirmed by XML inspection of geographers_template.pptx 2026-07-12:
+#   piece 1: Group 31   x≈0 in, y≈4 in  (bottom-left)
+#   piece 2: Group 40   x≈2 in, y≈4 in
+#   piece 3: Group 32   x≈4 in, y≈4 in
+#   piece 4: Group 7    x≈6 in, y≈4 in  (bottom-right)
+#   piece 5: Group 39   x≈0 in, y≈2 in  (upper-left)
+# For lesson N, the builder shows pieces 1..N and deletes the rest.
+PUZZLE_PIECE_GROUP_NAMES = [
+    'Group 31',   # piece 1
+    'Group 40',   # piece 2
+    'Group 32',   # piece 3
+    'Group 7',    # piece 4
+    'Group 39',   # piece 5
 ]
-
-# Anchor text to locate the puzzle-pieces slide in Geographer.pptx.
-# This is the text that find_slide_by_anchor() searches for.
-# TODO: confirm by opening geography-example.pptx and reading slide text.
-PUZZLE_PIECES_SLIDE_ANCHOR = 'puzzle'
 
 # Anchor text to locate the progression slide in Geographer.pptx.
 PROGRESSION_SLIDE_ANCHOR = 'progression'

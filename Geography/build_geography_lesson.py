@@ -28,12 +28,12 @@ Key design decisions (locked in transfer file 2026-07-12):
       LO → KWL (L1) / Recap Quiz (L2+) → Key Vocabulary → [variable slides]
   - Colour / master changes PER LESSON (driven by substantive_concept),
     not per enquiry like history.
-  - Puzzle pieces (not building blocks): EMF+ images, cumulative.
-    Piece N is coloured by swapping r:embed rId to the EMF for that
-    lesson's skill_focus.  Cannot be coloured via XML fill — must be rId swap.
+  - Puzzle pieces (not building blocks): 5 fixed <p:grpSp> groups in the
+    template's slide PUZZLE_SOURCE_SLIDE.  For lesson N, the builder clones
+    that slide and deletes the groups for lessons N+1..5.  No EMF swapping —
+    only TextBox text is updated.
   - Progression slide: cloned from Geographer.pptx (anchor search).
   - LO slides are inline (not delegated to lo-slides skill).
-  - 15 puzzle pieces: 5 bottom row, 6 middle row, 4 top row.
 """
 
 import sys, os, json, argparse, glob, re, shutil
@@ -313,138 +313,33 @@ def _styled_tbox(sid, text, x, y, cx, cy, sz=1800, bold=False,
 #  Puzzle Pieces helpers
 # ══════════════════════════════════════════════════════════════════════════════
 
-def _build_emf_rId_map(sd, slide_num):
+def _set_group_textbox_text(group_el, text):
     """
-    Read the source slide's rels and return a mapping:
-        src_emf_basename → src_rId
-    for all EMF relationships on that slide.
+    Update the first TextBox (<p:sp>) in a puzzle piece group with new text.
+
+    Preserves the run's existing formatting (font, size, colour) but replaces
+    all text content with `text`, collapsing to a single run and paragraph.
     """
-    rp = f'{sd}/ppt/slides/_rels/slide{slide_num}.xml.rels'
-    tree = xr(rp); root = tree.getroot()
-    result = {}
-    for rel in root:
-        tgt = rel.get('Target', '')
-        rid = rel.get('Id', '')
-        if tgt.endswith('.emf'):
-            result[os.path.basename(tgt)] = rid
-    return result
-
-
-def _build_cloned_rId_map(work, cloned_sp_path):
-    """
-    After clone(), read the cloned slide's rels to build:
-        old_emf_basename → new_rId_in_cloned_slide
-
-    We infer the original basename from the new media filename because
-    clone() renames media files to imageN.emf but we track the order in
-    which the source rels were processed via the src_emf name in the
-    PUZZLE_PIECE_EMF table.
-
-    Returns: dict mapping src_emf_basename → rId_in_cloned_slide
-    """
-    rp = cloned_sp_path.replace('.xml', '.xml.rels').replace(
-        '/slides/', '/slides/_rels/')
-    # Already formed correctly if cloned_sp_path is in _rels; adjust if not
-    sp_dir = os.path.dirname(cloned_sp_path)
-    rels_path = os.path.join(sp_dir, '_rels',
-                             os.path.basename(cloned_sp_path) + '.rels')
-    if not os.path.exists(rels_path):
-        rels_path = cloned_sp_path.replace('/slides/slide', '/slides/_rels/slide') + '.rels'
-
-    tree = xr(rels_path); root = tree.getroot()
-    # Build: rId → new_media_name  (in work dir)
-    rid_to_media = {}
-    for rel in root:
-        tgt = rel.get('Target', '')
-        rid = rel.get('Id', '')
-        if '../media/' in tgt:
-            rid_to_media[rid] = os.path.basename(tgt)
-    return rid_to_media   # rId → new_media_name
-
-
-def _swap_piece_emf(sp_path, rels_path, work, piece_shape_name,
-                    skill_focus, src_pptx, src_slide_num):
-    """
-    Swap the EMF image of a puzzle piece shape to the correct skill_focus EMF.
-
-    Strategy:
-      1. Find the <p:pic> with cNvPr name == piece_shape_name in the cloned slide.
-      2. Get its current r:embed rId.
-      3. Remove that rId's relationship and add a new one pointing to the
-         correct EMF file (copied from the source PPTX's media directory).
-      4. Update r:embed on the blip.
-
-    If the EMF file already exists in the work media dir under the correct
-    src_emf name (from the original PPTX), reuse it instead of re-copying.
-    """
-    emf_info = REG.PUZZLE_PIECE_EMF.get(skill_focus)
-    if emf_info is None:
-        print(f'  WARNING: unknown skill_focus "{skill_focus}" for piece '
-              f'"{piece_shape_name}" — leaving unchanged', file=sys.stderr)
-        return
-
-    # Locate the target EMF in the source PPTX's unpacked media
-    sd = src_dir(src_pptx)
-    src_emf_name = emf_info['src_emf']   # e.g. 'image12.emf'
-    src_emf_path = os.path.join(sd, 'ppt', 'media', src_emf_name)
-    if not os.path.exists(src_emf_path):
-        # Fallback: look for the file by EMF extension
-        candidates = glob.glob(os.path.join(sd, 'ppt', 'media', '*.emf'))
-        if not candidates:
-            print(f'  WARNING: EMF file {src_emf_name} not found in template — '
-                  f'skill_focus "{skill_focus}" piece will not be swapped',
-                  file=sys.stderr)
-            return
-        # Guess by position (the rId ordering is 6,8,10,12,15 → index 0,1,2,3,4)
-        skill_order = list(REG.PUZZLE_PIECE_EMF.keys())
-        idx = skill_order.index(skill_focus) if skill_focus in skill_order else 0
-        src_emf_path = sorted(candidates)[min(idx, len(candidates)-1)]
-
-    # Copy EMF into work media if not already there under a stable name
-    media_dir = os.path.join(work, 'ppt', 'media')
-    # Use a stable name keyed to the skill so we only copy once per lesson build
-    stable_name = f'geo_piece_{skill_focus}.emf'
-    dest_emf = os.path.join(media_dir, stable_name)
-    if not os.path.exists(dest_emf):
-        shutil.copy(src_emf_path, dest_emf)
-
-    # Find the pic shape in the cloned slide
-    tree = xr(sp_path); root = tree.getroot()
-    target_pic = None
-    for pic in root.iter(f'{{{P}}}pic'):
-        cNvPr = pic.find(f'.//{{{P}}}cNvPr')
-        if cNvPr is not None and cNvPr.get('name') == piece_shape_name:
-            target_pic = pic
-            break
-
-    if target_pic is None:
-        print(f'  WARNING: puzzle piece shape "{piece_shape_name}" not found '
-              f'in cloned slide — skipping', file=sys.stderr)
-        return
-
-    blip = target_pic.find(f'.//{{{A}}}blip')
-    if blip is None:
-        print(f'  WARNING: no blip in piece shape "{piece_shape_name}"',
-              file=sys.stderr)
-        return
-    old_rid = blip.get(f'{{{R}}}embed', '')
-
-    # Add a new relationship for the skill EMF
-    rt = xr(rels_path); rr = rt.getroot()
-    ex_rids = {int(m.group(1)) for el in rr
-               for m in [re.match(r'rId(\d+)', el.get('Id', ''))] if m}
-    new_rn = max(ex_rids, default=0) + 1
-    new_rid = f'rId{new_rn}'
-    etree.SubElement(rr, 'Relationship', {
-        'Id': new_rid,
-        'Type': f'{R}/image',
-        'Target': f'../media/{stable_name}',
-    })
-    xw(rt, rels_path)
-
-    # Update the blip's r:embed
-    blip.set(f'{{{R}}}embed', new_rid)
-    xw(tree, sp_path)
+    for sp_el in group_el.findall(f'{{{P}}}sp'):
+        txBody = sp_el.find(f'{{{P}}}txBody')
+        if txBody is None:
+            continue
+        paras = txBody.findall(f'{{{A}}}p')
+        if not paras:
+            continue
+        # Set first para's first run text; remove extra runs
+        first_para = paras[0]
+        runs = first_para.findall(f'{{{A}}}r')
+        if runs:
+            t_el = runs[0].find(f'{{{A}}}t')
+            if t_el is not None:
+                t_el.text = text
+            for r in runs[1:]:
+                first_para.remove(r)
+        # Remove extra paragraphs
+        for p in paras[1:]:
+            txBody.remove(p)
+        return   # only update the first TextBox in the group
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -630,53 +525,64 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, colours, 
     """
     Slide 4: Puzzle Pieces
 
-    15 pieces arranged in rows (5 bottom / 6 middle / 4 top).
-    Pieces 1..lesson_number are 'filled' by swapping their EMF rId to the
-    EMF for that lesson's skill_focus.  Remaining pieces keep the template's
-    default (empty) state.
+    Clones slide REG.PUZZLE_SOURCE_SLIDE from the template (the complete 5-piece
+    slide) then deletes the groups for lessons not yet reached.
 
-    Clone strategy:
-      1. Find the puzzle-pieces slide in the Geographer.pptx template.
-      2. Clone it into the work directory.
-      3. For each lesson ≤ current_lesson, swap the piece's EMF to the
-         correct skill_focus EMF.
-
-    Shape naming:
-      The pieces must be named 'Piece1'…'Piece15' in the template (or
-      whatever names are stored in PUZZLE_PIECE_SHAPE_NAMES).  If the
-      shape is NOT found by name, the swap is skipped with a warning so
-      the build still completes.
+    The 5 puzzle piece groups (named in REG.PUZZLE_PIECE_GROUP_NAMES) are in
+    fixed positions.  For lesson N, pieces 1..N are shown with their TextBox
+    updated to the lesson focus text.  Groups in REG.PUZZLE_NON_PIECE_GROUPS
+    (photo collage, decorative graphic) are kept on every slide.
     """
-    lesson_num = lesson['lesson_number']
+    lesson_num  = lesson['lesson_number']
+    max_pieces  = len(REG.PUZZLE_PIECE_GROUP_NAMES)
 
-    # Locate the puzzle-pieces slide in the template
+    # Clone the complete 5-piece slide from the template
     try:
-        pp_slide_num = find_slide_by_anchor(
-            base_pptx, REG.PUZZLE_PIECES_SLIDE_ANCHOR)
-    except RuntimeError as e:
-        print(f'  WARNING: cannot find puzzle pieces slide in template ({e}); '
-              f'building a plain fallback slide', file=sys.stderr)
+        sp, rp = clone(work, base_pptx, REG.PUZZLE_SOURCE_SLIDE)
+    except Exception as e:
+        print(f'  WARNING: cannot clone puzzle pieces slide ({e}); '
+              f'building fallback', file=sys.stderr)
         return _build_puzzle_pieces_fallback(
             work, lesson, all_lessons, colours, master_idx)
 
-    sp, rp = clone(work, base_pptx, pp_slide_num)
+    # Groups to keep: pieces 1..lesson_num + decorative elements
+    keep_names = set(REG.PUZZLE_PIECE_GROUP_NAMES[:lesson_num]) | REG.PUZZLE_NON_PIECE_GROUPS
+    piece_set  = set(REG.PUZZLE_PIECE_GROUP_NAMES)
 
-    # For each piece up to the current lesson, swap the EMF
-    for idx, lsn in enumerate(all_lessons):
-        if lsn['lesson_number'] > lesson_num:
-            break
-        piece_idx = idx   # 0-based
-        if piece_idx >= len(REG.PUZZLE_PIECE_SHAPE_NAMES):
-            print(f'  WARNING: lesson {lsn["lesson_number"]} has no matching '
-                  f'piece shape name (only {len(REG.PUZZLE_PIECE_SHAPE_NAMES)} '
-                  f'names defined)', file=sys.stderr)
+    tree = xr(sp); root = tree.getroot()
+    spTree = root.find(f'.//{{{P}}}spTree')
+
+    # Remove groups for lessons beyond the current one
+    to_remove = []
+    for child in list(spTree):
+        if child.tag.split('}')[-1] != 'grpSp':
             continue
-        shape_name = REG.PUZZLE_PIECE_SHAPE_NAMES[piece_idx]
-        skill      = lsn.get('skill_focus', 'questioning_predicting')
-        _swap_piece_emf(sp, rp, work, shape_name, skill,
-                        base_pptx, pp_slide_num)
+        nv   = child.find(f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr')
+        name = nv.get('name', '') if nv is not None else ''
+        if name in piece_set and name not in keep_names:
+            to_remove.append(child)
+    for el in to_remove:
+        spTree.remove(el)
 
-    print(f'  [4] puzzle_pieces — {lesson_num} piece(s) filled')
+    # Update TextBox text in each kept piece group
+    for piece_idx, group_name in enumerate(REG.PUZZLE_PIECE_GROUP_NAMES[:lesson_num]):
+        lsn = all_lessons[piece_idx] if piece_idx < len(all_lessons) else None
+        if lsn is None:
+            continue
+        text = (lsn.get('building_block_text') or
+                lsn.get('lesson_title') or
+                str(lsn['lesson_number']))
+        for child in spTree:
+            if child.tag.split('}')[-1] != 'grpSp':
+                continue
+            nv   = child.find(f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr')
+            name = nv.get('name', '') if nv is not None else ''
+            if name == group_name:
+                _set_group_textbox_text(child, text)
+                break
+
+    xw(tree, sp)
+    print(f'  [4] puzzle_pieces — {lesson_num} of {max_pieces} piece(s) shown')
     return sp
 
 
@@ -702,7 +608,8 @@ def _build_puzzle_pieces_fallback(work, lesson, all_lessons, colours, master_idx
     sid += 1
     save(t, sp)
 
-    rows      = REG.PUZZLE_PIECE_ROWS  # [5, 6, 4]
+    # Fallback: single row of up to 5 boxes (one per skill_focus slot)
+    rows      = [len(REG.PUZZLE_PIECE_GROUP_NAMES)]
     wall_top  = 700000
     wall_bot  = SH - 200000
     wall_h    = wall_bot - wall_top
