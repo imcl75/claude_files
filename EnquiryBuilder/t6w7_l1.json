@@ -30,25 +30,6 @@
         "type": "lo"
       },
       {
-        "type": "concept_cartoon",
-        "title": "Who do you agree with and why?",
-        "image_path": "/tmp/t6w7/images/oobleck.png",
-        "learners": [
-          {
-            "name": "Learner A",
-            "statement": "It's a solid. If you hit it hard, it goes rigid and keeps its shape."
-          },
-          {
-            "name": "Learner B",
-            "statement": "It's a liquid. You can pour it from one cup to another, just like water."
-          },
-          {
-            "name": "Learner C",
-            "statement": "It's neither \u2014 it behaves like both. I don't think it fits neatly into one group."
-          }
-        ]
-      },
-      {
         "type": "wedo_grid",
         "title": "Which state is each material?",
         "items": [
@@ -108,6 +89,25 @@
           "Sort the 12 material cards into three groups: solid, liquid or gas.",
           "For each card, write one reason: use particle language to explain your choice.",
           "Challenge: find one material that could belong in two groups \u2014 explain why."
+        ]
+      },
+      {
+        "type": "concept_cartoon",
+        "title": "Who do you agree with and why?",
+        "image_path": "/tmp/t6w7/images/oobleck.png",
+        "learners": [
+          {
+            "name": "Learner A",
+            "statement": "It's a solid. If you hit it hard, it goes rigid and keeps its shape."
+          },
+          {
+            "name": "Learner B",
+            "statement": "It's a liquid. You can pour it from one cup to another, just like water."
+          },
+          {
+            "name": "Learner C",
+            "statement": "It's neither \u2014 it behaves like both. I don't think it fits neatly into one group."
+          }
         ]
       },
       {

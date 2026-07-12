@@ -55,25 +55,6 @@
         ]
       },
       {
-        "type": "concept_cartoon",
-        "title": "Who do you agree with and why?",
-        "image_path": "/tmp/t6w7/images/melting_vs_dissolving.png",
-        "learners": [
-          {
-            "name": "Learner A",
-            "statement": "Melting and dissolving are the same thing \u2014 both make a solid disappear into a liquid."
-          },
-          {
-            "name": "Learner B",
-            "statement": "They're different. Melting needs heat to change state. Dissolving is mixing with a liquid, not a change of state."
-          },
-          {
-            "name": "Learner C",
-            "statement": "Both are reversible, so they must be the same kind of change."
-          }
-        ]
-      },
-      {
         "type": "wedo_hook",
         "title": "What have we found out this week?",
         "bullets": [
@@ -135,6 +116,25 @@
           "Include at least three different materials from this week as evidence.",
           "For each material, state the temperature at which it melts or boils.",
           "Challenge: explain why some materials we never see melt in everyday life."
+        ]
+      },
+      {
+        "type": "concept_cartoon",
+        "title": "Who do you agree with and why?",
+        "image_path": "/tmp/t6w7/images/melting_vs_dissolving.png",
+        "learners": [
+          {
+            "name": "Learner A",
+            "statement": "Melting and dissolving are the same thing \u2014 both make a solid disappear into a liquid."
+          },
+          {
+            "name": "Learner B",
+            "statement": "They're different. Melting needs heat to change state. Dissolving is mixing with a liquid, not a change of state."
+          },
+          {
+            "name": "Learner C",
+            "statement": "Both are reversible, so they must be the same kind of change."
+          }
         ]
       },
       {

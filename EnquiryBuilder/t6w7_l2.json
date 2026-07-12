@@ -55,25 +55,6 @@
         ]
       },
       {
-        "type": "concept_cartoon",
-        "title": "Who do you agree with and why?",
-        "image_path": "/tmp/t6w7/images/boiling_water.png",
-        "learners": [
-          {
-            "name": "Learner A",
-            "statement": "When water boils, it disappears \u2014 the bubbles are full of air that was trapped inside."
-          },
-          {
-            "name": "Learner B",
-            "statement": "The bubbles are water that has turned into gas. The water is still there, just in a different state."
-          },
-          {
-            "name": "Learner C",
-            "statement": "The steam goes up and then turns back into water again when it cools down."
-          }
-        ]
-      },
-      {
         "type": "wedo_hook",
         "title": "What do you remember from yesterday?",
         "bullets": [
@@ -125,6 +106,25 @@
           "Add the temperature labels: 0\u00b0C and 100\u00b0C at the correct change points.",
           "Write the correct process name for each arrow: melting, boiling or evaporating.",
           "Challenge: add a fourth arrow going the other way \u2014 what process does it show?"
+        ]
+      },
+      {
+        "type": "concept_cartoon",
+        "title": "Who do you agree with and why?",
+        "image_path": "/tmp/t6w7/images/boiling_water.png",
+        "learners": [
+          {
+            "name": "Learner A",
+            "statement": "When water boils, it disappears \u2014 the bubbles are full of air that was trapped inside."
+          },
+          {
+            "name": "Learner B",
+            "statement": "The bubbles are water that has turned into gas. The water is still there, just in a different state."
+          },
+          {
+            "name": "Learner C",
+            "statement": "The steam goes up and then turns back into water again when it cools down."
+          }
         ]
       },
       {

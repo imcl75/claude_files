@@ -55,25 +55,6 @@
         ]
       },
       {
-        "type": "concept_cartoon",
-        "title": "Who do you agree with and why?",
-        "image_path": "/tmp/t6w7/images/wax_comparison.png",
-        "learners": [
-          {
-            "name": "Learner A",
-            "statement": "One measurement is enough. If you do the experiment carefully once, you'll get the right answer."
-          },
-          {
-            "name": "Learner B",
-            "statement": "You should always repeat the measurement at least three times. One result might have an error in it."
-          },
-          {
-            "name": "Learner C",
-            "statement": "It only matters to repeat if your first result looks wrong or unexpected."
-          }
-        ]
-      },
-      {
         "type": "wedo_hook",
         "title": "Vocabulary check \u2014 what do these mean?",
         "bullets": [
@@ -114,6 +95,25 @@
           "Plot each reading on the line graph axes \u2014 join the points with a smooth line.",
           "Write a conclusion: what happened to the temperature as the ice melted?",
           "Challenge: explain why the temperature stayed at 0\u00b0C for a time before rising."
+        ]
+      },
+      {
+        "type": "concept_cartoon",
+        "title": "Who do you agree with and why?",
+        "image_path": "/tmp/t6w7/images/wax_comparison.png",
+        "learners": [
+          {
+            "name": "Learner A",
+            "statement": "One measurement is enough. If you do the experiment carefully once, you'll get the right answer."
+          },
+          {
+            "name": "Learner B",
+            "statement": "You should always repeat the measurement at least three times. One result might have an error in it."
+          },
+          {
+            "name": "Learner C",
+            "statement": "It only matters to repeat if your first result looks wrong or unexpected."
+          }
         ]
       },
       {

@@ -55,25 +55,6 @@
         ]
       },
       {
-        "type": "concept_cartoon",
-        "title": "Who do you agree with and why?",
-        "image_path": "/tmp/t6w7/images/condensation_glass.png",
-        "learners": [
-          {
-            "name": "Learner A",
-            "statement": "The water seeped through the glass from the cold drink inside."
-          },
-          {
-            "name": "Learner B",
-            "statement": "Water vapour in the warm air cooled down when it touched the cold glass and turned back into liquid."
-          },
-          {
-            "name": "Learner C",
-            "statement": "It's from my hands \u2014 my sweat gets on the glass when I hold it."
-          }
-        ]
-      },
-      {
         "type": "youdo_provocation",
         "title": "Where has this water come from?",
         "image_path": "/tmp/t6w7/images/condensation_glass.png"
@@ -106,6 +87,25 @@
           "Add the temperatures 0\u00b0C and 100\u00b0C at the correct change points.",
           "Write one sentence explaining why changing state is described as reversible.",
           "Challenge: think of one everyday example for each of the four processes."
+        ]
+      },
+      {
+        "type": "concept_cartoon",
+        "title": "Who do you agree with and why?",
+        "image_path": "/tmp/t6w7/images/condensation_glass.png",
+        "learners": [
+          {
+            "name": "Learner A",
+            "statement": "The water seeped through the glass from the cold drink inside."
+          },
+          {
+            "name": "Learner B",
+            "statement": "Water vapour in the warm air cooled down when it touched the cold glass and turned back into liquid."
+          },
+          {
+            "name": "Learner C",
+            "statement": "It's from my hands \u2014 my sweat gets on the glass when I hold it."
+          }
         ]
       },
       {
