@@ -1,0 +1,259 @@
+{
+  "enquiry": {
+    "key_question": "Can materials change their state?",
+    "science_strand": "Chemistry",
+    "year_group": "Y4",
+    "week": "T6W7"
+  },
+  "lesson": {
+    "number": 5,
+    "day": "Friday",
+    "session": "a.m.",
+    "key_question": "Can materials change their state?",
+    "lo": "explain that every material can change state and that different materials have different melting and boiling points",
+    "tib": "I understand that all materials can change state and that the temperature needed varies enormously between materials",
+    "isb": "writing an answer to the key question that includes at least three named materials with their melting or boiling points",
+    "slides": [
+      {
+        "type": "kq_challenge",
+        "key_question": "Can materials change their state?",
+        "challenge": ""
+      },
+      {
+        "type": "being_a_scientist"
+      },
+      {
+        "type": "discipline",
+        "strand": "Chemistry"
+      },
+      {
+        "type": "lo"
+      },
+      {
+        "type": "quiz_recap",
+        "qna": [
+          {
+            "question": "Name all four key changes of state.",
+            "answer": "Melting, freezing, evaporation and condensation."
+          },
+          {
+            "question": "What do we call the temperature at which a solid turns to liquid?",
+            "answer": "Its melting point."
+          },
+          {
+            "question": "Why do scientists repeat measurements?",
+            "answer": "To check for errors and make their results more reliable."
+          },
+          {
+            "question": "True or false \u2014 all changes of state are reversible.",
+            "answer": "True. Melting, freezing, evaporation and condensation can all be reversed."
+          },
+          {
+            "question": "What does a higher melting point tell us about a material?",
+            "answer": "It needs more energy (heat) before its particles can break free and flow as a liquid."
+          }
+        ]
+      },
+      {
+        "type": "concept_cartoon",
+        "title": "Who do you agree with and why?",
+        "image_path": "/tmp/t6w7/images/melting_vs_dissolving.png",
+        "learners": [
+          {
+            "name": "Learner A",
+            "statement": "Melting and dissolving are the same thing \u2014 both make a solid disappear into a liquid."
+          },
+          {
+            "name": "Learner B",
+            "statement": "They're different. Melting needs heat to change state. Dissolving is mixing with a liquid, not a change of state."
+          },
+          {
+            "name": "Learner C",
+            "statement": "Both are reversible, so they must be the same kind of change."
+          }
+        ]
+      },
+      {
+        "type": "wedo_hook",
+        "title": "What have we found out this week?",
+        "bullets": [
+          "What are the three states of matter and how can we tell them apart?",
+          "What are the four state changes \u2014 and what temperature do water's changes happen at?",
+          "What did your data tell you about the temperature of ice as it melted?"
+        ]
+      },
+      {
+        "type": "wedo_grid",
+        "title": "What temperature does each material melt at?",
+        "items": [
+          {
+            "label": "Chocolate (34\u00b0C)",
+            "image_path": "/tmp/t6w7/images/grid_chocolate.png"
+          },
+          {
+            "label": "Butter (32\u00b0C)",
+            "image_path": "/tmp/t6w7/images/grid_butter.png"
+          },
+          {
+            "label": "Wax (64\u00b0C)",
+            "image_path": "/tmp/t6w7/images/grid_wax.png"
+          },
+          {
+            "label": "Aluminium (660\u00b0C)",
+            "image_path": "/tmp/t6w7/images/grid_aluminium.png"
+          },
+          {
+            "label": "Iron (1538\u00b0C)",
+            "image_path": "/tmp/t6w7/images/grid_iron.png"
+          },
+          {
+            "label": "Nitrogen (-196\u00b0C)",
+            "image_path": "/tmp/t6w7/images/grid_nitrogen.png"
+          }
+        ]
+      },
+      {
+        "type": "youdo_provocation",
+        "title": "Can rock change its state?",
+        "image_path": "/tmp/t6w7/images/lava.png"
+      },
+      {
+        "type": "ido_diagram",
+        "title": "Is this melting or dissolving?",
+        "image_path": "/tmp/t6w7/images/melting_vs_dissolving.png",
+        "bullets": [
+          "MELTING: a solid turns into a liquid when heated \u2014 the same material, just a different state.",
+          "DISSOLVING: a solid breaks into tiny particles that spread through a liquid \u2014 it mixes in, it does not change state.",
+          "Misconception: dissolving is NOT a state change \u2014 the sugar disappears into water but does not become a gas or a liquid."
+        ]
+      },
+      {
+        "type": "youdo_task",
+        "title": "Answer the key question",
+        "bullets": [
+          "Use the sentence starter on your LP: 'Yes, all materials can change their state because\u2026'",
+          "Include at least three different materials from this week as evidence.",
+          "For each material, state the temperature at which it melts or boils.",
+          "Challenge: explain why some materials we never see melt in everyday life."
+        ]
+      },
+      {
+        "type": "learning_review",
+        "starters": [
+          "I can now answer the key question because\u2026",
+          "Something that changed my thinking this week was\u2026",
+          "A question I still have is\u2026"
+        ]
+      }
+    ],
+    "lp": {
+      "date": "17/07/2026",
+      "lf": "explain that all materials can change state and that melting points vary",
+      "ican1": "name at least three materials with their melting point",
+      "ican2": "write an answer to the key question using evidence from the data",
+      "sections": [
+        {
+          "type": "heading",
+          "text": "Melting points of different materials",
+          "size_pt": 16
+        },
+        {
+          "type": "instruction",
+          "text": "Use this reference table when writing your answer. It shows the temperature at which each material changes from solid to liquid.",
+          "size_pt": 12
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "text": "Material",
+              "frac": 0.62
+            },
+            {
+              "text": "Melting point",
+              "frac": 0.38
+            }
+          ],
+          "rows": [
+            [
+              "Chocolate",
+              "34\u00b0C"
+            ],
+            [
+              "Butter",
+              "32\u00b0C"
+            ],
+            [
+              "Wax",
+              "64\u00b0C"
+            ],
+            [
+              "Aluminium",
+              "660\u00b0C"
+            ],
+            [
+              "Iron",
+              "1538\u00b0C"
+            ],
+            [
+              "Nitrogen (gas at room temp)",
+              "-196\u00b0C"
+            ]
+          ],
+          "row_height": 0.33,
+          "body_size_pt": 11
+        },
+        {
+          "type": "spacer",
+          "h": 0.18
+        },
+        {
+          "type": "heading",
+          "text": "Answer the key question",
+          "size_pt": 14
+        },
+        {
+          "type": "instruction",
+          "text": "Use the sentence starter. Include at least three materials from the table as evidence. For each one, state the temperature at which it melts.",
+          "size_pt": 12
+        },
+        {
+          "type": "sentence_starter",
+          "text": "Yes, all materials can change their state because... "
+        },
+        {
+          "type": "write_lines",
+          "n": 5
+        },
+        {
+          "type": "word_bank",
+          "words": "melt  \u2022  boil  \u2022  freeze  \u2022  solid  \u2022  liquid  \u2022  gas  \u2022  melting point  \u2022  temperature  \u2022  evidence  \u2022  for example"
+        },
+        {
+          "type": "marking_station"
+        },
+        {
+          "type": "answer_text",
+          "text": "Model answer:",
+          "bold": true
+        },
+        {
+          "type": "answer_text",
+          "text": "Yes, all materials can change their state because every material has a melting point at which it changes from solid to liquid. For example, chocolate melts at 34\u00b0C, which is why it melts in your hand. Aluminium melts at 660\u00b0C and iron at 1538\u00b0C, so they need much higher temperatures that we rarely see in daily life. Nitrogen is unusual because it is already a gas at room temperature and only becomes liquid if cooled to -196\u00b0C. This shows that all materials can change state, but each needs a very different temperature to do so."
+        },
+        {
+          "type": "spacer",
+          "h": 0.14
+        },
+        {
+          "type": "answer_text",
+          "text": "Accept any three materials from the table with correct temperatures."
+        },
+        {
+          "type": "answer_text",
+          "text": "Award higher marks for: connective \"because\", named temperatures as evidence, comparison between materials, reference to everyday examples."
+        }
+      ]
+    }
+  }
+}
