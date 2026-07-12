@@ -9,7 +9,10 @@ into template files that have since been renamed/renumbered).
 Usage: python3 build_science_lesson.py <mtp_json> <templates_dir> <out_pptx> <manifest_out>
 """
 import sys, os, json, subprocess
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Also ensure /tmp/t6w7 is on path when this script lives elsewhere (e.g. outputs dir)
+if os.path.isdir('/tmp/t6w7') and '/tmp/t6w7' not in sys.path:
+    sys.path.insert(0, '/tmp/t6w7')
 from lib_ooxml import (
     P, A, unzip, rezip, clear_slides, build_layout_map, src_dir,
     find_slide_by_anchor, clone, fresh, get_spTree, save,
@@ -20,6 +23,43 @@ from lib_ooxml import (
     xr, xw, xp, ex, SW, SH,
 )
 import science_registry as REG
+
+# ── Sandbox compatibility patch ──────────────────────────────────────────────
+# Python PID is always 3 in this sandbox. lib_ooxml.src_dir caches template
+# extractions at /tmp/src_{pid}_{stem}, but those paths are owned by 'nobody'
+# from previous sessions and can't be deleted or overwritten. Redirect to
+# /sessions/ (ext4, 3.3 GB free, full permissions).
+import lib_ooxml as _lo_mod
+from pathlib import Path as _Path
+_SESSION_TMP = '/sessions/admiring-sleepy-wozniak'
+_lo_src_cache = {}
+
+def _patched_src_dir(pptx, k=None):
+    k = k or pptx
+    if k not in _lo_src_cache:
+        dst = f'{_SESSION_TMP}/src_{os.getpid()}_{_Path(pptx).stem}'
+        _lo_mod.unzip(pptx, dst)
+        _lo_src_cache[k] = dst
+    return _lo_src_cache[k]
+
+_lo_mod.src_dir = _patched_src_dir
+src_dir = _patched_src_dir  # rebind the already-imported name
+
+# Also patch rezip: FUSE mount blocks os.remove() on existing files.
+# zipfile.ZipFile with mode "w" truncates-and-overwrites, so the remove is redundant.
+_orig_rezip = _lo_mod.rezip
+def _patched_rezip(src, dst):
+    import zipfile, os, shutil
+    with zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED) as z:
+        for root, dirs, files in os.walk(src):
+            for f in files:
+                p = os.path.join(root, f)
+                z.write(p, os.path.relpath(p, src))
+    shutil.rmtree(src, ignore_errors=True)
+_lo_mod.rezip = _patched_rezip
+rezip = _patched_rezip  # rebind the already-imported name
+# ─────────────────────────────────────────────────────────────────────────────
+
 
 
 def build_being_a_scientist(work, templates, spec):
@@ -345,7 +385,8 @@ def build_lesson(mtp_path, templates_dir, out_path, manifest_path):
     # Was a fixed '/tmp/build_work' - collided with stale leftover directories
     # from unrelated processes in some sandboxes (owned by a different user,
     # un-removable). PID-scoped so each build gets a fresh, unique path.
-    work = f'/tmp/build_work_{os.getpid()}'
+    
+    work = f'/sessions/admiring-sleepy-wozniak/bsl_{os.getpid()}_work'
     unzip(templates['science_example'], work)
     clear_slides(work)
     build_layout_map(work)
@@ -380,6 +421,76 @@ def build_lesson(mtp_path, templates_dir, out_path, manifest_path):
     with open(manifest_path, 'w') as f:
         json.dump({'mtp': mtp_path, 'slides': manifest}, f, indent=2)
     print(f"\n-> {out_path} ({os.path.getsize(out_path):,} bytes), manifest -> {manifest_path}")
+
+    # ── Fix OOXML issues (SharePoint metadata strip, customXml, etc.) ────
+    _this_dir = os.path.dirname(os.path.abspath(__file__))
+    fix_script = next(
+        (p for p in [
+            os.path.join(_this_dir, 'fix_pptx_ooxml.py'),
+            '/tmp/t6w7/fix_pptx_ooxml.py',
+        ] if os.path.exists(p)), None
+    )
+    if fix_script:
+        r_fix = subprocess.run(['python3', fix_script, out_path], capture_output=True, text=True)
+        if r_fix.returncode != 0:
+            print(f'  fix_pptx_ooxml warning: {r_fix.stderr.strip()[:200]}')
+        else:
+            print('  fix_pptx_ooxml: OK')
+    else:
+        print('  fix_pptx_ooxml.py not found — skipping fix (file may show repair dialog)')
+
+    # ── Verify (hard gate — must PASS before LP is built) ────────────────
+    verify_script = next(
+        (p for p in [
+            os.path.join(_this_dir, 'verify_lesson.py'),
+            '/tmp/t6w7/verify_lesson.py',
+        ] if os.path.exists(p)), None
+    )
+    if verify_script:
+        r_ver = subprocess.run(
+            ['python3', verify_script, out_path, mtp_path, manifest_path],
+            capture_output=True, text=True
+        )
+        print(r_ver.stdout.strip())
+        if r_ver.returncode != 0:
+            print('VERIFY FAILED — LP not built. Fix issues above and re-run.')
+            sys.exit(1)
+    else:
+        print('  verify_lesson.py not found — skipping verification')
+
+    # ── Build LP (only if lesson JSON contains an lp spec) ───────────────
+    lp_spec = mtp.get('lesson', {}).get('lp')
+    if lp_spec is None:
+        print("  No 'lp' key in lesson JSON — skipping LP build")
+    else:
+        lp_path = os.path.splitext(out_path)[0] + ' LP.pptx'
+        # Find build_lp.py: same dir as this script first, then outputs dir, then /tmp/t6w7
+        build_lp_script = next(
+            (p for p in [
+                os.path.join(_this_dir, 'build_lp.py'),
+                '/sessions/admiring-sleepy-wozniak/mnt/outputs/build_lp.py',
+                '/tmp/t6w7/build_lp.py',
+            ] if os.path.exists(p)), None
+        )
+        if build_lp_script is None:
+            print('  build_lp.py not found — skipping LP build')
+        else:
+            lp_mod_dir = os.path.dirname(build_lp_script)
+            if lp_mod_dir not in sys.path:
+                sys.path.insert(0, lp_mod_dir)
+            # Find resource_base: directory containing ll_assets/
+            _rb_candidates = [
+                os.path.dirname(os.path.abspath(mtp_path)),
+                _this_dir,
+                '/tmp/t6w7',
+            ]
+            resource_base = next(
+                (c for c in _rb_candidates if os.path.isdir(os.path.join(c, 'll_assets'))),
+                '/tmp/t6w7'
+            )
+            from build_lp import build_lp
+            build_lp(mtp_path, lp_path, resource_base=resource_base)
+
     return out_path, manifest_path
 
 
