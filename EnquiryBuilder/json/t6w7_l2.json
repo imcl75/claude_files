@@ -30,6 +30,50 @@
         "type": "lo"
       },
       {
+        "type": "quiz_recap",
+        "qna": [
+          {
+            "question": "What are the three main states of matter?",
+            "answer": "Solid, liquid and gas."
+          },
+          {
+            "question": "Give one property of a solid.",
+            "answer": "A solid has a fixed shape and fixed volume. Particles are packed tightly and cannot move past each other."
+          },
+          {
+            "question": "True or false \u2014 sand is a liquid because you can pour it.",
+            "answer": "False. Sand is a solid. Each grain keeps its own fixed shape, even when poured."
+          },
+          {
+            "question": "In which state of matter do particles move most freely?",
+            "answer": "Gas. The particles are spread far apart and move randomly in all directions."
+          },
+          {
+            "question": "Name a material that is a liquid at room temperature.",
+            "answer": "Accept water, milk, oil, juice or similar."
+          }
+        ]
+      },
+      {
+        "type": "concept_cartoon",
+        "title": "Who do you agree with and why?",
+        "image_path": "/tmp/t6w7/images/boiling_water.png",
+        "learners": [
+          {
+            "name": "Learner A",
+            "statement": "When water boils, it disappears \u2014 the bubbles are full of air that was trapped inside."
+          },
+          {
+            "name": "Learner B",
+            "statement": "The bubbles are water that has turned into gas. The water is still there, just in a different state."
+          },
+          {
+            "name": "Learner C",
+            "statement": "The steam goes up and then turns back into water again when it cools down."
+          }
+        ]
+      },
+      {
         "type": "wedo_hook",
         "title": "What do you remember from yesterday?",
         "bullets": [
