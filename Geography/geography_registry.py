@@ -2,84 +2,129 @@
 geography_registry.py — Component definitions and asset paths for the
 geography enquiry lesson builder.
 
-Parallel to history_registry.py, with two key differences:
-  1. Colours and masters change *per lesson* (keyed on substantive_concept),
-     not per enquiry (unlike history where one concept covers all lessons).
-  2. Puzzle Pieces replace Building Blocks — pieces are EMF+ image files
-     embedded in the Geographer.pptx template.  Colour is applied by swapping
-     the r:embed rId on the <p:pic> element, not by filling a rectangle.
-
-Asset paths are absolute paths on Innes's Mac.
+All layout names and structure confirmed by direct XML inspection of
+Geographer.pptx on 2026-07-12.
 """
 
 # ── Per-lesson master selection ───────────────────────────────────────────────
-# Each lesson carries a 'substantive_concept' field in the MTP JSON.
-# That determines which slide master (and therefore which background colour
-# palette) the lesson's slides use.
+# substantive_concept → master index (0-based, order from presentation.xml)
 
-# Master index → background/border colours used for overlay fills.
-# (The master itself controls the default palette; the builder ALSO applies
-# explicit fills for shapes it draws, so these colours need to match the master.)
 MASTER_INDICES = {
-    'place_space_scale':    0,   # Yellow master
-    'human_geography':      1,   # Peach/pink master
-    'cultural_awareness':   2,   # Blue master
-    'physical_geography':   3,   # Green master  (layout names have '1_' prefix in OOXML)
-    'environmental_impact': 4,   # Purple master (layout names have '1_' prefix in OOXML)
-}
-
-MASTER_COLOURS = {
-    'place_space_scale':    {'bg': 'FFF3CC', 'border': 'FFC000'},   # Yellow
-    'human_geography':      {'bg': 'FFCCCC', 'border': 'C05102'},   # Peach
-    'cultural_awareness':   {'bg': 'DAE3F3', 'border': '4573C4'},   # Blue
-    'physical_geography':   {'bg': 'D5E8D4', 'border': '00AE4B'},   # Green
-    'environmental_impact': {'bg': 'CCCCFF', 'border': '7438A5'},   # Purple
+    'place_space_scale':    0,   # Yellow  — slideMaster1
+    'human_geography':      1,   # Peach   — slideMaster2
+    'cultural_awareness':   2,   # Blue    — slideMaster3
+    'physical_geography':   3,   # Green   — slideMaster4 (layouts prefixed 1_)
+    'environmental_impact': 4,   # Purple  — slideMaster5 (layouts prefixed 1_)
 }
 
 DEFAULT_SUBSTANTIVE_CONCEPT = 'place_space_scale'
 
-# ── Asset paths ───────────────────────────────────────────────────────────────
-ASSETS_ROOT = '/Users/innes/Pictures/PPTX Slide assets/Geographers'
+# Masters 3 and 4 use '1_' prefix on several layout names in their OOXML.
+PREFIXED_MASTER_INDICES = {3, 4}
 
-STATIC_ASSETS = {
-    'geo_icon':     f'{ASSETS_ROOT}/geo-icon.png',
-    'sub_concepts': f'{ASSETS_ROOT}/geo-sub-concepts.png',
-    'skill':        f'{ASSETS_ROOT}/Geo-skill.png',
-    'skills_21c':   f'{ASSETS_ROOT}/21C-skills-KQ-slide.png',
-    'children_kq':  f'{ASSETS_ROOT}/4-children-KQ-slide.png',
-    'progression':  f'{ASSETS_ROOT}/geo-progression.png',   # Progression slide image
+
+def layout_name_for_master(base_name, master_idx):
+    """Return the layout name for a given master — adds '1_' prefix for M3/M4."""
+    if master_idx in PREFIXED_MASTER_INDICES:
+        return f'1_{base_name}'
+    return base_name
+
+
+# ── Layout names — confirmed by XML inspection 2026-07-12 ────────────────────
+#
+# All five masters share the same 13 layout names (M3/M4 have 1_ prefix on
+# the 4 teaching layouts).
+#
+# Layouts that exist:
+#   Our Key Question is, Concepts & Skills, Puzzle Pieces,
+#   KS2 What, Why, How (M0/M1) / What, Why, How (M2/M3/M4),
+#   Vocabulary, I Do / 1_I Do, We Do / 1_We Do,
+#   You Do Trio / 1_You Do Trio, You Do / 1_You Do,
+#   Learning Review Editable, Revisit, Hook, Building Blocks
+#
+# Layouts that DO NOT exist (documented to prevent confusion):
+#   KQ Cover, Progression, KWL, Quiz, Blank, You Do Ind
+#
+# For slides with no layout (Progression, KWL, Quiz) the builder uses
+# the closest available layout as a base.
+
+# LO layout name varies across masters
+LO_LAYOUT_BY_MASTER = {
+    0: 'KS2 What, Why, How',
+    1: 'KS2 What, Why, How',
+    2: 'What, Why, How',
+    3: 'What, Why, How',
+    4: 'What, Why, How',
 }
 
-# ── Puzzle piece EMF reference ────────────────────────────────────────────────
-# Reference data only — the builder does NOT swap EMFs.
-# Puzzle pieces are cloned as a group from slide PUZZLE_SOURCE_SLIDE of the
-# template; unneeded groups are deleted.  These entries map skill_focus to the
-# EMF filename in geographers_template.pptx and are kept for documentation.
+
+def lo_layout_name(master_idx):
+    return LO_LAYOUT_BY_MASTER.get(master_idx, 'KS2 What, Why, How')
+
+
+# Teaching content layouts — the 1_ prefix applies to M3/M4
+TEACHING_LAYOUTS = {
+    'i_do':        'I Do',
+    'we_do':       'We Do',
+    'you_do_trio': 'You Do Trio',
+    'you_do':      'You Do',
+}
+
+
+def teaching_layout(slide_type, master_idx):
+    base = TEACHING_LAYOUTS.get(slide_type, 'I Do')
+    return layout_name_for_master(base, master_idx)
+
+
+# ── Puzzle Pieces — confirmed structure ──────────────────────────────────────
 #
-# Companion icon PNGs in the template (image11–16.png) don't match the names
-# used in geography-example.pptx (image13–22.png) — they were renamed when
-# the file was packaged.  Confirmed by XML inspection 2026-07-12.
-PUZZLE_PIECE_EMF = {
-    'questioning_predicting': {
-        'emf':    'image42.emf',  # in geographers_template.pptx
-        'colour': 'Orange',
-    },
-    'observing_recording': {
-        'emf':    'image55.emf',  # companion icon: image15.png (confirmed)
-        'colour': 'Yellow',
-    },
-    'field_work': {
-        'emf':    'image43.emf',
-        'colour': 'Purple',
-    },
-    'map_skills': {
-        'emf':    'image56.emf',
-        'colour': 'Green',
-    },
-    'concluding_communicating': {
-        'emf':    'image57.emf',
-        'colour': 'Blue',
-    },
+# The Puzzle Pieces layout (slideLayout4 for M0) has 15 piece groups plus
+# one decorative group (Group 16).  Confirmed by coordinate inspection:
+#
+#   Bottom row (pos 1–5,  y≈4.72 in, left→right):
+#     Group 24, Group 14, Group 4, Group 20, Group 35
+#   Middle row (pos 6–11, y≈2.68 in, left→right):
+#     Group 43, Group 39, Group 47, Group 51, Group 55, Group 71
+#   Top row    (pos 12–15, y≈0.62 in, left→right):
+#     Group 63, Group 59, Group 67, Group 75
+#
+# Each piece group contains:
+#   1. <p:pic> — the EMF+ coloured jigsaw-piece background
+#   2. <p:pic> or nested <p:grpSp> — the skill icon
+#   3. <p:sp>  — TextBox for puzzle_piece_text
+#
+# Group 16 is a decorative background element — always kept visible.
+
+PUZZLE_PIECE_GROUPS = [
+    'Group 24',   # pos 1  bottom-left
+    'Group 14',   # pos 2
+    'Group 4',    # pos 3
+    'Group 20',   # pos 4
+    'Group 35',   # pos 5  bottom-right
+    'Group 43',   # pos 6  middle-left
+    'Group 39',   # pos 7
+    'Group 47',   # pos 8
+    'Group 51',   # pos 9
+    'Group 55',   # pos 10
+    'Group 71',   # pos 11 middle-right
+    'Group 63',   # pos 12 top (starts at col 3)
+    'Group 59',   # pos 13
+    'Group 67',   # pos 14
+    'Group 75',   # pos 15 top-right
+]
+
+PUZZLE_DECORATIVE_GROUPS = {'Group 16'}
+
+# skill_focus → rId in the Puzzle Pieces LAYOUT's .rels file
+# These rIds resolve to the layout's own media files (image12.emf etc.)
+# clone_from_layout() remaps these to new slide rIds — use REG values only
+# to look up which layout rId to map from.
+SKILL_EMF_LAYOUT_RID = {
+    'questioning_predicting':   'rId6',   # image12.emf  — Orange
+    'observing_recording':      'rId8',   # image14.emf  — Yellow
+    'field_work':               'rId10',  # image16.emf  — Purple
+    'map_skills':               'rId12',  # image18.emf  — Green
+    'concluding_communicating': 'rId15',  # image21.emf  — Blue
 }
 
 SKILL_DISPLAY_NAMES = {
@@ -90,88 +135,55 @@ SKILL_DISPLAY_NAMES = {
     'concluding_communicating': 'Concluding & Communicating',
 }
 
-# ── Puzzle piece layout ───────────────────────────────────────────────────────
-# The template (geographers_template.pptx) has exactly 5 puzzle piece groups,
-# confirmed by XML inspection 2026-07-12.  Each group (<p:grpSp>) contains one
-# EMF (coloured puzzle-piece background), an icon, and a TextBox for the lesson
-# focus text.
+# ── Placeholder indices — confirmed by XML inspection 2026-07-12 ─────────────
 #
-# Build strategy: clone slide PUZZLE_SOURCE_SLIDE (the complete 5-piece slide),
-# delete groups for lessons beyond the current one, update TextBox text in each
-# kept group with the lesson's focus.  No EMF swapping is needed.
+# Our Key Question is:
+#   PH idx=10  — key question text body
+#
+# KS2 What, Why, How / What, Why, How (same across all masters):
+#   PH idx=0   — title (date line)
+#   PH idx=10  — WALT body
+#   PH idx=13  — TIB body
+#   PH idx=14  — ISB body
+#
+# Vocabulary:
+#   PH idx=10  — content body (word/definition pairs)
+#
+# I Do, We Do, You Do Trio, You Do:
+#   PH idx=0   — title
+#   PH idx=1   — content body
+#
+# Learning Review Editable:
+#   PH idx=10  — question 1
+#   PH idx=11  — question 2
+#   PH idx=12  — question 3
+#
+# Hook (used for KWL and Quiz — no dedicated layout exists):
+#   PH idx=0   — title
+#   PH idx=1   — content body
 
-# Slide number (1-based) in the template to clone for the puzzle pieces slide.
-# Slide 10 = the complete enquiry summary slide with all 5 pieces.
-PUZZLE_SOURCE_SLIDE = 10
+# ── Asset paths ───────────────────────────────────────────────────────────────
+ASSETS_ROOT = '/Users/innes/Pictures/PPTX Slide assets/Geographers'
 
-# Groups on the puzzle pieces slide that are NOT puzzle pieces.
-# These are decorative/photo elements kept on every lesson's slide.
-# Group 14 = decorative graphic + speech bubble.
-# Group 38 = photo collage (4 JPEG images).
-PUZZLE_NON_PIECE_GROUPS = {'Group 14', 'Group 38'}
-
-# Puzzle piece group names in reveal order (piece 1 → piece 5).
-# Ordered left-to-right across the bottom row (y≈4 in), then the upper piece.
-# Positions confirmed by XML inspection of geographers_template.pptx 2026-07-12:
-#   piece 1: Group 31   x≈0 in, y≈4 in  (bottom-left)
-#   piece 2: Group 40   x≈2 in, y≈4 in
-#   piece 3: Group 32   x≈4 in, y≈4 in
-#   piece 4: Group 7    x≈6 in, y≈4 in  (bottom-right)
-#   piece 5: Group 39   x≈0 in, y≈2 in  (upper-left)
-# For lesson N, the builder shows pieces 1..N and deletes the rest.
-PUZZLE_PIECE_GROUP_NAMES = [
-    'Group 31',   # piece 1
-    'Group 40',   # piece 2
-    'Group 32',   # piece 3
-    'Group 7',    # piece 4
-    'Group 39',   # piece 5
-]
-
-# Anchor text to locate the progression slide in Geographer.pptx.
-PROGRESSION_SLIDE_ANCHOR = 'progression'
+STATIC_ASSETS = {
+    'progression': f'{ASSETS_ROOT}/geo-progression.png',
+}
 
 # ── Fonts ─────────────────────────────────────────────────────────────────────
 TITLE_FONT = 'Twinkl Cursive Looped'
 BODY_FONT  = 'Aptos'
 
-# ── Phase display names ───────────────────────────────────────────────────────
-PHASE_NAMES = {1: 'Discover', 2: 'Investigate', 3: 'Communicate'}
-
-# ── Slide type definitions ────────────────────────────────────────────────────
-# 'fixed' types are always auto-generated from MTP metadata.
-# 'variable' types appear in the lesson's 'slides' array.
-
+# ── Slide type lists ──────────────────────────────────────────────────────────
 FIXED_SLIDE_TYPES = [
-    'key_question',
+    'kq_cover',
     'concepts_skills',
     'progression',
     'puzzle_pieces',
     'lo',
-    'kwl_or_quiz',   # resolves to kwl for L1, recap_quiz for L2+
-    'key_vocabulary',
+    'kwl_or_quiz',
+    'vocabulary',
 ]
 
-VARIABLE_SLIDE_TYPES = ['i_do', 'we_do', 'you_do', 'you_do_trio']
-
-# Layout names expected in Geographer.pptx.
-# Masters 3 (physical_geography) and 4 (environmental_impact) use a '1_'
-# prefix on their layout names in OOXML (confirmed 2026-07-12).
-CONTENT_LAYOUTS = {
-    'i_do':       'I do',
-    'we_do':      'We do',
-    'you_do':     'You do Ind',
-    'you_do_trio':'You Do Trio',
-    'blank':      'Blank',
-}
-
-# Master indices that carry a '1_' prefix on their layout names.
-PREFIXED_MASTER_INDICES = {3, 4}
-
-def layout_name_for_master(base_name, master_idx):
-    """
-    Return the correct layout name for a given master index.
-    Masters 3 and 4 use '1_<base_name>' in their OOXML layout names.
-    """
-    if master_idx in PREFIXED_MASTER_INDICES:
-        return f'1_{base_name}'
-    return base_name
+VARIABLE_SLIDE_TYPES = [
+    'i_do', 'we_do', 'you_do_trio', 'you_do', 'learning_review',
+]
