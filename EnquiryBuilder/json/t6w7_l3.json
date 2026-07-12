@@ -1,0 +1,200 @@
+{
+  "enquiry": {
+    "key_question": "Can materials change their state?",
+    "science_strand": "Chemistry",
+    "year_group": "Y4",
+    "week": "T6W7"
+  },
+  "lesson": {
+    "number": 3,
+    "day": "Wednesday",
+    "session": "a.m.",
+    "key_question": "Can materials change their state?",
+    "lo": "describe what happens when materials are cooled and explain that changing state is reversible",
+    "tib": "I understand that changing state can be reversed by heating or cooling, and that no new material is created",
+    "isb": "labelling all four arrows on a reversible changes diagram with the correct process name and temperature",
+    "slides": [
+      {
+        "type": "kq_challenge",
+        "key_question": "Can materials change their state?",
+        "challenge": ""
+      },
+      {
+        "type": "being_a_scientist"
+      },
+      {
+        "type": "discipline",
+        "strand": "Chemistry"
+      },
+      {
+        "type": "lo"
+      },
+      {
+        "type": "youdo_provocation",
+        "title": "Where has this water come from?",
+        "image_path": "/tmp/t6w7/images/condensation_glass.png"
+      },
+      {
+        "type": "ido_diagram",
+        "title": "What happens when materials are cooled?",
+        "image_path": "/tmp/t6w7/images/reversible_changes.png",
+        "bullets": [
+          "When a gas is cooled, particles slow down and come together \u2014 this is CONDENSING (gas \u2192 liquid).",
+          "When a liquid is cooled further, particles lock into a fixed arrangement \u2014 this is FREEZING (liquid \u2192 solid).",
+          "Changing state is REVERSIBLE \u2014 the same material can be heated or cooled to change back again."
+        ]
+      },
+      {
+        "type": "ido_diagram",
+        "title": "Where do we see this in the real world?",
+        "image_path": "/tmp/t6w7/images/water_cycle.png",
+        "bullets": [
+          "The water cycle uses the same state changes: evaporation, condensation, and precipitation.",
+          "This links to Geography \u2014 the water cycle moves water around our planet using these exact processes.",
+          "The same water changes state over and over \u2014 it is never destroyed, only transformed."
+        ]
+      },
+      {
+        "type": "youdo_task",
+        "title": "Label the reversible changes diagram",
+        "bullets": [
+          "On your LP, write the correct process name on each of the four arrows.",
+          "Add the temperatures 0\u00b0C and 100\u00b0C at the correct change points.",
+          "Write one sentence explaining why changing state is described as reversible.",
+          "Challenge: think of one everyday example for each of the four processes."
+        ]
+      },
+      {
+        "type": "learning_review",
+        "starters": [
+          "I can now explain what reversible means because\u2026",
+          "A connection I made today was\u2026",
+          "I am still wondering\u2026"
+        ]
+      }
+    ],
+    "lp": {
+      "date": "15/07/2026",
+      "lf": "describe what happens when materials are cooled and explain that changing state is reversible",
+      "ican1": "label all four state changes on a diagram with the correct process name",
+      "ican2": "explain why changing state is described as reversible",
+      "sections": [
+        {
+          "type": "heading",
+          "text": "Label the reversible changes diagram",
+          "size_pt": 16
+        },
+        {
+          "type": "instruction",
+          "text": "Use the diagram below. Write the correct process name in each arrow and add the temperature.",
+          "size_pt": 12
+        },
+        {
+          "type": "reference_image",
+          "path": "/tmp/t6w7/images/reversible_changes.png",
+          "max_h": 1.55
+        },
+        {
+          "type": "table",
+          "headers": [
+            {
+              "text": "Arrow direction",
+              "frac": 0.45
+            },
+            {
+              "text": "Process name",
+              "frac": 0.33
+            },
+            {
+              "text": "Temperature",
+              "frac": 0.22
+            }
+          ],
+          "rows": [
+            [
+              "Arrow 1: Solid to Liquid",
+              "____________________",
+              "____\u00b0C"
+            ],
+            [
+              "Arrow 2: Liquid to Solid",
+              "____________________",
+              "____\u00b0C"
+            ],
+            [
+              "Arrow 3: Liquid to Gas",
+              "____________________",
+              "____\u00b0C"
+            ],
+            [
+              "Arrow 4: Gas to Liquid",
+              "____________________",
+              "____\u00b0C"
+            ]
+          ],
+          "row_height": 0.4,
+          "body_size_pt": 10
+        },
+        {
+          "type": "spacer",
+          "h": 0.18
+        },
+        {
+          "type": "heading",
+          "text": "Explain reversibility",
+          "size_pt": 14
+        },
+        {
+          "type": "instruction",
+          "text": "Write one or two sentences explaining why changing state is called reversible. Use the word bank.",
+          "size_pt": 12
+        },
+        {
+          "type": "write_lines",
+          "n": 3
+        },
+        {
+          "type": "word_bank",
+          "words": "reversible  \u2022  melt  \u2022  freeze  \u2022  evaporate  \u2022  condense  \u2022  solid  \u2022  liquid  \u2022  gas  \u2022  heat  \u2022  cool  \u2022  the same material"
+        },
+        {
+          "type": "marking_station"
+        },
+        {
+          "type": "answer_text",
+          "text": "Arrow labels:",
+          "bold": true
+        },
+        {
+          "type": "answer_text",
+          "text": "Arrow 1: Solid to Liquid = MELTING at 0\u00b0C"
+        },
+        {
+          "type": "answer_text",
+          "text": "Arrow 2: Liquid to Solid = FREEZING at 0\u00b0C"
+        },
+        {
+          "type": "answer_text",
+          "text": "Arrow 3: Liquid to Gas   = EVAPORATING / BOILING at 100\u00b0C"
+        },
+        {
+          "type": "answer_text",
+          "text": "Arrow 4: Gas to Liquid   = CONDENSING at 100\u00b0C"
+        },
+        {
+          "type": "spacer",
+          "h": 0.12
+        },
+        {
+          "type": "answer_text",
+          "text": "Model sentence:",
+          "bold": true
+        },
+        {
+          "type": "answer_text",
+          "text": "Changing state is reversible because the same material can be heated or cooled to move between solid, liquid and gas. No new substance is made and the process can go in both directions."
+        }
+      ]
+    }
+  }
+}
