@@ -24,6 +24,13 @@ from lib_ooxml import (
 )
 import science_registry as REG
 
+# ── quiz_recap component (not in original registry — added here) ─────────────
+REG.COMPONENTS['quiz_recap'] = {
+    'presence': 'optional', 'mode': 'fresh_quiz',
+    'fields': ['qna'],  # qna: list of {question, answer}
+}
+# ─────────────────────────────────────────────────────────────────────────────
+
 # ── Sandbox compatibility patch ──────────────────────────────────────────────
 # Python PID is always 3 in this sandbox. lib_ooxml.src_dir caches template
 # extractions at /tmp/src_{pid}_{stem}, but those paths are owned by 'nobody'
@@ -323,6 +330,132 @@ def build_youdo_provocation(work, spec):
     return sp
 
 
+def build_quiz_recap(work, quiz_template_pptx, spec):
+    """
+    Clone the quiz recap template slide, replace Q/A content, rebuild animation.
+    spec['qna'] = list of {question: str, answer: str}
+    """
+    from lxml import etree as _et
+
+    _A_NS = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+    _P_NS = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+
+    def _q_para(text, num):
+        p = _et.Element(f'{{{_A_NS}}}p')
+        pPr = _et.SubElement(p, f'{{{_A_NS}}}pPr')
+        pPr.set('marL', '514350'); pPr.set('indent', '-514350')
+        buFont = _et.SubElement(pPr, f'{{{_A_NS}}}buFont')
+        buFont.set('typeface', '+mj-lt')
+        buAutoNum = _et.SubElement(pPr, f'{{{_A_NS}}}buAutoNum')
+        buAutoNum.set('type', 'arabicPeriod')
+        if num > 1:
+            buAutoNum.set('startAt', str(num))
+        r = _et.SubElement(p, f'{{{_A_NS}}}r')
+        rPr = _et.SubElement(r, f'{{{_A_NS}}}rPr')
+        rPr.set('lang', 'en-GB'); rPr.set('dirty', '0')
+        t = _et.SubElement(r, f'{{{_A_NS}}}t')
+        t.text = text
+        return p
+
+    def _a_para(text):
+        p = _et.Element(f'{{{_A_NS}}}p')
+        pPr = _et.SubElement(p, f'{{{_A_NS}}}pPr')
+        pPr.set('marL', '0'); pPr.set('indent', '0')
+        _et.SubElement(pPr, f'{{{_A_NS}}}buNone')
+        r = _et.SubElement(p, f'{{{_A_NS}}}r')
+        rPr = _et.SubElement(r, f'{{{_A_NS}}}rPr')
+        rPr.set('lang', 'en-GB'); rPr.set('b', '1'); rPr.set('dirty', '0')
+        fill = _et.SubElement(rPr, f'{{{_A_NS}}}solidFill')
+        clr = _et.SubElement(fill, f'{{{_A_NS}}}srgbClr')
+        clr.set('val', '00B050')
+        sym = _et.SubElement(rPr, f'{{{_A_NS}}}sym')
+        sym.set('typeface', 'Wingdings'); sym.set('pitchFamily', '2'); sym.set('charset', '2')
+        t = _et.SubElement(r, f'{{{_A_NS}}}t')
+        t.text = ' ' + text  # Wingdings arrow + answer
+        return p
+
+    def _spacer_para():
+        p = _et.Element(f'{{{_A_NS}}}p')
+        pPr = _et.SubElement(p, f'{{{_A_NS}}}pPr')
+        pPr.set('marL', '0'); pPr.set('indent', '0')
+        _et.SubElement(pPr, f'{{{_A_NS}}}buNone')
+        endPr = _et.SubElement(p, f'{{{_A_NS}}}endParaRPr')
+        endPr.set('lang', 'en-GB'); endPr.set('dirty', '0')
+        sym = _et.SubElement(endPr, f'{{{_A_NS}}}sym')
+        sym.set('typeface', 'Wingdings'); sym.set('pitchFamily', '2'); sym.set('charset', '2')
+        return p
+
+    # Clone the reference slide (preserves layout, whiteboard image, background)
+    # clone() is 1-based (PPTX slide files are slide1.xml, slide2.xml, ...)
+    sp, rp = clone(work, quiz_template_pptx, 1, copy_hdphoto=True)
+
+    # Update title if provided
+    title_text = spec.get('title', 'Recap – Quiz Time')
+    tree = xr(sp)
+    title_shape = find_sp(tree, 'Title 2')
+    if title_shape is not None:
+        set_text(title_shape, title_text)
+    xw(tree, sp)
+
+    # Rebuild Q/A content in the content placeholder
+    tree = xr(sp)
+    content_sp_el = find_sp(tree, 'Content Placeholder 2')
+    if content_sp_el is None:
+        raise RuntimeError("quiz_recap: 'Content Placeholder 2' not found — template drift")
+    content_spid = int(content_sp_el.get('id', '3'))
+
+    # Find txBody — note: in p:sp, txBody is p:txBody (presentationml ns), not a:txBody
+    _P_NS2 = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+    txBody = content_sp_el.find(f'{{{_P_NS2}}}txBody')
+    if txBody is None:
+        raise RuntimeError("quiz_recap: no txBody in content placeholder")
+    for p_el in txBody.findall(f'{{{_A_NS}}}p'):
+        txBody.remove(p_el)
+
+    # Build new paragraphs
+    qna = spec['qna']
+    for i, item in enumerate(qna):
+        txBody.append(_q_para(item['question'], i + 1))
+        txBody.append(_a_para(item['answer']))
+        if i < len(qna) - 1:
+            txBody.append(_spacer_para())
+
+    xw(tree, sp)
+
+    # Rebuild animation: Q and A paras animate on click; spacers stay hidden
+    # Para layout: Q0(0), A0(1), SPACE(2), Q1(3), A1(4), SPACE(5), ...
+    # Animated indices: every 0,1 then 3,4 then 6,7 ... (skip spacers at 2,5,8,...)
+    animated = []
+    for i in range(len(qna)):
+        animated.append(i * 3)      # question
+        animated.append(i * 3 + 1)  # answer
+
+    # Generate timing XML
+    id_n = [1]
+    def nid(): v = id_n[0]; id_n[0] += 1; return str(v)
+
+    root_id = nid(); seq_id = nid()
+    blocks = []
+    for para_idx in animated:
+        b, inner, click, behav = nid(), nid(), nid(), nid()
+        blocks.append(f'''<p:par xmlns:p="{_P_NS}"><p:cTn id="{b}" fill="hold"><p:stCondLst><p:cond delay="indefinite"/></p:stCondLst><p:childTnLst><p:par><p:cTn id="{inner}" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst><p:childTnLst><p:par><p:cTn id="{click}" presetID="1" presetClass="entr" presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect"><p:stCondLst><p:cond delay="0"/></p:stCondLst><p:childTnLst><p:set><p:cBhvr><p:cTn id="{behav}" dur="1" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn><p:tgtEl><p:spTgt spid="{content_spid}"><p:txEl><p:pRg st="{para_idx}" end="{para_idx}"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst></p:cBhvr><p:to><p:strVal val="visible"/></p:to></p:set></p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:par>''')
+
+    timing_xml = f'''<p:timing xmlns:p="{_P_NS}" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><p:tnLst><p:par><p:cTn id="{root_id}" dur="indefinite" restart="never" nodeType="tmRoot"><p:childTnLst><p:seq concurrent="1" nextAc="seek"><p:cTn id="{seq_id}" dur="indefinite" nodeType="mainSeq"><p:childTnLst>{''.join(blocks)}</p:childTnLst></p:cTn><p:prevCondLst><p:cond evt="onPrev" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst><p:nextCondLst><p:cond evt="onNext" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst></p:seq></p:childTnLst></p:cTn></p:par></p:tnLst><p:bldLst><p:bldP spid="{content_spid}" grpId="0" build="p"/></p:bldLst></p:timing>'''
+
+    # Insert/replace timing element in slide XML
+    from lxml import etree as _et2
+    tree = xr(sp)
+    root = tree.getroot()
+    existing_timing = root.find(f'{{{_P_NS}}}timing')
+    if existing_timing is not None:
+        root.remove(existing_timing)
+    new_timing = _et2.fromstring(timing_xml)
+    root.append(new_timing)
+    xw(tree, sp)
+
+    return sp
+
+
 def build_youdo_task(work, spec):
     # Round 8: same reversion as build_wedo_hook() above - confirmed against
     # Innes's ground-truth file that slide 9 also keeps the per-bullet
@@ -346,6 +479,7 @@ DISPATCH = {
     'kq_challenge':       lambda work, templates, layouts, spec: build_kq_challenge(work, templates, spec),
     'discipline':         lambda work, templates, layouts, spec: build_discipline(work, templates, spec),
     'lo':                 lambda work, templates, layouts, spec: build_lo(work, templates, spec),
+    'quiz_recap':         lambda work, templates, layouts, spec: build_quiz_recap(work, templates['quiz_recap'], spec),
     'wedo_hook':          lambda work, templates, layouts, spec: build_wedo_hook(work, spec),
     'wedo_grid':          lambda work, templates, layouts, spec: build_wedo_grid(work, spec),
     'ido_diagram':        lambda work, templates, layouts, spec: build_ido_diagram(work, spec),
@@ -378,7 +512,20 @@ def build_lesson(mtp_path, templates_dir, out_path, manifest_path):
         raise ValueError(f"Lesson plan is missing required slide types: {sorted(missing)}")
 
     templates = {k: os.path.join(templates_dir, v) for k, v in REG.TEMPLATE_FILES.items()}
+    # quiz_recap template: search same dir as this script, then /tmp/t6w7
+    _this_dir_early = os.path.dirname(os.path.abspath(__file__))
+    _quiz_template = next(
+        (p for p in [
+            os.path.join(_this_dir_early, 'quiz_recap_template.pptx'),
+            '/tmp/t6w7/quiz_recap_template.pptx',
+        ] if os.path.exists(p)), None
+    )
+    if _quiz_template is None and any(e['type'] == 'quiz_recap' for e in slides_spec):
+        raise FileNotFoundError("quiz_recap_template.pptx not found — place it alongside build_science_lesson.py")
+    templates['quiz_recap'] = _quiz_template
     for k, p in templates.items():
+        if p is None:
+            continue
         if not os.path.exists(p):
             raise FileNotFoundError(f"Template '{k}' not found at {p}")
 
@@ -397,7 +544,8 @@ def build_lesson(mtp_path, templates_dir, out_path, manifest_path):
                                 f"science-example.pptx may have changed")
 
     for k in templates.values():
-        src_dir(k)
+        if k:
+            src_dir(k)
 
     manifest = []
     for i, entry in enumerate(slides_spec, 1):
