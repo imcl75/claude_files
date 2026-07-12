@@ -30,6 +30,50 @@
         "type": "lo"
       },
       {
+        "type": "quiz_recap",
+        "qna": [
+          {
+            "question": "What do we call the change from solid to liquid?",
+            "answer": "Melting."
+          },
+          {
+            "question": "What happens to particles in a solid when it is heated?",
+            "answer": "They vibrate faster and gain energy until they break free and can flow past each other as a liquid."
+          },
+          {
+            "question": "What do we call the temperature at which a solid melts?",
+            "answer": "Its melting point."
+          },
+          {
+            "question": "True or false \u2014 all materials have the same melting point.",
+            "answer": "False. Different materials melt at different temperatures \u2014 ice at 0\u00b0C, iron at about 1538\u00b0C."
+          },
+          {
+            "question": "What change of state happens when liquid water is heated to 100\u00b0C?",
+            "answer": "Evaporation (boiling). It becomes water vapour \u2014 a gas."
+          }
+        ]
+      },
+      {
+        "type": "concept_cartoon",
+        "title": "Who do you agree with and why?",
+        "image_path": "/tmp/t6w7/images/condensation_glass.png",
+        "learners": [
+          {
+            "name": "Learner A",
+            "statement": "The water seeped through the glass from the cold drink inside."
+          },
+          {
+            "name": "Learner B",
+            "statement": "Water vapour in the warm air cooled down when it touched the cold glass and turned back into liquid."
+          },
+          {
+            "name": "Learner C",
+            "statement": "It's from my hands \u2014 my sweat gets on the glass when I hold it."
+          }
+        ]
+      },
+      {
         "type": "youdo_provocation",
         "title": "Where has this water come from?",
         "image_path": "/tmp/t6w7/images/condensation_glass.png"
