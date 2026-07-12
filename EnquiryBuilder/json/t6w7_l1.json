@@ -54,35 +54,35 @@
         "items": [
           {
             "label": "Ice",
-            "image_path": "/tmp/t6w7/images/grid_l1_ice.png"
+            "image_path": "/sessions/admiring-sleepy-wozniak/images/grid_l1_ice.png"
           },
           {
             "label": "Water",
-            "image_path": "/tmp/t6w7/images/grid_l1_water.png"
+            "image_path": "/sessions/admiring-sleepy-wozniak/images/grid_l1_water.png"
           },
           {
             "label": "Steam",
-            "image_path": "/tmp/t6w7/images/grid_l1_steam.png"
+            "image_path": "/sessions/admiring-sleepy-wozniak/images/grid_l1_steam.png"
           },
           {
             "label": "Wood",
-            "image_path": "/tmp/t6w7/images/grid_l1_wood.png"
+            "image_path": "/sessions/admiring-sleepy-wozniak/images/grid_l1_wood.png"
           },
           {
             "label": "Sand",
-            "image_path": "/tmp/t6w7/images/grid_l1_sand.png"
+            "image_path": "/sessions/admiring-sleepy-wozniak/images/grid_l1_sand.png"
           },
           {
             "label": "Milk",
-            "image_path": "/tmp/t6w7/images/grid_l1_milk.png"
+            "image_path": "/sessions/admiring-sleepy-wozniak/images/grid_l1_milk.png"
           },
           {
             "label": "Balloon",
-            "image_path": "/tmp/t6w7/images/grid_l1_balloon.png"
+            "image_path": "/sessions/admiring-sleepy-wozniak/images/grid_l1_balloon.png"
           },
           {
             "label": "Honey",
-            "image_path": "/tmp/t6w7/images/grid_l1_honey.png"
+            "image_path": "/sessions/admiring-sleepy-wozniak/images/grid_l1_honey.png"
           }
         ]
       },
