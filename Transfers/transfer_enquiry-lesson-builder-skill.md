@@ -125,17 +125,15 @@ Standard: **I Do → (We Do) → You Do Trio → You Do (independent)**
     "preparation_for": "Independent annotation task where each pupil selects one source and writes an annotation."
   },
   "independent_task": {
-    "type": "lp",
+    "recording": "lp",
     "organisation": "individual",
-    "ll_needed": true,
-    "ll_delivery": "embedded",
     "lp_title": "What can this source tell us?",
     "description": "Pupils select one source and write an annotation: what it tells us, what it can't tell us, and whether it is reliable.",
     "lp_shared": false,
-    "supporting_resource": {
+    "resource": {
       "needed": true,
       "description": "Source card sheet — three images with brief captions",
-      "ll_needed": false
+      "kept_in_book": false
     },
     "adaptation": {
       "support": "Pre-selected source with sentence stems: 'This source shows... I think this because... This source cannot tell us...'",
@@ -156,26 +154,28 @@ Standard: **I Do → (We Do) → You Do Trio → You Do (independent)**
 }
 ```
 
-### independent_task.type values
-| Value | Meaning |
-|-------|---------|
-| `lp` | Pupils write on the LP; it goes in the book |
-| `book` | Pupils read LP but write in books |
-| `ll_only` | No LP; pupils write in books or answer slide questions. LL sticker only. |
-| `group_verbal` | Group task, no written output. Teacher assesses during task + learning review. No LP, no LL. |
-| `group_shared_lp` | Group task, one LP per trio (possibly photocopied per member). LL embedded. |
+### independent_task.recording values and LL rules
 
-### LP/LL type system (mirrors maths skill Type A/B)
-| Type | What exists | LL delivery |
-|------|------------|-------------|
-| A | LP — write on sheet | Embedded top-right on LP |
-| B | LP — read, write in books | Separate sticker sheet |
-| C | No LP — write in books / answer slides | Separate sticker only |
-| D | Supporting resource stuck in book | Embedded top-right on resource |
-| E | Group task, verbal only | None |
-| F | Group task, shared LP | Embedded on LP, flagged in teacher notes |
+**Key principle:** LL is needed whenever a physical outcome will be stuck in the book. What drives LL generation is what gets KEPT, not what type of task it is.
 
-Type D can accompany any of A–C.
+| `recording` value | Meaning | LL generated | Where |
+|-------------------|---------|--------------|-------|
+| `"lp"` | Pupils write on LP; LP goes in book | Yes | Embedded on LP |
+| `"books"` | Pupils write in books (no LP) | Yes | Separate LL sticker sheet |
+| `"none"` | Nothing kept — group task or verbal; no physical output | No | — |
+
+**Resource** is separate from LP. An LP is where learning is recorded. A resource supports the task.
+
+| `resource.kept_in_book` | LL on resource? |
+|-------------------------|----------------|
+| `true` | Yes — embedded on resource |
+| `false` | No |
+
+A lesson can have any combination: LP only, resource only (kept), LP + resource (kept), LP + resource (not kept), books + LL sticker + resource (kept), or nothing at all.
+
+When `recording: "lp"` AND `lp_shared: true` → one LP per trio, flag in teacher notes (may be photocopied per member).
+
+**Note on resources vs LPs:** A document pupils read-but-don't-write-on is a **resource**, not an LP — even if it has questions on it. Call it a resource. The LP is only the document pupils write on as their record of learning.
 
 ### Learning label format
 - **LF**: "I am learning to [verb]..."
