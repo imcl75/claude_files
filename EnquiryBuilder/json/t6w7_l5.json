@@ -30,6 +30,50 @@
         "type": "lo"
       },
       {
+        "type": "quiz_recap",
+        "qna": [
+          {
+            "question": "Name all four key changes of state.",
+            "answer": "Melting, freezing, evaporation and condensation."
+          },
+          {
+            "question": "What do we call the temperature at which a solid turns to liquid?",
+            "answer": "Its melting point."
+          },
+          {
+            "question": "Why do scientists repeat measurements?",
+            "answer": "To check for errors and make their results more reliable."
+          },
+          {
+            "question": "True or false \u2014 all changes of state are reversible.",
+            "answer": "True. Melting, freezing, evaporation and condensation can all be reversed."
+          },
+          {
+            "question": "What does a higher melting point tell us about a material?",
+            "answer": "It needs more energy (heat) before its particles can break free and flow as a liquid."
+          }
+        ]
+      },
+      {
+        "type": "concept_cartoon",
+        "title": "Who do you agree with and why?",
+        "image_path": "/tmp/t6w7/images/melting_vs_dissolving.png",
+        "learners": [
+          {
+            "name": "Learner A",
+            "statement": "Melting and dissolving are the same thing \u2014 both make a solid disappear into a liquid."
+          },
+          {
+            "name": "Learner B",
+            "statement": "They're different. Melting needs heat to change state. Dissolving is mixing with a liquid, not a change of state."
+          },
+          {
+            "name": "Learner C",
+            "statement": "Both are reversible, so they must be the same kind of change."
+          }
+        ]
+      },
+      {
         "type": "wedo_hook",
         "title": "What have we found out this week?",
         "bullets": [
