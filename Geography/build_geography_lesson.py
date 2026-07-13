@@ -826,13 +826,16 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
         else:
             lsn = all_lessons[pos_idx] if pos_idx < len(all_lessons) else None
 
-            if cNvPr is not None:
-                cNvPr.attrib.pop('hidden', None)  # un-hide for all visible/current pieces
             if position == lesson_num:
-                # Current lesson's piece: record id for click-reveal animation.
-                # The shape is un-hidden above; PowerPoint's animation engine
-                # hides it before the click fires, then reveals it on click.
+                # Current lesson's piece: KEEP cNvPr hidden="1" so the shape
+                # starts hidden at slide open. The click-reveal animation below
+                # sets style.visibility=visible on click, exactly like the
+                # original layout animation pattern.
                 current_piece_id = int(cNvPr.get('id', 0)) if cNvPr is not None else None
+            else:
+                # Previous lessons' pieces: un-hide so they show statically.
+                if cNvPr is not None:
+                    cNvPr.attrib.pop('hidden', None)
 
             # Update EMF colour and TextBox text for all visible/current pieces.
             if lsn is not None:
@@ -1139,7 +1142,7 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
         f'<p:nvPr><p:ph idx="1"/></p:nvPr>'
         f'</p:nvSpPr>'
         f'<p:spPr/>'
-        f'<p:txBody><a:bodyPr/><a:lstStyle/></p:txBody>'
+        f'<p:txBody><a:bodyPr><a:normAutofit/></a:bodyPr><a:lstStyle/></p:txBody>'
         f'</p:sp>'
     )
     txBody = sp_el.find(f'.//{{{P}}}txBody')
@@ -1270,7 +1273,7 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
         f'<p:nvPr><p:ph idx="1"/></p:nvPr>'
         f'</p:nvSpPr>'
         f'<p:spPr/>'
-        f'<p:txBody><a:bodyPr/><a:lstStyle/></p:txBody>'
+        f'<p:txBody><a:bodyPr><a:normAutofit/></a:bodyPr><a:lstStyle/></p:txBody>'
         f'</p:sp>'
     )
     txBody = sp_el.find(f'.//{{{P}}}txBody')
