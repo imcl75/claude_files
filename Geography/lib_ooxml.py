@@ -779,3 +779,109 @@ def extract_image_by_shape_name(pptx_path, slide_number, shape_name, dest_path):
         shutil.copy(src_media, dest_path)
         return dest_path
     raise RuntimeError(f"extract_image_by_shape_name: shape '{shape_name}' not found on slide {slide_number} of {pptx_path}")
+
+
+# ── Font embedding ─────────────────────────────────────────────────────────────
+
+FONT_REL = f'{R}/font'
+_ODTTF_CT = 'application/vnd.openxmlformats-officedocument.obfuscatedFont'
+
+def _guid_to_key(guid_str):
+    """Convert a GUID like '{37D0410B-CB06-4AF0-9B29-5C09E60A5021}' to a 16-byte
+    obfuscation key following the OOXML mixed-endian (COM GUID) byte order."""
+    import struct, uuid as _uuid
+    clean = guid_str.strip('{}').replace('-', '')
+    u = _uuid.UUID(clean)
+    # COM/Windows GUID byte order: first three fields are little-endian,
+    # last two fields are big-endian.
+    key = struct.pack('<IHH', u.time_low, u.time_mid, u.time_hi_version) + u.bytes[8:]
+    return key
+
+
+def _obfuscate_font(font_data, key):
+    """XOR the first 32 bytes of font_data with key (16 bytes), repeated twice."""
+    ba = bytearray(font_data)
+    for i in range(min(32, len(ba))):
+        ba[i] ^= key[i % 16]
+    return bytes(ba)
+
+
+def embed_fonts(work, font_files):
+    """Embed fonts into an unpacked PPTX working directory.
+
+    font_files: list of (typeface_name, font_path) tuples.
+    Embeds each font with OOXML obfuscation (ECMA-376 §22.5).
+    Call this after all slides are built, before rezip().
+    """
+    import uuid as _uuid
+    pres_path      = Path(work) / 'ppt' / 'presentation.xml'
+    pres_rels_path = Path(work) / 'ppt' / '_rels' / 'presentation.xml.rels'
+    ct_path        = Path(work) / '[Content_Types].xml'
+    fonts_dir      = Path(work) / 'ppt' / 'fonts'
+    fonts_dir.mkdir(exist_ok=True)
+
+    # -- presentation.xml.rels ------------------------------------------------
+    rels_tree = xr(pres_rels_path)
+    rels_root = rels_tree.getroot()
+    max_rid = max(
+        (int(m.group(1)) for el in rels_root
+         for m in [re.match(r'rId(\d+)', el.get('Id', ''))] if m),
+        default=0
+    )
+
+    # -- presentation.xml: find or create <p:embeddedFontLst> -----------------
+    pres_tree = xr(pres_path)
+    pres_root = pres_tree.getroot()
+    efl = pres_root.find(f'{{{P}}}embeddedFontLst')
+    if efl is None:
+        # Insert before <p:extLst> if present, otherwise append
+        extlst = pres_root.find(f'{{{P}}}extLst')
+        if extlst is not None:
+            idx = list(pres_root).index(extlst)
+            efl = etree.Element(f'{{{P}}}embeddedFontLst')
+            pres_root.insert(idx, efl)
+        else:
+            efl = etree.SubElement(pres_root, f'{{{P}}}embeddedFontLst')
+
+    # -- [Content_Types].xml: add odttf default if absent ---------------------
+    ct_tree = xr(ct_path)
+    ct_root = ct_tree.getroot()
+    if not any(el.get('Extension') == 'odttf' for el in ct_root):
+        etree.SubElement(ct_root, f'{{{CT_NS}}}Default',
+                         {'Extension': 'odttf', 'ContentType': _ODTTF_CT})
+    xw(ct_tree, ct_path)
+
+    # -- Embed each font ------------------------------------------------------
+    for i, (typeface, font_path) in enumerate(font_files):
+        font_path = Path(font_path)
+        if not font_path.exists():
+            print(f'  WARNING: font not found, skipping: {font_path}', file=sys.stderr)
+            continue
+
+        font_data = font_path.read_bytes()
+        guid = '{' + str(_uuid.uuid4()).upper() + '}'
+        key  = _guid_to_key(guid)
+        obf  = _obfuscate_font(font_data, key)
+
+        out_name = f'font{i + 1}.odttf'
+        (fonts_dir / out_name).write_bytes(obf)
+
+        rid = f'rId{max_rid + 1 + i}'
+        etree.SubElement(rels_root, 'Relationship', {
+            'Id': rid,
+            'Type': FONT_REL,
+            'Target': f'fonts/{out_name}',
+        })
+
+        ef_xml = (
+            f'<p:embeddedFont xmlns:p="{P}" xmlns:r="{R}">'
+            f'<p:font typeface="{ex(typeface)}" panose="020B0502050000060200"'
+            f' pitchFamily="34" charset="0"/>'
+            f'<p:regular r:id="{rid}"/>'
+            f'</p:embeddedFont>'
+        )
+        efl.append(etree.fromstring(ef_xml))
+        print(f'  [font] embedded "{typeface}" → {out_name} ({len(obf):,} bytes)')
+
+    xw(rels_tree, pres_rels_path)
+    xw(pres_tree,  pres_path)
