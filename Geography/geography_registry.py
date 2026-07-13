@@ -169,6 +169,24 @@ STATIC_ASSETS = {
     'progression': f'{ASSETS_ROOT}/geo-progression.png',
 }
 
+# ── Per-concept progression images ────────────────────────────────────────────
+# To update: save a PNG named 'progression_{concept}.png' in ASSETS_ROOT.
+# No code change required — the builder looks up the file by convention.
+#
+# Expected file names:
+#   progression_place_space_scale.png
+#   progression_human_geography.png
+#   progression_cultural_awareness.png
+#   progression_physical_geography.png
+#   progression_environmental_impact.png
+
+def progression_image_path(substantive_concept):
+    """
+    Return the expected path for this concept's progression PNG.
+    Name convention: {ASSETS_ROOT}/progression_{concept}.png
+    """
+    return f'{ASSETS_ROOT}/progression_{substantive_concept}.png'
+
 # ── Fonts ─────────────────────────────────────────────────────────────────────
 TITLE_FONT = 'Twinkl Cursive Looped'
 BODY_FONT  = 'Aptos'
