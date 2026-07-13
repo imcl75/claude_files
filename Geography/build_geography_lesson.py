@@ -486,31 +486,197 @@ def build_concepts_skills(work, base_pptx, lesson, enquiry, master_idx):
 
 def build_progression(work, base_pptx, lesson, enquiry, master_idx):
     """
-    Slide 3: Progression
-    No Progression layout exists in the template.  Displays a per-concept PNG
-    (progression_{concept}.png in ASSETS_ROOT) full-bleed on a Revisit slide.
+    Slide 3: Progression — animated, one strip per year group (Y1–Y6).
 
-    To update progression images: drop a new PNG named
-    'progression_{concept}.png' into the ASSETS_ROOT folder.
+    Layout: Revisit (provides themed background + globe icon top-left).
+
+    Left panel (static, always visible):
+      • Concept title text box
+      • Concept icon(s) + definition text — one icon per row, placed below
+        the globe using the PNG assets from ASSETS_ROOT.
+
+    Right panel (animated):
+      • 6 strip images placed in a vertical column.
+      • Each strip appears on click (Y1 first → Y6 last).
+      • Strips that are missing from disk are silently skipped.
+
+    To add strips: drop geo-prog-{concept}-y{N}.png into ASSETS_ROOT.
     No code change required.
     """
+    sc = lesson.get('substantive_concept', REG.DEFAULT_SUBSTANTIVE_CONCEPT)
     sp, rp = fresh_geo(work, 'Revisit', master_idx)
 
-    sc        = lesson.get('substantive_concept', REG.DEFAULT_SUBSTANTIVE_CONCEPT)
-    prog_path = REG.progression_image_path(sc)
+    # ── Slide geometry ────────────────────────────────────────────────────────
+    # Widescreen 16:9 — 12192000 × 6858000 EMU
+    # Left panel: ~28% of width (icons + text), right panel: strips
+    LEFT_W   = 3200000   # left panel width (~2.6 in)
+    MARGIN_T = 500000    # top margin for content
+    MARGIN_B = 200000    # bottom margin
+    STRIP_X  = LEFT_W + 200000   # strips start after left panel + gap
+    STRIP_W  = SW - STRIP_X - 150000
+    USABLE_H = SH - MARGIN_T - MARGIN_B
+    STRIP_H  = USABLE_H // 6    # height per strip
 
-    # Fall back to generic progression image if the per-concept one is missing
-    if not os.path.exists(prog_path):
-        prog_path = REG.STATIC_ASSETS.get('progression', '')
+    # ── Left panel — concept title ────────────────────────────────────────────
+    title_text = REG.CONCEPT_TITLES.get(sc, sc.replace('_', ' ').title())
+    title_xml = (
+        f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+        f'<p:nvSpPr>'
+        f'<p:cNvPr id="300" name="ProgTitle"/>'
+        f'<p:cNvSpPr txBox="1"/><p:nvPr/>'
+        f'</p:nvSpPr>'
+        f'<p:spPr>'
+        f'<a:xfrm><a:off x="120000" y="{MARGIN_T}"/>'
+        f'<a:ext cx="{LEFT_W - 120000}" cy="500000"/></a:xfrm>'
+        f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+        f'<a:noFill/>'
+        f'</p:spPr>'
+        f'<p:txBody><a:bodyPr wrap="square"><a:normAutofit/></a:bodyPr>'
+        f'<a:lstStyle/>'
+        f'<a:p><a:r>'
+        f'<a:rPr lang="en-GB" sz="1800" b="1" dirty="0">'
+        f'<a:latin typeface="Twinkl Cursive Looped"/>'
+        f'</a:rPr>'
+        f'<a:t>{ex(title_text)}</a:t>'
+        f'</a:r></a:p>'
+        f'</p:txBody>'
+        f'</p:sp>'
+    )
+    t, st = get_spTree(sp)
+    st.append(etree.fromstring(title_xml))
+    save(t, sp)
 
-    if prog_path and os.path.exists(prog_path):
-        add_img(sp, rp, work, prog_path, 0, 0, SW, SH, 10)
-    else:
-        _fill_ph(sp, 10, 'Geographer Progression')
-        print(f'  NOTE: progression image not found for concept "{sc}" '
-              f'(expected: {REG.progression_image_path(sc)})', file=sys.stderr)
+    # ── Left panel — concept icons + definition text ──────────────────────────
+    icon_data  = REG.CONCEPT_ICON_DATA.get(sc, [])
+    icon_y     = MARGIN_T + 560000   # start below title
+    icon_size  = 650000              # icon image square size
+    text_x     = 120000 + icon_size + 80000
+    text_w     = LEFT_W - text_x - 60000
 
-    print('  [3] progression')
+    shape_id = 310
+    for icon_file, definition in icon_data:
+        icon_path = f'{REG.ASSETS_ROOT}/{icon_file}'
+        if os.path.exists(icon_path):
+            add_img(sp, rp, work, icon_path,
+                    120000, icon_y, icon_size, icon_size, shape_id)
+            shape_id += 1
+
+        # Definition text box alongside the icon
+        def_xml = (
+            f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+            f'<p:nvSpPr>'
+            f'<p:cNvPr id="{shape_id}" name="DefText{shape_id}"/>'
+            f'<p:cNvSpPr txBox="1"/><p:nvPr/>'
+            f'</p:nvSpPr>'
+            f'<p:spPr>'
+            f'<a:xfrm><a:off x="{text_x}" y="{icon_y}"/>'
+            f'<a:ext cx="{text_w}" cy="{icon_size}"/></a:xfrm>'
+            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+            f'<a:noFill/>'
+            f'</p:spPr>'
+            f'<p:txBody>'
+            f'<a:bodyPr wrap="square" anchor="t"><a:normAutofit/></a:bodyPr>'
+            f'<a:lstStyle/>'
+            f'<a:p><a:r>'
+            f'<a:rPr lang="en-GB" sz="1000" dirty="0">'
+            f'<a:latin typeface="Aptos"/>'
+            f'</a:rPr>'
+            f'<a:t>{ex(definition)}</a:t>'
+            f'</a:r></a:p>'
+            f'</p:txBody>'
+            f'</p:sp>'
+        )
+        t, st = get_spTree(sp)
+        st.append(etree.fromstring(def_xml))
+        save(t, sp)
+        shape_id += 1
+
+        icon_y += icon_size + 60000   # gap between icon rows
+
+    # ── Right panel — 6 year-group strips (placed, then animated) ────────────
+    strip_shape_ids = []
+    strip_id = 400
+
+    for yr in range(1, 7):
+        strip_path = REG.progression_strip_path(sc, yr)
+        if not os.path.exists(strip_path):
+            print(f'  NOTE: progression strip missing: {strip_path}',
+                  file=sys.stderr)
+            strip_shape_ids.append(None)
+            strip_id += 1
+            continue
+
+        y_pos = MARGIN_T + (yr - 1) * STRIP_H
+        add_img(sp, rp, work, strip_path,
+                STRIP_X, y_pos, STRIP_W, STRIP_H, strip_id)
+        strip_shape_ids.append(strip_id)
+        strip_id += 1
+
+    # ── Animation — each strip appears on its own click ──────────────────────
+    visible_strips = [(i, sid) for i, sid in enumerate(strip_shape_ids)
+                      if sid is not None]
+
+    if visible_strips:
+        nid = [1]
+        def _nid(): v = nid[0]; nid[0] += 1; return str(v)
+
+        root_id = _nid(); seq_id = _nid()
+        blocks = []
+        for _, sid in visible_strips:
+            b, inn, clk, bhv = _nid(), _nid(), _nid(), _nid()
+            blocks.append(
+                f'<p:par xmlns:p="{P}"><p:cTn id="{b}" fill="hold">'
+                f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
+                f'<p:childTnLst><p:par><p:cTn id="{inn}" fill="hold">'
+                f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+                f'<p:childTnLst><p:par>'
+                f'<p:cTn id="{clk}" presetID="1" presetClass="entr" '
+                f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
+                f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+                f'<p:childTnLst><p:set><p:cBhvr>'
+                f'<p:cTn id="{bhv}" dur="1" fill="hold">'
+                f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
+                f'<p:tgtEl><p:spTgt spid="{sid}"/></p:tgtEl>'
+                f'<p:attrNameLst>'
+                f'<p:attrName>style.visibility</p:attrName>'
+                f'</p:attrNameLst>'
+                f'</p:cBhvr>'
+                f'<p:to><p:strVal val="visible"/></p:to>'
+                f'</p:set></p:childTnLst></p:cTn>'
+                f'</p:par></p:childTnLst></p:cTn></p:par>'
+                f'</p:childTnLst></p:cTn></p:par>'
+            )
+
+        timing_xml = (
+            f'<p:timing xmlns:p="{P}" xmlns:a="{A}">'
+            f'<p:tnLst><p:par><p:cTn id="{root_id}" dur="indefinite" '
+            f'restart="never" nodeType="tmRoot"><p:childTnLst>'
+            f'<p:seq concurrent="1" nextAc="seek">'
+            f'<p:cTn id="{seq_id}" dur="indefinite" nodeType="mainSeq">'
+            f'<p:childTnLst>{"".join(blocks)}</p:childTnLst></p:cTn>'
+            f'<p:prevCondLst><p:cond evt="onPrev" delay="0">'
+            f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>'
+            f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
+            f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
+            f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
+            f'<p:bldLst>'
+            + ''.join(
+                f'<p:bldP spid="{sid}" grpId="0" build="p"/>'
+                for _, sid in visible_strips
+            )
+            + f'</p:bldLst></p:timing>'
+        )
+
+        tree = xr(sp)
+        sld_root = tree.getroot()
+        existing = sld_root.find(f'{{{P}}}timing')
+        if existing is not None:
+            sld_root.remove(existing)
+        sld_root.append(etree.fromstring(timing_xml))
+        xw(tree, sp)
+
+    found = sum(1 for sid in strip_shape_ids if sid is not None)
+    print(f'  [3] progression — {found}/6 strips for "{sc}"')
     return sp
 
 
