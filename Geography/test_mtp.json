@@ -1,0 +1,87 @@
+{
+  "key_question": "How does water shape the land around us?",
+  "subject": "Geography",
+  "year_group": "Y4",
+  "default_substantive_concept": "physical_geography",
+  "model_text": "Rivers are powerful forces that shape the land around us.",
+  "lessons": [
+    {
+      "lesson_number": 1,
+      "day": "Monday",
+      "week": 1,
+      "phase": 1,
+      "phase_label": "Discover",
+      "skill_focus": "questioning_predicting",
+      "substantive_concept": "physical_geography",
+      "puzzle_piece_text": "What is a river?",
+      "building_block_text": "What is a river?",
+      "key_question": "How does water shape the land around us?",
+      "lesson_title": "What is a river?",
+      "learning_label": {
+        "lf": "I am learning to describe the key features of a river.",
+        "sc1": "I can name the three stages of a river.",
+        "sc2": "I can explain how rivers shape the land over time."
+      },
+      "what": "Identify and name key river features",
+      "why": "Understanding river features helps us explain how water shapes the landscape",
+      "success": "I can label a river diagram and describe what happens at each stage",
+      "vocabulary": [
+        {"word": "river", "definition": "A large natural stream of water flowing towards the sea, a lake or another river"},
+        {"word": "source", "definition": "The starting point of a river, usually high up in hills or mountains"},
+        {"word": "tributary", "definition": "A smaller river or stream that joins a larger river"},
+        {"word": "meander", "definition": "A curve or bend in a river, formed as water erodes the outer bank"}
+      ],
+      "quiz": null,
+      "lesson_flow": "Introduce key river vocabulary. Label a river diagram together. Pupils sort river feature cards.",
+      "slides": [
+        {"type": "i_do", "title": "What makes a river?", "content": "A river has three main stages: the upper course (fast, steep), the middle course (wider, slower) and the lower course (wide, flat, near the sea)."},
+        {"type": "we_do", "title": "Label the river", "content": "Together we label the main features on a river diagram — source, tributary, meander, flood plain, mouth."},
+        {"type": "you_do_trio", "title": "Sort the features", "content": "In your trio, sort the river feature cards into upper, middle and lower course."},
+        {"type": "you_do", "title": "River diagram", "content": "Label and annotate your own river diagram LP."},
+        {"type": "learning_review", "questions": ["What is the source of a river?", "What is a meander and how does it form?", "Which stage of a river is fastest — upper, middle or lower?"]}
+      ]
+    },
+    {
+      "lesson_number": 2,
+      "day": "Monday",
+      "week": 2,
+      "phase": 1,
+      "phase_label": "Discover",
+      "skill_focus": "observing_recording",
+      "substantive_concept": "physical_geography",
+      "puzzle_piece_text": "How does erosion work?",
+      "building_block_text": "How does erosion work?",
+      "key_question": "How does water shape the land around us?",
+      "lesson_title": "How does erosion work?",
+      "learning_label": {
+        "lf": "I am learning to explain how rivers erode and deposit material.",
+        "sc1": "I can describe what erosion means and give an example.",
+        "sc2": "I can explain the difference between erosion and deposition."
+      },
+      "what": "Understand erosion and deposition",
+      "why": "Erosion and deposition are the main processes that change the shape of rivers over time",
+      "success": "I can explain what erosion and deposition mean and where they happen in a river",
+      "vocabulary": [
+        {"word": "erosion", "definition": "The wearing away of rock and soil by water, wind or ice"},
+        {"word": "deposition", "definition": "When a river drops the material it has been carrying because it slows down"},
+        {"word": "sediment", "definition": "Tiny particles of rock, sand or soil carried and deposited by a river"},
+        {"word": "flood plain", "definition": "The flat land beside a river that floods when the river overflows its banks"},
+        {"word": "estuary", "definition": "The wide mouth of a river where it meets the sea and fresh water mixes with salt water"}
+      ],
+      "quiz": [
+        {"question": "What is the source of a river?", "answer": "The starting point of a river, usually high up in hills or mountains"},
+        {"question": "Name the three stages of a river.", "answer": "Upper course, middle course and lower course"},
+        {"question": "What is a meander?", "answer": "A curve or bend in a river formed as water erodes the outer bank"},
+        {"question": "What is a tributary?", "answer": "A smaller river or stream that joins a larger river"}
+      ],
+      "lesson_flow": "Recap river features. Explore erosion and deposition with sand tray. Record observations.",
+      "slides": [
+        {"type": "i_do", "title": "Erosion and deposition", "content": "Erosion happens fastest on the outer bend of a meander. Deposition happens on the inner bend where the water slows down. Over time this makes the meander more pronounced."},
+        {"type": "we_do", "title": "Sand tray investigation", "content": "Watch water flowing over the sand tray. Where does erosion happen? Where does deposition happen? Record observations as a class."},
+        {"type": "you_do_trio", "title": "Predict and explain", "content": "In your trio, predict what will happen if we pour more water into the channel. Then explain what you saw using the words erosion and deposition."},
+        {"type": "you_do", "title": "Erosion diagram", "content": "Annotate a meander diagram to show where erosion and deposition happen. Explain why using a sentence."},
+        {"type": "learning_review", "questions": ["What is the difference between erosion and deposition?", "Where in a meander does erosion happen fastest?", "What does sediment mean?"]}
+      ]
+    }
+  ]
+}

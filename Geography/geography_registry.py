@@ -100,6 +100,8 @@ def teaching_layout(slide_type, master_idx):
 # Per-master puzzle piece group names, in position order (pos 1 = bottom-left).
 # Keyed by master index (0–4).
 PUZZLE_PIECE_GROUPS_BY_MASTER = {
+    # Ordering confirmed 2026-07-13 from layout animation spid sequence.
+    # pos 1 = bottom-left, reveals first on click.
     0: [
         'Group 24',   # pos 1  bottom-left
         'Group 14',   # pos 2
@@ -118,72 +120,72 @@ PUZZLE_PIECE_GROUPS_BY_MASTER = {
         'Group 75',   # pos 15 top-right
     ],
     1: [
-        'Group 8',    # pos 1  bottom-left
-        'Group 12',   # pos 2
-        'Group 16',   # pos 3
-        'Group 22',   # pos 4
-        'Group 26',   # pos 5
-        'Group 30',   # pos 6
-        'Group 35',   # pos 7
-        'Group 39',   # pos 8
-        'Group 43',   # pos 9
-        'Group 47',   # pos 10
-        'Group 51',   # pos 11
-        'Group 55',   # pos 12
-        'Group 59',   # pos 13
-        'Group 63',   # pos 14
-        'Group 1',    # pos 15
+        'Group 16',   # pos 1  bottom-left  (slideMaster2 — human_geography)
+        'Group 8',    # pos 2
+        'Group 1',    # pos 3
+        'Group 12',   # pos 4
+        'Group 22',   # pos 5  bottom-right
+        'Group 30',   # pos 6  middle-left
+        'Group 26',   # pos 7
+        'Group 35',   # pos 8
+        'Group 39',   # pos 9
+        'Group 43',   # pos 10
+        'Group 59',   # pos 11 middle-right
+        'Group 51',   # pos 12 top
+        'Group 47',   # pos 13
+        'Group 55',   # pos 14
+        'Group 63',   # pos 15 top-right
     ],
     2: [
-        'Group 7',    # pos 1  (Layout 30 / slideMaster3)
-        'Group 12',   # pos 2
-        'Group 16',   # pos 3
-        'Group 22',   # pos 4
-        'Group 26',   # pos 5
-        'Group 30',   # pos 6
-        'Group 35',   # pos 7
-        'Group 39',   # pos 8
-        'Group 43',   # pos 9
-        'Group 47',   # pos 10
-        'Group 51',   # pos 11
-        'Group 55',   # pos 12
-        'Group 59',   # pos 13
-        'Group 63',   # pos 14
-        'Group 1',    # pos 15
+        'Group 16',   # pos 1  bottom-left  (slideMaster3 — cultural_awareness)
+        'Group 7',    # pos 2
+        'Group 1',    # pos 3
+        'Group 12',   # pos 4
+        'Group 22',   # pos 5  bottom-right
+        'Group 30',   # pos 6  middle-left
+        'Group 26',   # pos 7
+        'Group 35',   # pos 8
+        'Group 39',   # pos 9
+        'Group 43',   # pos 10
+        'Group 59',   # pos 11 middle-right
+        'Group 51',   # pos 12 top
+        'Group 47',   # pos 13
+        'Group 55',   # pos 14
+        'Group 63',   # pos 15 top-right
     ],
     3: [
-        'Group 7',    # pos 1
-        'Group 12',   # pos 2
-        'Group 16',   # pos 3
-        'Group 22',   # pos 4
-        'Group 26',   # pos 5
-        'Group 30',   # pos 6
-        'Group 35',   # pos 7
-        'Group 39',   # pos 8
-        'Group 43',   # pos 9
-        'Group 47',   # pos 10
-        'Group 51',   # pos 11
-        'Group 55',   # pos 12
-        'Group 59',   # pos 13
-        'Group 63',   # pos 14
-        'Group 1',    # pos 15
+        'Group 16',   # pos 1  bottom-left  (slideMaster4 — physical_geography)
+        'Group 7',    # pos 2
+        'Group 1',    # pos 3
+        'Group 12',   # pos 4
+        'Group 22',   # pos 5  bottom-right
+        'Group 30',   # pos 6  middle-left
+        'Group 26',   # pos 7
+        'Group 35',   # pos 8
+        'Group 39',   # pos 9
+        'Group 43',   # pos 10
+        'Group 59',   # pos 11 middle-right
+        'Group 51',   # pos 12 top
+        'Group 47',   # pos 13
+        'Group 55',   # pos 14
+        'Group 63',   # pos 15 top-right
     ],
     4: [
-        'Group 7',    # pos 1
-        'Group 12',   # pos 2
-        'Group 16',   # pos 3
-        'Group 22',   # pos 4
-        'Group 26',   # pos 5
-        'Group 30',   # pos 6
-        'Group 35',   # pos 7
-        'Group 39',   # pos 8
-        'Group 43',   # pos 9
-        'Group 47',   # pos 10
-        'Group 51',   # pos 11
-        'Group 55',   # pos 12
-        'Group 59',   # pos 13
-        'Group 63',   # pos 14
-        'Group 1',    # pos 15
+        'Group 16',   # pos 1  bottom-left  (slideMaster5 — environmental_impact)
+        'Group 7',    # pos 2
+        'Group 1',    # pos 3
+        'Group 12',   # pos 4
+        'Group 22',   # pos 5  bottom-right
+        'Group 30',   # pos 6  middle-left
+        'Group 26',   # pos 7
+        'Group 35',   # pos 8
+        'Group 39',   # pos 9
+        'Group 43',   # pos 10
+        'Group 59',   # pos 11 middle-right
+        'Group 51',   # pos 12 top
+        'Group 47',   # pos 13
+        'Group 55',   # pos 14
+        'Group 63',   # pos 15 top-right
     ],
 }
 
