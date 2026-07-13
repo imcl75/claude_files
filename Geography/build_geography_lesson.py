@@ -797,6 +797,8 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
     root = tree.getroot()
     spTree = root.find(f'.//{{{P}}}spTree')
 
+    current_piece_id = None  # shape ID of the current lesson's piece — animated in on click
+
     for pos_idx, group_name in enumerate(REG.PUZZLE_PIECE_GROUPS):
         position = pos_idx + 1  # 1-based
 
@@ -821,19 +823,24 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
             # Already hidden by _prep_puzzle_pieces_layout — leave as-is.
             pass
         else:
-            # Un-hide: remove the hidden attribute added by the prep step.
-            if cNvPr is not None:
-                cNvPr.attrib.pop('hidden', None)
-
-            # Visible piece — update EMF colour and TextBox text
             lsn = all_lessons[pos_idx] if pos_idx < len(all_lessons) else None
+
+            if position < lesson_num:
+                # Previous lessons: un-hide statically (already done).
+                if cNvPr is not None:
+                    cNvPr.attrib.pop('hidden', None)
+            else:
+                # Current lesson's piece (position == lesson_num):
+                # Keep hidden — animation will reveal it on click.
+                current_piece_id = int(cNvPr.get('id', 0)) if cNvPr is not None else None
+
+            # Update EMF colour and TextBox text for all visible/current pieces.
             if lsn is not None:
                 skill     = lsn.get('skill_focus', 'questioning_predicting')
                 piece_txt = (lsn.get('puzzle_piece_text') or
                              lsn.get('building_block_text') or
                              str(lsn['lesson_number']))
 
-                # Swap the first <p:pic> (EMF) rId to the correct skill colour
                 target_rid = skill_to_slide_rid.get(skill)
                 if target_rid:
                     for sub in group_el:
@@ -843,10 +850,61 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
                                 blip.set(R_EMBED, target_rid)
                             break
 
-                # Update TextBox text
                 _set_group_textbox_text(group_el, piece_txt)
 
     xw(tree, sp)
+
+    # ── Click-reveal animation for current lesson's piece ─────────────────────
+    if current_piece_id:
+        sid = current_piece_id
+        nid = [1]
+        def _nid(): v = nid[0]; nid[0] += 1; return str(v)
+        root_id = _nid(); seq_id = _nid()
+        b, inn, clk, bhv = _nid(), _nid(), _nid(), _nid()
+        block = (
+            f'<p:par xmlns:p="{P}"><p:cTn id="{b}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
+            f'<p:childTnLst><p:par><p:cTn id="{inn}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:par>'
+            f'<p:cTn id="{clk}" presetID="1" presetClass="entr" '
+            f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:set><p:cBhvr>'
+            f'<p:cTn id="{bhv}" dur="1" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
+            f'<p:tgtEl><p:spTgt spid="{sid}"/></p:tgtEl>'
+            f'<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst>'
+            f'</p:cBhvr>'
+            f'<p:to><p:strVal val="visible"/></p:to>'
+            f'</p:set></p:childTnLst></p:cTn>'
+            f'</p:par></p:childTnLst></p:cTn></p:par>'
+            f'</p:childTnLst></p:cTn></p:par>'
+        )
+        timing_xml = (
+            f'<p:timing xmlns:p="{P}" xmlns:a="{A}">'
+            f'<p:tnLst><p:par><p:cTn id="{root_id}" dur="indefinite" '
+            f'restart="never" nodeType="tmRoot"><p:childTnLst>'
+            f'<p:seq concurrent="1" nextAc="seek">'
+            f'<p:cTn id="{seq_id}" dur="indefinite" nodeType="mainSeq">'
+            f'<p:childTnLst>{block}</p:childTnLst></p:cTn>'
+            f'<p:prevCondLst><p:cond evt="onPrev" delay="0">'
+            f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>'
+            f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
+            f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
+            f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
+            f'<p:bldLst>'
+            f'<p:bldP spid="{sid}" grpId="0" build="p"/>'
+            f'</p:bldLst></p:timing>'
+        )
+        anim_tree = xr(sp)
+        anim_root = anim_tree.getroot()
+        existing = anim_root.find(f'{{{P}}}timing')
+        if existing is not None:
+            anim_root.remove(existing)
+        anim_root.append(etree.fromstring(timing_xml))
+        xw(anim_tree, sp)
+
     print(f'  [4] puzzle_pieces — {lesson_num}/{len(REG.PUZZLE_PIECE_GROUPS)} pieces')
     return sp
 
