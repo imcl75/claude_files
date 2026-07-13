@@ -44,6 +44,7 @@ from lib_ooxml import (
     xr, xw, xp, ex,
     SW, SH, next_sn, next_mn,
     strip_orphaned_media,
+    embed_fonts,
 )
 import geography_registry as REG
 from lxml import etree
@@ -1294,6 +1295,23 @@ def build_one_lesson(mtp, lesson_num, base_pptx, out_pptx):
     removed = strip_orphaned_media(work)
     if removed:
         print(f'  stripped {len(removed)} orphaned media file(s)')
+
+    # Embed Twinkl Cursive Looped so the PPTX carries its own font copy and
+    # renders correctly on machines without the font installed.
+    _twinkl_fonts = []
+    for pattern in [
+        '/sessions/*/mnt/Geographer/fonts/TwinklCursiveLooped-Regular.ttf',
+        '/sessions/*/mnt/*/fonts/TwinklCursiveLooped-Regular.ttf',
+        '/home/claude/fonts/TwinklCursiveLooped-Regular.ttf',
+    ]:
+        matches = glob.glob(pattern)
+        if matches:
+            _twinkl_fonts.append(('Twinkl Cursive Looped', matches[0]))
+            break
+    if _twinkl_fonts:
+        embed_fonts(work, _twinkl_fonts)
+    else:
+        print('  NOTE: Twinkl font not found — skipping font embedding', file=sys.stderr)
 
     os.makedirs(os.path.dirname(out_pptx) or '.', exist_ok=True)
     _patched_rezip(work, out_pptx)
