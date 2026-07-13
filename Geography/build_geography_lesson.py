@@ -868,12 +868,15 @@ def build_lo(work, base_pptx, lesson, enquiry, master_idx):
     tib   = lesson.get('why', ll.get('sc1', ''))
     isb   = lesson.get('success', ll.get('sc2', ''))
 
-    # Strip "I am learning to " prefix — the layout label already provides it.
+    # Strip "I am learning to " prefix -- the layout label already provides it.
+    # Also strip a bare leading 'to ' when MTP what field starts 'to [verb]'.
+    import re as _re_lo
     for pfx in ('I am learning to ', 'I am learning to '):
         if walt.lower().startswith(pfx.lower()):
             walt = walt[len(pfx):]
-            walt = walt[0].upper() + walt[1:] if walt else walt
             break
+    walt = _re_lo.sub(r'^to\s+', '', walt, flags=_re_lo.IGNORECASE)
+    walt = walt[0].upper() + walt[1:] if walt else walt
 
     _fill_ph(sp, 0, date)
 
