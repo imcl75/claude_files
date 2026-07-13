@@ -163,7 +163,19 @@ SKILL_DISPLAY_NAMES = {
 #   PH idx=1   — content body
 
 # ── Asset paths ───────────────────────────────────────────────────────────────
-ASSETS_ROOT = '/Users/innes/Pictures/PPTX Slide assets/Geographer'
+# Resolve at import time: the sandbox mounts the user's folder under a
+# session-specific UUID path, so we glob for it first, then fall back to
+# the real macOS path (which works when running outside the sandbox).
+import glob as _glob, os as _os
+_ASSETS_CANDIDATES = [
+    '/sessions/*/mnt/Geographer',
+    '/Users/innes/Pictures/PPTX Slide assets/Geographer',
+]
+ASSETS_ROOT = next(
+    (p for _pat in _ASSETS_CANDIDATES
+       for p in _glob.glob(_pat) if _os.path.isdir(p)),
+    '/Users/innes/Pictures/PPTX Slide assets/Geographer',
+)
 
 
 # ── Per-concept progression strips ────────────────────────────────────────────
