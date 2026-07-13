@@ -36,12 +36,13 @@ for _p in [_THIS,
 
 from lib_ooxml import (
     P, A, R, PKG,
+    IMG_REL,
     unzip, rezip, clear_slides, build_layout_map,
     find_slide_by_anchor, clone,
     get_spTree, save,
     add_img, animate,
     xr, xw, xp, ex,
-    SW, SH, next_sn,
+    SW, SH, next_sn, next_mn,
     strip_orphaned_media,
 )
 import geography_registry as REG
@@ -484,6 +485,49 @@ def build_concepts_skills(work, base_pptx, lesson, enquiry, master_idx):
     return sp
 
 
+def _add_strip_img(sp, rp, work, img_path, x, y, w, h, sid):
+    """Place a strip image filling EXACTLY (x, y, w, h) — no aspect-ratio preservation.
+    Uses <a:stretch><a:fillRect/></a:stretch> so PowerPoint stretches the bitmap
+    to fill the box, matching the w×h dimensions set on the xfrm ext element."""
+    import re as _re
+    n = next_mn(work)
+    extn = Path(img_path).suffix.lower()
+    nm = f'image{n}{extn}'
+    md = Path(work) / 'ppt' / 'media'
+    md.mkdir(exist_ok=True)
+    shutil.copy(img_path, md / nm)
+
+    rt = xr(rp); rr = rt.getroot()
+    ex_rids = {int(m.group(1)) for el in rr
+               for m in [_re.match(r'rId(\d+)', el.get('Id', ''))] if m}
+    rn = max(ex_rids, default=0) + 1
+    rid = f'rId{rn}'
+    etree.SubElement(rr, 'Relationship',
+                     {'Id': rid, 'Type': IMG_REL, 'Target': f'../media/{nm}'})
+    rt.write(rp, xml_declaration=True, encoding='UTF-8', standalone=True)
+
+    st = xr(sp)
+    spTree = st.getroot().find(f'.//{{{P}}}spTree')
+    spTree.append(xp(
+        f'<p:pic xmlns:p="{P}" xmlns:a="{A}" xmlns:r="{R}">'
+        f'<p:nvPicPr>'
+        f'<p:cNvPr id="{sid}" name="Strip{sid}"/>'
+        f'<p:cNvPicPr><a:picLocks noChangeAspect="0"/></p:cNvPicPr>'
+        f'<p:nvPr/>'
+        f'</p:nvPicPr>'
+        f'<p:blipFill>'
+        f'<a:blip r:embed="{rid}"/>'
+        f'<a:stretch><a:fillRect/></a:stretch>'
+        f'</p:blipFill>'
+        f'<p:spPr>'
+        f'<a:xfrm><a:off x="{x}" y="{y}"/><a:ext cx="{w}" cy="{h}"/></a:xfrm>'
+        f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+        f'</p:spPr>'
+        f'</p:pic>'
+    ))
+    st.write(sp, xml_declaration=True, encoding='UTF-8', standalone=True)
+
+
 def build_progression(work, base_pptx, lesson, enquiry, master_idx):
     """
     Slide 3: Progression — animated, one strip per year group (Y1–Y6).
@@ -509,8 +553,10 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
     # ── Slide geometry ────────────────────────────────────────────────────────
     # Widescreen 16:9 — 12192000 × 6858000 EMU
     # Left panel: ~28% of width (icons + text), right panel: strips
+    # The Revisit layout's globe + "Revisit" title occupies the top ~950 000 EMU.
+    # All content must start below that to avoid overlap.
     LEFT_W   = 3200000   # left panel width (~2.6 in)
-    MARGIN_T = 500000    # top margin for content
+    MARGIN_T = 1050000   # top margin — below the Revisit header
     MARGIN_B = 200000    # bottom margin
     STRIP_X  = LEFT_W + 200000   # strips start after left panel + gap
     STRIP_W  = SW - STRIP_X - 150000
@@ -611,8 +657,8 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
 
         # Y6 sits at MARGIN_T, Y1 sits at bottom: y = MARGIN_T + (6-yr)*STRIP_H
         y_pos = MARGIN_T + (6 - yr) * STRIP_H
-        add_img(sp, rp, work, strip_path,
-                STRIP_X, y_pos, STRIP_W, STRIP_H, strip_id)
+        _add_strip_img(sp, rp, work, strip_path,
+                       STRIP_X, y_pos, STRIP_W, STRIP_H, strip_id)
         strip_shape_ids.append(strip_id)
         strip_id += 1
 
@@ -807,9 +853,11 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
 def build_lo(work, base_pptx, lesson, enquiry, master_idx):
     """
     Slide 5: Learning Objective (KS2 What, Why, How)
-    Layout provides: three cloud callouts, rounded-rectangle panels,
-    'I am learning to…', 'This is so…', 'I will show this by…' labels.
-    Slide populates: PH idx=0 (date), 10 (WALT), 13 (TIB), 14 (ISB).
+    Layout provides: three cloud callouts, rounded-rectangle panels, and
+    static labels 'I am learning to...', 'This is so...', 'I will be successful by...'.
+    Content written as explicit text boxes below each label.
+    Positions from user-confirmed PPTX edit (2026-07-13).
+    Font: Twinkl Cursive Looped 14pt + normAutofit.
     """
     lo_layout = REG.lo_layout_name(master_idx)
     sp, rp = fresh_geo(work, lo_layout, master_idx)
@@ -820,14 +868,55 @@ def build_lo(work, base_pptx, lesson, enquiry, master_idx):
     tib   = lesson.get('why', ll.get('sc1', ''))
     isb   = lesson.get('success', ll.get('sc2', ''))
 
-    _fill_ph(sp, 0,  date)
-    _fill_ph(sp, 10, walt)
-    _fill_ph(sp, 13, tib)
-    _fill_ph(sp, 14, isb)
+    # Strip "I am learning to " prefix — the layout label already provides it.
+    for pfx in ('I am learning to ', 'I am learning to '):
+        if walt.lower().startswith(pfx.lower()):
+            walt = walt[len(pfx):]
+            walt = walt[0].upper() + walt[1:] if walt else walt
+            break
+
+    _fill_ph(sp, 0, date)
+
+    # ── Explicit content text boxes below each panel label ────────────────────
+    # y=4 719 286 sits below the static labels in each rounded-rectangle panel.
+    # sz=1400 (14 pt) + normAutofit handles Twinkl Cursive Looped which runs
+    # ~20% wider than screen render fonts, preventing bottom overflow.
+    LO_BOXES = [
+        (698500,   4719286, 2559050, 1698625, walt),  # panel 1 - WALT
+        (4877594,  4719287, 2559050, 1698625, tib),   # panel 2 - TIB
+        (9056688,  4719287, 2559050, 1698625, isb),   # panel 3 - ISB
+    ]
+
+    t, st = get_spTree(sp)
+    for box_id, (bx, by, bcx, bcy, txt) in enumerate(LO_BOXES, start=501):
+        sp_xml = (
+            f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+            f'<p:nvSpPr>'
+            f'<p:cNvPr id="{box_id}" name="LOContent{box_id}"/>'
+            f'<p:cNvSpPr txBox="1"/><p:nvPr/>'
+            f'</p:nvSpPr>'
+            f'<p:spPr>'
+            f'<a:xfrm><a:off x="{bx}" y="{by}"/><a:ext cx="{bcx}" cy="{bcy}"/></a:xfrm>'
+            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+            f'<a:noFill/>'
+            f'</p:spPr>'
+            f'<p:txBody>'
+            f'<a:bodyPr wrap="square" anchor="t"><a:normAutofit/></a:bodyPr>'
+            f'<a:lstStyle/>'
+            f'<a:p><a:r>'
+            f'<a:rPr lang="en-GB" sz="1400" dirty="0">'
+            f'<a:latin typeface="Twinkl Cursive Looped"/>'
+            f'</a:rPr>'
+            f'<a:t>{ex(txt)}</a:t>'
+            f'</a:r></a:p>'
+            f'</p:txBody>'
+            f'</p:sp>'
+        )
+        st.append(etree.fromstring(sp_xml))
+    save(t, sp)
 
     print('  [5] lo')
     return sp
-
 
 def build_kwl(work, base_pptx, lesson, enquiry, master_idx):
     """
@@ -845,10 +934,13 @@ def build_kwl(work, base_pptx, lesson, enquiry, master_idx):
              'What would I like to find out?')
 
     # 2-column table dimensions (EMU, 12192000 × 6858000 slide)
+    # tbl_y must clear the Hook layout's title placeholder, which renders the
+    # two-line question at the layout's native font size (~2000 EMU per point).
+    # 2 200 000 EMU ≈ 1.75 in gives comfortable clearance below the title.
     tbl_x  = 457200      # ~0.5 in from left
-    tbl_y  = 1600000     # below title area
+    tbl_y  = 2200000     # below title area (increased from 1 600 000)
     tbl_cx = 11277600    # ~12.4 in wide (slide width minus margins)
-    tbl_cy = 4800000     # remaining height
+    tbl_cy = SH - tbl_y - 200000   # fill remaining height with a small bottom margin
     col_w  = tbl_cx // 2
     hdr_h  = 500000      # header row
     body_h = tbl_cy - hdr_h
