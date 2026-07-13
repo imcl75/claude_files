@@ -395,11 +395,16 @@ def _fill_ph(sp_path, ph_idx, text, sz=None, bold=False, color=None):
     if not paras_xml:
         paras_xml = f'<a:p><a:endParaRPr lang="en-GB" dirty="0"/></a:p>'
 
-    # ph element — title uses type="title", body uses idx only
+    # ph element — title uses type="title"; body must include type="body" so
+    # PowerPoint matches the layout PH exactly (triggers icon-group suppression
+    # and other layout-level behaviours that rely on PH identity matching).
     if ph_idx == 0:
-        ph_xml = '<p:ph type="title"/>'
+        ph_xml  = '<p:ph type="title"/>'
+        body_pr = '<a:bodyPr/>'
     else:
-        ph_xml = f'<p:ph idx="{ph_idx}"/>'
+        ph_xml  = f'<p:ph type="body" idx="{ph_idx}"/>'
+        # normAutofit prevents text from overflowing the placeholder box
+        body_pr = '<a:bodyPr><a:normAutofit/></a:bodyPr>'
 
     sp_xml = (
         f'<p:sp xmlns:p="{P}" xmlns:a="{A}" xmlns:r="{R}">'
@@ -409,7 +414,7 @@ def _fill_ph(sp_path, ph_idx, text, sz=None, bold=False, color=None):
         f'<p:nvPr>{ph_xml}</p:nvPr>'
         f'</p:nvSpPr>'
         f'<p:spPr/>'
-        f'<p:txBody><a:bodyPr/><a:lstStyle/>'
+        f'<p:txBody>{body_pr}<a:lstStyle/>'
         f'{paras_xml}'
         f'</p:txBody>'
         f'</p:sp>'
@@ -482,32 +487,83 @@ def build_concepts_skills(work, base_pptx, lesson, enquiry, master_idx):
 def build_progression(work, base_pptx, lesson, enquiry, master_idx):
     """
     Slide 3: Progression
-    No Progression layout exists in the template.  Falls back to displaying
-    the geo-progression.png static asset full-bleed on a Revisit slide.
+    No Progression layout exists in the template.  Displays a per-concept PNG
+    (progression_{concept}.png in ASSETS_ROOT) full-bleed on a Revisit slide.
+
+    To update progression images: drop a new PNG named
+    'progression_{concept}.png' into the ASSETS_ROOT folder.
+    No code change required.
     """
     sp, rp = fresh_geo(work, 'Revisit', master_idx)
 
-    prog_path = REG.STATIC_ASSETS.get('progression', '')
+    sc        = lesson.get('substantive_concept', REG.DEFAULT_SUBSTANTIVE_CONCEPT)
+    prog_path = REG.progression_image_path(sc)
+
+    # Fall back to generic progression image if the per-concept one is missing
+    if not os.path.exists(prog_path):
+        prog_path = REG.STATIC_ASSETS.get('progression', '')
+
     if prog_path and os.path.exists(prog_path):
         add_img(sp, rp, work, prog_path, 0, 0, SW, SH, 10)
     else:
         _fill_ph(sp, 10, 'Geographer Progression')
-        print(f'  NOTE: progression image not found at {prog_path}', file=sys.stderr)
+        print(f'  NOTE: progression image not found for concept "{sc}" '
+              f'(expected: {REG.progression_image_path(sc)})', file=sys.stderr)
 
     print('  [3] progression')
     return sp
+
+
+def _prep_puzzle_pieces_layout(work, master_idx):
+    """
+    Modify the Puzzle Pieces layout in the work directory before cloning:
+      1. Set hidden="1" on all 15 piece groups.
+      2. Remove the <p:timing> element.
+
+    The layout's timing element makes all pieces appear via visibility
+    animations, meaning without this fix a cloned slide would show pieces
+    both statically (from the cloned spTree) AND from the layout's animation.
+    By hiding all groups here and removing timing, the cloned spTree starts
+    with all pieces hidden; build_puzzle_pieces then selectively un-hides
+    positions 1..N.
+    """
+    lf = _get_layout_file('Puzzle Pieces', master_idx)
+    layout_path = f'{work}/ppt/slideLayouts/{lf}'
+
+    tree = xr(layout_path)
+    root = tree.getroot()
+
+    # Set hidden="1" on all piece groups
+    for grpSp in root.iter(f'{{{P}}}grpSp'):
+        cNvPr = grpSp.find(f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr')
+        if cNvPr is None:
+            continue
+        if cNvPr.get('name', '') in REG.PUZZLE_PIECE_GROUPS:
+            cNvPr.set('hidden', '1')
+
+    # Remove timing (15 click-reveal entrance effects)
+    timing = root.find(f'{{{P}}}timing')
+    if timing is not None:
+        root.remove(timing)
+
+    xw(tree, layout_path)
 
 
 def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_idx):
     """
     Slide 4: Puzzle Pieces
     Clones the Puzzle Pieces layout into the slide so groups can be
-    hidden (sp:hidden) and their TextBox/EMF updated directly.
+    un-hidden and their TextBox/EMF updated directly.
 
-    Piece positions 1..N are shown; positions N+1..15 are hidden.
+    Piece positions 1..N are shown; positions N+1..15 remain hidden.
     Each visible piece swaps its EMF rId to the lesson's skill_focus colour.
     """
     lesson_num = lesson['lesson_number']
+
+    # Pre-process the layout: hide all groups, remove timing animation.
+    # After this, clone_from_layout copies groups that all start hidden.
+    _prep_puzzle_pieces_layout(work, master_idx)
+
     sp, rp, rId_map = clone_from_layout(work, 'Puzzle Pieces', master_idx)
 
     # Build skill → slide rId lookup (from layout rIds → new slide rIds)
@@ -539,12 +595,16 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
                   file=sys.stderr)
             continue
 
+        cNvPr = group_el.find(f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr')
+
         if position > lesson_num:
-            # Hide this piece — set hidden="1" on the group's cNvPr
-            cNvPr = group_el.find(f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr')
-            if cNvPr is not None:
-                cNvPr.set('hidden', '1')
+            # Already hidden by _prep_puzzle_pieces_layout — leave as-is.
+            pass
         else:
+            # Un-hide: remove the hidden attribute added by the prep step.
+            if cNvPr is not None:
+                cNvPr.attrib.pop('hidden', None)
+
             # Visible piece — update EMF colour and TextBox text
             lsn = all_lessons[pos_idx] if pos_idx < len(all_lessons) else None
             if lsn is not None:
@@ -599,17 +659,94 @@ def build_lo(work, base_pptx, lesson, enquiry, master_idx):
 def build_kwl(work, base_pptx, lesson, enquiry, master_idx):
     """
     Slide 6 (Lesson 1 only): KWL — What do we know? Want to know?
-    No dedicated KWL layout exists; uses Hook as the base (title + content).
+    Matches the historians KWL setup: title question + 2-column table
+    drawn as a native PPTX table (a:tbl).
+    Layout: Hook (title PH + themed background from master).
     """
+    TBL_URI = 'http://schemas.openxmlformats.org/drawingml/2006/table'
+
     sp, rp = fresh_geo(work, 'Hook', master_idx)
 
-    _fill_ph(sp, 0, 'What do I know? What do I want to find out?')
-    _fill_ph(
-        sp, 1,
-        'What do I already know about this topic?\n'
-        '\n'
-        'What would I like to find out?'
+    _fill_ph(sp, 0,
+             'What knowledge am I bringing to this enquiry?\n'
+             'What would I like to find out?')
+
+    # 2-column table dimensions (EMU, 12192000 × 6858000 slide)
+    tbl_x  = 457200      # ~0.5 in from left
+    tbl_y  = 1600000     # below title area
+    tbl_cx = 11277600    # ~12.4 in wide (slide width minus margins)
+    tbl_cy = 4800000     # remaining height
+    col_w  = tbl_cx // 2
+    hdr_h  = 500000      # header row
+    body_h = tbl_cy - hdr_h
+
+    def _hdr_cell(text):
+        return (
+            f'<a:tc xmlns:a="{A}">'
+            f'<a:txBody><a:bodyPr/><a:lstStyle/>'
+            f'<a:p><a:r>'
+            f'<a:rPr lang="en-GB" sz="2000" b="1" dirty="0">'
+            f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
+            f'</a:rPr>'
+            f'<a:t>{ex(text)}</a:t>'
+            f'</a:r></a:p>'
+            f'</a:txBody>'
+            f'<a:tcPr marL="91440" marT="45720">'
+            f'<a:solidFill><a:srgbClr val="1798D3"/></a:solidFill>'
+            f'</a:tcPr>'
+            f'</a:tc>'
+        )
+
+    def _body_cell():
+        return (
+            f'<a:tc xmlns:a="{A}">'
+            f'<a:txBody><a:bodyPr/><a:lstStyle/>'
+            f'<a:p><a:endParaRPr lang="en-GB" dirty="0"/></a:p>'
+            f'</a:txBody>'
+            f'<a:tcPr marL="91440" marT="45720">'
+            f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
+            f'</a:tcPr>'
+            f'</a:tc>'
+        )
+
+    tbl_xml = (
+        f'<p:graphicFrame xmlns:p="{P}" xmlns:a="{A}">'
+        f'<p:nvGraphicFramePr>'
+        f'<p:cNvPr id="200" name="KWL Table"/>'
+        f'<p:cNvGraphicFramePr>'
+        f'<a:graphicFrameLocks noGrp="1"/>'
+        f'</p:cNvGraphicFramePr>'
+        f'<p:nvPr/>'
+        f'</p:nvGraphicFramePr>'
+        f'<p:xfrm>'
+        f'<a:off x="{tbl_x}" y="{tbl_y}"/>'
+        f'<a:ext cx="{tbl_cx}" cy="{tbl_cy}"/>'
+        f'</p:xfrm>'
+        f'<a:graphic>'
+        f'<a:graphicData uri="{TBL_URI}">'
+        f'<a:tbl>'
+        f'<a:tblPr firstRow="1"/>'
+        f'<a:tblGrid>'
+        f'<a:gridCol w="{col_w}"/>'
+        f'<a:gridCol w="{col_w}"/>'
+        f'</a:tblGrid>'
+        f'<a:tr h="{hdr_h}">'
+        f'{_hdr_cell("Prior Knowledge and Skill")}'
+        f'{_hdr_cell("I am curious about...")}'
+        f'</a:tr>'
+        f'<a:tr h="{body_h}">'
+        f'{_body_cell()}'
+        f'{_body_cell()}'
+        f'</a:tr>'
+        f'</a:tbl>'
+        f'</a:graphicData>'
+        f'</a:graphic>'
+        f'</p:graphicFrame>'
     )
+
+    t, st = get_spTree(sp)
+    st.append(etree.fromstring(tbl_xml))
+    save(t, sp)
 
     print('  [6] kwl')
     return sp
