@@ -93,27 +93,104 @@ def teaching_layout(slide_type, master_idx):
 #   2. <p:pic> or nested <p:grpSp> — the skill icon
 #   3. <p:sp>  — TextBox for puzzle_piece_text
 #
-# Group 16 is a decorative background element — always kept visible.
+# Group names differ across masters — confirmed by XML inspection 2026-07-13.
+# Group 16 (master 0) is a decorative background element — kept visible.
+# Masters 1–4 layouts do not have this decorative group.
 
-PUZZLE_PIECE_GROUPS = [
-    'Group 24',   # pos 1  bottom-left
-    'Group 14',   # pos 2
-    'Group 4',    # pos 3
-    'Group 20',   # pos 4
-    'Group 35',   # pos 5  bottom-right
-    'Group 43',   # pos 6  middle-left
-    'Group 39',   # pos 7
-    'Group 47',   # pos 8
-    'Group 51',   # pos 9
-    'Group 55',   # pos 10
-    'Group 71',   # pos 11 middle-right
-    'Group 63',   # pos 12 top (starts at col 3)
-    'Group 59',   # pos 13
-    'Group 67',   # pos 14
-    'Group 75',   # pos 15 top-right
-]
+# Per-master puzzle piece group names, in position order (pos 1 = bottom-left).
+# Keyed by master index (0–4).
+PUZZLE_PIECE_GROUPS_BY_MASTER = {
+    0: [
+        'Group 24',   # pos 1  bottom-left
+        'Group 14',   # pos 2
+        'Group 4',    # pos 3
+        'Group 20',   # pos 4
+        'Group 35',   # pos 5  bottom-right
+        'Group 43',   # pos 6  middle-left
+        'Group 39',   # pos 7
+        'Group 47',   # pos 8
+        'Group 51',   # pos 9
+        'Group 55',   # pos 10
+        'Group 71',   # pos 11 middle-right
+        'Group 63',   # pos 12 top
+        'Group 59',   # pos 13
+        'Group 67',   # pos 14
+        'Group 75',   # pos 15 top-right
+    ],
+    1: [
+        'Group 8',    # pos 1  bottom-left
+        'Group 12',   # pos 2
+        'Group 16',   # pos 3
+        'Group 22',   # pos 4
+        'Group 26',   # pos 5
+        'Group 30',   # pos 6
+        'Group 35',   # pos 7
+        'Group 39',   # pos 8
+        'Group 43',   # pos 9
+        'Group 47',   # pos 10
+        'Group 51',   # pos 11
+        'Group 55',   # pos 12
+        'Group 59',   # pos 13
+        'Group 63',   # pos 14
+        'Group 1',    # pos 15
+    ],
+    2: [
+        'Group 7',    # pos 1  (Layout 30 / slideMaster3)
+        'Group 12',   # pos 2
+        'Group 16',   # pos 3
+        'Group 22',   # pos 4
+        'Group 26',   # pos 5
+        'Group 30',   # pos 6
+        'Group 35',   # pos 7
+        'Group 39',   # pos 8
+        'Group 43',   # pos 9
+        'Group 47',   # pos 10
+        'Group 51',   # pos 11
+        'Group 55',   # pos 12
+        'Group 59',   # pos 13
+        'Group 63',   # pos 14
+        'Group 1',    # pos 15
+    ],
+    3: [
+        'Group 7',    # pos 1
+        'Group 12',   # pos 2
+        'Group 16',   # pos 3
+        'Group 22',   # pos 4
+        'Group 26',   # pos 5
+        'Group 30',   # pos 6
+        'Group 35',   # pos 7
+        'Group 39',   # pos 8
+        'Group 43',   # pos 9
+        'Group 47',   # pos 10
+        'Group 51',   # pos 11
+        'Group 55',   # pos 12
+        'Group 59',   # pos 13
+        'Group 63',   # pos 14
+        'Group 1',    # pos 15
+    ],
+    4: [
+        'Group 7',    # pos 1
+        'Group 12',   # pos 2
+        'Group 16',   # pos 3
+        'Group 22',   # pos 4
+        'Group 26',   # pos 5
+        'Group 30',   # pos 6
+        'Group 35',   # pos 7
+        'Group 39',   # pos 8
+        'Group 43',   # pos 9
+        'Group 47',   # pos 10
+        'Group 51',   # pos 11
+        'Group 55',   # pos 12
+        'Group 59',   # pos 13
+        'Group 63',   # pos 14
+        'Group 1',    # pos 15
+    ],
+}
 
-PUZZLE_DECORATIVE_GROUPS = {'Group 16'}
+# Backwards-compatible alias used by build_geography_lesson (master 0 default)
+PUZZLE_PIECE_GROUPS = PUZZLE_PIECE_GROUPS_BY_MASTER[0]
+
+PUZZLE_DECORATIVE_GROUPS = {'Group 16'}   # master 0 only
 
 # skill_focus → rId in the Puzzle Pieces LAYOUT's .rels file
 # These rIds resolve to the layout's own media files (image12.emf etc.)
