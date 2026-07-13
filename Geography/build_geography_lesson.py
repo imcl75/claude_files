@@ -593,8 +593,11 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
 
         icon_y += icon_size + 60000   # gap between icon rows
 
-    # ── Right panel — 6 year-group strips (placed, then animated) ────────────
-    strip_shape_ids = []
+    # ── Right panel — 6 year-group strips ────────────────────────────────────
+    # Visual layout: Y6 at top, Y5 below, ..., Y1 at bottom.
+    # Animation order: Y1 reveals first (bottom), Y6 reveals last (top).
+    # So we place Y6→Y1 top-to-bottom, then animate in reverse (Y1 first).
+    strip_shape_ids = []   # index 0 = Y1, index 5 = Y6 (matches year group)
     strip_id = 400
 
     for yr in range(1, 7):
@@ -606,23 +609,27 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
             strip_id += 1
             continue
 
-        y_pos = MARGIN_T + (yr - 1) * STRIP_H
+        # Y6 sits at MARGIN_T, Y1 sits at bottom: y = MARGIN_T + (6-yr)*STRIP_H
+        y_pos = MARGIN_T + (6 - yr) * STRIP_H
         add_img(sp, rp, work, strip_path,
                 STRIP_X, y_pos, STRIP_W, STRIP_H, strip_id)
         strip_shape_ids.append(strip_id)
         strip_id += 1
 
-    # ── Animation — each strip appears on its own click ──────────────────────
+    # ── Animation — reveal bottom-to-top (Y1 first, Y6 last) ─────────────────
+    # strip_shape_ids[0] = Y1 (bottom), strip_shape_ids[5] = Y6 (top)
     visible_strips = [(i, sid) for i, sid in enumerate(strip_shape_ids)
                       if sid is not None]
+    # Animate in ascending order (Y1→Y6) so bottom strip appears first
+    visible_strips_anim = sorted(visible_strips, key=lambda x: x[0])
 
-    if visible_strips:
+    if visible_strips_anim:
         nid = [1]
         def _nid(): v = nid[0]; nid[0] += 1; return str(v)
 
         root_id = _nid(); seq_id = _nid()
         blocks = []
-        for _, sid in visible_strips:
+        for _, sid in visible_strips_anim:
             b, inn, clk, bhv = _nid(), _nid(), _nid(), _nid()
             blocks.append(
                 f'<p:par xmlns:p="{P}"><p:cTn id="{b}" fill="hold">'
@@ -662,7 +669,7 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
             f'<p:bldLst>'
             + ''.join(
                 f'<p:bldP spid="{sid}" grpId="0" build="p"/>'
-                for _, sid in visible_strips
+                for _, sid in visible_strips_anim
             )
             + f'</p:bldLst></p:timing>'
         )
