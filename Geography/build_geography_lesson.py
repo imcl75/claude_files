@@ -985,14 +985,15 @@ def build_kwl(work, base_pptx, lesson, enquiry, master_idx):
     Slide 6 (Lesson 1 only): KWL — What do we know? Want to know?
     Matches the historians KWL setup: title question + 2-column table
     drawn as a native PPTX table (a:tbl).
-    Layout: Hook (title PH + themed background from master).
+    Layout: You Do Trio (shows activity badge, title PH + themed background).
     """
     TBL_URI = 'http://schemas.openxmlformats.org/drawingml/2006/table'
 
-    sp, rp = fresh_geo(work, 'Hook', master_idx)
+    layout_name = REG.teaching_layout('you_do_trio', master_idx)
+    sp, rp = fresh_geo(work, layout_name, master_idx)
 
     _fill_ph(sp, 0,
-             'What knowledge am I bringing to this enquiry?\n'
+             'What knowledge am I bringing to this enquiry? '
              'What would I like to find out?')
 
     # 2-column table dimensions (EMU, 12192000 × 6858000 slide)
@@ -1082,10 +1083,11 @@ def build_kwl(work, base_pptx, lesson, enquiry, master_idx):
 def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
     """
     Slide 6 (Lessons 2+): Recap Quiz — Q clicks in, A clicks in.
-    No dedicated Quiz layout; uses Hook as the base.
+    Layout: You Do (shows activity badge, title PH idx=0 + body PH idx=1).
     Animation: each question paragraph then each answer paragraph fires on click.
     """
-    sp, rp = fresh_geo(work, 'Hook', master_idx)
+    layout_name = REG.teaching_layout('you_do', master_idx)
+    sp, rp = fresh_geo(work, layout_name, master_idx)
 
     _fill_ph(sp, 0, 'Recap Quiz')
 
@@ -1220,19 +1222,131 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
 def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
     """
     Slide 7: Key Vocabulary
-    Layout provides: 'Vocabulary' header, decorative group.
-    Slide populates: PH idx=10 with word / definition pairs.
+    Layout: We Do (shows activity badge; PH idx=0 = title, PH idx=1 = body).
+    Animation: click → word 1, click → definition 1, click → word 2, etc.
+    Each word and each definition is a separate paragraph; all start hidden
+    and reveal one per click using the same style.visibility pattern as
+    the recap quiz.
     """
-    sp, rp = fresh_geo(work, 'Vocabulary', master_idx)
+    layout_name = REG.teaching_layout('we_do', master_idx)
+    sp, rp = fresh_geo(work, layout_name, master_idx)
+
+    _fill_ph(sp, 0, 'Key Vocabulary')
 
     vocab = lesson.get('vocabulary', [])[:5]
-    if vocab:
-        lines = []
-        for item in vocab:
-            lines.append(f"{item.get('word', '')}: {item.get('definition', '')}")
-        _fill_ph(sp, 10, '\n'.join(lines))
+    if not vocab:
+        print('  [7] vocabulary (empty)')
+        return sp
 
-    print('  [7] vocabulary')
+    content_id = 201  # fixed shape ID for the vocabulary content box
+
+    def _word_para(word):
+        p = etree.Element(f'{{{A}}}p')
+        r = etree.SubElement(p, f'{{{A}}}r')
+        rPr = etree.SubElement(r, f'{{{A}}}rPr')
+        rPr.set('lang', 'en-GB'); rPr.set('sz', '2200'); rPr.set('b', '1')
+        rPr.set('dirty', '0')
+        t_ = etree.SubElement(r, f'{{{A}}}t'); t_.text = word
+        return p
+
+    def _def_para(definition):
+        p = etree.Element(f'{{{A}}}p')
+        pPr = etree.SubElement(p, f'{{{A}}}pPr')
+        pPr.set('marL', '457200')
+        r = etree.SubElement(p, f'{{{A}}}r')
+        rPr = etree.SubElement(r, f'{{{A}}}rPr')
+        rPr.set('lang', 'en-GB'); rPr.set('sz', '1800'); rPr.set('dirty', '0')
+        fill = etree.SubElement(rPr, f'{{{A}}}solidFill')
+        clr  = etree.SubElement(fill, f'{{{A}}}srgbClr')
+        clr.set('val', '1A5C2A')
+        t_ = etree.SubElement(r, f'{{{A}}}t'); t_.text = definition
+        return p
+
+    sp_el = etree.fromstring(
+        f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+        f'<p:nvSpPr>'
+        f'<p:cNvPr id="{content_id}" name="VocabContent"/>'
+        f'<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>'
+        f'<p:nvPr><p:ph idx="1"/></p:nvPr>'
+        f'</p:nvSpPr>'
+        f'<p:spPr/>'
+        f'<p:txBody><a:bodyPr/><a:lstStyle/></p:txBody>'
+        f'</p:sp>'
+    )
+    txBody = sp_el.find(f'.//{{{P}}}txBody')
+
+    animated_para_idxs = []
+    para_global = 0
+
+    for i, item in enumerate(vocab):
+        txBody.append(_word_para(item.get('word', '')))
+        animated_para_idxs.append(para_global); para_global += 1
+        txBody.append(_def_para(item.get('definition', '')))
+        animated_para_idxs.append(para_global); para_global += 1
+        if i < len(vocab) - 1:
+            spacer = etree.Element(f'{{{A}}}p')
+            etree.SubElement(spacer, f'{{{A}}}endParaRPr').set('lang', 'en-GB')
+            txBody.append(spacer)
+            para_global += 1
+
+    t, st = get_spTree(sp)
+    st.append(sp_el)
+    save(t, sp)
+
+    # Paragraph-level click animation — same pattern as recap quiz
+    nid_counter = [1]
+    def nid(): v = nid_counter[0]; nid_counter[0] += 1; return str(v)
+
+    root_id = nid(); seq_id = nid()
+    blocks  = []
+    for pi in animated_para_idxs:
+        b, inn, clk, bhv = nid(), nid(), nid(), nid()
+        blocks.append(
+            f'<p:par xmlns:p="{P}"><p:cTn id="{b}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
+            f'<p:childTnLst><p:par><p:cTn id="{inn}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:par><p:cTn id="{clk}" presetID="1" presetClass="entr" '
+            f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:set><p:cBhvr>'
+            f'<p:cTn id="{bhv}" dur="1" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
+            f'<p:tgtEl><p:spTgt spid="{content_id}"><p:txEl>'
+            f'<p:pRg st="{pi}" end="{pi}"/></p:txEl></p:spTgt></p:tgtEl>'
+            f'<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst>'
+            f'</p:cBhvr><p:to><p:strVal val="visible"/></p:to></p:set>'
+            f'</p:childTnLst></p:cTn></p:par>'
+            f'</p:childTnLst></p:cTn></p:par>'
+            f'</p:childTnLst></p:cTn></p:par>'
+        )
+
+    timing_xml = (
+        f'<p:timing xmlns:p="{P}" xmlns:a="{A}">'
+        f'<p:tnLst><p:par><p:cTn id="{root_id}" dur="indefinite" restart="never" '
+        f'nodeType="tmRoot"><p:childTnLst>'
+        f'<p:seq concurrent="1" nextAc="seek">'
+        f'<p:cTn id="{seq_id}" dur="indefinite" nodeType="mainSeq">'
+        f'<p:childTnLst>{"".join(blocks)}</p:childTnLst></p:cTn>'
+        f'<p:prevCondLst><p:cond evt="onPrev" delay="0">'
+        f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>'
+        f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
+        f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
+        f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
+        f'<p:bldLst>'
+        f'<p:bldP spid="{content_id}" grpId="0" build="p"/>'
+        f'</p:bldLst></p:timing>'
+    )
+
+    tree = xr(sp)
+    sld_root = tree.getroot()
+    existing = sld_root.find(f'{{{P}}}timing')
+    if existing is not None:
+        sld_root.remove(existing)
+    sld_root.append(etree.fromstring(timing_xml))
+    xw(tree, sp)
+
+    print('  [7] vocabulary (animated)')
     return sp
 
 
