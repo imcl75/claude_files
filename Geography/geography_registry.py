@@ -168,19 +168,31 @@ ASSETS_ROOT = '/Users/innes/Pictures/PPTX Slide assets/Geographer'
 
 # ── Per-concept progression strips ────────────────────────────────────────────
 # 6 strip images per concept, one per year group (Y1–Y6), animated on click.
-# Drop files into ASSETS_ROOT using the naming convention below.
-# No code change required — the builder looks up by convention.
+# Stored in concept-specific subfolders under ASSETS_ROOT.
 #
-# Expected file names (30 total, 6 per concept):
-#   geo-prog-place_space_scale-y1.png … geo-prog-place_space_scale-y6.png
-#   geo-prog-human_geography-y1.png   … geo-prog-human_geography-y6.png
-#   geo-prog-cultural_awareness-y1.png … geo-prog-cultural_awareness-y6.png
-#   geo-prog-physical_geography-y1.png … geo-prog-physical_geography-y6.png
-#   geo-prog-environmental_impact-y1.png … geo-prog-environmental_impact-y6.png
+# Folder / filename structure (confirmed from disk 2026-07-13):
+#   Place Space Scale/PSS-geo-prog-y{N}.png
+#   Human Geography/Hum-geo-prog-y{N}.png
+#   Culture/Culture-prog-y{N}.png
+#   Physical Geography/Physical-geo-prog-y{N}.png
+#   Environment/Env-prog-y{N}.png
+
+PROGRESSION_STRIP_FOLDERS = {
+    'place_space_scale':    ('Place Space Scale', 'PSS-geo-prog-y{}.png'),
+    'human_geography':      ('Human Geography',   'Hum-geo-prog-y{}.png'),
+    'cultural_awareness':   ('Culture',           'Culture-prog-y{}.png'),
+    'physical_geography':   ('Physical Geography','Physical-geo-prog-y{}.png'),
+    'environmental_impact': ('Environment',       'Env-prog-y{}.png'),
+}
 
 def progression_strip_path(substantive_concept, year_group):
     """Return the path for a concept's year-group strip image (year_group = 1–6)."""
-    return f'{ASSETS_ROOT}/geo-prog-{substantive_concept}-y{year_group}.png'
+    folder, template = PROGRESSION_STRIP_FOLDERS.get(
+        substantive_concept,
+        ('', f'geo-prog-{substantive_concept}-y{{}}.png')
+    )
+    filename = template.format(year_group)
+    return f'{ASSETS_ROOT}/{folder}/{filename}' if folder else f'{ASSETS_ROOT}/{filename}'
 
 
 # ── Concept titles (used on the progression slide header) ────────────────────
