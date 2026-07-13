@@ -166,24 +166,91 @@ SKILL_DISPLAY_NAMES = {
 ASSETS_ROOT = '/Users/innes/Pictures/PPTX Slide assets/Geographer'
 
 
-# ── Per-concept progression images ────────────────────────────────────────────
-# One complete slide-sized PNG per concept.
-# To add or update: save the PNG into ASSETS_ROOT with the name below.
-# No code change required — the builder looks up by naming convention.
+# ── Per-concept progression strips ────────────────────────────────────────────
+# 6 strip images per concept, one per year group (Y1–Y6), animated on click.
+# Drop files into ASSETS_ROOT using the naming convention below.
+# No code change required — the builder looks up by convention.
 #
-# Expected file names (drop into the Geographer folder when ready):
-#   geo-prog-place_space_scale.png
-#   geo-prog-human_geography.png
-#   geo-prog-cultural_awareness.png
-#   geo-prog-physical_geography.png
-#   geo-prog-environmental_impact.png
+# Expected file names (30 total, 6 per concept):
+#   geo-prog-place_space_scale-y1.png … geo-prog-place_space_scale-y6.png
+#   geo-prog-human_geography-y1.png   … geo-prog-human_geography-y6.png
+#   geo-prog-cultural_awareness-y1.png … geo-prog-cultural_awareness-y6.png
+#   geo-prog-physical_geography-y1.png … geo-prog-physical_geography-y6.png
+#   geo-prog-environmental_impact-y1.png … geo-prog-environmental_impact-y6.png
 
-def progression_image_path(substantive_concept):
-    """
-    Return the expected path for this concept's progression PNG.
-    Naming convention: {ASSETS_ROOT}/geo-prog-{concept}.png
-    """
-    return f'{ASSETS_ROOT}/geo-prog-{substantive_concept}.png'
+def progression_strip_path(substantive_concept, year_group):
+    """Return the path for a concept's year-group strip image (year_group = 1–6)."""
+    return f'{ASSETS_ROOT}/geo-prog-{substantive_concept}-y{year_group}.png'
+
+
+# ── Concept titles (used on the progression slide header) ────────────────────
+CONCEPT_TITLES = {
+    'place_space_scale':    'Place, space and scale',
+    'human_geography':      'Human Geography',
+    'cultural_awareness':   'Cultural awareness & diversity',
+    'physical_geography':   'Physical Geography',
+    'environmental_impact': 'Environmental impact and sustainability',
+}
+
+# ── Concept icons and definition text ────────────────────────────────────────
+# Each entry is a list of (icon_filename, definition_text) tuples.
+# Place, Space & Scale has three separate icons with their own definitions;
+# the other concepts each have one icon.
+CONCEPT_ICON_DATA = {
+    'place_space_scale': [
+        (
+            'geo-Place-icon.png',
+            'Places are areas that have been defined by a given name.',
+        ),
+        (
+            'geo-space-icon.png',
+            'Space is about the importance of places and the way people '
+            'organise where we live.',
+        ),
+        (
+            'geo-scale-icon.png',
+            "Scale is when we 'zoom-in and zoom-out' to explore local, "
+            'regional and global patterns and connections.',
+        ),
+    ],
+    'human_geography': [
+        (
+            'geo-human-geog-icon.png',
+            'Human geography is the study of how people live, use and change '
+            'places. This includes towns, cities, jobs, transport and how '
+            'humans affect the environment.',
+        ),
+    ],
+    'cultural_awareness': [
+        (
+            'geo-culture-icon.png',
+            'Culture is the ideas, customs, behaviours and way of life of a '
+            'group of people. We can make links between the physical and human '
+            'geography of a place and how this affects the culture of the '
+            'people living there.',
+        ),
+    ],
+    'physical_geography': [
+        (
+            'geo-physical-geog-icon.png',
+            'Physical geography is the study of the natural features and '
+            'processes of the Earth, such as land, water, weather and climate, '
+            'and how they change our world.',
+        ),
+    ],
+    'environmental_impact': [
+        (
+            'geo-sustain-icon.png',
+            'Sustainability is about the environment and whether it can '
+            'continue to support humans and the lives of other living creatures '
+            'in the future. It involves the interaction between physical and '
+            'human environments and the effect they have on each other. When '
+            'we are Being a Geographer, we think about what is natural and '
+            'what is man-made in our environment, and how we can live more '
+            'sustainably.',
+        ),
+    ],
+}
 
 # ── Fonts ─────────────────────────────────────────────────────────────────────
 TITLE_FONT = 'Twinkl Cursive Looped'
