@@ -758,7 +758,7 @@ def _prep_puzzle_pieces_layout(work, master_idx):
         cNvPr = grpSp.find(f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr')
         if cNvPr is None:
             continue
-        if cNvPr.get('name', '') in REG.PUZZLE_PIECE_GROUPS:
+        if cNvPr.get('name', '') in REG.PUZZLE_PIECE_GROUPS_BY_MASTER.get(master_idx, REG.PUZZLE_PIECE_GROUPS):
             cNvPr.set('hidden', '1')
 
     # Remove timing (15 click-reveal entrance effects)
@@ -798,8 +798,9 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
     spTree = root.find(f'.//{{{P}}}spTree')
 
     current_piece_id = None  # shape ID of the current lesson's piece — animated in on click
+    piece_groups = REG.PUZZLE_PIECE_GROUPS_BY_MASTER.get(master_idx, REG.PUZZLE_PIECE_GROUPS)
 
-    for pos_idx, group_name in enumerate(REG.PUZZLE_PIECE_GROUPS):
+    for pos_idx, group_name in enumerate(piece_groups):
         position = pos_idx + 1  # 1-based
 
         # Locate the group element by name
@@ -825,13 +826,12 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
         else:
             lsn = all_lessons[pos_idx] if pos_idx < len(all_lessons) else None
 
-            if position < lesson_num:
-                # Previous lessons: un-hide statically (already done).
-                if cNvPr is not None:
-                    cNvPr.attrib.pop('hidden', None)
-            else:
-                # Current lesson's piece (position == lesson_num):
-                # Keep hidden — animation will reveal it on click.
+            if cNvPr is not None:
+                cNvPr.attrib.pop('hidden', None)  # un-hide for all visible/current pieces
+            if position == lesson_num:
+                # Current lesson's piece: record id for click-reveal animation.
+                # The shape is un-hidden above; PowerPoint's animation engine
+                # hides it before the click fires, then reveals it on click.
                 current_piece_id = int(cNvPr.get('id', 0)) if cNvPr is not None else None
 
             # Update EMF colour and TextBox text for all visible/current pieces.
@@ -905,7 +905,7 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
         anim_root.append(etree.fromstring(timing_xml))
         xw(anim_tree, sp)
 
-    print(f'  [4] puzzle_pieces — {lesson_num}/{len(REG.PUZZLE_PIECE_GROUPS)} pieces')
+    print(f'  [4] puzzle_pieces — {lesson_num}/{len(piece_groups)} pieces')
     return sp
 
 
