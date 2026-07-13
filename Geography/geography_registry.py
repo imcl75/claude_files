@@ -163,29 +163,27 @@ SKILL_DISPLAY_NAMES = {
 #   PH idx=1   — content body
 
 # ── Asset paths ───────────────────────────────────────────────────────────────
-ASSETS_ROOT = '/Users/innes/Pictures/PPTX Slide assets/Geographers'
+ASSETS_ROOT = '/Users/innes/Pictures/PPTX Slide assets/Geographer'
 
-STATIC_ASSETS = {
-    'progression': f'{ASSETS_ROOT}/geo-progression.png',
-}
 
 # ── Per-concept progression images ────────────────────────────────────────────
-# To update: save a PNG named 'progression_{concept}.png' in ASSETS_ROOT.
-# No code change required — the builder looks up the file by convention.
+# One complete slide-sized PNG per concept.
+# To add or update: save the PNG into ASSETS_ROOT with the name below.
+# No code change required — the builder looks up by naming convention.
 #
-# Expected file names:
-#   progression_place_space_scale.png
-#   progression_human_geography.png
-#   progression_cultural_awareness.png
-#   progression_physical_geography.png
-#   progression_environmental_impact.png
+# Expected file names (drop into the Geographer folder when ready):
+#   geo-prog-place_space_scale.png
+#   geo-prog-human_geography.png
+#   geo-prog-cultural_awareness.png
+#   geo-prog-physical_geography.png
+#   geo-prog-environmental_impact.png
 
 def progression_image_path(substantive_concept):
     """
     Return the expected path for this concept's progression PNG.
-    Name convention: {ASSETS_ROOT}/progression_{concept}.png
+    Naming convention: {ASSETS_ROOT}/geo-prog-{concept}.png
     """
-    return f'{ASSETS_ROOT}/progression_{substantive_concept}.png'
+    return f'{ASSETS_ROOT}/geo-prog-{substantive_concept}.png'
 
 # ── Fonts ─────────────────────────────────────────────────────────────────────
 TITLE_FONT = 'Twinkl Cursive Looped'
