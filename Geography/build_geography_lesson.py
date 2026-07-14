@@ -1224,7 +1224,7 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
         f'</p:nvSpPr>'
         f'<p:spPr>'
         f'<a:xfrm><a:off x="246888" y="1826167"/>'
-        f'<a:ext cx="11684402" cy="4350000"/></a:xfrm>'
+        f'<a:ext cx="11684402" cy="4900000"/></a:xfrm>'
         f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
         f'<a:noFill/>'
         f'</p:spPr>'
@@ -1243,7 +1243,10 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
         animated_para_idxs.append(para_global); para_global += 1
         if i < len(qna) - 1:
             spacer = etree.Element(f'{{{A}}}p')
-            etree.SubElement(spacer, f'{{{A}}}endParaRPr').set('lang', 'en-GB')
+            endPr = etree.SubElement(spacer, f'{{{A}}}endParaRPr')
+            endPr.set('lang', 'en-GB')
+            endPr.set('sz', '600')   # 6pt — stops spacer inheriting 24pt master default
+            endPr.set('dirty', '0')
             txBody.append(spacer)
             para_global += 1
 
@@ -1371,7 +1374,7 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
         f'</p:nvSpPr>'
         f'<p:spPr>'
         f'<a:xfrm><a:off x="246888" y="1826167"/>'
-        f'<a:ext cx="11684402" cy="4350000"/></a:xfrm>'
+        f'<a:ext cx="11684402" cy="4900000"/></a:xfrm>'
         f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
         f'<a:noFill/>'
         f'</p:spPr>'
@@ -1390,7 +1393,10 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
         animated_para_idxs.append(para_global); para_global += 1
         if i < len(vocab) - 1:
             spacer = etree.Element(f'{{{A}}}p')
-            etree.SubElement(spacer, f'{{{A}}}endParaRPr').set('lang', 'en-GB')
+            endPr = etree.SubElement(spacer, f'{{{A}}}endParaRPr')
+            endPr.set('lang', 'en-GB')
+            endPr.set('sz', '600')   # 6pt — stops spacer inheriting 24pt master default
+            endPr.set('dirty', '0')
             txBody.append(spacer)
             para_global += 1
 
