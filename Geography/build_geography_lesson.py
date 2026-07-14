@@ -738,36 +738,104 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
     """
     Slide 4: Puzzle Pieces
 
-    Strategy — use the layout's own animation timing rather than cNvPr hidden:
-      • Clone the Puzzle Pieces layout (all groups are visible in the cloned spTree).
-      • Read the layout's original timing (15 entrance animations, one per piece).
-      • Strip par blocks for pieces 1..N-1 from the mainSeq; those pieces
-        become statically visible because they no longer have entrance animations.
-      • Keep par blocks for pieces N..15; those pieces stay hidden initially
-        because presetClass="entr" tells PowerPoint to hide them until revealed.
-      • Piece N fires on first click; pieces N+1..15 never fire in normal use.
-      • Update EMF colour and text for pieces 1..N.
+    Fix for double-rendering (Bug 1, 2026-07-14):
+      The original clone_from_layout approach set rId1 → Puzzle Pieces layout in
+      the slide rels, THEN deep-copied that layout's spTree into the slide.
+      PowerPoint rendered BOTH the inherited layout shapes (15 groups, layout
+      entrance animations) AND the copied slide shapes (same 15 groups, slide
+      timing) → 30 click events, all 15 pieces visible from the start.
 
-    No modification of the layout file — timing is cloned fresh each time.
+      New approach:
+        1. fresh_geo with 'Our Key Question is' as the slide's rId1 reference.
+           This layout has no puzzle-piece groups, so no inherited double-render.
+        2. Read Puzzle Pieces layout media rels → add to slide rels with new rIds.
+        3. Deep-copy the Puzzle Pieces layout's spTree into the slide's spTree,
+           remapping r:embed refs to the new slide rIds.
+        4. Update EMF and text for pieces 1..N (same as before).
+        5. Clone layout timing, strip pieces 1..N-1, inject into slide.
     """
     lesson_num = lesson['lesson_number']
     piece_groups = REG.PUZZLE_PIECE_GROUPS_BY_MASTER.get(master_idx, REG.PUZZLE_PIECE_GROUPS)
 
-    # Clone layout (groups visible, no timing on the cloned slide yet)
-    sp, rp, rId_map = clone_from_layout(work, 'Puzzle Pieces', master_idx)
+    # Step 1: create slide referencing a non-Puzzle-Pieces layout as rId1.
+    # 'Our Key Question is' exists for all masters without a 1_ prefix.
+    sp, rp = fresh_geo(work, 'Our Key Question is', master_idx)
 
-    # Build skill → slide rId lookup
+    # Step 2: read Puzzle Pieces layout and its rels
+    lf               = _get_layout_file('Puzzle Pieces', master_idx)
+    layout_path      = f'{work}/ppt/slideLayouts/{lf}'
+    layout_rels_path = f'{work}/ppt/slideLayouts/_rels/{lf}.rels'
+
+    # Build new rels file: keep existing rId1 (blank layout ref from fresh_geo),
+    # append all media from the Puzzle Pieces layout with new rIds.
+    rId_map = {}
+    rels_entries = []
+
+    with open(rp) as _f:
+        _existing = etree.fromstring(_f.read().encode())
+    for _rel in _existing:
+        rels_entries.append(
+            f'<Relationship Id="{_rel.get("Id")}" '
+            f'Type="{_rel.get("Type")}" '
+            f'Target="{_rel.get("Target")}"/>'
+        )
+
+    counter = 2  # rId1 is the blank layout; media starts at rId2
+    if os.path.exists(layout_rels_path):
+        for rel in xr(layout_rels_path).getroot():
+            typ = rel.get('Type', '')
+            tgt = rel.get('Target', '')
+            lid = rel.get('Id', '')
+            if 'slideMaster' in tgt or 'slideLayout' in tgt:
+                continue
+            new_rid = f'rId{counter}'
+            counter += 1
+            rId_map[lid] = new_rid
+            rels_entries.append(
+                f'<Relationship Id="{new_rid}" '
+                f'Type="{typ}" '
+                f'Target="{tgt}"/>'
+            )
+
+    with open(rp, 'w', encoding='utf-8') as _f:
+        _f.write(
+            f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
+            f'<Relationships xmlns="{PKG}">'
+            + ''.join(rels_entries)
+            + '</Relationships>'
+        )
+
+    # Step 3: deep-copy Puzzle Pieces layout spTree into the slide, remapping rIds
+    layout_root   = xr(layout_path).getroot()
+    layout_spTree = layout_root.find(f'.//{{{P}}}spTree')
+    if layout_spTree is not None:
+        spTree_copy = copy.deepcopy(layout_spTree)
+        for el in spTree_copy.iter():
+            if R_EMBED in el.attrib and el.attrib[R_EMBED] in rId_map:
+                el.attrib[R_EMBED] = rId_map[el.attrib[R_EMBED]]
+            if R_LINK in el.attrib and el.attrib[R_LINK] in rId_map:
+                el.attrib[R_LINK] = rId_map[el.attrib[R_LINK]]
+        _slide_tree = xr(sp)
+        _slide_root = _slide_tree.getroot()
+        _cSld = _slide_root.find(f'{{{P}}}cSld')
+        _old = _cSld.find(f'{{{P}}}spTree')
+        if _old is not None:
+            _cSld.remove(_old)
+        _cSld.append(spTree_copy)
+        xw(_slide_tree, sp)
+
+    # Step 4: build skill → slide rId lookup for EMF swaps
     skill_to_slide_rid = {
         skill: rId_map.get(layout_rid)
         for skill, layout_rid in REG.SKILL_EMF_LAYOUT_RID.items()
         if rId_map.get(layout_rid)
     }
 
+    # Update EMF colour and text for pieces 1..N
     tree = xr(sp)
     root = tree.getroot()
     spTree = root.find(f'.//{{{P}}}spTree')
 
-    # Update EMF colour and text for pieces 1..N
     for pos_idx, group_name in enumerate(piece_groups):
         position = pos_idx + 1
         if position > lesson_num:
@@ -807,32 +875,26 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
 
     xw(tree, sp)
 
-    # ── Timing: clone layout's original timing, strip pieces 1..N-1 ──────────
-    # The layout's timing has all 15 entrance animations in sequence.
-    # Removing pieces 1..N-1 makes those groups visible immediately.
+    # Step 5: clone layout's timing, strip pieces 1..N-1, inject into slide.
+    # The layout's timing has all 15 entrance animations in mainSeq.
+    # Removing pieces 1..N-1 makes those groups visible from slide open.
     # Keeping pieces N..15 means PowerPoint hides them (presetClass="entr").
-    lf = _get_layout_file('Puzzle Pieces', master_idx)
-    layout_path = f'{work}/ppt/slideLayouts/{lf}'
-    layout_root = xr(layout_path).getroot()
     layout_timing = layout_root.find(f'{{{P}}}timing')
 
     if layout_timing is not None:
-        # Build id → group_name map from the layout
+        # id → group_name map from the layout
         id_to_name = {}
         for grp in layout_root.iter(f'{{{P}}}grpSp'):
             cNvPr = grp.find(f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr')
             if cNvPr is not None:
                 id_to_name[cNvPr.get('id')] = cNvPr.get('name')
 
-        # group_name → position (1-based)
         name_to_pos = {name: i + 1 for i, name in enumerate(piece_groups)}
 
-        # Find the mainSeq childTnLst (the list of per-piece par blocks)
         mainSeq_cTn = layout_timing.find(
             f'.//{{{P}}}seq[@concurrent="1"]/{{{P}}}cTn[@nodeType="mainSeq"]'
         )
         if mainSeq_cTn is None:
-            # Fallback: find by nodeType attribute alone
             for el in layout_timing.iter(f'{{{P}}}cTn'):
                 if el.get('nodeType') == 'mainSeq':
                     mainSeq_cTn = el
@@ -846,23 +908,18 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
                     sptgt = par.find(f'.//{{{P}}}spTgt')
                     if sptgt is None:
                         continue
-                    spid   = sptgt.get('spid')
-                    gname  = id_to_name.get(spid)
-                    pos    = name_to_pos.get(gname)
-                    # Strip animations for pieces BEFORE the current lesson
-                    # (they become statically visible; no entrance hiding)
+                    spid  = sptgt.get('spid')
+                    gname = id_to_name.get(spid)
+                    pos   = name_to_pos.get(gname)
                     if pos is not None and pos < lesson_num:
                         pars_to_remove.append(par)
-
                 for par in pars_to_remove:
                     childTnLst.remove(par)
 
-        # Deep-copy the modified timing into the slide
-        import copy as _copy
-        timing_copy = _copy.deepcopy(layout_timing)
+        timing_copy = copy.deepcopy(layout_timing)
         anim_tree = xr(sp)
         anim_root = anim_tree.getroot()
-        existing = anim_root.find(f'{{{P}}}timing')
+        existing  = anim_root.find(f'{{{P}}}timing')
         if existing is not None:
             anim_root.remove(existing)
         anim_root.append(timing_copy)
@@ -940,7 +997,62 @@ def build_lo(work, base_pptx, lesson, enquiry, master_idx):
         st.append(etree.fromstring(sp_xml))
     save(t, sp)
 
-    print('  [5] lo')
+    # ── Animate LO boxes 501, 502, 503 on clicks 1, 2, 3 ────────────────────
+    # The layout's timing (if any) only targets layout-level shapes.
+    # The three content text boxes (IDs 501–503) are slide-level shapes and
+    # need explicit slide timing using the same visibility-toggle pattern as
+    # recap_quiz / key_vocabulary.
+    lo_box_ids = [501, 502, 503]
+    nid_counter = [1]
+    def _nid(): v = nid_counter[0]; nid_counter[0] += 1; return str(v)
+
+    root_id = _nid(); seq_id = _nid()
+    lo_blocks = []
+    for lo_bid in lo_box_ids:
+        b, inn, clk, bhv = _nid(), _nid(), _nid(), _nid()
+        lo_blocks.append(
+            f'<p:par xmlns:p="{P}"><p:cTn id="{b}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
+            f'<p:childTnLst><p:par><p:cTn id="{inn}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:par><p:cTn id="{clk}" presetID="1" presetClass="entr" '
+            f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:set><p:cBhvr>'
+            f'<p:cTn id="{bhv}" dur="1" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
+            f'<p:tgtEl><p:spTgt spid="{lo_bid}"/></p:tgtEl>'
+            f'<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst>'
+            f'</p:cBhvr><p:to><p:strVal val="visible"/></p:to></p:set>'
+            f'</p:childTnLst></p:cTn></p:par>'
+            f'</p:childTnLst></p:cTn></p:par>'
+            f'</p:childTnLst></p:cTn></p:par>'
+        )
+
+    lo_timing_xml = (
+        f'<p:timing xmlns:p="{P}" xmlns:a="{A}">'
+        f'<p:tnLst><p:par><p:cTn id="{root_id}" dur="indefinite" restart="never" '
+        f'nodeType="tmRoot"><p:childTnLst>'
+        f'<p:seq concurrent="1" nextAc="seek">'
+        f'<p:cTn id="{seq_id}" dur="indefinite" nodeType="mainSeq">'
+        f'<p:childTnLst>{"".join(lo_blocks)}</p:childTnLst></p:cTn>'
+        f'<p:prevCondLst><p:cond evt="onPrev" delay="0">'
+        f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>'
+        f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
+        f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
+        f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
+        f'</p:timing>'
+    )
+
+    lo_anim_tree = xr(sp)
+    lo_root = lo_anim_tree.getroot()
+    existing_timing = lo_root.find(f'{{{P}}}timing')
+    if existing_timing is not None:
+        lo_root.remove(existing_timing)
+    lo_root.append(etree.fromstring(lo_timing_xml))
+    xw(lo_anim_tree, sp)
+
+    print('  [5] lo (animated)')
     return sp
 
 def build_kwl(work, base_pptx, lesson, enquiry, master_idx):
@@ -1063,6 +1175,15 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
     # Each Q paragraph and each A paragraph fires on a separate click.
     content_id = 200   # fixed shape ID for the quiz content box
 
+    # Explicit font sizes based on item count — no normAutofit.
+    item_count = len(qna[:5])
+    if item_count <= 4:
+        qn_sz = '2000'   # 20 pt
+        an_sz = '1600'   # 16 pt
+    else:
+        qn_sz = '1600'   # 16 pt  (5 items)
+        an_sz = '1400'   # 14 pt
+
     def _q_para(text, num):
         p = etree.Element(f'{{{A}}}p')
         pPr = etree.SubElement(p, f'{{{A}}}pPr')
@@ -1075,7 +1196,7 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
             buNum.set('startAt', str(num))
         r = etree.SubElement(p, f'{{{A}}}r')
         rPr = etree.SubElement(r, f'{{{A}}}rPr')
-        rPr.set('lang', 'en-GB'); rPr.set('sz', '2000'); rPr.set('dirty', '0')
+        rPr.set('lang', 'en-GB'); rPr.set('sz', qn_sz); rPr.set('dirty', '0')
         t_ = etree.SubElement(r, f'{{{A}}}t'); t_.text = text
         return p
 
@@ -1086,7 +1207,7 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
         etree.SubElement(pPr, f'{{{A}}}buNone')
         r = etree.SubElement(p, f'{{{A}}}r')
         rPr = etree.SubElement(r, f'{{{A}}}rPr')
-        rPr.set('lang', 'en-GB'); rPr.set('sz', '1800')
+        rPr.set('lang', 'en-GB'); rPr.set('sz', an_sz)
         rPr.set('b', '1'); rPr.set('dirty', '0')
         fill = etree.SubElement(rPr, f'{{{A}}}solidFill')
         clr  = etree.SubElement(fill, f'{{{A}}}srgbClr')
@@ -1103,11 +1224,11 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
         f'</p:nvSpPr>'
         f'<p:spPr>'
         f'<a:xfrm><a:off x="246888" y="1826167"/>'
-        f'<a:ext cx="11684402" cy="3700000"/></a:xfrm>'
+        f'<a:ext cx="11684402" cy="4350000"/></a:xfrm>'
         f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
         f'<a:noFill/>'
         f'</p:spPr>'
-        f'<p:txBody><a:bodyPr><a:normAutofit/></a:bodyPr><a:lstStyle/></p:txBody>'
+        f'<p:txBody><a:bodyPr wrap="square" anchor="t"/><a:lstStyle/></p:txBody>'
         f'</p:sp>'
     )
     txBody = sp_el.find(f'.//{{{P}}}txBody')
@@ -1208,11 +1329,22 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
 
     content_id = 201  # fixed shape ID for the vocabulary content box
 
+    # Explicit font sizes based on item count — more reliable than normAutofit.
+    # Twinkl Cursive Looped runs ~20% wider than screen fonts; at 5 items the
+    # natural height exceeds the box even with normAutofit, so we size down.
+    item_count = len(vocab)
+    if item_count <= 4:
+        word_sz = '1800'   # 18 pt
+        def_sz  = '1400'   # 14 pt
+    else:
+        word_sz = '1400'   # 14 pt  (5 items)
+        def_sz  = '1200'   # 12 pt
+
     def _word_para(word):
         p = etree.Element(f'{{{A}}}p')
         r = etree.SubElement(p, f'{{{A}}}r')
         rPr = etree.SubElement(r, f'{{{A}}}rPr')
-        rPr.set('lang', 'en-GB'); rPr.set('sz', '2200'); rPr.set('b', '1')
+        rPr.set('lang', 'en-GB'); rPr.set('sz', word_sz); rPr.set('b', '1')
         rPr.set('dirty', '0')
         t_ = etree.SubElement(r, f'{{{A}}}t'); t_.text = word
         return p
@@ -1223,7 +1355,7 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
         pPr.set('marL', '457200')
         r = etree.SubElement(p, f'{{{A}}}r')
         rPr = etree.SubElement(r, f'{{{A}}}rPr')
-        rPr.set('lang', 'en-GB'); rPr.set('sz', '1800'); rPr.set('dirty', '0')
+        rPr.set('lang', 'en-GB'); rPr.set('sz', def_sz); rPr.set('dirty', '0')
         fill = etree.SubElement(rPr, f'{{{A}}}solidFill')
         clr  = etree.SubElement(fill, f'{{{A}}}srgbClr')
         clr.set('val', '1A5C2A')
@@ -1239,11 +1371,11 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
         f'</p:nvSpPr>'
         f'<p:spPr>'
         f'<a:xfrm><a:off x="246888" y="1826167"/>'
-        f'<a:ext cx="11684402" cy="3700000"/></a:xfrm>'
+        f'<a:ext cx="11684402" cy="4350000"/></a:xfrm>'
         f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
         f'<a:noFill/>'
         f'</p:spPr>'
-        f'<p:txBody><a:bodyPr><a:normAutofit/></a:bodyPr><a:lstStyle/></p:txBody>'
+        f'<p:txBody><a:bodyPr wrap="square" anchor="t"/><a:lstStyle/></p:txBody>'
         f'</p:sp>'
     )
     txBody = sp_el.find(f'.//{{{P}}}txBody')
