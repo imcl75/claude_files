@@ -736,196 +736,268 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
 
 def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_idx):
     """
-    Slide 4: Puzzle Pieces
+    Slide 4: Puzzle Pieces (jigsaw).
 
-    Fix for double-rendering (Bug 1, 2026-07-14):
-      The original clone_from_layout approach set rId1 → Puzzle Pieces layout in
-      the slide rels, THEN deep-copied that layout's spTree into the slide.
-      PowerPoint rendered BOTH the inherited layout shapes (15 groups, layout
-      entrance animations) AND the copied slide shapes (same 15 groups, slide
-      timing) → 30 click events, all 15 pieces visible from the start.
+    For lesson N in the enquiry sequence:
+      - Slots 1..N-1  : always visible — no animation (no timing entry needed)
+      - Slot  N       : click-reveal animation (p:set style.visibility → visible)
+      - Slots N+1..15 : not added to slide at all
 
-      New approach:
-        1. fresh_geo with 'Our Key Question is' as the slide's rId1 reference.
-           This layout has no puzzle-piece groups, so no inherited double-render.
-        2. Read Puzzle Pieces layout media rels → add to slide rels with new rIds.
-        3. Deep-copy the Puzzle Pieces layout's spTree into the slide's spTree,
-           remapping r:embed refs to the new slide rIds.
-        4. Update EMF and text for pieces 1..N (same as before).
-        5. Clone layout timing, strip pieces 1..N-1, inject into slide.
+    Each slot is a p:grpSp built from scratch:
+      - p:pic  : skill-coloured PNG from ASSETS_ROOT/Jigsaw Pieces/
+      - p:sp   : TextBox with lesson_title (11pt Twinkl Cursive Looped)
+
+    Positions come from REG.JIGSAW_PIECE_POSITIONS (EMU coords extracted from
+    jigsaw-animated.pptx 2026-07-14). Slide references 'Custom Layout' which
+    gives the WFA master background with no decorative shapes — no double-
+    rendering possible because pieces are never in the layout's spTree.
     """
-    lesson_num = lesson['lesson_number']
-    piece_groups = REG.PUZZLE_PIECE_GROUPS_BY_MASTER.get(master_idx, REG.PUZZLE_PIECE_GROUPS)
+    lesson_num  = lesson['lesson_number']
+    positions   = REG.JIGSAW_PIECE_POSITIONS          # list of (x, y, cx, cy)
+    jigsaw_dir  = f'{REG.ASSETS_ROOT}/Jigsaw Pieces'
 
-    # Step 1: create slide referencing a non-Puzzle-Pieces layout as rId1.
-    # 'Our Key Question is' exists for all masters without a 1_ prefix.
+    # Use 'Our Key Question is' — exists for all masters, gives WFA background.
+    # Pieces are built into the slide's own spTree so no double-rendering with layout.
     sp, rp = fresh_geo(work, 'Our Key Question is', master_idx)
 
-    # Step 2: read Puzzle Pieces layout and its rels
-    lf               = _get_layout_file('Puzzle Pieces', master_idx)
-    layout_path      = f'{work}/ppt/slideLayouts/{lf}'
-    layout_rels_path = f'{work}/ppt/slideLayouts/_rels/{lf}.rels'
+    # ── Load slide XML ────────────────────────────────────────────────────────
+    tree   = xr(sp)
+    root   = tree.getroot()
+    cSld   = root.find(f'{{{P}}}cSld')
+    spTree = cSld.find(f'{{{P}}}spTree')
 
-    # Build new rels file: keep existing rId1 (blank layout ref from fresh_geo),
-    # append all media from the Puzzle Pieces layout with new rIds.
-    rId_map = {}
-    rels_entries = []
+    # ── Load rels to append PNG image relationships ───────────────────────────
+    rels_tree = xr(rp)
+    rels_root = rels_tree.getroot()
 
-    with open(rp) as _f:
-        _existing = etree.fromstring(_f.read().encode())
-    for _rel in _existing:
-        rels_entries.append(
-            f'<Relationship Id="{_rel.get("Id")}" '
-            f'Type="{_rel.get("Type")}" '
-            f'Target="{_rel.get("Target")}"/>'
-        )
+    # Find the highest existing rId number so we can start above it
+    def _max_rid(rels_el):
+        hi = 1
+        for r in rels_el:
+            rid = r.get('Id', 'rId0')
+            try:
+                hi = max(hi, int(rid.replace('rId', '')))
+            except ValueError:
+                pass
+        return hi
 
-    counter = 2  # rId1 is the blank layout; media starts at rId2
-    if os.path.exists(layout_rels_path):
-        for rel in xr(layout_rels_path).getroot():
-            typ = rel.get('Type', '')
-            tgt = rel.get('Target', '')
-            lid = rel.get('Id', '')
-            if 'slideMaster' in tgt or 'slideLayout' in tgt:
-                continue
-            new_rid = f'rId{counter}'
-            counter += 1
-            rId_map[lid] = new_rid
-            rels_entries.append(
-                f'<Relationship Id="{new_rid}" '
-                f'Type="{typ}" '
-                f'Target="{tgt}"/>'
-            )
+    next_rid     = _max_rid(rels_root) + 1
+    png_rid_map  = {}   # skill_focus → rId (deduplicate same PNG)
 
-    with open(rp, 'w', encoding='utf-8') as _f:
-        _f.write(
-            f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
-            f'<Relationships xmlns="{PKG}">'
-            + ''.join(rels_entries)
-            + '</Relationships>'
-        )
+    def _add_png_rel(skill):
+        """Copy PNG to media dir and add a relationship. Returns rId or None."""
+        nonlocal next_rid
+        if skill in png_rid_map:
+            return png_rid_map[skill]
+        fname = REG.SKILL_JIGSAW_PNG.get(skill)
+        if not fname:
+            fname = REG.SKILL_JIGSAW_PNG.get('questioning_predicting')
+        src = f'{jigsaw_dir}/{fname}'
+        if not os.path.exists(src):
+            print(f'  WARNING: jigsaw PNG not found: {src}', file=sys.stderr)
+            return None
+        media_dir  = f'{work}/ppt/media'
+        tgt_name   = f'jig_{skill}.png'
+        tgt_path   = f'{media_dir}/{tgt_name}'
+        if not os.path.exists(tgt_path):
+            import shutil as _sh
+            _sh.copy2(src, tgt_path)
+        rid = f'rId{next_rid}'
+        next_rid  += 1
+        rel_el = etree.SubElement(rels_root, 'Relationship')
+        rel_el.set('Id',     rid)
+        rel_el.set('Type',   'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image')
+        rel_el.set('Target', f'../media/{tgt_name}')
+        png_rid_map[skill] = rid
+        return rid
 
-    # Step 3: deep-copy Puzzle Pieces layout spTree into the slide, remapping rIds
-    layout_root   = xr(layout_path).getroot()
-    layout_spTree = layout_root.find(f'.//{{{P}}}spTree')
-    if layout_spTree is not None:
-        spTree_copy = copy.deepcopy(layout_spTree)
-        for el in spTree_copy.iter():
-            if R_EMBED in el.attrib and el.attrib[R_EMBED] in rId_map:
-                el.attrib[R_EMBED] = rId_map[el.attrib[R_EMBED]]
-            if R_LINK in el.attrib and el.attrib[R_LINK] in rId_map:
-                el.attrib[R_LINK] = rId_map[el.attrib[R_LINK]]
-        _slide_tree = xr(sp)
-        _slide_root = _slide_tree.getroot()
-        _cSld = _slide_root.find(f'{{{P}}}cSld')
-        _old = _cSld.find(f'{{{P}}}spTree')
-        if _old is not None:
-            _cSld.remove(_old)
-        _cSld.append(spTree_copy)
-        xw(_slide_tree, sp)
+    # ── Build piece groups ────────────────────────────────────────────────────
+    # spids: group=200+i*3, pic=201+i*3, txt=202+i*3  (i=0-indexed slot)
+    BASE_SPID = 200
+    # Spid of the current lesson's group — computed up front so it's correct
+    # even if some earlier PNG lookups fail and trigger continue.
+    current_piece_spid = BASE_SPID + (lesson_num - 1) * 3
 
-    # Step 4: build skill → slide rId lookup for EMF swaps
-    skill_to_slide_rid = {
-        skill: rId_map.get(layout_rid)
-        for skill, layout_rid in REG.SKILL_EMF_LAYOUT_RID.items()
-        if rId_map.get(layout_rid)
-    }
+    for i, lsn in enumerate(all_lessons[:lesson_num]):
+        if i >= len(positions):
+            break
 
-    # Update EMF colour and text for pieces 1..N
-    tree = xr(sp)
-    root = tree.getroot()
-    spTree = root.find(f'.//{{{P}}}spTree')
-
-    for pos_idx, group_name in enumerate(piece_groups):
-        position = pos_idx + 1
-        if position > lesson_num:
-            break  # pieces N+1..15 kept as-is (entrance animation hides them)
-
-        group_el = None
-        for child in spTree:
-            if child.tag.split('}')[-1] != 'grpSp':
-                continue
-            cNvPr = child.find(f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr')
-            if cNvPr is not None and cNvPr.get('name') == group_name:
-                group_el = child
-                break
-
-        if group_el is None:
-            print(f'  WARNING: puzzle piece group "{group_name}" not found',
-                  file=sys.stderr)
+        off_x, off_y, cx, cy = positions[i]
+        skill  = lsn.get('skill_focus', 'questioning_predicting')
+        txt    = (lsn.get('puzzle_piece_text') or
+                  lsn.get('lesson_title') or
+                  f'Lesson {i + 1}')
+        rid    = _add_png_rel(skill)
+        if rid is None:
             continue
 
-        lsn = all_lessons[pos_idx] if pos_idx < len(all_lessons) else None
-        if lsn is not None:
-            skill     = lsn.get('skill_focus', 'questioning_predicting')
-            piece_txt = (lsn.get('puzzle_piece_text') or
-                         lsn.get('building_block_text') or
-                         str(lsn['lesson_number']))
+        grp_spid = BASE_SPID + i * 3
+        pic_spid = grp_spid + 1
+        sp_spid  = grp_spid + 2
 
-            target_rid = skill_to_slide_rid.get(skill)
-            if target_rid:
-                for sub in group_el:
-                    if sub.tag.split('}')[-1] == 'pic':
-                        blip = sub.find(f'.//{{{A}}}blip')
-                        if blip is not None:
-                            blip.set(R_EMBED, target_rid)
-                        break
+        # TextBox sits centred in the lower half of the piece
+        tb_margin = cx // 10
+        tb_x      = off_x + tb_margin
+        tb_y      = off_y + cy // 2
+        tb_cx     = cx - 2 * tb_margin
+        tb_cy     = cy // 2 - tb_margin
 
-            _set_group_textbox_text(group_el, piece_txt)
+        grp_xml = (
+            f'<p:grpSp xmlns:p="{P}" xmlns:a="{A}" xmlns:r="{R}">'
+              f'<p:nvGrpSpPr>'
+                f'<p:cNvPr id="{grp_spid}" name="JigsawPiece_{i+1}"/>'
+                f'<p:cNvGrpSpPr/>'
+                f'<p:nvPr/>'
+              f'</p:nvGrpSpPr>'
+              f'<p:grpSpPr>'
+                f'<a:xfrm>'
+                  f'<a:off x="{off_x}" y="{off_y}"/>'
+                  f'<a:ext cx="{cx}" cy="{cy}"/>'
+                  f'<a:chOff x="{off_x}" y="{off_y}"/>'
+                  f'<a:chExt cx="{cx}" cy="{cy}"/>'
+                f'</a:xfrm>'
+              f'</p:grpSpPr>'
+              # Image — fills the whole group
+              f'<p:pic>'
+                f'<p:nvPicPr>'
+                  f'<p:cNvPr id="{pic_spid}" name="JigsawImg_{i+1}"/>'
+                  f'<p:cNvPicPr/>'
+                  f'<p:nvPr/>'
+                f'</p:nvPicPr>'
+                f'<p:blipFill>'
+                  f'<a:blip r:embed="{rid}"/>'
+                  f'<a:stretch><a:fillRect/></a:stretch>'
+                f'</p:blipFill>'
+                f'<p:spPr>'
+                  f'<a:xfrm>'
+                    f'<a:off x="{off_x}" y="{off_y}"/>'
+                    f'<a:ext cx="{cx}" cy="{cy}"/>'
+                  f'</a:xfrm>'
+                  f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+                f'</p:spPr>'
+              f'</p:pic>'
+              # TextBox — lesson title in lower half
+              f'<p:sp>'
+                f'<p:nvSpPr>'
+                  f'<p:cNvPr id="{sp_spid}" name="JigsawTxt_{i+1}"/>'
+                  f'<p:cNvSpPr txBox="1"/>'
+                  f'<p:nvPr/>'
+                f'</p:nvSpPr>'
+                f'<p:spPr>'
+                  f'<a:xfrm>'
+                    f'<a:off x="{tb_x}" y="{tb_y}"/>'
+                    f'<a:ext cx="{tb_cx}" cy="{tb_cy}"/>'
+                  f'</a:xfrm>'
+                  f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+                  f'<a:noFill/>'
+                f'</p:spPr>'
+                f'<p:txBody>'
+                  f'<a:bodyPr wrap="square" rtlCol="0" anchor="ctr">'
+                    f'<a:spAutoFit/>'
+                  f'</a:bodyPr>'
+                  f'<a:lstStyle/>'
+                  f'<a:p>'
+                    f'<a:pPr algn="ctr"/>'
+                    f'<a:r>'
+                      f'<a:rPr lang="en-GB" sz="1000" b="1" dirty="0">'
+                        f'<a:latin typeface="Twinkl Cursive Looped"'
+                        f' panose="02000000000000000000"'
+                        f' pitchFamily="2" charset="77"/>'
+                        f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
+                      f'</a:rPr>'
+                      f'<a:t>{txt}</a:t>'
+                    f'</a:r>'
+                  f'</a:p>'
+                f'</p:txBody>'
+              f'</p:sp>'
+            f'</p:grpSp>'
+        )
+        spTree.append(etree.fromstring(grp_xml))
 
+    # ── Save slide XML ────────────────────────────────────────────────────────
     xw(tree, sp)
 
-    # Step 5: clone layout's timing, strip pieces 1..N-1, inject into slide.
-    # The layout's timing has all 15 entrance animations in mainSeq.
-    # Removing pieces 1..N-1 makes those groups visible from slide open.
-    # Keeping pieces N..15 means PowerPoint hides them (presetClass="entr").
-    layout_timing = layout_root.find(f'{{{P}}}timing')
+    # ── Save updated rels ─────────────────────────────────────────────────────
+    xw(rels_tree, rp)
 
-    if layout_timing is not None:
-        # id → group_name map from the layout
-        id_to_name = {}
-        for grp in layout_root.iter(f'{{{P}}}grpSp'):
-            cNvPr = grp.find(f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr')
-            if cNvPr is not None:
-                id_to_name[cNvPr.get('id')] = cNvPr.get('name')
+    # ── Build timing: single click-reveal for piece N ─────────────────────────
+    # Pieces 1..N-1 have no timing entry → visible from slide open.
+    # Piece N uses p:set style.visibility → visible on click.
+    timing_xml = (
+        f'<p:timing xmlns:p="{P}">'
+          f'<p:tnLst>'
+            f'<p:par>'
+              f'<p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot">'
+                f'<p:childTnLst>'
+                  f'<p:seq concurrent="1" nextAc="seek">'
+                    f'<p:cTn id="2" dur="indefinite" nodeType="mainSeq">'
+                      f'<p:childTnLst>'
+                        f'<p:par>'
+                          f'<p:cTn id="3" fill="hold">'
+                            f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
+                            f'<p:childTnLst>'
+                              f'<p:par>'
+                                f'<p:cTn id="4" fill="hold">'
+                                  f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+                                  f'<p:childTnLst>'
+                                    f'<p:par>'
+                                      f'<p:cTn id="5" presetID="1" presetClass="entr"'
+                                      f' presetSubtype="0" fill="hold"'
+                                      f' nodeType="clickEffect">'
+                                        f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+                                        f'<p:childTnLst>'
+                                          f'<p:set>'
+                                            f'<p:cBhvr>'
+                                              f'<p:cTn id="6" dur="1" fill="hold">'
+                                                f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+                                              f'</p:cTn>'
+                                              f'<p:tgtEl>'
+                                                f'<p:spTgt spid="{current_piece_spid}"/>'
+                                              f'</p:tgtEl>'
+                                              f'<p:attrNameLst>'
+                                                f'<p:attrName>style.visibility</p:attrName>'
+                                              f'</p:attrNameLst>'
+                                            f'</p:cBhvr>'
+                                            f'<p:to><p:strVal val="visible"/></p:to>'
+                                          f'</p:set>'
+                                        f'</p:childTnLst>'
+                                      f'</p:cTn>'
+                                    f'</p:par>'
+                                  f'</p:childTnLst>'
+                                f'</p:cTn>'
+                              f'</p:par>'
+                            f'</p:childTnLst>'
+                          f'</p:cTn>'
+                        f'</p:par>'
+                      f'</p:childTnLst>'
+                    f'</p:cTn>'
+                    f'<p:prevCondLst>'
+                      f'<p:cond evt="onPrevClick" delay="0">'
+                        f'<p:tn><p:tgtEl><p:sldTgt/></p:tgtEl></p:tn>'
+                      f'</p:cond>'
+                    f'</p:prevCondLst>'
+                    f'<p:nextCondLst>'
+                      f'<p:cond evt="onNextClick" delay="0">'
+                        f'<p:tn><p:tgtEl><p:sldTgt/></p:tgtEl></p:tn>'
+                      f'</p:cond>'
+                    f'</p:nextCondLst>'
+                  f'</p:seq>'
+                f'</p:childTnLst>'
+              f'</p:cTn>'
+            f'</p:par>'
+          f'</p:tnLst>'
+        f'</p:timing>'
+    )
 
-        name_to_pos = {name: i + 1 for i, name in enumerate(piece_groups)}
+    timing_el = etree.fromstring(timing_xml)
+    existing  = root.find(f'{{{P}}}timing')
+    if existing is not None:
+        root.remove(existing)
+    root.append(timing_el)
+    xw(tree, sp)
 
-        mainSeq_cTn = layout_timing.find(
-            f'.//{{{P}}}seq[@concurrent="1"]/{{{P}}}cTn[@nodeType="mainSeq"]'
-        )
-        if mainSeq_cTn is None:
-            for el in layout_timing.iter(f'{{{P}}}cTn'):
-                if el.get('nodeType') == 'mainSeq':
-                    mainSeq_cTn = el
-                    break
-
-        if mainSeq_cTn is not None:
-            childTnLst = mainSeq_cTn.find(f'{{{P}}}childTnLst')
-            if childTnLst is not None:
-                pars_to_remove = []
-                for par in list(childTnLst):
-                    sptgt = par.find(f'.//{{{P}}}spTgt')
-                    if sptgt is None:
-                        continue
-                    spid  = sptgt.get('spid')
-                    gname = id_to_name.get(spid)
-                    pos   = name_to_pos.get(gname)
-                    if pos is not None and pos < lesson_num:
-                        pars_to_remove.append(par)
-                for par in pars_to_remove:
-                    childTnLst.remove(par)
-
-        timing_copy = copy.deepcopy(layout_timing)
-        anim_tree = xr(sp)
-        anim_root = anim_tree.getroot()
-        existing  = anim_root.find(f'{{{P}}}timing')
-        if existing is not None:
-            anim_root.remove(existing)
-        anim_root.append(timing_copy)
-        xw(anim_tree, sp)
-
-    print(f'  [4] puzzle_pieces — {lesson_num}/{len(piece_groups)} pieces')
+    print(f'  [4] puzzle_pieces — {lesson_num}/{len(positions)} pieces'
+          f'  (spid {current_piece_spid} animates on click)')
     return sp
 
 
