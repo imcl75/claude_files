@@ -157,7 +157,7 @@ def _styled_tbox(sid, text, x, y, cx, cy, sz=1800, bold=False,
         f'<p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr>'
         f'<p:spPr><a:xfrm><a:off x="{x}" y="{y}"/><a:ext cx="{cx}" cy="{cy}"/></a:xfrm>'
         f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr>'
-        f'<p:txBody><a:bodyPr wrap="square"><a:normAutofit/></a:bodyPr>'
+        f'<p:txBody><a:bodyPr wrap="square" anchor="t"/>'
         f'<a:lstStyle/><a:p><a:pPr algn="{align}"/>'
         f'<a:r><a:rPr lang="en-GB" sz="{sz}"{b}{u} dirty="0">'
         f'<a:solidFill><a:srgbClr val="{color}"/></a:solidFill>{fn}</a:rPr>'
@@ -749,7 +749,7 @@ def build_recap_quiz(work, rp_dummy, lesson, enquiry, colours):
         f'<p:spPr><a:xfrm><a:off x="{MARGIN_X}" y="680000"/>'
         f'<a:ext cx="{SW - 2 * MARGIN_X}" cy="{SH - 900000}"/></a:xfrm>'
         f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr>'
-        f'<p:txBody><a:bodyPr wrap="square"><a:normAutofit/></a:bodyPr>'
+        f'<p:txBody><a:bodyPr wrap="square" anchor="t"/>'
         f'<a:lstStyle/></p:txBody></p:sp>'
     )
     content_el = etree.fromstring(content_sp_xml)
@@ -761,7 +761,7 @@ def build_recap_quiz(work, rp_dummy, lesson, enquiry, colours):
         if i < len(qna) - 1:
             spacer = etree.Element(f'{{{_A_NS}}}p')
             endPr  = etree.SubElement(spacer, f'{{{_A_NS}}}endParaRPr')
-            endPr.set('lang', 'en-GB'); endPr.set('dirty', '0')
+            endPr.set('lang', 'en-GB'); endPr.set('sz', '600'); endPr.set('dirty', '0')
             txBody.append(spacer)
 
     content_sp_id = sid
