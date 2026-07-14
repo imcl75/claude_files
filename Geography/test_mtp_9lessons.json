@@ -1,0 +1,211 @@
+{
+  "enquiry_title": "What shapes our physical world?",
+  "subject": "physical_geography",
+  "key_question": "What shapes our physical world?",
+  "year_group": "Y4",
+  "lessons": [
+    {
+      "lesson_number": 1,
+      "lesson_title": "How do rivers form?",
+      "skill_focus": "questioning_predicting",
+      "vocabulary": [
+        {
+          "word": "tributary",
+          "definition": "a smaller river that flows into a larger one"
+        },
+        {
+          "word": "erosion",
+          "definition": "the wearing away of rock and soil by water"
+        },
+        {
+          "word": "meander",
+          "definition": "a bend or curve in a river's path"
+        },
+        {
+          "word": "watershed",
+          "definition": "the high land dividing one river system from another"
+        }
+      ],
+      "quiz_questions": [],
+      "substantive_concept": "physical_geography"
+    },
+    {
+      "lesson_number": 2,
+      "lesson_title": "What is a river's journey?",
+      "skill_focus": "observing_recording",
+      "vocabulary": [
+        {
+          "word": "source",
+          "definition": "the place where a river begins"
+        },
+        {
+          "word": "mouth",
+          "definition": "where a river meets the sea"
+        },
+        {
+          "word": "channel",
+          "definition": "the bed along which a river flows"
+        },
+        {
+          "word": "floodplain",
+          "definition": "the flat land beside a river that floods"
+        },
+        {
+          "word": "delta",
+          "definition": "a fan of land at the mouth of a river"
+        }
+      ],
+      "quiz_questions": [
+        {
+          "question": "What is the source of a river?",
+          "answer": "Where it begins, usually high in hills or mountains"
+        },
+        {
+          "question": "What is a meander?",
+          "answer": "A bend or curve in a river"
+        },
+        {
+          "question": "What happens on a floodplain?",
+          "answer": "It floods when the river overflows its banks"
+        },
+        {
+          "question": "What is a tributary?",
+          "answer": "A smaller river that flows into a larger one"
+        }
+      ],
+      "substantive_concept": "physical_geography"
+    },
+    {
+      "lesson_number": 3,
+      "lesson_title": "Why do rivers flood?",
+      "skill_focus": "questioning_predicting",
+      "vocabulary": [
+        {
+          "word": "precipitation",
+          "definition": "water falling from the sky as rain or snow"
+        },
+        {
+          "word": "permeability",
+          "definition": "how easily water passes through the ground"
+        }
+      ],
+      "quiz_questions": [
+        {
+          "question": "Name one cause of flooding.",
+          "answer": "Heavy rainfall over a short period"
+        },
+        {
+          "question": "What is precipitation?",
+          "answer": "Water falling from the sky as rain or snow"
+        }
+      ],
+      "substantive_concept": "physical_geography"
+    },
+    {
+      "lesson_number": 4,
+      "lesson_title": "How do mountains form?",
+      "skill_focus": "observing_recording",
+      "vocabulary": [
+        {
+          "word": "tectonic",
+          "definition": "relating to the large plates that make up the Earth's crust"
+        }
+      ],
+      "quiz_questions": [],
+      "substantive_concept": "physical_geography"
+    },
+    {
+      "lesson_number": 5,
+      "lesson_title": "What is a biome?",
+      "skill_focus": "questioning_predicting",
+      "vocabulary": [
+        {
+          "word": "biome",
+          "definition": "a large natural area with its own climate and wildlife"
+        }
+      ],
+      "quiz_questions": [
+        {
+          "question": "What is a biome?",
+          "answer": "A large natural area defined by its climate and wildlife"
+        }
+      ],
+      "substantive_concept": "physical_geography"
+    },
+    {
+      "lesson_number": 6,
+      "lesson_title": "How do volcanoes erupt?",
+      "skill_focus": "observing_recording",
+      "vocabulary": [
+        {
+          "word": "magma",
+          "definition": "molten rock beneath the Earth's surface"
+        }
+      ],
+      "quiz_questions": [],
+      "substantive_concept": "physical_geography"
+    },
+    {
+      "lesson_number": 7,
+      "lesson_title": "What causes earthquakes?",
+      "skill_focus": "questioning_predicting",
+      "vocabulary": [
+        {
+          "word": "epicentre",
+          "definition": "the point on the surface directly above an earthquake's focus"
+        },
+        {
+          "word": "seismic",
+          "definition": "relating to earthquakes or vibrations in the Earth"
+        }
+      ],
+      "quiz_questions": [
+        {
+          "question": "What is an epicentre?",
+          "answer": "The point on the surface above where an earthquake starts"
+        },
+        {
+          "question": "What causes tectonic plates to move?",
+          "answer": "Convection currents in the Earth's mantle"
+        }
+      ],
+      "substantive_concept": "physical_geography"
+    },
+    {
+      "lesson_number": 8,
+      "lesson_title": "How are coasts shaped?",
+      "skill_focus": "observing_recording",
+      "vocabulary": [
+        {
+          "word": "cliff",
+          "definition": "a steep rock face at the coast"
+        }
+      ],
+      "quiz_questions": [],
+      "substantive_concept": "physical_geography"
+    },
+    {
+      "lesson_number": 9,
+      "lesson_title": "What have we learned?",
+      "skill_focus": "questioning_predicting",
+      "vocabulary": [
+        {
+          "word": "geography",
+          "definition": "the study of the Earth's physical features and environments"
+        }
+      ],
+      "quiz_questions": [
+        {
+          "question": "Name a type of physical feature.",
+          "answer": "River, mountain, volcano, coast"
+        },
+        {
+          "question": "What is erosion?",
+          "answer": "The wearing away of rock and soil by water or wind"
+        }
+      ],
+      "substantive_concept": "physical_geography"
+    }
+  ],
+  "default_substantive_concept": "physical_geography"
+}

@@ -748,17 +748,26 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
       - p:sp   : TextBox with lesson_title (11pt Twinkl Cursive Looped)
 
     Positions come from REG.JIGSAW_PIECE_POSITIONS (EMU coords extracted from
-    jigsaw-animated.pptx 2026-07-14). Slide references 'Custom Layout' which
-    gives the WFA master background with no decorative shapes — no double-
-    rendering possible because pieces are never in the layout's spTree.
+    jigsaw-animated.pptx 2026-07-14). Slide references 'Revisit' layout which
+    gives the WFA master background without the KQ cloud callout — no double-
+    rendering possible because pieces are built into the slide's own spTree.
     """
     lesson_num  = lesson['lesson_number']
     positions   = REG.JIGSAW_PIECE_POSITIONS          # list of (x, y, cx, cy)
-    jigsaw_dir  = f'{REG.ASSETS_ROOT}/Jigsaw Pieces'
 
-    # Use 'Our Key Question is' — exists for all masters, gives WFA background.
-    # Pieces are built into the slide's own spTree so no double-rendering with layout.
-    sp, rp = fresh_geo(work, 'Our Key Question is', master_idx)
+    # Resolve the directory holding the skill-coloured jigsaw PNGs.
+    # In the sandbox (test builds) the PNGs are copied to jigsaw_tmp;
+    # on Innes's machine they live in ASSETS_ROOT/Jigsaw Pieces/ as normal.
+    _sandbox_jig = '/sessions/fervent-jolly-einstein/mnt/outputs/jigsaw_tmp'
+    jigsaw_dir = (
+        _sandbox_jig if os.path.isdir(_sandbox_jig)
+        else f'{REG.ASSETS_ROOT}/Jigsaw Pieces'
+    )
+
+    # Use 'Revisit' — available for all masters, provides WFA background +
+    # globe decoration but NO cloud callout / children image from KQ layout.
+    # Pieces are built into the slide's own spTree so no double-rendering.
+    sp, rp = fresh_geo(work, 'Revisit', master_idx)
 
     # ── Load slide XML ────────────────────────────────────────────────────────
     tree   = xr(sp)
