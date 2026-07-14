@@ -380,7 +380,7 @@ def build_quiz_recap(work, quiz_template_pptx, spec):
         pPr.set('marL', '0'); pPr.set('indent', '0')
         _et.SubElement(pPr, f'{{{_A_NS}}}buNone')
         endPr = _et.SubElement(p, f'{{{_A_NS}}}endParaRPr')
-        endPr.set('lang', 'en-GB'); endPr.set('dirty', '0')
+        endPr.set('lang', 'en-GB'); endPr.set('sz', '600'); endPr.set('dirty', '0')
         sym = _et.SubElement(endPr, f'{{{_A_NS}}}sym')
         sym.set('typeface', 'Wingdings'); sym.set('pitchFamily', '2'); sym.set('charset', '2')
         return p
@@ -411,6 +411,13 @@ def build_quiz_recap(work, quiz_template_pptx, spec):
         raise RuntimeError("quiz_recap: no txBody in content placeholder")
     for p_el in txBody.findall(f'{{{_A_NS}}}p'):
         txBody.remove(p_el)
+    # Strip normAutofit from cloned bodyPr so content doesn't overflow
+    bodyPr = txBody.find(f'{{{_A_NS}}}bodyPr')
+    if bodyPr is not None:
+        for _bf in list(bodyPr):
+            bodyPr.remove(_bf)
+        bodyPr.set('wrap', 'square'); bodyPr.set('anchor', 't')
+
 
     # Build new paragraphs
     qna = spec['qna']
