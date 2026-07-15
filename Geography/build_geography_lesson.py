@@ -368,11 +368,43 @@ def _fill_ph(sp_path, ph_idx, text, sz=None, bold=False, color=None):
     Append a placeholder-filling <p:sp> to the slide's spTree.
     The shape inherits all formatting from the layout's matching placeholder.
     Newlines in text become separate paragraphs.
+
+    Universal overflow prevention (two-layer):
+      Layer 1 — explicit font cap:
+        When no sz is given, cap based on the longest line's character count
+        so text is never written at a size that guarantees overflow.
+        Thresholds are conservative for Twinkl Cursive Looped which runs
+        ~20% wider than screen-render fonts.
+          ≤35 chars → inherit from layout/master (no cap)
+          36–55 chars → 1800 (18 pt)
+          >55 chars  → 1600 (16 pt)
+
+      Layer 2 — normAutofit:
+        Applied in the bodyPr so PowerPoint will shrink any remaining
+        overflow at render time regardless of font or layout size.
+
+    bodyPr strategy:
+      ph_idx == 0 (title): standard margins, wrap, normAutofit.
+      ph_idx 1–9  (std body): standard margins, wrap, normAutofit.
+      ph_idx ≥10  (custom layout PHs — LR speech bubbles, KQ callout, etc.):
+        zero internal margins to match the layout placeholder definition,
+        wrap, top-anchor, normAutofit.  These layouts define bodyPr with
+        lIns=tIns=rIns=bIns=0 so our slide-level override must match to
+        avoid adding unexpected padding that reduces the effective text area.
     """
+    # ── Layer 1: font cap ────────────────────────────────────────────────────
+    _eff_sz = sz
+    if not _eff_sz:
+        _max_ch = max(len(l) for l in str(text).split('\n')) if text else 0
+        if _max_ch > 55:
+            _eff_sz = '1600'
+        elif _max_ch > 35:
+            _eff_sz = '1800'
+
     # Run properties
     rpr_parts = ['lang="en-GB" dirty="0"']
-    if sz:
-        rpr_parts.append(f'sz="{sz}"')
+    if _eff_sz:
+        rpr_parts.append(f'sz="{_eff_sz}"')
     if bold:
         rpr_parts.append('b="1"')
     rpr_attrs = ' '.join(rpr_parts)
@@ -397,16 +429,25 @@ def _fill_ph(sp_path, ph_idx, text, sz=None, bold=False, color=None):
     if not paras_xml:
         paras_xml = f'<a:p><a:endParaRPr lang="en-GB" dirty="0"/></a:p>'
 
+    # ── Layer 2: bodyPr with normAutofit ─────────────────────────────────────
     # ph element — title uses type="title"; body must include type="body" so
-    # PowerPoint matches the layout PH exactly (triggers icon-group suppression
-    # and other layout-level behaviours that rely on PH identity matching).
+    # PowerPoint matches the layout PH exactly.
     if ph_idx == 0:
         ph_xml  = '<p:ph type="title"/>'
-        body_pr = '<a:bodyPr/>'
+        body_pr = '<a:bodyPr wrap="square" anchor="t"><a:normAutofit/></a:bodyPr>'
+    elif ph_idx >= 10:
+        # Custom-indexed layout PHs (LR speech bubbles, KQ callout, etc.).
+        # Layout defines these with zero internal margins — mirror that so our
+        # override doesn't shrink the effective text area.
+        ph_xml  = f'<p:ph type="body" idx="{ph_idx}"/>'
+        body_pr = (
+            '<a:bodyPr spcFirstLastPara="1" wrap="square" '
+            'lIns="0" tIns="0" rIns="0" bIns="0" anchor="t" anchorCtr="0">'
+            '<a:normAutofit/></a:bodyPr>'
+        )
     else:
         ph_xml  = f'<p:ph type="body" idx="{ph_idx}"/>'
-        # normAutofit prevents text from overflowing the placeholder box
-        body_pr = '<a:bodyPr><a:normAutofit/></a:bodyPr>'
+        body_pr = '<a:bodyPr wrap="square" anchor="t"><a:normAutofit/></a:bodyPr>'
 
     sp_xml = (
         f'<p:sp xmlns:p="{P}" xmlns:a="{A}" xmlns:r="{R}">'
