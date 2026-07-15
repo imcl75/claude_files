@@ -370,6 +370,42 @@ def ensure_asset(rel_path):
 ASSETS_ROOT = _LOCAL_ASSETS_ROOT or _GEO_CACHE
 
 
+def install_render_fonts():
+    """
+    Install Twinkl Cursive Looped as a system font so LibreOffice (and any
+    other render tool) uses the real font rather than a fallback.
+
+    Must be called before any slide→image render step.  Safe to call multiple
+    times — exits silently if the font is already installed.
+
+    Fonts live in the repo at Geography/fonts/; ensure_asset() fetches them
+    if not available locally.
+    """
+    import subprocess as _sp
+    import shutil as _sh
+
+    font_dir = _os.path.expanduser('~/.fonts')
+    target = _os.path.join(font_dir, 'TwinklCursiveLooped-Regular.ttf')
+
+    if _os.path.exists(target):
+        return  # already installed this session
+
+    font_path = ensure_asset('fonts/TwinklCursiveLooped-Regular.ttf')
+    if not font_path:
+        print('  NOTE: Twinkl Cursive Looped TTF not available — renders will use fallback font',
+              file=_sys.stderr)
+        return
+
+    _os.makedirs(font_dir, exist_ok=True)
+    _sh.copy2(font_path, target)
+    try:
+        _sp.run(['fc-cache', '-f', font_dir], check=True,
+                capture_output=True, timeout=15)
+        print(f'  [font] installed Twinkl Cursive Looped → {target}', file=_sys.stderr)
+    except Exception as _e:
+        print(f'  NOTE: fc-cache failed: {_e}', file=_sys.stderr)
+
+
 # ── Per-concept progression strips ────────────────────────────────────────────
 # 6 strip images per concept, one per year group (Y1–Y6), animated on click.
 # Stored in concept-specific subfolders under ASSETS_ROOT.

@@ -1686,6 +1686,10 @@ VARIABLE_DISPATCH = {
 
 def build_one_lesson(mtp, lesson_num, base_pptx, out_pptx):
     """Build one lesson PPTX from the MTP dict."""
+    # Install Twinkl Cursive Looped as a system font so any render step
+    # (LibreOffice, thumbnail export, etc.) uses the real font, not a fallback.
+    REG.install_render_fonts()
+
     lesson_data = next(
         (l for l in mtp['lessons'] if l['lesson_number'] == lesson_num), None
     )
