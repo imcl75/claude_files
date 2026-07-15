@@ -602,8 +602,8 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
 
     shape_id = 310
     for icon_file, definition in icon_data:
-        icon_path = f'{REG.ASSETS_ROOT}/{icon_file}'
-        if os.path.exists(icon_path):
+        icon_path = REG.ensure_asset(icon_file)
+        if icon_path and os.path.exists(icon_path):
             add_img(sp, rp, work, icon_path,
                     120000, icon_y, icon_size, icon_size, shape_id)
             shape_id += 1
@@ -649,8 +649,8 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
 
     for yr in range(1, 7):
         strip_path = REG.progression_strip_path(sc, yr)
-        if not os.path.exists(strip_path):
-            print(f'  NOTE: progression strip missing: {strip_path}',
+        if not strip_path or not os.path.exists(strip_path):
+            print(f'  NOTE: progression strip missing for Y{yr} ({sc})',
                   file=sys.stderr)
             strip_shape_ids.append(None)
             strip_id += 1
@@ -755,16 +755,10 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
     lesson_num  = lesson['lesson_number']
     positions   = REG.JIGSAW_PIECE_POSITIONS          # list of (x, y, cx, cy)
 
-    # Resolve the directory holding the skill-coloured jigsaw PNGs.
-    # In the sandbox (test builds) the PNGs are copied to jigsaw_tmp;
-    # on Innes's machine they live in ASSETS_ROOT/Jigsaw Pieces/ as normal.
-    # Glob for jigsaw_tmp across any sandbox session name.
-    _sandbox_jig_matches = glob.glob('/sessions/*/mnt/outputs/jigsaw_tmp')
-    _sandbox_jig = _sandbox_jig_matches[0] if _sandbox_jig_matches else ''
-    jigsaw_dir = (
-        _sandbox_jig if _sandbox_jig and os.path.isdir(_sandbox_jig)
-        else f'{REG.ASSETS_ROOT}/Jigsaw Pieces'
-    )
+    # Jigsaw PNGs are resolved per-piece via REG.ensure_asset so they are
+    # fetched from the GitHub repo automatically when not found locally.
+    # jigsaw_dir is kept as a fallback for any legacy path references.
+    jigsaw_dir = os.path.join(REG.ASSETS_ROOT, 'Jigsaw Pieces')
 
     # Use 'Puzzle Pieces' layout — provides the "Connections" header, WFA
     # background and globe icon for this slide type.  The layout contains NO
@@ -804,9 +798,10 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
         fname = REG.SKILL_JIGSAW_PNG.get(skill)
         if not fname:
             fname = REG.SKILL_JIGSAW_PNG.get('questioning_predicting')
-        src = f'{jigsaw_dir}/{fname}'
-        if not os.path.exists(src):
-            print(f'  WARNING: jigsaw PNG not found: {src}', file=sys.stderr)
+        # Use ensure_asset so the PNG is fetched from GitHub if not local
+        src = REG.ensure_asset(f'Jigsaw Pieces/{fname}')
+        if not src or not os.path.exists(src):
+            print(f'  WARNING: jigsaw PNG not available: Jigsaw Pieces/{fname}', file=sys.stderr)
             return None
         media_dir  = f'{work}/ppt/media'
         tgt_name   = f'jig_{skill}.png'

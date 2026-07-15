@@ -279,19 +279,95 @@ SKILL_JIGSAW_PNG = {
 #   PH idx=1   — content body
 
 # ── Asset paths ───────────────────────────────────────────────────────────────
-# Resolve at import time: the sandbox mounts the user's folder under a
-# session-specific UUID path, so we glob for it first, then fall back to
-# the real macOS path (which works when running outside the sandbox).
-import glob as _glob, os as _os
+# Resolution order:
+#   1. Sandbox session mount (glob)
+#   2. Innes's Mac local path
+#   3. GitHub repo cache — downloaded on demand to /tmp/geo_assets/
+import glob as _glob, os as _os, sys as _sys
+
 _ASSETS_CANDIDATES = [
     '/sessions/*/mnt/Geographer',
     '/Users/innes/Pictures/PPTX Slide assets/Geographer',
 ]
-ASSETS_ROOT = next(
+_LOCAL_ASSETS_ROOT = next(
     (p for _pat in _ASSETS_CANDIDATES
        for p in _glob.glob(_pat) if _os.path.isdir(p)),
-    '/Users/innes/Pictures/PPTX Slide assets/Geographer',
+    None,
 )
+
+# Cache dir used when local assets not available
+_GEO_CACHE = '/tmp/geo_assets'
+_GEO_REPO_ASSET_PREFIX = 'Geography/assets'
+_GEO_REPO = 'imcl75/claude_files'
+_GEO_RAW_BASE = f'https://raw.githubusercontent.com/{_GEO_REPO}/main'
+
+def _geo_token():
+    """Read GitHub token from github-sync SKILL.md."""
+    import re as _re
+    candidates = [
+        '/mnt/skills/user/github-sync/SKILL.md',
+        '/sessions/exciting-cool-cray/mnt/.claude/skills/github-sync/SKILL.md',
+        '/var/folders/7w/tbn3l_nd3pj08rjjyfvc31d80000gn/T/claude-hostloop-plugins/20f3261227b068eb/skills/github-sync/SKILL.md',
+    ]
+    # Also glob for any session path
+    candidates += _glob.glob('/sessions/*/mnt/.claude/skills/github-sync/SKILL.md')
+    for path in candidates:
+        if _os.path.exists(path):
+            with open(path) as _f:
+                m = _re.search(r'GITHUB_TOKEN:\s*(\S+)', _f.read())
+                if m:
+                    return m.group(1)
+    return None
+
+def ensure_asset(rel_path):
+    """
+    Return the local filesystem path to a Geographer asset.
+
+    Checks in order:
+      1. ASSETS_ROOT (local Mac or sandbox mount)
+      2. /tmp/geo_assets cache
+      3. GitHub repo — downloads and caches on first use
+
+    rel_path is relative to ASSETS_ROOT, e.g.
+      'geo-physical-geog-icon.png'
+      'Jigsaw Pieces/new-Jig-orange-questioning.png'
+      'Physical Geography/Physical-geo-prog-y4.png'
+    """
+    import urllib.request as _ur, urllib.parse as _up
+
+    # 1. Local
+    if _LOCAL_ASSETS_ROOT:
+        local = _os.path.join(_LOCAL_ASSETS_ROOT, rel_path)
+        if _os.path.exists(local):
+            return local
+
+    # 2. Cache hit
+    cached = _os.path.join(_GEO_CACHE, rel_path)
+    if _os.path.exists(cached):
+        return cached
+
+    # 3. Fetch from GitHub
+    token = _geo_token()
+    if not token:
+        print(f'  NOTE: no GitHub token — cannot fetch asset {rel_path}', file=_sys.stderr)
+        return None
+
+    parts = [_up.quote(p) for p in rel_path.replace('\\', '/').split('/')]
+    url = f'{_GEO_RAW_BASE}/{_GEO_REPO_ASSET_PREFIX}/{"/".join(parts)}'
+    _os.makedirs(_os.path.dirname(cached), exist_ok=True)
+    try:
+        req = _ur.Request(url, headers={'Authorization': f'token {token}'})
+        with _ur.urlopen(req, timeout=20) as _r:
+            with open(cached, 'wb') as _out:
+                _out.write(_r.read())
+        print(f'  [asset] fetched {rel_path} ({_os.path.getsize(cached):,}b)', file=_sys.stderr)
+        return cached
+    except Exception as _e:
+        print(f'  NOTE: could not fetch asset {rel_path}: {_e}', file=_sys.stderr)
+        return None
+
+# ASSETS_ROOT: kept for backwards compat — points to local if available, else cache dir
+ASSETS_ROOT = _LOCAL_ASSETS_ROOT or _GEO_CACHE
 
 
 # ── Per-concept progression strips ────────────────────────────────────────────
@@ -314,13 +390,14 @@ PROGRESSION_STRIP_FOLDERS = {
 }
 
 def progression_strip_path(substantive_concept, year_group):
-    """Return the path for a concept's year-group strip image (year_group = 1–6)."""
+    """Return a local path to the strip image, fetching from GitHub if needed."""
     folder, template = PROGRESSION_STRIP_FOLDERS.get(
         substantive_concept,
         ('', f'geo-prog-{substantive_concept}-y{{}}.png')
     )
     filename = template.format(year_group)
-    return f'{ASSETS_ROOT}/{folder}/{filename}' if folder else f'{ASSETS_ROOT}/{filename}'
+    rel = f'{folder}/{filename}' if folder else filename
+    return ensure_asset(rel)
 
 
 # ── Concept titles (used on the progression slide header) ────────────────────
