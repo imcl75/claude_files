@@ -392,21 +392,25 @@ def _fill_ph(sp_path, ph_idx, text, sz=None, bold=False, color=None):
         lIns=tIns=rIns=bIns=0 so our slide-level override must match to
         avoid adding unexpected padding that reduces the effective text area.
     """
-    # ── Layer 1: font cap (idx >= 10 only) ──────────────────────────────────
-    # Only small custom-layout PHs (LR speech bubbles etc.) need a hard cap.
-    # Standard title/body PHs are large enough that normAutofit handles them.
-    # Threshold is based on the LR bubble dimensions (3370263 × 1096962 EMU,
-    # ≈3.69" × 1.20") with Twinkl Cursive Looped running ~20% wider than
-    # screen fonts.  At 24pt, roughly 22 chars fit per line; 3 lines = 1.15"
-    # which just fits.  4 lines = 1.53" → overflows.  Cap only fires when the
-    # longest line suggests 4+ lines would result at 24pt (i.e. > ~65 chars).
+    # ── Layer 1: font sizing for idx >= 10 PHs ──────────────────────────────
+    # Custom-indexed PHs (LR speech bubbles, KQ callout, etc.) are small shapes
+    # whose master-inherited font size is typically 28–32pt — too large to fit
+    # multi-line questions without overflow.  We set an explicit base of 2000
+    # (20pt) so normAutofit has a sensible starting point, then cap further for
+    # genuinely long strings.  This avoids relying on normAutofit's minimum-
+    # font-size floor, which varies across PowerPoint versions.
+    #
+    # LR bubble dimensions: 3370263 × 1096962 EMU (≈3.69" × 1.20").
+    # At 20pt + Twinkl Cursive Looped (~20% wider): ~18 chars/line.
+    # 3 lines at 20pt = 0.96" → fits.  4 lines = 1.28" → overflows.
+    # Threshold: >65 chars likely needs 4+ lines at 20pt → drop to 16pt.
     _eff_sz = sz
     if not _eff_sz and ph_idx >= 10:
         _max_ch = max(len(l) for l in str(text).split('\n')) if text else 0
-        if _max_ch > 80:
-            _eff_sz = '1600'   # 16pt — very long text, 4+ lines even at 20pt
-        elif _max_ch > 65:
-            _eff_sz = '2000'   # 20pt — borderline; 4 lines at 24pt overflows
+        if _max_ch > 65:
+            _eff_sz = '1600'   # 16pt — 4+ lines at 20pt would overflow
+        else:
+            _eff_sz = '2000'   # 20pt — sensible base; normAutofit backstop
 
     # Run properties
     rpr_parts = ['lang="en-GB" dirty="0"']
@@ -1093,7 +1097,7 @@ def build_lo(work, base_pptx, lesson, enquiry, master_idx):
     static labels 'I am learning to...', 'This is so...', 'I will be successful by...'.
     Content written as explicit text boxes below each label.
     Positions from user-confirmed PPTX edit (2026-07-13).
-    Font: Twinkl Cursive Looped 14pt + normAutofit.
+    Font: Twinkl Cursive Looped 18pt + normAutofit.
     """
     lo_layout = REG.lo_layout_name(master_idx)
     sp, rp = fresh_geo(work, lo_layout, master_idx)
@@ -1118,8 +1122,10 @@ def build_lo(work, base_pptx, lesson, enquiry, master_idx):
 
     # ── Explicit content text boxes below each panel label ────────────────────
     # y=4 719 286 sits below the static labels in each rounded-rectangle panel.
-    # sz=1400 (14 pt) + normAutofit handles Twinkl Cursive Looped which runs
+    # sz=1800 (18 pt) + normAutofit handles Twinkl Cursive Looped which runs
     # ~20% wider than screen render fonts, preventing bottom overflow.
+    # Boxes are 2559050 × 1698625 EMU (≈2.8" × 1.86"); at 18pt, typical
+    # LO text (30–70 chars) fits in 3–4 lines (max height ≈1.15") with room.
     LO_BOXES = [
         (698500,   4719286, 2559050, 1698625, walt),  # panel 1 - WALT
         (4877594,  4719287, 2559050, 1698625, tib),   # panel 2 - TIB
@@ -1143,7 +1149,7 @@ def build_lo(work, base_pptx, lesson, enquiry, master_idx):
             f'<a:bodyPr wrap="square" anchor="t"><a:normAutofit/></a:bodyPr>'
             f'<a:lstStyle/>'
             f'<a:p><a:r>'
-            f'<a:rPr lang="en-GB" sz="1400" dirty="0">'
+            f'<a:rPr lang="en-GB" sz="1800" dirty="0">'
             f'<a:latin typeface="Twinkl Cursive Looped"/>'
             f'</a:rPr>'
             f'<a:t>{ex(txt)}</a:t>'
