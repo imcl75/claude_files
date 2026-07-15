@@ -758,9 +758,11 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
     # Resolve the directory holding the skill-coloured jigsaw PNGs.
     # In the sandbox (test builds) the PNGs are copied to jigsaw_tmp;
     # on Innes's machine they live in ASSETS_ROOT/Jigsaw Pieces/ as normal.
-    _sandbox_jig = '/sessions/fervent-jolly-einstein/mnt/outputs/jigsaw_tmp'
+    # Glob for jigsaw_tmp across any sandbox session name.
+    _sandbox_jig_matches = glob.glob('/sessions/*/mnt/outputs/jigsaw_tmp')
+    _sandbox_jig = _sandbox_jig_matches[0] if _sandbox_jig_matches else ''
     jigsaw_dir = (
-        _sandbox_jig if os.path.isdir(_sandbox_jig)
+        _sandbox_jig if _sandbox_jig and os.path.isdir(_sandbox_jig)
         else f'{REG.ASSETS_ROOT}/Jigsaw Pieces'
     )
 
