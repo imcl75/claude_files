@@ -392,14 +392,21 @@ def _fill_ph(sp_path, ph_idx, text, sz=None, bold=False, color=None):
         lIns=tIns=rIns=bIns=0 so our slide-level override must match to
         avoid adding unexpected padding that reduces the effective text area.
     """
-    # ── Layer 1: font cap ────────────────────────────────────────────────────
+    # ── Layer 1: font cap (idx >= 10 only) ──────────────────────────────────
+    # Only small custom-layout PHs (LR speech bubbles etc.) need a hard cap.
+    # Standard title/body PHs are large enough that normAutofit handles them.
+    # Threshold is based on the LR bubble dimensions (3370263 × 1096962 EMU,
+    # ≈3.69" × 1.20") with Twinkl Cursive Looped running ~20% wider than
+    # screen fonts.  At 24pt, roughly 22 chars fit per line; 3 lines = 1.15"
+    # which just fits.  4 lines = 1.53" → overflows.  Cap only fires when the
+    # longest line suggests 4+ lines would result at 24pt (i.e. > ~65 chars).
     _eff_sz = sz
-    if not _eff_sz:
+    if not _eff_sz and ph_idx >= 10:
         _max_ch = max(len(l) for l in str(text).split('\n')) if text else 0
-        if _max_ch > 55:
-            _eff_sz = '1600'
-        elif _max_ch > 35:
-            _eff_sz = '1800'
+        if _max_ch > 80:
+            _eff_sz = '1600'   # 16pt — very long text, 4+ lines even at 20pt
+        elif _max_ch > 65:
+            _eff_sz = '2000'   # 20pt — borderline; 4 lines at 24pt overflows
 
     # Run properties
     rpr_parts = ['lang="en-GB" dirty="0"']
