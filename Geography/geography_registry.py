@@ -222,31 +222,33 @@ SKILL_DISPLAY_NAMES = {
 # Same positions used for all masters — the jigsaw layout is universal.
 #
 JIGSAW_PIECE_POSITIONS = [
-    ( 215259, 4391087, 2311678, 2311678),  # slot  1  bottom-left
-    (2074221, 4391771, 2317967, 2317967),  # slot  2
-    (3948886, 4393277, 2317966, 2317966),  # slot  3
-    (5809534, 4384795, 2387476, 2311677),  # slot  4
-    (7664035, 4391771, 2311677, 2311677),  # slot  5  bottom-right
-    ( 208574, 2521974, 2317967, 2317967),  # slot  6  middle-left
-    (2083239, 2523480, 2317966, 2317966),  # slot  7
-    (3955176, 2526287, 2387476, 2311677),  # slot  8
-    (5809677, 2521974, 2311677, 2311677),  # slot  9
-    (7674702, 2524411, 2317967, 2317967),  # slot 10
-    (9548466, 2529769, 2311677, 2311677),  # slot 11  middle-right
-    (3949165,  649231, 2317967, 2317967),  # slot 12  top-left of top row
-    (5814581,  639141, 2317966, 2317966),  # slot 13
-    (7674702,  653003, 2387476, 2311677),  # slot 14
-    (9545923,  659691, 2311678, 2311678),  # slot 15  top-right
+    # All positions hand-tuned by Innes McLean 2026-07-15 from jig_v6_L15.pptx.
+    # (off_x, off_y, cx, cy) in EMU.  Larger pieces, fully interlocking.
+    ( -312726, 3569551, 3437304, 3437304),  # slot  1  bottom-left
+    ( 1560881, 3554757, 3446656, 3446656),  # slot  2
+    ( 3447222, 3556997, 3446654, 3446654),  # slot  3
+    ( 5291717, 3544384, 3550011, 3437303),  # slot  4
+    ( 7221656, 3538947, 3437303, 3437303),  # slot  5  bottom-right
+    ( -322666, 1691479, 3446656, 3446656),  # slot  6  middle-left
+    ( 1547846, 1677908, 3446654, 3446654),  # slot  7
+    ( 3382693, 1682081, 3550011, 3437303),  # slot  8
+    ( 5333906, 1675668, 3437303, 3437303),  # slot  9
+    ( 7205896, 1663481, 3446656, 3446656),  # slot 10
+    ( 9090881, 1655639, 3437303, 3437303),  # slot 11  middle-right
+    ( 3421196,  -208063, 3446656, 3446656), # slot 12  top-left of top row
+    ( 5304404,  -212433, 3446654, 3446654), # slot 13
+    ( 7142654,  -202176, 3550011, 3437303), # slot 14
+    ( 9087125,  -208042, 3437304, 3437304), # slot 15  top-right
 ]
 
 # skill_focus → PNG filename under ASSETS_ROOT/Jigsaw Pieces/
-# PNGs supplied by Innes (2026-07-14): coloured jigsaw piece images with icon.
+# New pieces remade by Innes (2026-07-14): identical shape, one colour per skill.
 SKILL_JIGSAW_PNG = {
-    'questioning_predicting':   'Jig-orange-questioning.png',
-    'observing_recording':      'Jig-yellow-observing.png',
-    'field_work':               'Jig-purple-field-work.png',
-    'map_skills':               'Jig-green-map-skills.png',
-    'concluding_communicating': 'Jig-blue-concluding.png',
+    'questioning_predicting':   'new-Jig-orange-questioning.png',
+    'observing_recording':      'new-Jig-yellow-observing.png',
+    'field_work':               'new-Jig-purple-field-work.png',
+    'map_skills':               'new-Jig-green-map-skills.png',
+    'concluding_communicating': 'new-Jig-blue-concluding.png',
 }
 
 # ── Placeholder indices — confirmed by XML inspection 2026-07-12 ─────────────

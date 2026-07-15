@@ -739,8 +739,8 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
     Slide 4: Puzzle Pieces (jigsaw).
 
     For lesson N in the enquiry sequence:
-      - Slots 1..N-1  : always visible — no animation (no timing entry needed)
-      - Slot  N       : click-reveal animation (p:set style.visibility → visible)
+      - Slot  1       : always visible on slide load — no animation entry
+      - Slots 2..N    : each gets one click-reveal animation (p:set style.visibility → visible)
       - Slots N+1..15 : not added to slide at all
 
     Each slot is a p:grpSp built from scratch:
@@ -764,10 +764,11 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
         else f'{REG.ASSETS_ROOT}/Jigsaw Pieces'
     )
 
-    # Use 'Revisit' — available for all masters, provides WFA background +
-    # globe decoration but NO cloud callout / children image from KQ layout.
-    # Pieces are built into the slide's own spTree so no double-rendering.
-    sp, rp = fresh_geo(work, 'Revisit', master_idx)
+    # Use 'Puzzle Pieces' layout — provides the "Connections" header, WFA
+    # background and globe icon for this slide type.  The layout contains NO
+    # actual puzzle-piece shapes (only decorative text + images), so building
+    # groups into the slide's own spTree causes no double-rendering.
+    sp, rp = fresh_geo(work, 'Puzzle Pieces', master_idx)
 
     # ── Load slide XML ────────────────────────────────────────────────────────
     tree   = xr(sp)
@@ -823,9 +824,7 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
     # ── Build piece groups ────────────────────────────────────────────────────
     # spids: group=200+i*3, pic=201+i*3, txt=202+i*3  (i=0-indexed slot)
     BASE_SPID = 200
-    # Spid of the current lesson's group — computed up front so it's correct
-    # even if some earlier PNG lookups fail and trigger continue.
-    current_piece_spid = BASE_SPID + (lesson_num - 1) * 3
+    animated_spids = []   # group spids for pieces 2..N (click-revealed)
 
     for i, lsn in enumerate(all_lessons[:lesson_num]):
         if i >= len(positions):
@@ -843,13 +842,18 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
         grp_spid = BASE_SPID + i * 3
         pic_spid = grp_spid + 1
         sp_spid  = grp_spid + 2
+        if i > 0:                    # piece 1 (i=0) is always visible; 2..N animate
+            animated_spids.append(grp_spid)
 
-        # TextBox sits centred in the lower half of the piece
-        tb_margin = cx // 10
+        # TextBox sits in the safe body zone of the piece.
+        # Margins hand-tuned by Innes McLean 2026-07-15 from jig_v9_colour_L5.pptx.
+        # 30% side margins (≈ 40% wide), 31% from top, 38% tall.
+        # Child coords map 1-to-1 to slide coords (chOff = off_x, off_y).
+        tb_margin = int(cx * 0.30)
         tb_x      = off_x + tb_margin
-        tb_y      = off_y + cy // 2
+        tb_y      = off_y + int(cy * 0.31)
         tb_cx     = cx - 2 * tb_margin
-        tb_cy     = cy // 2 - tb_margin
+        tb_cy     = int(cy * 0.38)
 
         grp_xml = (
             f'<p:grpSp xmlns:p="{P}" xmlns:a="{A}" xmlns:r="{R}">'
@@ -866,7 +870,7 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
                   f'<a:chExt cx="{cx}" cy="{cy}"/>'
                 f'</a:xfrm>'
               f'</p:grpSpPr>'
-              # Image — fills the whole group
+              # Image — fills the whole group (child coords = slide coords when chOff=off)
               f'<p:pic>'
                 f'<p:nvPicPr>'
                   f'<p:cNvPr id="{pic_spid}" name="JigsawImg_{i+1}"/>'
@@ -885,7 +889,7 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
                   f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
                 f'</p:spPr>'
               f'</p:pic>'
-              # TextBox — lesson title in lower half
+              # TextBox — lesson title centred in piece body
               f'<p:sp>'
                 f'<p:nvSpPr>'
                   f'<p:cNvPr id="{sp_spid}" name="JigsawTxt_{i+1}"/>'
@@ -902,7 +906,7 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
                 f'</p:spPr>'
                 f'<p:txBody>'
                   f'<a:bodyPr wrap="square" rtlCol="0" anchor="ctr">'
-                    f'<a:spAutoFit/>'
+                    f'<a:normAutofit/>'
                   f'</a:bodyPr>'
                   f'<a:lstStyle/>'
                   f'<a:p>'
@@ -912,9 +916,9 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
                         f'<a:latin typeface="Twinkl Cursive Looped"'
                         f' panose="02000000000000000000"'
                         f' pitchFamily="2" charset="77"/>'
-                        f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
+                        f'<a:solidFill><a:srgbClr val="1C1C1C"/></a:solidFill>'
                       f'</a:rPr>'
-                      f'<a:t>{txt}</a:t>'
+                      f'<a:t>{ex(txt)}</a:t>'
                     f'</a:r>'
                   f'</a:p>'
                 f'</p:txBody>'
@@ -929,11 +933,67 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
     # ── Save updated rels ─────────────────────────────────────────────────────
     xw(rels_tree, rp)
 
-    # ── Build timing: single click-reveal for piece N ─────────────────────────
-    # Pieces 1..N-1 have no timing entry → visible from slide open.
-    # Piece N uses p:set style.visibility → visible on click.
+    # ── Build timing: one click-reveal par block per animated piece ───────────
+    # Piece 1 (i=0) has no timing entry → always visible on slide load.
+    # Pieces 2..N each get one <p:par> in mainSeq that fires on click.
+    # Lesson 1 has only piece 1 → no animations → skip timing entirely
+    # (empty childTnLst / bldLst causes PowerPoint to repair-and-strip the slide).
+    # cTn IDs: each block uses 4 IDs (outer, inner, clickEffect, set).
+    # Structure confirmed from Innes's jig_v6_L15.pptx edit (2026-07-15).
+    # prevCondLst/nextCondLst use evt="onPrev"/"onNext"; tgtEl is direct child
+    # of cond — no <p:tn> wrapper.
+    if not animated_spids:
+        # No animations needed — remove any existing timing and exit
+        existing = root.find(f'{{{P}}}timing')
+        if existing is not None:
+            root.remove(existing)
+        xw(tree, sp)
+        print(f'  [4] puzzle_pieces — {lesson_num}/{len(positions)} pieces  (no animations)')
+        return sp
+
+    inner_pars = ''
+    ctn_id = 3
+    for anim_spid in animated_spids:
+        inner_pars += (
+            f'<p:par>'
+              f'<p:cTn id="{ctn_id}" fill="hold">'
+                f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
+                f'<p:childTnLst>'
+                  f'<p:par>'
+                    f'<p:cTn id="{ctn_id+1}" fill="hold">'
+                      f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+                      f'<p:childTnLst>'
+                        f'<p:par>'
+                          f'<p:cTn id="{ctn_id+2}" presetID="1" presetClass="entr"'
+                          f' presetSubtype="0" fill="hold" nodeType="clickEffect">'
+                            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+                            f'<p:childTnLst>'
+                              f'<p:set>'
+                                f'<p:cBhvr>'
+                                  f'<p:cTn id="{ctn_id+3}" dur="1" fill="hold">'
+                                    f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+                                  f'</p:cTn>'
+                                  f'<p:tgtEl><p:spTgt spid="{anim_spid}"/></p:tgtEl>'
+                                  f'<p:attrNameLst>'
+                                    f'<p:attrName>style.visibility</p:attrName>'
+                                  f'</p:attrNameLst>'
+                                f'</p:cBhvr>'
+                                f'<p:to><p:strVal val="visible"/></p:to>'
+                              f'</p:set>'
+                            f'</p:childTnLst>'
+                          f'</p:cTn>'
+                        f'</p:par>'
+                      f'</p:childTnLst>'
+                    f'</p:cTn>'
+                  f'</p:par>'
+                f'</p:childTnLst>'
+              f'</p:cTn>'
+            f'</p:par>'
+        )
+        ctn_id += 4
+
     timing_xml = (
-        f'<p:timing xmlns:p="{P}">'
+        f'<p:timing xmlns:p="{P}" xmlns:a="{A}">'
           f'<p:tnLst>'
             f'<p:par>'
               f'<p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot">'
@@ -941,53 +1001,17 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
                   f'<p:seq concurrent="1" nextAc="seek">'
                     f'<p:cTn id="2" dur="indefinite" nodeType="mainSeq">'
                       f'<p:childTnLst>'
-                        f'<p:par>'
-                          f'<p:cTn id="3" fill="hold">'
-                            f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
-                            f'<p:childTnLst>'
-                              f'<p:par>'
-                                f'<p:cTn id="4" fill="hold">'
-                                  f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
-                                  f'<p:childTnLst>'
-                                    f'<p:par>'
-                                      f'<p:cTn id="5" presetID="1" presetClass="entr"'
-                                      f' presetSubtype="0" fill="hold"'
-                                      f' nodeType="clickEffect">'
-                                        f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
-                                        f'<p:childTnLst>'
-                                          f'<p:set>'
-                                            f'<p:cBhvr>'
-                                              f'<p:cTn id="6" dur="1" fill="hold">'
-                                                f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
-                                              f'</p:cTn>'
-                                              f'<p:tgtEl>'
-                                                f'<p:spTgt spid="{current_piece_spid}"/>'
-                                              f'</p:tgtEl>'
-                                              f'<p:attrNameLst>'
-                                                f'<p:attrName>style.visibility</p:attrName>'
-                                              f'</p:attrNameLst>'
-                                            f'</p:cBhvr>'
-                                            f'<p:to><p:strVal val="visible"/></p:to>'
-                                          f'</p:set>'
-                                        f'</p:childTnLst>'
-                                      f'</p:cTn>'
-                                    f'</p:par>'
-                                  f'</p:childTnLst>'
-                                f'</p:cTn>'
-                              f'</p:par>'
-                            f'</p:childTnLst>'
-                          f'</p:cTn>'
-                        f'</p:par>'
+                        f'{inner_pars}'
                       f'</p:childTnLst>'
                     f'</p:cTn>'
                     f'<p:prevCondLst>'
-                      f'<p:cond evt="onPrevClick" delay="0">'
-                        f'<p:tn><p:tgtEl><p:sldTgt/></p:tgtEl></p:tn>'
+                      f'<p:cond evt="onPrev" delay="0">'
+                        f'<p:tgtEl><p:sldTgt/></p:tgtEl>'
                       f'</p:cond>'
                     f'</p:prevCondLst>'
                     f'<p:nextCondLst>'
-                      f'<p:cond evt="onNextClick" delay="0">'
-                        f'<p:tn><p:tgtEl><p:sldTgt/></p:tgtEl></p:tn>'
+                      f'<p:cond evt="onNext" delay="0">'
+                        f'<p:tgtEl><p:sldTgt/></p:tgtEl>'
                       f'</p:cond>'
                     f'</p:nextCondLst>'
                   f'</p:seq>'
@@ -995,6 +1019,12 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
               f'</p:cTn>'
             f'</p:par>'
           f'</p:tnLst>'
+          f'<p:bldLst>'
+            + ''.join(
+                f'<p:bldP spid="{s}" grpId="0" build="p"/>'
+                for s in animated_spids
+              ) +
+          f'</p:bldLst>'
         f'</p:timing>'
     )
 
@@ -1005,8 +1035,9 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
     root.append(timing_el)
     xw(tree, sp)
 
+    anim_count = len(animated_spids)
     print(f'  [4] puzzle_pieces — {lesson_num}/{len(positions)} pieces'
-          f'  (spid {current_piece_spid} animates on click)')
+          f'  ({anim_count} click-reveal animation{"s" if anim_count != 1 else ""})')
     return sp
 
 
