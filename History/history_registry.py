@@ -76,7 +76,7 @@ FIXED_SLIDE_TYPES = [
     'key_vocabulary',
 ]
 
-VARIABLE_SLIDE_TYPES = ['i_do', 'we_do', 'you_do', 'you_do_trio']
+VARIABLE_SLIDE_TYPES = ['i_do', 'we_do', 'you_do', 'you_do_trio', 'concept_cartoon']
 
 # Layout names expected in the base PPTX (same as science-example.pptx)
 CONTENT_LAYOUTS = {
@@ -86,3 +86,21 @@ CONTENT_LAYOUTS = {
     'you_do_trio':'You Do Trio',
     'blank':      'Blank',
 }
+
+# ── Concept Cartoon ───────────────────────────────────────────────────────────
+# Shared with Science — template lives in Being_a_Scientist_slide_deck.pptx.
+# Pass the PPTX path via mtp['concept_cartoon_pptx'].
+CONCEPT_CARTOON_ANCHOR                  = 'turn on the light'
+CONCEPT_CARTOON_HINT                    = 11
+CONCEPT_CARTOON_CENTRAL_IMAGE_SHAPE_NAME= 'Picture 7'
+CONCEPT_CARTOON_TITLE_SHAPE_NAME        = 'Rectangle: Rounded Corners 2'
+CONCEPT_CARTOON_BUBBLE_NAMES = [
+    'Speech Bubble: Rectangle with Corners Rounded 19',
+    'Speech Bubble: Rectangle with Corners Rounded 21',
+    'Speech Bubble: Rectangle with Corners Rounded 20',
+]
+CONCEPT_CARTOON_ANIMATION_STEPS = [
+    ['Picture 8',  'TextBox 23', 'Speech Bubble: Rectangle with Corners Rounded 19'],
+    ['Picture 16', 'Speech Bubble: Rectangle with Corners Rounded 21', 'TextBox 24'],
+    ['Picture 14', 'Speech Bubble: Rectangle with Corners Rounded 20', 'TextBox 25'],
+]

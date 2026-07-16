@@ -522,7 +522,10 @@ def build_key_question(work, base_pptx, lesson, enquiry, master_idx):
     if bg_img and bg_img.get('local_path') and os.path.exists(bg_img['local_path']):
         add_img(sp, rp, work, bg_img['local_path'], 0, 0, SW, SH, 10)
 
-    _fill_ph(sp, 10, enquiry.get('key_question', ''))
+    kq_text   = enquiry.get('key_question', '')
+    challenge = enquiry.get('challenge', '')
+    combined  = kq_text + ('\n\n' + challenge if challenge else '')
+    _fill_ph(sp, 10, combined)
     print('  [1] key_question')
     return sp
 
@@ -1670,6 +1673,93 @@ def build_learning_review(work, slide_spec, lesson, enquiry, master_idx, slide_n
 #  Main orchestrator
 # ══════════════════════════════════════════════════════════════════════════════
 
+
+
+def build_concept_cartoon(work, slide_spec, lesson_data, mtp, master_idx, slide_num):
+    """
+    Variable slide: Concept Cartoon.
+
+    Clones the concept cartoon slide from Being_a_Scientist_slide_deck.pptx.
+    Requires:
+      slide_spec['title']              — optional title override
+      slide_spec['learners']           — list of 3 dicts with 'statement' key
+      slide_spec['image_path']         — path to the central image PNG (required)
+      mtp['concept_cartoon_pptx']      — path to Being_a_Scientist_slide_deck.pptx
+                                         OR standard fallback paths are tried
+    """
+    import os as _os
+
+    # Locate the template PPTX
+    cc_pptx = mtp.get('concept_cartoon_pptx')
+    if cc_pptx and not _os.path.exists(cc_pptx):
+        cc_pptx = None
+    if not cc_pptx:
+        _this = _os.path.dirname(_os.path.abspath(__file__))
+        candidates = [
+            _os.path.join(_this, '..', 'EnquiryBuilder', 'Being_a_Scientist_slide_deck.pptx'),
+            _os.path.join(_this, 'Being_a_Scientist_slide_deck.pptx'),
+            '/tmp/t6w7/Being_a_Scientist_slide_deck.pptx',
+        ]
+        cc_pptx = next((p for p in candidates if _os.path.exists(p)), None)
+    if not cc_pptx:
+        raise RuntimeError(
+            "concept_cartoon: Being_a_Scientist_slide_deck.pptx not found. "
+            "Set mtp['concept_cartoon_pptx'] to its path."
+        )
+
+    src_dir(cc_pptx)
+    sn = find_slide_by_anchor(cc_pptx, REG.CONCEPT_CARTOON_ANCHOR, REG.CONCEPT_CARTOON_HINT)
+    sp, rp = clone(work, cc_pptx, sn, copy_hdphoto=True)
+
+    # Title
+    tree = xr(sp)
+    title_s = find_sp(tree, REG.CONCEPT_CARTOON_TITLE_SHAPE_NAME)
+    if title_s is not None and slide_spec.get('title'):
+        set_text(title_s, slide_spec['title'])
+
+    # Learner speech bubbles
+    learners = slide_spec.get('learners', [])
+    if len(learners) != 3:
+        raise ValueError("concept_cartoon requires exactly 3 learners (A/B/C)")
+    for bubble_name, learner in zip(REG.CONCEPT_CARTOON_BUBBLE_NAMES, learners):
+        s = find_sp(tree, bubble_name)
+        if s is None:
+            raise RuntimeError(f"concept_cartoon: bubble '{bubble_name}' not found — template drift")
+        set_text(s, learner['statement'])
+        force_shrink_to_fit(s)
+    xw(tree, sp)
+
+    for bubble_name in REG.CONCEPT_CARTOON_BUBBLE_NAMES:
+        clamp_callout_tail(sp, bubble_name)
+
+    # Central image
+    img_path = slide_spec.get('image_path', '')
+    if not img_path or not _os.path.exists(img_path):
+        raise RuntimeError(
+            f"concept_cartoon: image_path '{img_path}' is missing — "
+            "refusing to deliver a slide with the default cat/light template image"
+        )
+    tree = xr(sp)
+    pic_id = find_pic_id_by_name(tree, REG.CONCEPT_CARTOON_CENTRAL_IMAGE_SHAPE_NAME)
+    if pic_id is None:
+        raise RuntimeError("concept_cartoon: central image shape not found")
+    replace_image(sp, rp, work, pic_id, img_path)
+
+    # Animation
+    tree = xr(sp)
+    id_steps = []
+    for step_names in REG.CONCEPT_CARTOON_ANIMATION_STEPS:
+        ids = []
+        for name in step_names:
+            sid = get_shape_id_by_name(tree, name)
+            if sid is None:
+                raise RuntimeError(f"concept_cartoon: animated shape '{name}' not found")
+            ids.append(sid)
+        id_steps.append(ids)
+    animate(sp, id_steps)
+
+    return sp
+
 VARIABLE_DISPATCH = {
     'i_do':            lambda work, spec, lsn, enq, mi, n:
                            _build_content_slide(work, 'i_do',       spec, lsn, mi, n),
@@ -1679,8 +1769,10 @@ VARIABLE_DISPATCH = {
                            _build_content_slide(work, 'you_do_trio',spec, lsn, mi, n),
     'you_do':          lambda work, spec, lsn, enq, mi, n:
                            _build_content_slide(work, 'you_do',     spec, lsn, mi, n),
-    'learning_review': lambda work, spec, lsn, enq, mi, n:
+    'learning_review':   lambda work, spec, lsn, enq, mi, n:
                            build_learning_review(work, spec, lsn, enq, mi, n),
+    'concept_cartoon':  lambda work, spec, lsn, enq, mi, n:
+                           build_concept_cartoon(work, spec, lsn, enq, mi, n),
 }
 
 

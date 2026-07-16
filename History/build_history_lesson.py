@@ -1038,11 +1038,101 @@ def build_you_do_trio(work, slide_spec, lesson, enquiry, colours):
 #  Main orchestrator
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
+
+def build_concept_cartoon(work, slide_spec, lesson_data, mtp, colours):
+    """
+    Variable slide: Concept Cartoon.
+
+    Clones the concept cartoon slide from Being_a_Scientist_slide_deck.pptx.
+    Requires:
+      slide_spec['title']              — optional override for the title box
+      slide_spec['learners']           — list of 3 dicts with 'statement' key
+      slide_spec['image_path']         — path to the central image PNG (required)
+      mtp['concept_cartoon_pptx']      — path to Being_a_Scientist_slide_deck.pptx
+                                         OR standard fallback paths are tried
+
+    Raises RuntimeError if the PPTX cannot be found or the central image is missing.
+    """
+    import os as _os
+
+    # Locate the template PPTX
+    cc_pptx = mtp.get('concept_cartoon_pptx')
+    if cc_pptx and not _os.path.exists(cc_pptx):
+        cc_pptx = None
+    if not cc_pptx:
+        _this = _os.path.dirname(_os.path.abspath(__file__))
+        candidates = [
+            _os.path.join(_this, '..', 'EnquiryBuilder', 'Being_a_Scientist_slide_deck.pptx'),
+            _os.path.join(_this, 'Being_a_Scientist_slide_deck.pptx'),
+            '/tmp/t6w7/Being_a_Scientist_slide_deck.pptx',
+        ]
+        cc_pptx = next((p for p in candidates if _os.path.exists(p)), None)
+    if not cc_pptx:
+        raise RuntimeError(
+            "concept_cartoon: Being_a_Scientist_slide_deck.pptx not found. "
+            "Set mtp['concept_cartoon_pptx'] to its path."
+        )
+
+    src_dir(cc_pptx)
+    sn = find_slide_by_anchor(cc_pptx, REG.CONCEPT_CARTOON_ANCHOR, REG.CONCEPT_CARTOON_HINT)
+    sp, rp = clone(work, cc_pptx, sn, copy_hdphoto=True)
+
+    # Title
+    tree = xr(sp)
+    title_s = find_sp(tree, REG.CONCEPT_CARTOON_TITLE_SHAPE_NAME)
+    if title_s is not None and slide_spec.get('title'):
+        set_text(title_s, slide_spec['title'])
+
+    # Learner speech bubbles
+    learners = slide_spec.get('learners', [])
+    if len(learners) != 3:
+        raise ValueError("concept_cartoon requires exactly 3 learners (A/B/C)")
+    for bubble_name, learner in zip(REG.CONCEPT_CARTOON_BUBBLE_NAMES, learners):
+        s = find_sp(tree, bubble_name)
+        if s is None:
+            raise RuntimeError(f"concept_cartoon: bubble '{bubble_name}' not found — template drift")
+        set_text(s, learner['statement'])
+        force_shrink_to_fit(s)
+    xw(tree, sp)
+
+    for bubble_name in REG.CONCEPT_CARTOON_BUBBLE_NAMES:
+        clamp_callout_tail(sp, bubble_name)
+
+    # Central image
+    img_path = slide_spec.get('image_path', '')
+    if not img_path or not _os.path.exists(img_path):
+        raise RuntimeError(
+            f"concept_cartoon: image_path '{img_path}' is missing — "
+            "refusing to deliver a slide with the default cat/light template image"
+        )
+    tree = xr(sp)
+    pic_id = find_pic_id_by_name(tree, REG.CONCEPT_CARTOON_CENTRAL_IMAGE_SHAPE_NAME)
+    if pic_id is None:
+        raise RuntimeError("concept_cartoon: central image shape not found")
+    replace_image(sp, rp, work, pic_id, img_path)
+
+    # Animation
+    tree = xr(sp)
+    id_steps = []
+    for step_names in REG.CONCEPT_CARTOON_ANIMATION_STEPS:
+        ids = []
+        for name in step_names:
+            sid = get_shape_id_by_name(tree, name)
+            if sid is None:
+                raise RuntimeError(f"concept_cartoon: animated shape '{name}' not found")
+            ids.append(sid)
+        id_steps.append(ids)
+    animate(sp, id_steps)
+
+    return sp
+
 VARIABLE_DISPATCH = {
-    'i_do':       build_i_do,
-    'we_do':      build_we_do,
-    'you_do':     build_you_do,
-    'you_do_trio':build_you_do_trio,
+    'i_do':         build_i_do,
+    'we_do':        build_we_do,
+    'you_do':       build_you_do,
+    'you_do_trio':  build_you_do_trio,
+    'concept_cartoon': build_concept_cartoon,
 }
 
 
