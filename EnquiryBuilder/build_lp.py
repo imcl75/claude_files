@@ -60,6 +60,27 @@ PINK   = RGBColor(0xC0, 0x15, 0x7B)
 
 FONT_BODY = 'Twinkl Cursive Looped'
 
+# ── Text-height model ────────────────────────────────────────────────────────
+# All text rendering uses these constants so behaviour is consistent everywhere.
+#
+# _TCF: chars per (pt × inch) of usable width — calibrated for Twinkl Cursive
+#       Looped, which is wider than a typical body font. 0.46 (the old value)
+#       allowed 99 chars/line at 11pt on 7 in and classified a 92-char label
+#       as fitting in one line; it does not. 0.58 gives 78 chars/line and
+#       correctly wraps the same label to two lines.
+# _LHF: line-height as a multiple of point size (1.45 × pt / 72 = inches/line).
+# _TPAD: fixed padding added to both textbox height and y-advance. Gives the
+#        text frame headroom against rounding error without burning much space.
+_TCF  = 0.58    # chars per (pt × inch) — Twinkl Cursive calibration
+_LHF  = 1.45    # line-height factor (× size_pt / 72 = inches per line)
+_TPAD = 0.06    # textbox padding added to both height and y-advance (inches)
+
+# answer_lines sub-layout gaps (all in inches):
+_AL_LABEL_LINE_GAP   = 0.05   # between bottom of label text and first ruled line
+_AL_STARTER_LINE_GAP = 0.04   # between bottom of sentence starter and first ruled line
+_AL_LINE_PITCH       = 0.315  # ruled-line pitch (≈ 8 mm) — matches exercise-book ruling
+_AL_POST_GAP         = 0.13   # breathing room after last ruled line before next element
+
 # Differentiation level colours and labels
 LEVEL_COLOURS = {
     'standard':        BLUE,
@@ -159,20 +180,41 @@ def _add_rect(slide, x, y, w, h, fill_rgb=None, line_rgb=None, line_pt=0.75):
     return shape
 
 
-def _wrap_line_count(text, width_in, size_pt):
-    """Estimate wrapped line count."""
-    usable_w_pt = width_in * 72
-    chars_per_line = max(1, int(usable_w_pt / (size_pt * 0.46)))
+def _wrap_lines(text, width_in, size_pt):
+    """
+    Return wrapped-line count for text in a box of width_in inches at size_pt.
+    Uses _TCF = 0.58 (conservative calibration for Twinkl Cursive Looped).
+    At 11 pt on 7 in: 78 chars/line. Old value 0.46 gave 99 chars/line and
+    silently classified 92-char labels as 1-line — they are not.
+    """
+    if not text:
+        return 1
+    chars_per_line = max(1, int(width_in * 72 / (size_pt * _TCF)))
     words = str(text).split()
     lines, cur = 1, ''
-    for w in words:
-        test = (cur + ' ' + w).strip()
+    for word in words:
+        test = (cur + ' ' + word).strip()
         if len(test) <= chars_per_line:
             cur = test
         else:
             lines += 1
-            cur = w
+            cur = word
     return max(1, lines)
+
+
+def _text_h(text, width_in, size_pt):
+    """
+    Height in inches for a text block (excluding _TPAD).
+    = wrapped-line count × (size_pt × _LHF / 72).
+    At 11 pt: 0.222 in per line.
+    Callers add _TPAD when setting both textbox height and y-advance.
+    """
+    return _wrap_lines(text, width_in, size_pt) * (size_pt * _LHF / 72)
+
+
+# Alias — legacy renderers that call _wrap_line_count still work unchanged.
+def _wrap_line_count(text, width_in, size_pt):
+    return _wrap_lines(text, width_in, size_pt)
 
 
 def _resolve_path(path, resource_base):
@@ -193,8 +235,7 @@ def _render_heading(slide, y, sec):
     text = sec['text']
     size_pt = sec.get('size_pt', 12)
     w = sec.get('w', CONT_W)
-    n = _wrap_line_count(text, w, size_pt)
-    h = (size_pt / 12) * 0.24 * n
+    h = _text_h(text, w, size_pt) + _TPAD
     tb = _add_textbox(slide, CONT_X, y, w, h)
     tb.text_frame.word_wrap = True
     _set_para(tb.text_frame.paragraphs[0], text, bold=True, size_pt=size_pt, color=BLUE)
@@ -205,8 +246,7 @@ def _render_instruction(slide, y, sec):
     text = sec['text']
     size_pt = sec.get('size_pt', 12)
     w = sec.get('w', CONT_W)
-    n = _wrap_line_count(text, w, size_pt)
-    h = (size_pt / 9.5) * 0.19 * n
+    h = _text_h(text, w, size_pt) + _TPAD
     tb = _add_textbox(slide, CONT_X, y, w, h)
     tb.text_frame.word_wrap = True
     _set_para(tb.text_frame.paragraphs[0], text, size_pt=size_pt, color=DARK)
@@ -467,37 +507,57 @@ def _render_answer_text(slide, y, sec):
 
 def _render_answer_lines(slide, y, sec):
     """
-    Labelled write-lines.
-    sec = {"type": "answer_lines", "label": "What is a galaxy?",
-           "n": 3, "sentence_starter": "A galaxy is..."}
+    Labelled ruled write-lines — the primary pupil-response element.
+
+    sec keys:
+        label            – question text, rendered bold above the lines (optional)
+        n / count        – number of ruled lines (default 3)
+        gap_in           – line pitch in inches (default _AL_LINE_PITCH = 0.315 ≈ 8 mm)
+        w                – content width in inches (default CONT_W)
+        x                – left edge in inches (default CONT_X)
+        size_pt          – font size for label (default 11)
+        sentence_starter – italic one-line prompt printed above the first line (optional)
+
+    Y-advance breakdown (all constants documented at top of file):
+        [label present]   _text_h(label) + _TPAD   +  _AL_LABEL_LINE_GAP
+        [starter present] _text_h(starter) + _TPAD  +  _AL_STARTER_LINE_GAP
+        [lines]           n × gap_in
+        [post-block]      _AL_POST_GAP
     """
     label   = sec.get('label', '')
     n       = sec.get('n', sec.get('count', 3))
-    gap     = sec.get('gap_in', 0.315)
+    gap     = sec.get('gap_in', _AL_LINE_PITCH)
     w       = sec.get('w', CONT_W)
     x       = sec.get('x', CONT_X)
     size_pt = sec.get('size_pt', 11)
     starter = sec.get('sentence_starter', '')
 
+    # ── 1. Label ──────────────────────────────────────────────────────────────
     if label:
-        n_label = _wrap_line_count(label, w, size_pt)
-        h_label = (size_pt / 9.5) * 0.21 * n_label
-        tb = _add_textbox(slide, CONT_X, y, w, h_label)
+        h = _text_h(label, w, size_pt) + _TPAD
+        tb = _add_textbox(slide, CONT_X, y, w, h)
         tb.text_frame.word_wrap = True
         _set_para(tb.text_frame.paragraphs[0], label, bold=True,
                   size_pt=size_pt, color=DARK)
-        y += h_label + 0.04
+        y += h + _AL_LABEL_LINE_GAP
 
+    # ── 2. Sentence starter ───────────────────────────────────────────────────
     if starter:
-        tb = _add_textbox(slide, CONT_X, y, w, 0.22)
+        st_pt = size_pt - 0.5
+        h = _text_h(starter, w, st_pt) + _TPAD
+        tb = _add_textbox(slide, CONT_X, y, w, h)
+        tb.text_frame.word_wrap = True
         _set_para(tb.text_frame.paragraphs[0], starter, italic=True,
-                  size_pt=size_pt - 0.5, color=BLUE)
-        y += 0.22
+                  size_pt=st_pt, color=BLUE)
+        y += h + _AL_STARTER_LINE_GAP
 
+    # ── 3. Ruled lines ────────────────────────────────────────────────────────
     for _ in range(n):
         _add_line(slide, x, y, w)
         y += gap
-    return y + 0.10
+
+    # ── 4. Post-block breathing room ─────────────────────────────────────────
+    return y + _AL_POST_GAP
 
 
 def _render_cloze(slide, y, sec, resource_base=None):
