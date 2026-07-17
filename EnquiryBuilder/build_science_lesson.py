@@ -136,152 +136,334 @@ def build_discipline(work, templates, enquiry):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  Fixed slide 4: Building Blocks — atom model (2-8-5 shells, up to 15 lessons)
+#  Fixed slide 4: Building Blocks — atom model (programmatic, animated)
+#  All positions in EMU, derived from Group 205 in atom-IM.pptx.
+#  No external template file required.
 # ══════════════════════════════════════════════════════════════════════════════
 
-def build_building_blocks_atom(work, enquiry, lesson, all_lessons):
-    """
-    Atom model: nucleus + 3 electron shells (Phosphorus: 2-8-5 = 15 electrons).
-    Completed lessons: filled Y4 blue.
-    Current lesson: filled Y4 blue, thick dark border.
-    Future lessons: light grey, outline only.
-    """
-    lesson_num = lesson['lesson_number']
-    topic = enquiry.get('topic', 'Science')
+# ── Coordinate transform constants (Group 205 in atom-IM.pptx) ────────────────
+# Slide coords = GRP_OX + (child_x − CH_OX) * SX,  similarly for Y.
+_ATOM_GRP_OX = 3264196
+_ATOM_GRP_OY = 464046
+_ATOM_SX = 8452884 / 6371657   # ~1.3266
+_ATOM_SY = 6166392 / 5090000   # ~1.2115
+_ATOM_CH_OX = 2910171
+_ATOM_CH_OY = 1110000
+_ATOM_ELECTRON_R = 190000       # half-radius in child coords
 
-    sp, rp = fresh(work, 'I do')
-    t, st = get_spTree(sp)
-    st.append(title_sp(2, f'Our Enquiry: {topic}', REG.TITLE_FONT))
-    save(t, sp)
+# Nucleus (child centre 6096000, 3750000 → slide)
+_ATOM_NUC_X  = int(_ATOM_GRP_OX + (6096000 - _ATOM_CH_OX) * _ATOM_SX)
+_ATOM_NUC_Y  = int(_ATOM_GRP_OY + (3750000 - _ATOM_CH_OY) * _ATOM_SY)
+_ATOM_NUC_RX = int(530000 * _ATOM_SX)
+_ATOM_NUC_RY = int(440000 * _ATOM_SY)
 
-    # Atom geometry (EMU, slide = 12192000 × 6858000)
-    CX, CY = 6096000, 3750000
+# Orbital ring semi-axes in slide coords (child radii scaled)
+_ATOM_RING_PARAMS = [
+    (int(900000  * _ATOM_SX), int(760000  * _ATOM_SY)),   # K shell
+    (int(2050000 * _ATOM_SX), int(1720000 * _ATOM_SY)),   # L shell
+    (int(3150000 * _ATOM_SX), int(2450000 * _ATOM_SY)),   # M shell
+]
 
-    # (n_electrons, rx, ry) for each shell
-    SHELLS = [
-        (2, 900000,  760000),     # K shell — 2 electrons
-        (8, 2050000, 1720000),    # L shell — 8 electrons
-        (5, 3150000, 2450000),    # M shell — 5 electrons  (max = 15 = Phosphorus)
-    ]
+# Electron centres in child coords (14 active lessons)
+_ATOM_CHILD_CENTRES = [
+    (6096000, 2990000), (6096000, 4510000),
+    (6096000, 2030000), (7545568, 2533776),
+    (8146000, 3750000), (7545568, 4966223),
+    (6096000, 5470000), (4646431, 4966223),
+    (4046000, 3750000), (4646431, 2533776),
+    (6096000, 1300000), (9091828, 2992908),
+    (7947523, 5732091), (4244476, 5732091),
+]
 
-    NUCLEUS_RX   = 530000
-    NUCLEUS_RY   = 440000
-    ELECTRON_R   = 190000     # electron circle radius
-    RING_W       = 19050      # orbital ring stroke (0.75 pt)
-    DONE_W       = 19050      # completed electron border
-    CURRENT_W    = 57150      # current lesson border (2.25 pt)
+_ATOM_LESSON_NAMES = [
+    "The Universe", "Our Solar System", "Sizes and Distances",
+    "Day, Night and the Seasons", "The Moon", "Planet Conditions",
+    "Relative Clauses", "Parenthesis", "Planning",
+    "Writing 1", "Writing 2", "Writing 3", "Editing", "Sharing",
+]
 
-    WFA_BLUE     = '1798D3'
-    DARK_BLUE    = '0A4A7A'
-    RING_COL     = 'A8C8E0'
-    EMPTY_FILL   = 'EBEBEB'
-    EMPTY_STROKE = 'BBBBBB'
+# Label positions (slide coords, hand-tuned by teacher on atom-IM.pptx slide 4)
+_ATOM_LABEL_POS = [
+    (7208270,  2226344, 1162498, 307777),
+    (6874683,  4812456, 1527982, 307777),
+    (6719341,  1069430, 1704313, 307777),
+    (8521921,  1449189, 1726888, 523220),
+    (9769736,  3093923,  939680, 307777),
+    (8783924,  4648576, 1547218, 307777),
+    (6927582,  5963340, 1422184, 307777),
+    (5027247,  4577164, 1064715, 307777),
+    (4344495,  3106286,  875560, 307777),
+    (5113635,  1667649,  878767, 307777),
+    (7038427,   151511,  904415, 307777),
+    (10849956, 2194282,  899605, 307777),
+    (9641910,  6293759,  728083, 307777),
+    (4606235,  6267824,  780983, 307777),
+]
 
-    sid = 10
+_ATOM_ABBREV = [
+    "1", "2",
+    "Size", "D/N", "Moon", "Cond", "Rel", "Par", "Plan", "Wrt1",
+    "Wrt2", "Wrt3", "Edit", "Shr",
+]
 
-    # Draw orbital rings (ellipses, back to front)
-    for (n_e, rx, ry) in SHELLS:
-        t2, st2 = get_spTree(sp)
-        st2.append(xp(
-            f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
-            f'<p:nvSpPr><p:cNvPr id="{sid}" name="Ring{rx}"/>'
-            f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
-            f'<p:spPr><a:xfrm>'
-            f'<a:off x="{CX - rx}" y="{CY - ry}"/>'
-            f'<a:ext cx="{2*rx}" cy="{2*ry}"/></a:xfrm>'
-            f'<a:prstGeom prst="ellipse"><a:avLst/></a:prstGeom>'
-            f'<a:noFill/>'
-            f'<a:ln w="{RING_W}"><a:solidFill>'
-            f'<a:srgbClr val="{RING_COL}"/></a:solidFill></a:ln>'
-            f'</p:spPr>'
-            f'<p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody>'
-            f'</p:sp>'
-        ))
-        save(t2, sp); sid += 1
+_ATOM_ORANGE_ID = 1000
+_ATOM_LABEL_ID  = 1001
 
-    # Nucleus
-    t2, st2 = get_spTree(sp)
-    st2.append(xp(
+
+# ── Coordinate helpers ─────────────────────────────────────────────────────────
+
+def _atom_child_to_slide(cx, cy):
+    return (
+        int(_ATOM_GRP_OX + (cx - _ATOM_CH_OX) * _ATOM_SX),
+        int(_ATOM_GRP_OY + (cy - _ATOM_CH_OY) * _ATOM_SY),
+    )
+
+def _atom_electron_rect(ccx, ccy):
+    r = _ATOM_ELECTRON_R
+    tl_x, tl_y = _atom_child_to_slide(ccx - r, ccy - r)
+    br_x, br_y = _atom_child_to_slide(ccx + r, ccy + r)
+    return tl_x, tl_y, br_x - tl_x, br_y - tl_y
+
+
+# ── XML factories (use P and A from lib_ooxml) ────────────────────────────────
+
+def _atom_ring_xml(sid, rx, ry):
+    nx, ny = _ATOM_NUC_X, _ATOM_NUC_Y
+    return (
+        f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+        f'<p:nvSpPr><p:cNvPr id="{sid}" name="Ring{sid}"/>'
+        f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+        f'<p:spPr>'
+        f'<a:xfrm><a:off x="{nx-rx}" y="{ny-ry}"/>'
+        f'<a:ext cx="{2*rx}" cy="{2*ry}"/></a:xfrm>'
+        f'<a:prstGeom prst="ellipse"><a:avLst/></a:prstGeom>'
+        f'<a:noFill/>'
+        f'<a:ln w="19050"><a:solidFill><a:srgbClr val="A8C8E0"/></a:solidFill></a:ln>'
+        f'</p:spPr>'
+        f'<p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody>'
+        f'</p:sp>'
+    )
+
+def _atom_nucleus_xml(sid, topic):
+    nx, ny = _ATOM_NUC_X, _ATOM_NUC_Y
+    rx, ry = _ATOM_NUC_RX, _ATOM_NUC_RY
+    return (
         f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
         f'<p:nvSpPr><p:cNvPr id="{sid}" name="Nucleus"/>'
         f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
-        f'<p:spPr><a:xfrm>'
-        f'<a:off x="{CX - NUCLEUS_RX}" y="{CY - NUCLEUS_RY}"/>'
-        f'<a:ext cx="{2*NUCLEUS_RX}" cy="{2*NUCLEUS_RY}"/></a:xfrm>'
+        f'<p:spPr>'
+        f'<a:xfrm><a:off x="{nx-rx}" y="{ny-ry}"/>'
+        f'<a:ext cx="{2*rx}" cy="{2*ry}"/></a:xfrm>'
         f'<a:prstGeom prst="ellipse"><a:avLst/></a:prstGeom>'
-        f'<a:solidFill><a:srgbClr val="{DARK_BLUE}"/></a:solidFill>'
-        f'<a:ln w="0"><a:noFill/></a:ln>'
+        f'<a:solidFill><a:srgbClr val="0A3D62"/></a:solidFill>'
         f'</p:spPr>'
         f'<p:txBody>'
         f'<a:bodyPr anchor="ctr" wrap="square"/><a:lstStyle/>'
         f'<a:p><a:pPr algn="ctr"/>'
         f'<a:r><a:rPr lang="en-GB" sz="800" b="1" dirty="0">'
         f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
-        f'<a:latin typeface="{REG.TITLE_FONT}"/></a:rPr>'
-        f'<a:t>{ex(topic)}</a:t></a:r></a:p>'
+        f'<a:latin typeface="Aptos"/></a:rPr>'
+        f'<a:t>{{topic}}</a:t></a:r></a:p>'
         f'</p:txBody>'
         f'</p:sp>'
-    ))
-    save(t2, sp); sid += 1
+    )
 
-    # Electrons (K first, then L, then M — numbered 1-15)
-    electron_num = 0
-    for (n_e, rx, ry) in SHELLS:
-        for i in range(n_e):
-            electron_num += 1
-            angle = (2 * _math.pi * i / n_e) - _math.pi / 2  # start from 12 o'clock
-            el_x = CX + int(rx * _math.cos(angle))
-            el_y = CY + int(ry * _math.sin(angle))
+def _atom_electron_xml(sid, left, top, ecx, ecy, fill, border, bw, text, tcol):
+    return (
+        f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+        f'<p:nvSpPr><p:cNvPr id="{sid}" name="El{sid}"/>'
+        f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+        f'<p:spPr>'
+        f'<a:xfrm><a:off x="{left}" y="{top}"/><a:ext cx="{ecx}" cy="{ecy}"/></a:xfrm>'
+        f'<a:prstGeom prst="ellipse"><a:avLst/></a:prstGeom>'
+        f'<a:solidFill><a:srgbClr val="{fill}"/></a:solidFill>'
+        f'<a:ln w="{bw}"><a:solidFill><a:srgbClr val="{border}"/></a:solidFill></a:ln>'
+        f'</p:spPr>'
+        f'<p:txBody>'
+        f'<a:bodyPr lIns="0" tIns="0" rIns="0" bIns="0" anchor="ctr"/><a:lstStyle/>'
+        f'<a:p><a:pPr algn="ctr"/>'
+        f'<a:r><a:rPr b="1" dirty="0">'
+        f'<a:solidFill><a:srgbClr val="{tcol}"/></a:solidFill>'
+        f'</a:rPr><a:t>{text}</a:t></a:r></a:p>'
+        f'</p:txBody>'
+        f'</p:sp>'
+    )
 
-            is_current = electron_num == lesson_num
-            is_done    = electron_num < lesson_num
-            is_future  = electron_num > lesson_num
+def _atom_orange_overlay_xml(shape_id, left, top, cx, cy, num):
+    """Hidden orange electron for current lesson, revealed on click."""
+    return (
+        f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+        f'<p:nvSpPr>'
+        f'<p:cNvPr id="{shape_id}" name="OrangeEl{num}"/>'
+        f'<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>'
+        f'<p:nvPr/></p:nvSpPr>'
+        f'<p:spPr>'
+        f'<a:xfrm><a:off x="{left}" y="{top}"/><a:ext cx="{cx}" cy="{cy}"/></a:xfrm>'
+        f'<a:prstGeom prst="ellipse"><a:avLst/></a:prstGeom>'
+        f'<a:solidFill><a:srgbClr val="E57D24"/></a:solidFill>'
+        f'<a:ln w="19050"><a:solidFill><a:srgbClr val="A35610"/></a:solidFill></a:ln>'
+        f'</p:spPr>'
+        f'<p:txBody>'
+        f'<a:bodyPr lIns="0" tIns="0" rIns="0" bIns="0" anchor="ctr"/><a:lstStyle/>'
+        f'<a:p><a:pPr algn="ctr"/>'
+        f'<a:r><a:rPr b="1" dirty="0">'
+        f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
+        f'</a:rPr><a:t>{num}</a:t></a:r></a:p>'
+        f'</p:txBody>'
+        f'</p:sp>'
+    )
 
-            if is_future:
-                fill_col, text_col, bdr_col, bdr_w = EMPTY_FILL, 'AAAAAA', EMPTY_STROKE, RING_W
-            elif is_current:
-                fill_col, text_col, bdr_col, bdr_w = WFA_BLUE, 'FFFFFF', DARK_BLUE, CURRENT_W
-            else:  # done
-                fill_col, text_col, bdr_col, bdr_w = WFA_BLUE, 'FFFFFF', WFA_BLUE, DONE_W
+def _atom_label_xml(shape_id, text, left, top, w, h):
+    return (
+        f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+        f'<p:nvSpPr>'
+        f'<p:cNvPr id="{shape_id}" name="LessonLabel"/>'
+        f'<p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr>'
+        f'<p:spPr>'
+        f'<a:xfrm><a:off x="{int(left)}" y="{int(top)}"/>'
+        f'<a:ext cx="{int(w)}" cy="{int(h)}"/></a:xfrm>'
+        f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+        f'<a:noFill/></p:spPr>'
+        f'<p:txBody>'
+        f'<a:bodyPr wrap="none" rtlCol="0"><a:spAutoFit/></a:bodyPr>'
+        f'<a:lstStyle/>'
+        f'<a:p><a:r>'
+        f'<a:rPr lang="en-US" sz="1400" b="1" dirty="0">'
+        f'<a:latin typeface="Twinkl Cursive Looped" pitchFamily="2" charset="77"/>'
+        f'</a:rPr>'
+        f'<a:t>{text}</a:t>'
+        f'</a:r></a:p>'
+        f'</p:txBody></p:sp>'
+    )
 
-            t2, st2 = get_spTree(sp)
-            st2.append(xp(
-                f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
-                f'<p:nvSpPr><p:cNvPr id="{sid}" name="Electron{electron_num}"/>'
-                f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
-                f'<p:spPr><a:xfrm>'
-                f'<a:off x="{el_x - ELECTRON_R}" y="{el_y - ELECTRON_R}"/>'
-                f'<a:ext cx="{2*ELECTRON_R}" cy="{2*ELECTRON_R}"/></a:xfrm>'
-                f'<a:prstGeom prst="ellipse"><a:avLst/></a:prstGeom>'
-                f'<a:solidFill><a:srgbClr val="{fill_col}"/></a:solidFill>'
-                f'<a:ln w="{bdr_w}"><a:solidFill>'
-                f'<a:srgbClr val="{bdr_col}"/></a:solidFill></a:ln>'
-                f'</p:spPr>'
-                f'<p:txBody>'
-                f'<a:bodyPr anchor="ctr" wrap="square"/><a:lstStyle/>'
-                f'<a:p><a:pPr algn="ctr"/>'
-                f'<a:r><a:rPr lang="en-GB" sz="900" b="1" dirty="0">'
-                f'<a:solidFill><a:srgbClr val="{text_col}"/></a:solidFill>'
-                f'</a:rPr><a:t>{electron_num}</a:t></a:r></a:p>'
-                f'</p:txBody>'
-                f'</p:sp>'
+def _atom_timing_xml(orange_id, label_id):
+    """Confirmed-working one-click timing XML (mirrors geo jigsaw pattern)."""
+    return (
+        f'<p:timing xmlns:p="{P}" xmlns:a="{A}">'
+        f'<p:tnLst><p:par>'
+        f'<p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot">'
+        f'<p:childTnLst>'
+        f'<p:seq concurrent="1" nextAc="seek">'
+        f'<p:cTn id="2" dur="indefinite" nodeType="mainSeq">'
+        f'<p:childTnLst>'
+        f'<p:par><p:cTn id="3" fill="hold">'
+        f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
+        f'<p:childTnLst><p:par><p:cTn id="4" fill="hold">'
+        f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+        f'<p:childTnLst>'
+        f'<p:par><p:cTn id="5" presetID="1" presetClass="entr" presetSubtype="0"'
+        f' fill="hold" nodeType="clickEffect">'
+        f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+        f'<p:childTnLst><p:set><p:cBhvr>'
+        f'<p:cTn id="6" dur="1" fill="hold">'
+        f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
+        f'<p:tgtEl><p:spTgt spid="{orange_id}"/></p:tgtEl>'
+        f'<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst>'
+        f'</p:cBhvr><p:to><p:strVal val="visible"/></p:to>'
+        f'</p:set></p:childTnLst></p:cTn></p:par>'
+        f'<p:par><p:cTn id="7" presetID="1" presetClass="entr" presetSubtype="0"'
+        f' fill="hold" nodeType="withEffect">'
+        f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+        f'<p:childTnLst><p:set><p:cBhvr>'
+        f'<p:cTn id="8" dur="1" fill="hold">'
+        f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
+        f'<p:tgtEl><p:spTgt spid="{label_id}"/></p:tgtEl>'
+        f'<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst>'
+        f'</p:cBhvr><p:to><p:strVal val="visible"/></p:to>'
+        f'</p:set></p:childTnLst></p:cTn></p:par>'
+        f'</p:childTnLst></p:cTn></p:par>'
+        f'</p:childTnLst></p:cTn></p:par>'
+        f'</p:childTnLst></p:cTn>'
+        f'<p:prevCondLst><p:cond evt="onPrev" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>'
+        f'<p:nextCondLst><p:cond evt="onNext" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
+        f'</p:seq>'
+        f'</p:childTnLst></p:cTn></p:par></p:tnLst>'
+        f'<p:bldLst>'
+        f'<p:bldP spid="{orange_id}" grpId="0" build="p"/>'
+        f'<p:bldP spid="{label_id}" grpId="0" build="p"/>'
+        f'</p:bldLst>'
+        f'</p:timing>'
+    )
+
+
+def build_building_blocks_atom(work, templates, enquiry, lesson, all_lessons):
+    """
+    Atom model building-blocks slide — fully programmatic, no external file.
+
+    Draws orbital rings, nucleus and all 14 electrons in slide-space coordinates
+    derived from the atom-IM.pptx group transform (hardcoded constants above).
+    Done electrons (< lesson_num) are orange and immediately visible.
+    Current lesson is grey with a hidden orange overlay + label that appears
+    on one mouse click.
+    """
+    from lxml import etree
+
+    lesson_num = lesson['lesson_number']
+    topic = enquiry.get('topic', 'Science')
+
+    sp, rp = fresh(work, 'I do')
+    t, st = get_spTree(sp)
+    st.append(title_sp(2, f'Building Blocks: {topic}', REG.TITLE_FONT))
+    save(t, sp)
+
+    tree    = xr(sp)
+    root    = tree.getroot()
+    sp_tree = root.find(f'{{{P}}}cSld').find(f'{{{P}}}spTree')
+
+    sid = 50   # start above layout shape IDs
+
+    # Orbital rings — draw M first (back), then L, then K (front)
+    for rx, ry in reversed(_ATOM_RING_PARAMS):
+        sp_tree.append(etree.fromstring(_atom_ring_xml(sid, rx, ry)))
+        sid += 1
+
+    # Nucleus
+    sp_tree.append(etree.fromstring(_atom_nucleus_xml(sid, ex(topic))))
+    sid += 1
+
+    # Base electrons (grey or orange depending on state)
+    for i, (ccx, ccy) in enumerate(_ATOM_CHILD_CENTRES):
+        les = i + 1
+        left, top, ecx, ecy = _atom_electron_rect(ccx, ccy)
+        if les < lesson_num:    # done — orange, lesson number
+            sp_tree.append(etree.fromstring(
+                _atom_electron_xml(sid, left, top, ecx, ecy,
+                                   'E57D24', 'A35610', 19050, str(les), 'FFFFFF')
             ))
-            save(t2, sp); sid += 1
+        else:                   # current or future — grey, abbreviated text
+            abbr = _ATOM_ABBREV[i] if i < len(_ATOM_ABBREV) else ''
+            sp_tree.append(etree.fromstring(
+                _atom_electron_xml(sid, left, top, ecx, ecy,
+                                   'EBEBEB', 'BBBBBB', 19050, abbr, 'AAAAAA')
+            ))
+        sid += 1
 
-    # Current lesson label — bottom of slide
-    current_lsn = next((l for l in all_lessons if l['lesson_number'] == lesson_num), lesson)
-    bb_text = current_lsn.get('building_block_text', '')
-    if bb_text:
-        label = f'Lesson {lesson_num}: {bb_text}'
-        t2, st2 = get_spTree(sp)
-        st2.append(tbox(
-            sid, label,
-            _MARGIN, 6350000, SW - 2 * _MARGIN, 380000,
-            sz=1600, bold=True, color='1A3A5C', align='ctr'
+    # Static labels for completed lessons (immediately visible)
+    for i in range(lesson_num - 1):
+        lx, ly, lw, lh = _ATOM_LABEL_POS[i]
+        sp_tree.append(etree.fromstring(
+            _atom_label_xml(2000 + i, _ATOM_LESSON_NAMES[i], lx, ly, lw, lh)
         ))
-        save(t2, sp); sid += 1
 
-    print('  [4] building_blocks_atom')
+    # Orange overlay + label for current lesson (hidden until click)
+    ci = lesson_num - 1
+    ccx, ccy = _ATOM_CHILD_CENTRES[ci]
+    left, top, ecx, ecy = _atom_electron_rect(ccx, ccy)
+    sp_tree.append(etree.fromstring(
+        _atom_orange_overlay_xml(_ATOM_ORANGE_ID, left, top, ecx, ecy, lesson_num)
+    ))
+    lx, ly, lw, lh = _ATOM_LABEL_POS[ci]
+    sp_tree.append(etree.fromstring(
+        _atom_label_xml(_ATOM_LABEL_ID, _ATOM_LESSON_NAMES[ci], lx, ly, lw, lh)
+    ))
+
+    # Attach one-click animation timing
+    for old in root.findall(f'{{{P}}}timing'):
+        root.remove(old)
+    root.append(etree.fromstring(_atom_timing_xml(_ATOM_ORANGE_ID, _ATOM_LABEL_ID)))
+
+    xw(tree, sp)
+    print(f'  [4] building_blocks_atom (L{lesson_num} animated)')
     return sp
 
 
@@ -903,7 +1085,7 @@ def build_lesson(mtp_path, templates_dir, out_path, manifest_path, lesson_num=1)
     build_discipline(work, templates, enquiry)
     manifest.append({'output_index': 3, 'type': 'discipline'})
 
-    build_building_blocks_atom(work, enquiry, lesson, all_lessons)
+    build_building_blocks_atom(work, templates, enquiry, lesson, all_lessons)
     manifest.append({'output_index': 4, 'type': 'building_blocks_atom'})
 
     build_lo(work, templates, enquiry, lesson)
