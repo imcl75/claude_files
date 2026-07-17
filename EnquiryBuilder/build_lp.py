@@ -81,6 +81,28 @@ _AL_STARTER_LINE_GAP = 0.04   # between bottom of sentence starter and first rul
 _AL_LINE_PITCH       = 0.315  # ruled-line pitch (≈ 8 mm) — matches exercise-book ruling
 _AL_POST_GAP         = 0.13   # breathing room after last ruled line before next element
 
+# ── Minimum font sizes ───────────────────────────────────────────────────────
+# Every renderer runs its size_pt through _safe_pt() before use.
+# These floors ensure nothing on a children's LP becomes unreadable in print.
+#
+#   BODY     – text children must read independently: instructions, question labels
+#   SUBLABEL – secondary labels, sentence starters, column headers in tables
+#   CELL     – pre-filled cell content (e.g. material names); printed, brief
+#   MARKING  – marking-station answers; teacher-read, smaller is acceptable
+#
+MIN_PT_BODY     = 12   # pt
+MIN_PT_SUBLABEL = 11   # pt
+MIN_PT_CELL     = 10   # pt
+MIN_PT_MARKING  = 10   # pt
+
+# ── Write-box geometry ───────────────────────────────────────────────────────
+# Any box, cell, or row where a child is expected to write uses _write_box_h().
+# Height = n_lines × _AL_LINE_PITCH + 2 × _WRITE_BOX_PAD.
+# At 1 line: 0.315 + 0.14 = 0.455 in (≈ 11.6 mm).
+# The old sort-table default of 0.36 in left only 0.023 in above and below the
+# writing — less than 1 mm — and is replaced throughout.
+_WRITE_BOX_PAD = 0.07  # top + bottom internal padding, each side (inches)
+
 # Differentiation level colours and labels
 LEVEL_COLOURS = {
     'standard':        BLUE,
@@ -217,6 +239,29 @@ def _wrap_line_count(text, width_in, size_pt):
     return _wrap_lines(text, width_in, size_pt)
 
 
+def _safe_pt(size_pt, minimum=None):
+    """
+    Clamp size_pt to a minimum.  Default minimum is MIN_PT_BODY (12).
+    Pass the appropriate MIN_PT_* constant for the context:
+        _safe_pt(pt)                  → body text / labels (≥ 12)
+        _safe_pt(pt, MIN_PT_SUBLABEL) → sub-labels, starters, table headers (≥ 11)
+        _safe_pt(pt, MIN_PT_CELL)     → pre-filled cell content (≥ 10)
+        _safe_pt(pt, MIN_PT_MARKING)  → marking-station answers (≥ 10)
+    """
+    if minimum is None:
+        minimum = MIN_PT_BODY
+    return max(float(size_pt), float(minimum))
+
+
+def _write_box_h(n_lines=1):
+    """
+    Minimum height in inches for a box where n_lines of child handwriting fits.
+    = n_lines × _AL_LINE_PITCH + 2 × _WRITE_BOX_PAD
+    Callers may pass this as row_height or use max(specified, _write_box_h(n)).
+    """
+    return n_lines * _AL_LINE_PITCH + 2 * _WRITE_BOX_PAD
+
+
 def _resolve_path(path, resource_base):
     if os.path.isabs(path) and os.path.exists(path):
         return path
@@ -233,7 +278,7 @@ def _resolve_path(path, resource_base):
 
 def _render_heading(slide, y, sec):
     text = sec['text']
-    size_pt = sec.get('size_pt', 12)
+    size_pt = _safe_pt(sec.get('size_pt', 12))
     w = sec.get('w', CONT_W)
     h = _text_h(text, w, size_pt) + _TPAD
     tb = _add_textbox(slide, CONT_X, y, w, h)
@@ -244,7 +289,7 @@ def _render_heading(slide, y, sec):
 
 def _render_instruction(slide, y, sec):
     text = sec['text']
-    size_pt = sec.get('size_pt', 12)
+    size_pt = _safe_pt(sec.get('size_pt', 12))
     w = sec.get('w', CONT_W)
     h = _text_h(text, w, size_pt) + _TPAD
     tb = _add_textbox(slide, CONT_X, y, w, h)
@@ -269,12 +314,13 @@ def _render_word_bank(slide, y, sec):
     # words can be a list or a string
     if isinstance(words, list):
         words = '  •  '.join(words)
-    size_pt = sec.get('size_pt', 12)
+    size_pt = _safe_pt(sec.get('size_pt', 12))
     w = sec.get('w', CONT_W)
-    n = _wrap_line_count('Word bank: ' + words, w - 0.1, size_pt)
-    box_h = (size_pt / 9) * 0.20 * n + 0.14
+    inner_w = w - 0.10
+    full_text = 'Word bank: ' + words
+    box_h = _text_h(full_text, inner_w, size_pt) + _TPAD + 0.10  # +0.10 for border padding
     _add_rect(slide, CONT_X, y, w, box_h, fill_rgb=CREAM, line_rgb=ORANGE, line_pt=1.0)
-    tb = _add_textbox(slide, CONT_X + 0.05, y + 0.05, w - 0.1, box_h - 0.08)
+    tb = _add_textbox(slide, CONT_X + 0.05, y + 0.05, inner_w, box_h - 0.08)
     tf = tb.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
@@ -309,31 +355,41 @@ def _render_reference_image(slide, y, sec, resource_base):
 
 
 def _render_row_boxes(slide, y, sec):
-    items = sec['items']
-    box_h = sec.get('height', 0.36)
-    size_pt = sec.get('size_pt', 10)
-    n = len(items)
-    gap = 0.10
-    box_w = (CONT_W - gap * (n - 1)) / n
+    items   = sec['items']
+    size_pt = _safe_pt(sec.get('size_pt', 10), MIN_PT_CELL)
+    n       = len(items)
+    gap     = 0.10
+    box_w   = (CONT_W - gap * (n - 1)) / n
+    inner_w = box_w - 0.14
     x = CONT_X
     for label in items:
+        # Height: enough for the wrapped text, never below a write-box minimum
+        text_h  = _text_h(label, inner_w, size_pt) + _TPAD
+        box_h   = max(_write_box_h(1), sec.get('height', text_h), text_h)
         _add_rect(slide, x, y, box_w, box_h, line_rgb=BLUE, line_pt=1.0)
-        tb = _add_textbox(slide, x + 0.05, y + 0.06, box_w - 0.14, box_h - 0.12)
+        tb = _add_textbox(slide, x + 0.05, y + _WRITE_BOX_PAD,
+                           inner_w, box_h - 2 * _WRITE_BOX_PAD)
+        tb.text_frame.word_wrap = True
         _set_para(tb.text_frame.paragraphs[0], label, size_pt=size_pt, color=DARK)
         x += box_w + gap
+    # Use the last computed box_h (all boxes share the tallest height)
     return y + box_h + 0.08
 
 
 def _render_pair_boxes(slide, y, sec):
-    items = sec['items']
-    box_h = sec.get('height', 0.36)
-    size_pt = sec.get('size_pt', 11)
-    half_w = CONT_W / 2 - 0.1
+    items   = sec['items']
+    size_pt = _safe_pt(sec.get('size_pt', 11), MIN_PT_SUBLABEL)
+    half_w  = CONT_W / 2 - 0.1
+    inner_w = half_w - 0.12
     x = CONT_X
     y_next = y
     for label in items[:2]:
+        text_h = _text_h(label, inner_w, size_pt) + _TPAD
+        box_h  = max(_write_box_h(1), sec.get('height', text_h), text_h)
         _add_rect(slide, x, y, half_w, box_h, line_rgb=BLUE, line_pt=1.0)
-        tb = _add_textbox(slide, x + 0.06, y + 0.06, half_w - 0.12, box_h - 0.12)
+        tb = _add_textbox(slide, x + 0.06, y + _WRITE_BOX_PAD,
+                           inner_w, box_h - 2 * _WRITE_BOX_PAD)
+        tb.text_frame.word_wrap = True
         _set_para(tb.text_frame.paragraphs[0], label, size_pt=size_pt, color=DARK)
         x += half_w + 0.20
         y_next = y + box_h + 0.08
@@ -341,31 +397,49 @@ def _render_pair_boxes(slide, y, sec):
 
 
 def _render_table(slide, y, sec):
-    headers = sec['headers']
-    rows    = sec.get('rows', [])
-    row_h   = sec.get('row_height', 0.38)
-    hdr_col = sec.get('header_color', BLUE)
-    body_size = sec.get('body_size_pt', 10)
+    headers   = sec['headers']
+    rows      = sec.get('rows', [])
+    # write_rows: set of row indices where children write (affects min row height)
+    write_rows = set(sec.get('write_rows', range(len(rows))))
+    hdr_col   = sec.get('header_color', BLUE)
+    body_size = _safe_pt(sec.get('body_size_pt', 11), MIN_PT_CELL)
+    hdr_size  = _safe_pt(sec.get('header_size_pt', 11), MIN_PT_SUBLABEL)
+    # Minimum row height: write rows use _write_box_h, display rows use text height
+    default_row_h = _write_box_h(1)
+    row_h = max(sec.get('row_height', default_row_h), default_row_h)
 
     col_ws = [CONT_W * h['frac'] for h in headers]
     x = CONT_X
-    hdr_h = 0.30
+    # Header height: tallest wrapped header across all columns
+    hdr_h = max(
+        _text_h(h['text'], cw - 0.08, hdr_size) + _TPAD
+        for h, cw in zip(headers, col_ws)
+    )
+    hdr_h = max(hdr_h, 0.30)
     for hdr, cw in zip(headers, col_ws):
         al = PP_ALIGN.CENTER if hdr.get('align') == 'center' else PP_ALIGN.LEFT
         _add_rect(slide, x, y, cw - 0.02, hdr_h, fill_rgb=hdr_col)
         tb = _add_textbox(slide, x + 0.04, y + 0.04, cw - 0.10, hdr_h - 0.06)
+        tb.text_frame.word_wrap = True
         _set_para(tb.text_frame.paragraphs[0], hdr['text'],
-                  bold=True, size_pt=10, color=WHITE, align=al)
+                  bold=True, size_pt=hdr_size, color=WHITE, align=al)
         x += cw
     y += hdr_h
 
     for i, row in enumerate(rows):
         fill = RGBColor(0xF5, 0xF5, 0xF5) if i % 2 == 0 else WHITE
         x = CONT_X
+        # Write rows get minimum write-box height; display rows just need text height
+        min_h = _write_box_h(1) if i in write_rows else 0.0
+        # Row height is the max of: explicit row_h, write-box minimum, tallest cell text
+        this_h = max(
+            row_h,
+            min_h,
+            *(_text_h(cell or '', cw - 0.08, body_size) + _TPAD
+              for cell, cw in zip(row, col_ws))
+        )
         for j, (cell, cw) in enumerate(zip(row, col_ws)):
             al = PP_ALIGN.CENTER if headers[j].get('align') == 'center' else PP_ALIGN.LEFT
-            nlines = _wrap_line_count(cell, cw - 0.08, body_size) if cell else 1
-            this_h = max(row_h, 0.08 + nlines * (body_size * 1.35 / 72))
             _add_rect(slide, x, y, cw - 0.02, this_h,
                       fill_rgb=fill, line_rgb=LGREY, line_pt=0.5)
             if cell:
@@ -417,44 +491,58 @@ def _render_graph_template(slide, y, sec, resource_base):
 
 
 def _render_sentence_starter(slide, y, sec):
-    text = sec['text']
-    size_pt = sec.get('size_pt', 12)
-    box_h = 0.38
+    text    = sec['text']
+    size_pt = _safe_pt(sec.get('size_pt', 12))
+    inner_w = CONT_W - 0.16
+    # Height driven by text wrap; never below a write-box minimum
+    text_h  = _text_h(text, inner_w, size_pt) + _TPAD
+    box_h   = max(_write_box_h(1), text_h + 0.14)  # +0.14 for top/bottom border padding
     _add_rect(slide, CONT_X, y, CONT_W, box_h,
               fill_rgb=RGBColor(0xDE, 0xEC, 0xF8), line_rgb=BLUE, line_pt=1.5)
-    tb = _add_textbox(slide, CONT_X + 0.08, y + 0.07, CONT_W - 0.16, box_h - 0.14)
+    tb = _add_textbox(slide, CONT_X + 0.08, y + _WRITE_BOX_PAD,
+                       inner_w, box_h - 2 * _WRITE_BOX_PAD)
+    tb.text_frame.word_wrap = True
     _set_para(tb.text_frame.paragraphs[0], text, italic=True,
               size_pt=size_pt, color=DARK)
     return y + box_h + 0.08
 
 
 def _render_sort_table(slide, y, sec):
-    materials = sec['materials']
-    size_pt   = sec.get('size_pt', 10)
-    row_h     = sec.get('row_height', 0.36)
+    materials  = sec['materials']
+    size_pt    = _safe_pt(sec.get('size_pt', 11), MIN_PT_SUBLABEL)
     col_labels = sec.get('col_labels', _SORT_COL_LABELS)
     col_ratio  = sec.get('col_ratio', _SORT_COL_RATIO)
-    col_ws = [CONT_W * r for r in col_ratio]
+    col_ws     = [CONT_W * r for r in col_ratio]
+    # Write cells: all columns except the first (pre-filled material name)
+    # must be at least _write_box_h(1) tall.
+    min_row_h = max(sec.get('row_height', _write_box_h(1)), _write_box_h(1))
 
-    hdr_h = max(0.28, 0.08 + (size_pt * 1.35 / 72))
+    # Header: height from tallest wrapped header label
+    hdr_h = max(
+        _text_h(lbl, cw - 0.08, size_pt) + _TPAD
+        for lbl, cw in zip(col_labels, col_ws)
+    )
+    hdr_h = max(hdr_h, 0.32)
     x = CONT_X
     for lbl, cw in zip(col_labels, col_ws):
         _add_rect(slide, x, y, cw, hdr_h, fill_rgb=BLUE)
-        tb = _add_textbox(slide, x + 0.04, y + 0.03, cw - 0.08, hdr_h - 0.06)
+        tb = _add_textbox(slide, x + 0.04, y + 0.04, cw - 0.08, hdr_h - 0.06)
         tb.text_frame.word_wrap = True
         _set_para(tb.text_frame.paragraphs[0], lbl, bold=True, size_pt=size_pt, color=WHITE)
         x += cw
     y += hdr_h
 
     for i, mat in enumerate(materials):
-        n = _wrap_line_count(mat, col_ws[0] - 0.08, size_pt)
-        this_h = max(row_h, 0.08 + n * (size_pt * 1.3 / 72))
+        # Row height driven by material-name wrap, but never below _write_box_h(1)
+        mat_h = _text_h(mat, col_ws[0] - 0.08, size_pt) + _TPAD
+        this_h = max(min_row_h, mat_h)
         fill = RGBColor(0xF5, 0xF5, 0xF5) if i % 2 == 0 else WHITE
         x = CONT_X
         for j, cw in enumerate(col_ws):
             _add_rect(slide, x, y, cw, this_h, fill_rgb=fill, line_rgb=LGREY, line_pt=0.5)
             if j == 0:
-                tb = _add_textbox(slide, x + 0.04, y + 0.04, cw - 0.08, this_h - 0.08)
+                tb = _add_textbox(slide, x + 0.04, y + _WRITE_BOX_PAD,
+                                   cw - 0.08, this_h - 2 * _WRITE_BOX_PAD)
                 tb.text_frame.word_wrap = True
                 _set_para(tb.text_frame.paragraphs[0], mat, size_pt=size_pt, color=DARK)
             x += cw
@@ -463,21 +551,26 @@ def _render_sort_table(slide, y, sec):
 
 
 def _render_sort_table_answers(slide, y, sec):
+    """Marking-station version: all cells filled in green. Size ≥ MIN_PT_MARKING."""
     answers  = sec['answers']
-    size_pt  = sec.get('size_pt', 8)
-    col_ws   = [CONT_W * r for r in _SORT_COL_RATIO]
+    size_pt  = _safe_pt(sec.get('size_pt', 10), MIN_PT_MARKING)
+    col_ratio = sec.get('col_ratio', _SORT_COL_RATIO)
+    col_ws   = [CONT_W * r for r in col_ratio]
 
     for row in answers:
-        n = max(_wrap_line_count(c, cw - 0.08, size_pt)
-                for c, cw in zip(row, col_ws))
-        row_h = max(0.26, 0.10 + n * (size_pt * 1.35 / 72))
+        # Row height: tallest cell after text wrap, never below marking min
+        this_h = max(
+            _text_h(cell, cw - 0.08, size_pt) + _TPAD
+            for cell, cw in zip(row, col_ws)
+        )
+        this_h = max(this_h, 0.28)
         x = CONT_X
         for cell, cw in zip(row, col_ws):
-            tb = _add_textbox(slide, x + 0.04, y + 0.02, cw - 0.08, row_h - 0.04)
+            tb = _add_textbox(slide, x + 0.04, y + 0.04, cw - 0.08, this_h - 0.06)
             tb.text_frame.word_wrap = True
             _set_para(tb.text_frame.paragraphs[0], cell, size_pt=size_pt, color=GREEN)
             x += cw
-        y += row_h
+        y += this_h
     return y
 
 
@@ -491,10 +584,9 @@ def _render_marking_station(slide, y, sec):
 def _render_answer_text(slide, y, sec):
     text = sec['text']
     bold = sec.get('bold', False)
-    size_pt = sec.get('size_pt', 9.5)
+    size_pt = _safe_pt(sec.get('size_pt', 10), MIN_PT_MARKING)
     w = sec.get('w', CONT_W)
-    n = _wrap_line_count(text, w, size_pt)
-    h = 0.19 * n
+    h = _text_h(text, w, size_pt) + _TPAD
     tb = _add_textbox(slide, CONT_X, y, w, h)
     tb.text_frame.word_wrap = True
     _set_para(tb.text_frame.paragraphs[0], text, bold=bold, size_pt=size_pt, color=GREEN)
@@ -529,7 +621,7 @@ def _render_answer_lines(slide, y, sec):
     gap     = sec.get('gap_in', _AL_LINE_PITCH)
     w       = sec.get('w', CONT_W)
     x       = sec.get('x', CONT_X)
-    size_pt = sec.get('size_pt', 11)
+    size_pt = _safe_pt(sec.get('size_pt', 12))       # label: body minimum
     starter = sec.get('sentence_starter', '')
 
     # ── 1. Label ──────────────────────────────────────────────────────────────
@@ -543,7 +635,7 @@ def _render_answer_lines(slide, y, sec):
 
     # ── 2. Sentence starter ───────────────────────────────────────────────────
     if starter:
-        st_pt = size_pt - 0.5
+        st_pt = _safe_pt(size_pt - 0.5, MIN_PT_SUBLABEL)   # never below sub-label min
         h = _text_h(starter, w, st_pt) + _TPAD
         tb = _add_textbox(slide, CONT_X, y, w, h)
         tb.text_frame.word_wrap = True
@@ -574,14 +666,15 @@ def _render_cloze(slide, y, sec, resource_base=None):
     """
     text     = sec['text']
     blanks   = sec.get('blanks', [])
-    size_pt  = sec.get('size_pt', 12)
+    size_pt  = _safe_pt(sec.get('size_pt', 12))
     w        = sec.get('w', CONT_W)
     show_ans = sec.get('show_answers', False)
 
+    # Height from text-wrap model; never below MIN_PT_BODY
+    h = _text_h(text, w, size_pt) + _TPAD
+
     if show_ans:
         parts = text.split('___')
-        n_lines = max(1, _wrap_line_count(text, w, size_pt))
-        h = (size_pt / 9) * 0.22 * n_lines + 0.10
         tb = _add_textbox(slide, CONT_X, y, w, h)
         tf = tb.text_frame
         tf.word_wrap = True
@@ -601,8 +694,6 @@ def _render_cloze(slide, y, sec, resource_base=None):
                 rb.font.color.rgb = GREEN
         y += h + 0.06
     else:
-        n_lines = max(1, _wrap_line_count(text, w, size_pt))
-        h = (size_pt / 9) * 0.22 * n_lines + 0.10
         tb = _add_textbox(slide, CONT_X, y, w, h)
         tf = tb.text_frame
         tf.word_wrap = True
@@ -630,29 +721,34 @@ def _render_matching(slide, y, sec, resource_base=None):
     """
     left  = sec['left']
     right = sec['right']
-    # Shuffle right column for pupil version (use answer_pairs to record mapping)
-    size_pt = sec.get('size_pt', 11)
-    row_h   = sec.get('row_height', 0.40)
+    size_pt = _safe_pt(sec.get('size_pt', 11), MIN_PT_SUBLABEL)
+    # Minimum row height: always at least one write-box height so children can draw arrows
+    min_row_h = max(sec.get('row_height', _write_box_h(1)), _write_box_h(1))
 
     col_left_w  = CONT_W * 0.32
     col_mid_w   = CONT_W * 0.08
     col_right_w = CONT_W * 0.60
 
     # Column headers
-    tb_l = _add_textbox(slide, CONT_X, y, col_left_w, 0.25)
+    hdr_h = max(
+        _text_h('Word',    col_left_w  - 0.08, size_pt) + _TPAD,
+        _text_h('Meaning', col_right_w - 0.08, size_pt) + _TPAD,
+        0.28,
+    )
+    tb_l = _add_textbox(slide, CONT_X, y, col_left_w, hdr_h)
     _set_para(tb_l.text_frame.paragraphs[0], 'Word', bold=True, size_pt=size_pt, color=BLUE)
-    tb_r = _add_textbox(slide, CONT_X + col_left_w + col_mid_w, y, col_right_w, 0.25)
+    tb_r = _add_textbox(slide, CONT_X + col_left_w + col_mid_w, y, col_right_w, hdr_h)
     _set_para(tb_r.text_frame.paragraphs[0], 'Meaning', bold=True, size_pt=size_pt, color=BLUE)
-    y += 0.28
+    y += hdr_h + 0.04
 
     n = max(len(left), len(right))
     for i in range(n):
         l_text = left[i]  if i < len(left)  else ''
         r_text = right[i] if i < len(right) else ''
 
-        nl = _wrap_line_count(l_text, col_left_w - 0.08, size_pt) if l_text else 1
-        nr = _wrap_line_count(r_text, col_right_w - 0.08, size_pt) if r_text else 1
-        this_h = max(row_h, 0.10 + max(nl, nr) * (size_pt * 1.35 / 72))
+        lh = (_text_h(l_text, col_left_w  - 0.08, size_pt) + _TPAD) if l_text else 0
+        rh = (_text_h(r_text, col_right_w - 0.08, size_pt) + _TPAD) if r_text else 0
+        this_h = max(min_row_h, lh, rh)
         fill = RGBColor(0xF5, 0xF5, 0xF5) if i % 2 == 0 else WHITE
 
         # Left cell
