@@ -16,11 +16,26 @@
       "why": "knowing where Earth sits in the universe puts the rest of our enquiry in context",
       "success": "describing the Big Bang theory, explaining what a galaxy is and placing our solar system within the Milky Way",
       "vocabulary": [
-        { "word": "universe",   "definition": "everything that exists — all space, matter and energy" },
-        { "word": "galaxy",     "definition": "a huge collection of millions of stars held together by gravity" },
-        { "word": "Milky Way",  "definition": "the galaxy that contains our solar system" },
-        { "word": "Big Bang",   "definition": "the theory that the universe began from a single point about 13.8 billion years ago" },
-        { "word": "astronomy",  "definition": "the study of space, stars and planets" }
+        {
+          "word": "universe",
+          "definition": "everything that exists — all space, matter and energy"
+        },
+        {
+          "word": "galaxy",
+          "definition": "a huge collection of millions of stars held together by gravity"
+        },
+        {
+          "word": "Milky Way",
+          "definition": "the galaxy that contains our solar system"
+        },
+        {
+          "word": "Big Bang",
+          "definition": "the theory that the universe began from a single point about 13.8 billion years ago"
+        },
+        {
+          "word": "astronomy",
+          "definition": "the study of space, stars and planets"
+        }
       ],
       "quiz": [],
       "slides": [
@@ -54,7 +69,237 @@
             "Challenge: Estimate — if the universe were the size of Earth, how big would our solar system be?"
           ]
         }
-      ]
+      ],
+      "lp": {
+        "recording": "lp",
+        "standard": {
+          "title": "The Scale of the Universe",
+          "lf": "understand how the universe began and the scale of space",
+          "ican1": "describe the Big Bang theory",
+          "ican2": "place our solar system within the universe",
+          "elements": [
+            {
+              "type": "instruction",
+              "text": "Use the vocabulary you have learned in today's lesson to answer the questions below.",
+              "size_pt": 12
+            },
+            {
+              "type": "answer_lines",
+              "label": "1. What is the universe?",
+              "n": 2,
+              "sentence_starter": "The universe is..."
+            },
+            {
+              "type": "answer_lines",
+              "label": "2. What galaxy is our solar system in?",
+              "n": 2
+            },
+            {
+              "type": "answer_lines",
+              "label": "3. Describe the Big Bang theory in your own words.",
+              "n": 3,
+              "sentence_starter": "The Big Bang theory says that..."
+            },
+            {
+              "type": "answer_lines",
+              "label": "4. Put these in order from smallest to largest: universe, galaxy, solar system, planet, star",
+              "n": 2
+            },
+            {
+              "type": "word_bank",
+              "words": "universe  •  galaxy  •  Milky Way  •  Big Bang  •  solar system  •  astronomy  •  13.8 billion years"
+            }
+          ],
+          "answers": [
+            {
+              "type": "answer_text",
+              "text": "1. The universe is everything that exists — all space, matter and energy.",
+              "size_pt": 9.5
+            },
+            {
+              "type": "answer_text",
+              "text": "2. Our solar system is in the Milky Way galaxy.",
+              "size_pt": 9.5
+            },
+            {
+              "type": "answer_text",
+              "text": "3. Accept: The universe began about 13.8 billion years ago from a single point. A huge explosion (the Big Bang) caused everything to expand outward. Space, matter and energy have been spreading out ever since.",
+              "size_pt": 9.5
+            },
+            {
+              "type": "answer_text",
+              "text": "4. planet → star → solar system → galaxy → universe",
+              "size_pt": 9.5
+            }
+          ]
+        },
+        "adapted": {
+          "title": "The Scale of the Universe (Adapted)",
+          "lf": "understand how the universe began",
+          "ican1": "fill in facts about the universe using a word bank",
+          "ican2": "match words about space to their meanings",
+          "elements": [
+            {
+              "type": "instruction",
+              "text": "Fill in the gaps using the word bank. Then match each word to its meaning.",
+              "size_pt": 12
+            },
+            {
+              "type": "cloze",
+              "text": "The universe began with the ___, about ___ billion years ago. Our solar system is inside the ___ galaxy. A galaxy is a huge collection of millions of ___ held together by gravity.",
+              "blanks": [
+                "Big Bang",
+                "13.8",
+                "Milky Way",
+                "stars"
+              ],
+              "word_bank": "Big Bang  •  13.8  •  Milky Way  •  stars  •  universe  •  astronomy"
+            },
+            {
+              "type": "spacer",
+              "h": 0.12
+            },
+            {
+              "type": "instruction",
+              "text": "Match each word to its meaning. Draw a line to join them.",
+              "size_pt": 12
+            },
+            {
+              "type": "matching",
+              "left": [
+                "universe",
+                "galaxy",
+                "Big Bang",
+                "astronomy"
+              ],
+              "right": [
+                "everything that exists",
+                "huge collection of millions of stars",
+                "how the universe began 13.8 billion years ago",
+                "the study of space"
+              ],
+              "answer_pairs": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  2
+                ],
+                [
+                  3,
+                  3
+                ]
+              ]
+            }
+          ],
+          "answers": [
+            {
+              "type": "answer_text",
+              "text": "Cloze: Big Bang | 13.8 | Milky Way | stars",
+              "bold": true,
+              "size_pt": 9.5
+            },
+            {
+              "type": "spacer",
+              "h": 0.08
+            },
+            {
+              "type": "answer_text",
+              "text": "Matching: universe = everything that exists  |  galaxy = huge collection of millions of stars  |  Big Bang = how the universe began  |  astronomy = the study of space",
+              "size_pt": 9.5
+            }
+          ]
+        },
+        "further_adapted": {
+          "title": "The Scale of the Universe (Further Adapted)",
+          "lf": "know where Earth is in space",
+          "ican1": "name our galaxy",
+          "ican2": "match key space words to their meanings",
+          "elements": [
+            {
+              "type": "instruction",
+              "text": "Match each word to its meaning. Draw a line.",
+              "size_pt": 12
+            },
+            {
+              "type": "matching",
+              "left": [
+                "universe",
+                "galaxy",
+                "Big Bang"
+              ],
+              "right": [
+                "everything that exists",
+                "a huge group of stars",
+                "how the universe began"
+              ],
+              "answer_pairs": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  2
+                ]
+              ]
+            },
+            {
+              "type": "spacer",
+              "h": 0.15
+            },
+            {
+              "type": "instruction",
+              "text": "Fill in the blank. Use the word bank to help you.",
+              "size_pt": 12
+            },
+            {
+              "type": "cloze",
+              "text": "Our solar system is in the ___ galaxy.",
+              "blanks": [
+                "Milky Way"
+              ],
+              "word_bank": "Milky Way  •  Andromeda  •  Big Dipper",
+              "size_pt": 12
+            },
+            {
+              "type": "cloze",
+              "text": "The universe began about ___ years ago.",
+              "blanks": [
+                "13.8 billion"
+              ],
+              "word_bank": "100  •  13.8 billion  •  1 million",
+              "size_pt": 12
+            }
+          ],
+          "answers": [
+            {
+              "type": "answer_text",
+              "text": "Matching: universe → everything that exists  |  galaxy → a huge group of stars  |  Big Bang → how the universe began",
+              "size_pt": 9.5
+            },
+            {
+              "type": "spacer",
+              "h": 0.08
+            },
+            {
+              "type": "answer_text",
+              "text": "Blanks: Milky Way | 13.8 billion",
+              "size_pt": 9.5
+            }
+          ]
+        }
+      }
     },
     {
       "lesson_number": 2,
@@ -64,16 +309,40 @@
       "why": "understanding the structure of our solar system gives us a framework for the whole enquiry",
       "success": "naming the eight planets in order from the Sun and explaining why the Sun is a star, not a planet",
       "vocabulary": [
-        { "word": "solar system", "definition": "the Sun and everything that orbits it, including the eight planets" },
-        { "word": "orbit",        "definition": "the path one object takes around another due to gravity" },
-        { "word": "star",         "definition": "a ball of burning gas that produces its own heat and light" },
-        { "word": "planet",       "definition": "a large, roughly spherical body that orbits a star" },
-        { "word": "dwarf planet", "definition": "a body that orbits the Sun but is too small to be a full planet (e.g. Pluto)" }
+        {
+          "word": "solar system",
+          "definition": "the Sun and everything that orbits it, including the eight planets"
+        },
+        {
+          "word": "orbit",
+          "definition": "the path one object takes around another due to gravity"
+        },
+        {
+          "word": "star",
+          "definition": "a ball of burning gas that produces its own heat and light"
+        },
+        {
+          "word": "planet",
+          "definition": "a large, roughly spherical body that orbits a star"
+        },
+        {
+          "word": "dwarf planet",
+          "definition": "a body that orbits the Sun but is too small to be a full planet (e.g. Pluto)"
+        }
       ],
       "quiz": [
-        { "question": "What theory describes the start of the universe?", "answer": "The Big Bang theory." },
-        { "question": "What is a galaxy?",                                "answer": "A huge collection of millions of stars held together by gravity." },
-        { "question": "What is the name of the galaxy we live in?",       "answer": "The Milky Way." }
+        {
+          "question": "What theory describes the start of the universe?",
+          "answer": "The Big Bang theory."
+        },
+        {
+          "question": "What is a galaxy?",
+          "answer": "A huge collection of millions of stars held together by gravity."
+        },
+        {
+          "question": "What is the name of the galaxy we live in?",
+          "answer": "The Milky Way."
+        }
       ],
       "slides": [
         {
@@ -116,16 +385,40 @@
       "why": "identifying patterns in data is a core scientific skill, and the solar system gives us rich data to work with",
       "success": "reading a data table of planet sizes, describing a pattern I can see and representing the data as a graph",
       "vocabulary": [
-        { "word": "diameter",  "definition": "the distance across a sphere through its centre" },
-        { "word": "scale",     "definition": "a way of representing large distances using smaller measurements" },
-        { "word": "data",      "definition": "information collected for analysis" },
-        { "word": "pattern",   "definition": "a repeated or regular feature in data" },
-        { "word": "scatter graph", "definition": "a graph used to show the relationship between two sets of data" }
+        {
+          "word": "diameter",
+          "definition": "the distance across a sphere through its centre"
+        },
+        {
+          "word": "scale",
+          "definition": "a way of representing large distances using smaller measurements"
+        },
+        {
+          "word": "data",
+          "definition": "information collected for analysis"
+        },
+        {
+          "word": "pattern",
+          "definition": "a repeated or regular feature in data"
+        },
+        {
+          "word": "scatter graph",
+          "definition": "a graph used to show the relationship between two sets of data"
+        }
       ],
       "quiz": [
-        { "question": "Name the four rocky planets in order from the Sun.", "answer": "Mercury, Venus, Earth, Mars." },
-        { "question": "Which is the largest planet in our solar system?",   "answer": "Jupiter." },
-        { "question": "Is the Sun a star or a planet? How do you know?",    "answer": "A star — it produces its own heat and light." }
+        {
+          "question": "Name the four rocky planets in order from the Sun.",
+          "answer": "Mercury, Venus, Earth, Mars."
+        },
+        {
+          "question": "Which is the largest planet in our solar system?",
+          "answer": "Jupiter."
+        },
+        {
+          "question": "Is the Sun a star or a planet? How do you know?",
+          "answer": "A star — it produces its own heat and light."
+        }
       ],
       "slides": [
         {
@@ -158,25 +451,58 @@
       "why": "these are common misconceptions in science, and correcting them deepens our understanding of how Earth moves",
       "success": "explaining what causes day and night, explaining what causes the seasons and correcting the misconception about Earth's distance from the Sun",
       "vocabulary": [
-        { "word": "rotate",     "definition": "to spin on an axis" },
-        { "word": "axis",       "definition": "an imaginary line through the centre of Earth from the North Pole to the South Pole" },
-        { "word": "tilt",       "definition": "Earth's axis is tilted at 23.5° — this causes the seasons" },
-        { "word": "revolution", "definition": "one complete journey of Earth around the Sun (takes one year)" },
-        { "word": "hemisphere", "definition": "half of the Earth — the Northern Hemisphere or Southern Hemisphere" }
+        {
+          "word": "rotate",
+          "definition": "to spin on an axis"
+        },
+        {
+          "word": "axis",
+          "definition": "an imaginary line through the centre of Earth from the North Pole to the South Pole"
+        },
+        {
+          "word": "tilt",
+          "definition": "Earth's axis is tilted at 23.5° — this causes the seasons"
+        },
+        {
+          "word": "revolution",
+          "definition": "one complete journey of Earth around the Sun (takes one year)"
+        },
+        {
+          "word": "hemisphere",
+          "definition": "half of the Earth — the Northern Hemisphere or Southern Hemisphere"
+        }
       ],
       "quiz": [
-        { "question": "What is the diameter of Jupiter compared to Earth?", "answer": "Jupiter is about 11 times wider than Earth." },
-        { "question": "What pattern links distance from the Sun and length of year?", "answer": "The further a planet is from the Sun, the longer its year." },
-        { "question": "Name the unit scientists use to measure force.", "answer": "TODO: adjust this question to match what was actually covered." }
+        {
+          "question": "What is the diameter of Jupiter compared to Earth?",
+          "answer": "Jupiter is about 11 times wider than Earth."
+        },
+        {
+          "question": "What pattern links distance from the Sun and length of year?",
+          "answer": "The further a planet is from the Sun, the longer its year."
+        },
+        {
+          "question": "Name the unit scientists use to measure force.",
+          "answer": "TODO: adjust this question to match what was actually covered."
+        }
       ],
       "slides": [
         {
           "type": "concept_cartoon",
           "title": "Why do we have seasons?",
           "learners": [
-            { "name": "Learner A", "statement": "We have seasons because Earth moves closer to the Sun in summer and further away in winter." },
-            { "name": "Learner B", "statement": "We have seasons because Earth is tilted on its axis as it orbits the Sun." },
-            { "name": "Learner C", "statement": "We have seasons because the Sun gets hotter and cooler throughout the year." }
+            {
+              "name": "Learner A",
+              "statement": "We have seasons because Earth moves closer to the Sun in summer and further away in winter."
+            },
+            {
+              "name": "Learner B",
+              "statement": "We have seasons because Earth is tilted on its axis as it orbits the Sun."
+            },
+            {
+              "name": "Learner C",
+              "statement": "We have seasons because the Sun gets hotter and cooler throughout the year."
+            }
           ],
           "image_path": "TODO: image showing Earth's orbit with tilt visible"
         },
@@ -210,16 +536,40 @@
       "why": "the Moon is Earth's closest neighbour and understanding it challenges some widely-held misconceptions",
       "success": "describing and explaining the phases of the Moon and explaining what causes a lunar eclipse",
       "vocabulary": [
-        { "word": "satellite",  "definition": "a body that orbits a planet — the Moon is Earth's natural satellite" },
-        { "word": "phase",      "definition": "the changing shape of the Moon as seen from Earth over the course of a month" },
-        { "word": "eclipse",    "definition": "when one body in space moves into the shadow of another" },
-        { "word": "lunar",      "definition": "relating to the Moon" },
-        { "word": "reflect",    "definition": "the Moon does not produce its own light — it reflects light from the Sun" }
+        {
+          "word": "satellite",
+          "definition": "a body that orbits a planet — the Moon is Earth's natural satellite"
+        },
+        {
+          "word": "phase",
+          "definition": "the changing shape of the Moon as seen from Earth over the course of a month"
+        },
+        {
+          "word": "eclipse",
+          "definition": "when one body in space moves into the shadow of another"
+        },
+        {
+          "word": "lunar",
+          "definition": "relating to the Moon"
+        },
+        {
+          "word": "reflect",
+          "definition": "the Moon does not produce its own light — it reflects light from the Sun"
+        }
       ],
       "quiz": [
-        { "question": "What causes day and night on Earth?",    "answer": "Earth's rotation on its axis." },
-        { "question": "What causes the seasons?",               "answer": "Earth's tilted axis as it orbits the Sun." },
-        { "question": "Where does the Sun appear to rise each morning?", "answer": "In the east." }
+        {
+          "question": "What causes day and night on Earth?",
+          "answer": "Earth's rotation on its axis."
+        },
+        {
+          "question": "What causes the seasons?",
+          "answer": "Earth's tilted axis as it orbits the Sun."
+        },
+        {
+          "question": "Where does the Sun appear to rise each morning?",
+          "answer": "In the east."
+        }
       ],
       "slides": [
         {
@@ -262,16 +612,40 @@
       "why": "comparing conditions across planets shows how a planet's position in the solar system shapes everything about it",
       "success": "grouping planets as rocky or gas giants, describing temperature patterns and making a data-based prediction about Planet X",
       "vocabulary": [
-        { "word": "atmosphere",  "definition": "the layer of gases surrounding a planet" },
-        { "word": "gravity",     "definition": "the force that pulls objects towards each other" },
-        { "word": "temperature", "definition": "a measure of how hot or cold something is" },
-        { "word": "classify",    "definition": "to sort objects into groups based on shared features" },
-        { "word": "predict",     "definition": "to use evidence and patterns to say what you think will happen" }
+        {
+          "word": "atmosphere",
+          "definition": "the layer of gases surrounding a planet"
+        },
+        {
+          "word": "gravity",
+          "definition": "the force that pulls objects towards each other"
+        },
+        {
+          "word": "temperature",
+          "definition": "a measure of how hot or cold something is"
+        },
+        {
+          "word": "classify",
+          "definition": "to sort objects into groups based on shared features"
+        },
+        {
+          "word": "predict",
+          "definition": "to use evidence and patterns to say what you think will happen"
+        }
       ],
       "quiz": [
-        { "question": "What is the Moon's relationship to Earth?",    "answer": "The Moon is Earth's natural satellite — it orbits Earth." },
-        { "question": "What causes the phases of the Moon?",          "answer": "The changing angle of sunlight on the Moon as it orbits Earth." },
-        { "question": "What is a lunar eclipse?",                     "answer": "When Earth moves between the Sun and Moon, casting its shadow on the Moon." }
+        {
+          "question": "What is the Moon's relationship to Earth?",
+          "answer": "The Moon is Earth's natural satellite — it orbits Earth."
+        },
+        {
+          "question": "What causes the phases of the Moon?",
+          "answer": "The changing angle of sunlight on the Moon as it orbits Earth."
+        },
+        {
+          "question": "What is a lunar eclipse?",
+          "answer": "When Earth moves between the Sun and Moon, casting its shadow on the Moon."
+        }
       ],
       "slides": [
         {
@@ -304,15 +678,36 @@
       "why": "relative clauses let us pack precise detail into our information texts without writing separate sentences for every fact",
       "success": "identifying relative clauses in examples and writing my own, correctly punctuated with commas, about planets",
       "vocabulary": [
-        { "word": "relative clause",   "definition": "a clause that gives more information about a noun, introduced by a relative pronoun" },
-        { "word": "relative pronoun",  "definition": "a word that introduces a relative clause — who, which, that, where, whose" },
-        { "word": "subordinate clause","definition": "a clause that adds information to the main clause but cannot stand alone" },
-        { "word": "noun phrase",       "definition": "a group of words built around a noun, e.g. 'the largest planet in the solar system'" }
+        {
+          "word": "relative clause",
+          "definition": "a clause that gives more information about a noun, introduced by a relative pronoun"
+        },
+        {
+          "word": "relative pronoun",
+          "definition": "a word that introduces a relative clause — who, which, that, where, whose"
+        },
+        {
+          "word": "subordinate clause",
+          "definition": "a clause that adds information to the main clause but cannot stand alone"
+        },
+        {
+          "word": "noun phrase",
+          "definition": "a group of words built around a noun, e.g. 'the largest planet in the solar system'"
+        }
       ],
       "quiz": [
-        { "question": "Name two ways of classifying the planets.",               "answer": "Rocky/terrestrial planets and gas giants." },
-        { "question": "Which planet has a higher temperature — Mercury or Venus? Why?", "answer": "Venus — its thick atmosphere traps heat despite being further from the Sun." },
-        { "question": "What pattern links distance from the Sun and temperature?","answer": "Generally, the further from the Sun, the colder the planet." }
+        {
+          "question": "Name two ways of classifying the planets.",
+          "answer": "Rocky/terrestrial planets and gas giants."
+        },
+        {
+          "question": "Which planet has a higher temperature — Mercury or Venus? Why?",
+          "answer": "Venus — its thick atmosphere traps heat despite being further from the Sun."
+        },
+        {
+          "question": "What pattern links distance from the Sun and temperature?",
+          "answer": "Generally, the further from the Sun, the colder the planet."
+        }
       ],
       "slides": [
         {
@@ -345,15 +740,36 @@
       "why": "parenthesis is a key feature of information writing — it lets us add detail without breaking the flow of a sentence",
       "success": "identifying parenthesis in examples and writing sentences using brackets, dashes and commas correctly",
       "vocabulary": [
-        { "word": "parenthesis", "definition": "additional information inserted into a sentence, separated by brackets, dashes or commas" },
-        { "word": "brackets",    "definition": "punctuation marks ( ) used to add an aside or extra detail" },
-        { "word": "dash",        "definition": "a punctuation mark — used to add emphasis or extra information" },
-        { "word": "appositive",  "definition": "a noun phrase placed next to another noun to describe it, e.g. 'Mars (the red planet)'" }
+        {
+          "word": "parenthesis",
+          "definition": "additional information inserted into a sentence, separated by brackets, dashes or commas"
+        },
+        {
+          "word": "brackets",
+          "definition": "punctuation marks ( ) used to add an aside or extra detail"
+        },
+        {
+          "word": "dash",
+          "definition": "a punctuation mark — used to add emphasis or extra information"
+        },
+        {
+          "word": "appositive",
+          "definition": "a noun phrase placed next to another noun to describe it, e.g. 'Mars (the red planet)'"
+        }
       ],
       "quiz": [
-        { "question": "What is a relative clause?",           "answer": "A clause that gives more information about a noun, introduced by a relative pronoun such as which, who or that." },
-        { "question": "Give an example of a relative pronoun.", "answer": "Who, which, that, where, whose." },
-        { "question": "Write a sentence about a planet using a relative clause.", "answer": "Accept any correctly punctuated example." }
+        {
+          "question": "What is a relative clause?",
+          "answer": "A clause that gives more information about a noun, introduced by a relative pronoun such as which, who or that."
+        },
+        {
+          "question": "Give an example of a relative pronoun.",
+          "answer": "Who, which, that, where, whose."
+        },
+        {
+          "question": "Write a sentence about a planet using a relative clause.",
+          "answer": "Accept any correctly punctuated example."
+        }
       ],
       "slides": [
         {
@@ -386,16 +802,40 @@
       "why": "careful planning makes the writing process smoother and helps us produce a well-structured text",
       "success": "choosing a planet, sorting evidence into three paragraphs and writing a topic sentence for each",
       "vocabulary": [
-        { "word": "introduction",  "definition": "the opening paragraph — sets the context and tells the reader what the text is about" },
-        { "word": "paragraph",     "definition": "a section of writing on one main topic or idea" },
-        { "word": "evidence",      "definition": "facts and information that support what you are writing" },
-        { "word": "comparison",    "definition": "looking at the similarities and differences between two things" },
-        { "word": "topic sentence","definition": "the sentence at the start of a paragraph that tells the reader what it is about" }
+        {
+          "word": "introduction",
+          "definition": "the opening paragraph — sets the context and tells the reader what the text is about"
+        },
+        {
+          "word": "paragraph",
+          "definition": "a section of writing on one main topic or idea"
+        },
+        {
+          "word": "evidence",
+          "definition": "facts and information that support what you are writing"
+        },
+        {
+          "word": "comparison",
+          "definition": "looking at the similarities and differences between two things"
+        },
+        {
+          "word": "topic sentence",
+          "definition": "the sentence at the start of a paragraph that tells the reader what it is about"
+        }
       ],
       "quiz": [
-        { "question": "What is parenthesis?",                  "answer": "Extra information added within a sentence using brackets, dashes or commas." },
-        { "question": "Write a sentence using brackets as parenthesis.", "answer": "Accept any correctly punctuated example about a planet." },
-        { "question": "What must be true if you remove the parenthesis?", "answer": "The main sentence must still make sense." }
+        {
+          "question": "What is parenthesis?",
+          "answer": "Extra information added within a sentence using brackets, dashes or commas."
+        },
+        {
+          "question": "Write a sentence using brackets as parenthesis.",
+          "answer": "Accept any correctly punctuated example about a planet."
+        },
+        {
+          "question": "What must be true if you remove the parenthesis?",
+          "answer": "The main sentence must still make sense."
+        }
       ],
       "slides": [
         {
@@ -429,13 +869,28 @@
       "why": "this is where our science knowledge and grammar skills come together in a real piece of writing",
       "success": "writing a clear introduction and topic sentence for paragraph 2, using scientific vocabulary accurately",
       "vocabulary": [
-        { "word": "formal language",   "definition": "writing that is serious in tone and uses precise vocabulary, appropriate for information texts" },
-        { "word": "technical vocabulary", "definition": "specialist words linked to a subject — e.g. orbit, atmosphere, satellite" }
+        {
+          "word": "formal language",
+          "definition": "writing that is serious in tone and uses precise vocabulary, appropriate for information texts"
+        },
+        {
+          "word": "technical vocabulary",
+          "definition": "specialist words linked to a subject — e.g. orbit, atmosphere, satellite"
+        }
       ],
       "quiz": [
-        { "question": "What goes in the introduction of your information text?",  "answer": "General information about the solar system and Earth's place within it." },
-        { "question": "What is the purpose of a topic sentence?",                 "answer": "To tell the reader what the paragraph is going to be about." },
-        { "question": "Name one grammar technique you will use in your writing.",  "answer": "Relative clauses or parenthesis." }
+        {
+          "question": "What goes in the introduction of your information text?",
+          "answer": "General information about the solar system and Earth's place within it."
+        },
+        {
+          "question": "What is the purpose of a topic sentence?",
+          "answer": "To tell the reader what the paragraph is going to be about."
+        },
+        {
+          "question": "Name one grammar technique you will use in your writing.",
+          "answer": "Relative clauses or parenthesis."
+        }
       ],
       "slides": [
         {
@@ -469,8 +924,14 @@
       "success": "writing a paragraph about my chosen planet using technical vocabulary, a relative clause and parenthesis",
       "vocabulary": [],
       "quiz": [
-        { "question": "Read your introduction back — does it contain a relative clause?", "answer": "Self-assessment." },
-        { "question": "What should the topic sentence of paragraph 2 do?",               "answer": "Introduce the chosen planet and signal what the paragraph will cover." }
+        {
+          "question": "Read your introduction back — does it contain a relative clause?",
+          "answer": "Self-assessment."
+        },
+        {
+          "question": "What should the topic sentence of paragraph 2 do?",
+          "answer": "Introduce the chosen planet and signal what the paragraph will cover."
+        }
       ],
       "slides": [
         {
@@ -503,12 +964,24 @@
       "why": "completing the text and comparing our planet to Earth shows how much scientific knowledge we have built up",
       "success": "writing a comparison paragraph using comparative language and bringing the text to a clear conclusion",
       "vocabulary": [
-        { "word": "comparative",    "definition": "language used to show differences or similarities between two things, e.g. larger, hotter, more distant" },
-        { "word": "conclusion",     "definition": "the final paragraph — summarises key points and brings the text to a close" }
+        {
+          "word": "comparative",
+          "definition": "language used to show differences or similarities between two things, e.g. larger, hotter, more distant"
+        },
+        {
+          "word": "conclusion",
+          "definition": "the final paragraph — summarises key points and brings the text to a close"
+        }
       ],
       "quiz": [
-        { "question": "What should paragraph 2 be about?",                       "answer": "The chosen planet — key facts, conditions and features." },
-        { "question": "Name one piece of technical vocabulary you used yesterday.", "answer": "Accept any appropriate scientific term." }
+        {
+          "question": "What should paragraph 2 be about?",
+          "answer": "The chosen planet — key facts, conditions and features."
+        },
+        {
+          "question": "Name one piece of technical vocabulary you used yesterday.",
+          "answer": "Accept any appropriate scientific term."
+        }
       ],
       "slides": [
         {
@@ -542,13 +1015,28 @@
       "why": "good writers revise their work — editing is where we develop the habit of evaluating and improving what we have written",
       "success": "identifying and making at least three targeted improvements to content, grammar or vocabulary",
       "vocabulary": [
-        { "word": "edit",    "definition": "to review and improve a piece of writing" },
-        { "word": "revise",  "definition": "to make changes to the content or structure of a piece of writing" },
-        { "word": "accuracy","definition": "making sure information is correct and language is used precisely" }
+        {
+          "word": "edit",
+          "definition": "to review and improve a piece of writing"
+        },
+        {
+          "word": "revise",
+          "definition": "to make changes to the content or structure of a piece of writing"
+        },
+        {
+          "word": "accuracy",
+          "definition": "making sure information is correct and language is used precisely"
+        }
       ],
       "quiz": [
-        { "question": "What goes in the comparison paragraph?", "answer": "Key similarities and differences between the chosen planet and Earth." },
-        { "question": "What is a conclusion?",                  "answer": "The final part of the text — it brings it to a close and summarises key points." }
+        {
+          "question": "What goes in the comparison paragraph?",
+          "answer": "Key similarities and differences between the chosen planet and Earth."
+        },
+        {
+          "question": "What is a conclusion?",
+          "answer": "The final part of the text — it brings it to a close and summarises key points."
+        }
       ],
       "slides": [
         {
@@ -581,8 +1069,14 @@
       "success": "reading my text clearly and confidently to a Year 4 child and giving specific feedback to another writer",
       "vocabulary": [],
       "quiz": [
-        { "question": "Name one change you made when editing your information text and explain why.", "answer": "Individual pupil response." },
-        { "question": "What are the three paragraphs of your information text about?",              "answer": "P1: solar system and Earth; P2: chosen planet; P3: comparison." }
+        {
+          "question": "Name one change you made when editing your information text and explain why.",
+          "answer": "Individual pupil response."
+        },
+        {
+          "question": "What are the three paragraphs of your information text about?",
+          "answer": "P1: solar system and Earth; P2: chosen planet; P3: comparison."
+        }
       ],
       "slides": [
         {

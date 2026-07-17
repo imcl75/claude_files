@@ -1,25 +1,31 @@
 #!/usr/bin/env python3
 """
 build_lp.py — Generic enquiry Learning Paper builder.
+v2: supports both legacy flat-sections schema and new three-level schema.
 
-Entry point:
-    build_lp(lesson_json_path_or_dict, out_path, resource_base='/tmp/t6w7')
+Entry points:
+    build_lp(lesson_data, out_path, resource_base, level='standard')
+        Build one level's LP PPTX.
 
-Reads the 'lp' key from the lesson JSON and renders a 2-slide A4 portrait
-PPTX (slide 1 = pupil task, slide 2 = marking station).
+    build_lp_all_levels(lesson_data, out_dir, resource_base, base_name)
+        Build all three levels, return dict {level: path}.
 
-Section types supported:
-    heading, instruction, write_lines, word_bank, reference_image,
-    row_boxes, pair_boxes, table, graph_template, sentence_starter, spacer,
-    sort_table, sort_table_answers, marking_station, answer_text
+Schema detection:
+    LEGACY: lp = {"sections": [...], "date": ..., "lf": ..., ...}
+    NEW:    lp = {"standard": {"elements": [...]}, "adapted": {...}, "further_adapted": {...}}
+
+New element types (v2):
+    answer_lines, cloze, matching, diagram
+    (plus all legacy types: heading, instruction, write_lines, word_bank,
+     reference_image, row_boxes, pair_boxes, table, graph_template,
+     sentence_starter, spacer, sort_table, sort_table_answers,
+     marking_station, answer_text)
 
 Called automatically from build_science_lesson.py after VERIFY: PASS.
 """
 
 import os, sys, json
 
-# When imported, add /tmp/t6w7 to path so label_builder etc. are found
-# (this is the session resource base; overridden at call time via resource_base param)
 _DEFAULT_RESOURCE_BASE = '/tmp/t6w7'
 if _DEFAULT_RESOURCE_BASE not in sys.path:
     sys.path.insert(0, _DEFAULT_RESOURCE_BASE)
@@ -50,10 +56,23 @@ WHITE  = RGBColor(0xFF, 0xFF, 0xFF)
 LGREY  = RGBColor(0xCC, 0xCC, 0xCC)
 EXBOOK = RGBColor(0xBD, 0xD7, 0xEE)
 CREAM  = RGBColor(0xFE, 0xF9, 0xE7)
+PINK   = RGBColor(0xC0, 0x15, 0x7B)
 
 FONT_BODY = 'Twinkl Cursive Looped'
 
-# Sort table column setup (L1-specific but kept here for reuse)
+# Differentiation level colours and labels
+LEVEL_COLOURS = {
+    'standard':        BLUE,
+    'adapted':         ORANGE,
+    'further_adapted': PINK,
+}
+LEVEL_LABELS = {
+    'standard':        'Standard',
+    'adapted':         'Adapted',
+    'further_adapted': 'Further Adapted',
+}
+
+# Sort table column setup (legacy — kept for reuse)
 _SORT_COL_LABELS  = ['Material', 'State?', 'Reason (use the particle model)']
 _SORT_COL_RATIO   = [0.26, 0.14, 0.60]
 
@@ -141,10 +160,10 @@ def _add_rect(slide, x, y, w, h, fill_rgb=None, line_rgb=None, line_pt=0.75):
 
 
 def _wrap_line_count(text, width_in, size_pt):
-    """Estimate wrapped line count. Calibrated to Twinkl Cursive Looped at 0.46 chars/pt/width."""
+    """Estimate wrapped line count."""
     usable_w_pt = width_in * 72
     chars_per_line = max(1, int(usable_w_pt / (size_pt * 0.46)))
-    words = text.split()
+    words = str(text).split()
     lines, cur = 1, ''
     for w in words:
         test = (cur + ' ' + w).strip()
@@ -157,7 +176,6 @@ def _wrap_line_count(text, width_in, size_pt):
 
 
 def _resolve_path(path, resource_base):
-    """Return absolute path: try as-is first, then relative to resource_base."""
     if os.path.isabs(path) and os.path.exists(path):
         return path
     candidate = os.path.join(resource_base, path)
@@ -168,7 +186,7 @@ def _resolve_path(path, resource_base):
 
 
 # ══════════════════════════════════════════════════════════════════
-# Section renderers
+# Legacy section renderers
 # ══════════════════════════════════════════════════════════════════
 
 def _render_heading(slide, y, sec):
@@ -208,6 +226,9 @@ def _render_write_lines(slide, y, sec):
 
 def _render_word_bank(slide, y, sec):
     words = sec['words']
+    # words can be a list or a string
+    if isinstance(words, list):
+        words = '  •  '.join(words)
     size_pt = sec.get('size_pt', 12)
     w = sec.get('w', CONT_W)
     n = _wrap_line_count('Word bank: ' + words, w - 0.1, size_pt)
@@ -248,7 +269,6 @@ def _render_reference_image(slide, y, sec, resource_base):
 
 
 def _render_row_boxes(slide, y, sec):
-    """Row of N equal-width boxes with text labels (e.g. L2 state labels)."""
     items = sec['items']
     box_h = sec.get('height', 0.36)
     size_pt = sec.get('size_pt', 10)
@@ -265,32 +285,29 @@ def _render_row_boxes(slide, y, sec):
 
 
 def _render_pair_boxes(slide, y, sec):
-    """Two half-width boxes (e.g. L2 temperature fill-ins)."""
     items = sec['items']
     box_h = sec.get('height', 0.36)
     size_pt = sec.get('size_pt', 11)
     half_w = CONT_W / 2 - 0.1
     x = CONT_X
+    y_next = y
     for label in items[:2]:
         _add_rect(slide, x, y, half_w, box_h, line_rgb=BLUE, line_pt=1.0)
         tb = _add_textbox(slide, x + 0.06, y + 0.06, half_w - 0.12, box_h - 0.12)
         _set_para(tb.text_frame.paragraphs[0], label, size_pt=size_pt, color=DARK)
         x += half_w + 0.20
         y_next = y + box_h + 0.08
-        y = y  # keep same y for second box
     return y_next
 
 
 def _render_table(slide, y, sec):
-    """Generic data table: coloured header + alternating data rows."""
-    headers = sec['headers']   # [{text, frac, align?}]
+    headers = sec['headers']
     rows    = sec.get('rows', [])
     row_h   = sec.get('row_height', 0.38)
     hdr_col = sec.get('header_color', BLUE)
     body_size = sec.get('body_size_pt', 10)
 
     col_ws = [CONT_W * h['frac'] for h in headers]
-    # header row
     x = CONT_X
     hdr_h = 0.30
     for hdr, cw in zip(headers, col_ws):
@@ -302,12 +319,10 @@ def _render_table(slide, y, sec):
         x += cw
     y += hdr_h
 
-    # data rows
     for i, row in enumerate(rows):
         fill = RGBColor(0xF5, 0xF5, 0xF5) if i % 2 == 0 else WHITE
         x = CONT_X
         for j, (cell, cw) in enumerate(zip(row, col_ws)):
-            # auto-grow row height if text wraps
             al = PP_ALIGN.CENTER if headers[j].get('align') == 'center' else PP_ALIGN.LEFT
             nlines = _wrap_line_count(cell, cw - 0.08, body_size) if cell else 1
             this_h = max(row_h, 0.08 + nlines * (body_size * 1.35 / 72))
@@ -324,15 +339,12 @@ def _render_table(slide, y, sec):
 
 
 def _render_graph_template(slide, y, sec, resource_base):
-    """Generate a blank axes matplotlib figure and embed it."""
     filename = sec['filename']
-    # If filename is an absolute path use it; otherwise put in resource_base/images/
     if os.path.isabs(filename):
         graph_path = filename
     else:
         graph_path = os.path.join(resource_base, 'images', filename)
 
-    # Only regenerate if the file doesn't already exist
     if not os.path.exists(graph_path):
         os.makedirs(os.path.dirname(graph_path), exist_ok=True)
         fig, ax = plt.subplots(figsize=(6, 3.5))
@@ -365,7 +377,6 @@ def _render_graph_template(slide, y, sec, resource_base):
 
 
 def _render_sentence_starter(slide, y, sec):
-    """Blue-tinted box with italic sentence starter."""
     text = sec['text']
     size_pt = sec.get('size_pt', 12)
     box_h = 0.38
@@ -378,16 +389,16 @@ def _render_sentence_starter(slide, y, sec):
 
 
 def _render_sort_table(slide, y, sec):
-    """L1 sort table: 3-column header + blank rows for each material."""
     materials = sec['materials']
     size_pt   = sec.get('size_pt', 10)
     row_h     = sec.get('row_height', 0.36)
-    col_ws    = [CONT_W * r for r in _SORT_COL_RATIO]
+    col_labels = sec.get('col_labels', _SORT_COL_LABELS)
+    col_ratio  = sec.get('col_ratio', _SORT_COL_RATIO)
+    col_ws = [CONT_W * r for r in col_ratio]
 
-    # header
     hdr_h = max(0.28, 0.08 + (size_pt * 1.35 / 72))
     x = CONT_X
-    for lbl, cw in zip(_SORT_COL_LABELS, col_ws):
+    for lbl, cw in zip(col_labels, col_ws):
         _add_rect(slide, x, y, cw, hdr_h, fill_rgb=BLUE)
         tb = _add_textbox(slide, x + 0.04, y + 0.03, cw - 0.08, hdr_h - 0.06)
         tb.text_frame.word_wrap = True
@@ -395,7 +406,6 @@ def _render_sort_table(slide, y, sec):
         x += cw
     y += hdr_h
 
-    # blank rows with material name pre-filled
     for i, mat in enumerate(materials):
         n = _wrap_line_count(mat, col_ws[0] - 0.08, size_pt)
         this_h = max(row_h, 0.08 + n * (size_pt * 1.3 / 72))
@@ -413,8 +423,7 @@ def _render_sort_table(slide, y, sec):
 
 
 def _render_sort_table_answers(slide, y, sec):
-    """L1 marking: sort table with all three cells filled in green."""
-    answers  = sec['answers']   # [[material, state, reason], ...]
+    answers  = sec['answers']
     size_pt  = sec.get('size_pt', 8)
     col_ws   = [CONT_W * r for r in _SORT_COL_RATIO]
 
@@ -452,23 +461,228 @@ def _render_answer_text(slide, y, sec):
     return y + h + 0.06
 
 
+# ══════════════════════════════════════════════════════════════════
+# v2 element renderers
+# ══════════════════════════════════════════════════════════════════
+
+def _render_answer_lines(slide, y, sec):
+    """
+    Labelled write-lines.
+    sec = {"type": "answer_lines", "label": "What is a galaxy?",
+           "n": 3, "sentence_starter": "A galaxy is..."}
+    """
+    label   = sec.get('label', '')
+    n       = sec.get('n', sec.get('count', 3))
+    gap     = sec.get('gap_in', 0.315)
+    w       = sec.get('w', CONT_W)
+    x       = sec.get('x', CONT_X)
+    size_pt = sec.get('size_pt', 11)
+    starter = sec.get('sentence_starter', '')
+
+    if label:
+        n_label = _wrap_line_count(label, w, size_pt)
+        h_label = (size_pt / 9.5) * 0.21 * n_label
+        tb = _add_textbox(slide, CONT_X, y, w, h_label)
+        tb.text_frame.word_wrap = True
+        _set_para(tb.text_frame.paragraphs[0], label, bold=True,
+                  size_pt=size_pt, color=DARK)
+        y += h_label + 0.04
+
+    if starter:
+        tb = _add_textbox(slide, CONT_X, y, w, 0.22)
+        _set_para(tb.text_frame.paragraphs[0], starter, italic=True,
+                  size_pt=size_pt - 0.5, color=BLUE)
+        y += 0.22
+
+    for _ in range(n):
+        _add_line(slide, x, y, w)
+        y += gap
+    return y + 0.10
+
+
+def _render_cloze(slide, y, sec, resource_base=None):
+    """
+    Cloze passage with ___ blanks.
+    sec = {"type": "cloze",
+           "text": "The ___ began with the ___.",
+           "blanks": ["universe", "Big Bang"],
+           "word_bank": "Big Bang  •  universe  •  Milky Way",
+           "show_answers": false}
+    On the task slide: renders text as-is with blanks shown as ___.
+    On the marking slide: caller sets show_answers=True and blanks replace
+    ___ in green.
+    """
+    text     = sec['text']
+    blanks   = sec.get('blanks', [])
+    size_pt  = sec.get('size_pt', 12)
+    w        = sec.get('w', CONT_W)
+    show_ans = sec.get('show_answers', False)
+
+    if show_ans:
+        parts = text.split('___')
+        n_lines = max(1, _wrap_line_count(text, w, size_pt))
+        h = (size_pt / 9) * 0.22 * n_lines + 0.10
+        tb = _add_textbox(slide, CONT_X, y, w, h)
+        tf = tb.text_frame
+        tf.word_wrap = True
+        para = tf.paragraphs[0]
+        for i, part in enumerate(parts):
+            r = para.add_run()
+            r.text = part
+            r.font.name = FONT_BODY
+            r.font.size = Pt(size_pt)
+            r.font.color.rgb = DARK
+            if i < len(blanks):
+                rb = para.add_run()
+                rb.text = blanks[i]
+                rb.font.name = FONT_BODY
+                rb.font.size = Pt(size_pt)
+                rb.font.bold = True
+                rb.font.color.rgb = GREEN
+        y += h + 0.06
+    else:
+        n_lines = max(1, _wrap_line_count(text, w, size_pt))
+        h = (size_pt / 9) * 0.22 * n_lines + 0.10
+        tb = _add_textbox(slide, CONT_X, y, w, h)
+        tf = tb.text_frame
+        tf.word_wrap = True
+        _set_para(tf.paragraphs[0], text, size_pt=size_pt, color=DARK)
+        y += h + 0.06
+
+    wb = sec.get('word_bank', '')
+    if wb and not show_ans:
+        y = _render_word_bank(slide, y, {'words': wb, 'size_pt': size_pt - 1})
+
+    return y
+
+
+def _render_matching(slide, y, sec, resource_base=None):
+    """
+    Two-column matching activity.
+    sec = {"type": "matching",
+           "left": ["universe", "galaxy", "Big Bang"],
+           "right": ["everything that exists", "huge collection of stars",
+                     "theory of how universe began"],
+           "answer_pairs": [[0,0],[1,1],[2,2]]}
+    Renders left column (bold term) and right column (definition).
+    Pupil draws arrows in the gap. On marking station, show_answers=True
+    adds answer_pairs as coloured bullet connections.
+    """
+    left  = sec['left']
+    right = sec['right']
+    # Shuffle right column for pupil version (use answer_pairs to record mapping)
+    size_pt = sec.get('size_pt', 11)
+    row_h   = sec.get('row_height', 0.40)
+
+    col_left_w  = CONT_W * 0.32
+    col_mid_w   = CONT_W * 0.08
+    col_right_w = CONT_W * 0.60
+
+    # Column headers
+    tb_l = _add_textbox(slide, CONT_X, y, col_left_w, 0.25)
+    _set_para(tb_l.text_frame.paragraphs[0], 'Word', bold=True, size_pt=size_pt, color=BLUE)
+    tb_r = _add_textbox(slide, CONT_X + col_left_w + col_mid_w, y, col_right_w, 0.25)
+    _set_para(tb_r.text_frame.paragraphs[0], 'Meaning', bold=True, size_pt=size_pt, color=BLUE)
+    y += 0.28
+
+    n = max(len(left), len(right))
+    for i in range(n):
+        l_text = left[i]  if i < len(left)  else ''
+        r_text = right[i] if i < len(right) else ''
+
+        nl = _wrap_line_count(l_text, col_left_w - 0.08, size_pt) if l_text else 1
+        nr = _wrap_line_count(r_text, col_right_w - 0.08, size_pt) if r_text else 1
+        this_h = max(row_h, 0.10 + max(nl, nr) * (size_pt * 1.35 / 72))
+        fill = RGBColor(0xF5, 0xF5, 0xF5) if i % 2 == 0 else WHITE
+
+        # Left cell
+        _add_rect(slide, CONT_X, y, col_left_w, this_h,
+                  fill_rgb=fill, line_rgb=LGREY, line_pt=0.5)
+        if l_text:
+            tb = _add_textbox(slide, CONT_X + 0.05, y + 0.05,
+                               col_left_w - 0.10, this_h - 0.08)
+            tb.text_frame.word_wrap = True
+            _set_para(tb.text_frame.paragraphs[0], l_text,
+                      size_pt=size_pt, color=DARK, bold=True)
+
+        # Right cell
+        rx = CONT_X + col_left_w + col_mid_w
+        _add_rect(slide, rx, y, col_right_w, this_h,
+                  fill_rgb=fill, line_rgb=LGREY, line_pt=0.5)
+        if r_text:
+            tb = _add_textbox(slide, rx + 0.05, y + 0.05,
+                               col_right_w - 0.10, this_h - 0.08)
+            tb.text_frame.word_wrap = True
+            _set_para(tb.text_frame.paragraphs[0], r_text,
+                      size_pt=size_pt, color=DARK)
+
+        # Arrow hint dot in gap
+        mid_x = CONT_X + col_left_w + 0.02
+        _add_rect(slide, mid_x, y + this_h / 2 - 0.02, col_mid_w - 0.04, 0.04,
+                  fill_rgb=LGREY)
+
+        y += this_h + 0.04
+
+    return y + 0.06
+
+
+def _render_diagram(slide, y, sec, resource_base):
+    """
+    Image or placeholder. Gracefully handles missing files.
+    sec = {"type": "diagram", "path": "images/foo.png",
+           "description": "diagram of the solar system", "max_h": 2.0}
+    """
+    path = sec.get('path', '')
+    if path:
+        try:
+            return _render_reference_image(slide, y, sec, resource_base)
+        except FileNotFoundError:
+            pass  # fall through to placeholder
+
+    desc  = sec.get('description', 'Diagram')
+    box_h = sec.get('max_h', sec.get('max_h', 1.5))
+    _add_rect(slide, CONT_X, y, CONT_W, box_h, line_rgb=LGREY, line_pt=1.0)
+    tb = _add_textbox(slide, CONT_X + 0.2, y + box_h / 2 - 0.15,
+                       CONT_W - 0.4, 0.30)
+    _set_para(tb.text_frame.paragraphs[0],
+              f'[{desc}]', italic=True, size_pt=11, color=LGREY,
+              align=PP_ALIGN.CENTER)
+    return y + box_h + 0.10
+
+
+def _render_image(slide, y, sec, resource_base):
+    """Alias for diagram (element type 'image')."""
+    return _render_diagram(slide, y, sec, resource_base)
+
+
 # ── dispatch ────────────────────────────────────────────────────────────────
 _SECTION_RENDERERS = {
-    'heading':            lambda slide, y, sec, rb: _render_heading(slide, y, sec),
-    'instruction':        lambda slide, y, sec, rb: _render_instruction(slide, y, sec),
-    'write_lines':        lambda slide, y, sec, rb: _render_write_lines(slide, y, sec),
-    'word_bank':          lambda slide, y, sec, rb: _render_word_bank(slide, y, sec),
+    # legacy types
+    'heading':            lambda sl, y, sec, rb: _render_heading(sl, y, sec),
+    'instruction':        lambda sl, y, sec, rb: _render_instruction(sl, y, sec),
+    'write_lines':        lambda sl, y, sec, rb: _render_write_lines(sl, y, sec),
+    'word_bank':          lambda sl, y, sec, rb: _render_word_bank(sl, y, sec),
     'reference_image':    _render_reference_image,
-    'row_boxes':          lambda slide, y, sec, rb: _render_row_boxes(slide, y, sec),
-    'pair_boxes':         lambda slide, y, sec, rb: _render_pair_boxes(slide, y, sec),
-    'table':              lambda slide, y, sec, rb: _render_table(slide, y, sec),
+    'row_boxes':          lambda sl, y, sec, rb: _render_row_boxes(sl, y, sec),
+    'pair_boxes':         lambda sl, y, sec, rb: _render_pair_boxes(sl, y, sec),
+    'table':              lambda sl, y, sec, rb: _render_table(sl, y, sec),
     'graph_template':     _render_graph_template,
-    'sentence_starter':   lambda slide, y, sec, rb: _render_sentence_starter(slide, y, sec),
-    'spacer':             lambda slide, y, sec, rb: y + sec.get('h', 0.1),
-    'sort_table':         lambda slide, y, sec, rb: _render_sort_table(slide, y, sec),
-    'sort_table_answers': lambda slide, y, sec, rb: _render_sort_table_answers(slide, y, sec),
-    'marking_station':    lambda slide, y, sec, rb: _render_marking_station(slide, y, sec),
-    'answer_text':        lambda slide, y, sec, rb: _render_answer_text(slide, y, sec),
+    'sentence_starter':   lambda sl, y, sec, rb: _render_sentence_starter(sl, y, sec),
+    'spacer':             lambda sl, y, sec, rb: y + sec.get('h', 0.1),
+    'sort_table':         lambda sl, y, sec, rb: _render_sort_table(sl, y, sec),
+    'sort_table_answers': lambda sl, y, sec, rb: _render_sort_table_answers(sl, y, sec),
+    'marking_station':    lambda sl, y, sec, rb: _render_marking_station(sl, y, sec),
+    'answer_text':        lambda sl, y, sec, rb: _render_answer_text(sl, y, sec),
+    # v2 types
+    'answer_lines':       lambda sl, y, sec, rb: _render_answer_lines(sl, y, sec),
+    'cloze':              _render_cloze,
+    'matching':           _render_matching,
+    'diagram':            _render_diagram,
+    'image':              _render_image,
+    # v2 aliases
+    'timeline_diagram':   _render_diagram,
+    'graph_axes':         _render_graph_template,
+    'sorting_record':     lambda sl, y, sec, rb: _render_sort_table(sl, y, sec),
 }
 
 
@@ -484,113 +698,189 @@ def _render_section(slide, sec, y, resource_base):
 # Label builder
 # ══════════════════════════════════════════════════════════════════
 
-def _add_label(slide, lp_spec, lesson, resource_base, png_dest):
+def _add_label(slide, lf, ican1, ican2, date_str, key_question,
+               resource_base, png_dest, year='Y4'):
     """Place the WFA enquiry label and return the y position below it."""
-    # Import here so the path patch is applied first by the caller
-    from label_builder import build_enquiry_label, LL_W
+    try:
+        if resource_base not in sys.path:
+            sys.path.insert(0, resource_base)
+        import build_enquiry_label as _bel
+        _bel.ASSETS = os.path.join(resource_base, 'll_assets')
+        from label_builder import build_enquiry_label, LL_W
 
-    lf = lp_spec.get('lf') or lesson.get('lo', '')
-    label_h = build_enquiry_label(
-        slide,
-        SW_IN - LL_W - MARGIN,
-        LBL_Y,
-        date_str=lp_spec.get('date', ''),
-        key_q=lesson.get('key_question', ''),
-        lf=lf,
-        ican1=lp_spec.get('ican1', ''),
-        ican2=lp_spec.get('ican2', ''),
-        icon_path=None,
-        subject='scientist',
-        year='Y4',
-        png_dest=png_dest,
-    )
-    LABEL_SCALE = 0.707
-    label_pic = slide.shapes[-1]
-    new_w = LL_W * LABEL_SCALE
-    new_h = label_h * LABEL_SCALE
-    label_pic.left = _i(SW_IN - new_w - MARGIN)
-    label_pic.top  = _i(LBL_Y)
-    label_pic.width  = _i(new_w)
-    label_pic.height = _i(new_h)
-    return LBL_Y + new_h + 0.15
+        label_h = build_enquiry_label(
+            slide,
+            SW_IN - LL_W - MARGIN,
+            LBL_Y,
+            date_str=date_str,
+            key_q=key_question,
+            lf=lf,
+            ican1=ican1,
+            ican2=ican2,
+            icon_path=None,
+            subject='scientist',
+            year=year,
+            png_dest=png_dest,
+        )
+        LABEL_SCALE = 0.707
+        label_pic = slide.shapes[-1]
+        new_w = LL_W * LABEL_SCALE
+        new_h = label_h * LABEL_SCALE
+        label_pic.left   = _i(SW_IN - new_w - MARGIN)
+        label_pic.top    = _i(LBL_Y)
+        label_pic.width  = _i(new_w)
+        label_pic.height = _i(new_h)
+        return LBL_Y + new_h + 0.15
+    except (ImportError, ModuleNotFoundError, FileNotFoundError):
+        # label_builder not available in this environment — skip gracefully
+        return LBL_Y + 0.10
 
 
 # ══════════════════════════════════════════════════════════════════
-# Public entry point
+# Level badge (v2 only) — small coloured tag top-right of slide 1
 # ══════════════════════════════════════════════════════════════════
 
-def build_lp(lesson_json_or_path, out_path, resource_base=None):
-    """
-    Build the LP PPTX for a single lesson.
+def _add_level_badge(slide, level):
+    colour = LEVEL_COLOURS.get(level, BLUE)
+    label  = LEVEL_LABELS.get(level, level.replace('_', ' ').title())
+    badge_w, badge_h = 1.5, 0.28
+    bx = SW_IN - badge_w - MARGIN
+    by = SH_IN - badge_h - MARGIN
+    _add_rect(slide, bx, by, badge_w, badge_h, fill_rgb=colour)
+    tb = _add_textbox(slide, bx + 0.06, by + 0.04, badge_w - 0.12, badge_h - 0.08)
+    _set_para(tb.text_frame.paragraphs[0], label,
+              bold=True, size_pt=10, color=WHITE, align=PP_ALIGN.CENTER)
 
-    Args:
-        lesson_json_or_path: path to lesson JSON file, or an already-loaded dict.
-        out_path:            where to write the output PPTX.
-        resource_base:       directory containing ll_assets/, images/, etc.
-                             Defaults to dirname of lesson_json_or_path (if path),
-                             or /tmp/t6w7 (if dict).
-    Returns:
-        out_path on success.
+
+# ══════════════════════════════════════════════════════════════════
+# Schema detection
+# ══════════════════════════════════════════════════════════════════
+
+def _is_new_schema(lp_spec):
+    """Return True if lp_spec uses the three-level standard/adapted/further_adapted schema."""
+    return 'standard' in lp_spec or 'adapted' in lp_spec or 'further_adapted' in lp_spec
+
+
+# ══════════════════════════════════════════════════════════════════
+# Core builder (internal)
+# ══════════════════════════════════════════════════════════════════
+
+def _build_one_level(lesson_data, level_spec, level, lp_top, out_path,
+                     resource_base, lesson_meta, year='Y5'):
     """
-    # Load JSON
-    if isinstance(lesson_json_or_path, (str, os.PathLike)):
-        json_path = str(lesson_json_or_path)
-        with open(json_path) as f:
-            lesson_data = json.load(f)
-        if resource_base is None:
-            resource_base = os.path.dirname(os.path.abspath(json_path))
+    Build a single-level LP PPTX from a level_spec dict
+    (the standard/adapted/further_adapted sub-dict of lp).
+
+    lesson_meta: dict with optional keys: key_question, date, lf, ican1, ican2
+    """
+    prs = _new_prs()
+    s1, s2 = prs.slides[0], prs.slides[1]
+    _clear_slide(s1)
+    _clear_slide(s2)
+
+    # Resolve label fields: level_spec first, then lesson_meta fallback
+    lf     = level_spec.get('lf')     or lesson_meta.get('lf', '')
+    ican1  = level_spec.get('ican1')  or lesson_meta.get('ican1', '')
+    ican2  = level_spec.get('ican2')  or lesson_meta.get('ican2', '')
+    date_s = lp_top.get('date', '')   or lesson_meta.get('date', '')
+    key_q  = lesson_meta.get('key_question', '')
+
+    _tmp_dir = '/tmp'
+    png_dest = os.path.join(_tmp_dir, f'_lp_label_{os.getpid()}_{level}.png')
+    y1 = _add_label(s1, lf, ican1, ican2, date_s, key_q,
+                    resource_base, png_dest, year=year)
+
+    # Level badge on slide 1
+    _add_level_badge(s1, level)
+
+    # Slide 1: elements up to first 'marking_station'
+    elements = level_spec.get('elements', [])
+    try:
+        split_at = next(i for i, e in enumerate(elements)
+                        if e['type'] == 'marking_station')
+    except StopIteration:
+        split_at = len(elements)
+
+    s1_elements = elements[:split_at]
+    s2_elements_from_list = elements[split_at:]
+
+    for el in s1_elements:
+        y1 = _render_section(s1, el, y1, resource_base)
+
+    # Slide 2: explicit answers list (preferred) or remainder of elements list
+    answers = level_spec.get('answers', [])
+    y2 = 0.30
+    # Auto marking station header
+    y2 = _render_marking_station(s2, y2, {'title': 'Marking Station'})
+    _add_level_badge(s2, level)
+
+    if answers:
+        for el in answers:
+            y2 = _render_section(s2, el, y2, resource_base)
     else:
-        lesson_data = lesson_json_or_path
-        if resource_base is None:
-            resource_base = _DEFAULT_RESOURCE_BASE
+        for el in s2_elements_from_list:
+            y2 = _render_section(s2, el, y2, resource_base)
 
-    lesson  = lesson_data['lesson']
-    lp_spec = lesson.get('lp')
-    if lp_spec is None:
-        raise ValueError(
-            "Lesson JSON has no 'lp' key — add an 'lp' spec before calling build_lp()")
+    os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
+    prs.save(out_path)
 
-    # Patch assets path for the label builder
+    try:
+        if os.path.exists(png_dest):
+            os.remove(png_dest)
+    except OSError:
+        pass
+
+    size_kb = os.path.getsize(out_path) // 1024
+    print(f"  LP [{level}] -> {out_path} ({size_kb} KB)")
+    return out_path
+
+
+def _build_legacy(lesson_data, lp_spec, out_path, resource_base):
+    """Build using the original flat-sections schema (unchanged behaviour)."""
+    lesson = lesson_data['lesson']
+
     if resource_base not in sys.path:
         sys.path.insert(0, resource_base)
-    import build_enquiry_label as _bel
-    _bel.ASSETS = os.path.join(resource_base, 'll_assets')
+    try:
+        import build_enquiry_label as _bel
+        _bel.ASSETS = os.path.join(resource_base, 'll_assets')
+    except ImportError:
+        pass
 
     prs = _new_prs()
     s1, s2 = prs.slides[0], prs.slides[1]
     _clear_slide(s1)
     _clear_slide(s2)
 
-    # Label on slide 1; returns y-start for content
-    # PNG must be on a real filesystem (not FUSE) because PyMuPDF does
-    # a remove-before-write internally. Use /sessions/ (ext4) as temp.
-    _tmp_dir = '/sessions/admiring-sleepy-wozniak'
-    if not os.path.isdir(_tmp_dir):
-        _tmp_dir = os.path.dirname(os.path.abspath(out_path))
+    _tmp_dir = '/tmp'
     png_dest = os.path.join(_tmp_dir, f'_lp_label_{os.getpid()}.png')
-    y1 = _add_label(s1, lp_spec, lesson, resource_base, png_dest)
 
-    # Split sections at the first 'marking_station' — everything before → slide 1
+    lf    = lp_spec.get('lf') or lesson.get('lo', '')
+    ican1 = lp_spec.get('ican1', '')
+    ican2 = lp_spec.get('ican2', '')
+    date_s = lp_spec.get('date', '')
+    key_q  = lesson.get('key_question', '')
+
+    y1 = _add_label(s1, lf, ican1, ican2, date_s, key_q,
+                    resource_base, png_dest, year='Y4')
+
     all_sections = lp_spec.get('sections', [])
     try:
-        split_at = next(i for i, s in enumerate(all_sections) if s['type'] == 'marking_station')
+        split_at = next(i for i, s in enumerate(all_sections)
+                        if s['type'] == 'marking_station')
     except StopIteration:
         split_at = len(all_sections)
 
-    s1_sections = all_sections[:split_at]
-    s2_sections = all_sections[split_at:]   # includes the marking_station entry
-
-    for sec in s1_sections:
+    for sec in all_sections[:split_at]:
         y1 = _render_section(s1, sec, y1, resource_base)
 
     y2 = 0.30
-    for sec in s2_sections:
+    for sec in all_sections[split_at:]:
         y2 = _render_section(s2, sec, y2, resource_base)
 
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     prs.save(out_path)
 
-    # Clean up the temp label PNG (ignore errors on FUSE mounts)
     try:
         if os.path.exists(png_dest):
             os.remove(png_dest)
@@ -602,11 +892,160 @@ def build_lp(lesson_json_or_path, out_path, resource_base=None):
     return out_path
 
 
+# ══════════════════════════════════════════════════════════════════
+# Public entry points
+# ══════════════════════════════════════════════════════════════════
+
+def build_lp(lesson_json_or_path, out_path, resource_base=None, level='standard'):
+    """
+    Build the LP PPTX for a single lesson (one differentiation level).
+
+    Args:
+        lesson_json_or_path: path to lesson JSON or already-loaded dict.
+                             For the new MTP schema, pass the full MTP dict
+                             with 'lessons' list, or a single lesson dict
+                             that has a 'lp' key.
+        out_path:            where to write the output PPTX.
+        resource_base:       directory for images, ll_assets, etc.
+        level:               'standard' | 'adapted' | 'further_adapted'
+                             (ignored for legacy flat-sections schema)
+
+    Returns:
+        out_path on success.
+    """
+    # Load JSON
+    if isinstance(lesson_json_or_path, (str, os.PathLike)):
+        json_path = str(lesson_json_or_path)
+        with open(json_path) as f:
+            lesson_json = json.load(f)
+        if resource_base is None:
+            resource_base = os.path.dirname(os.path.abspath(json_path))
+    else:
+        lesson_json = lesson_json_or_path
+        if resource_base is None:
+            resource_base = _DEFAULT_RESOURCE_BASE
+
+    # Support both wrapped {"lesson": {...}} and bare lesson dicts
+    if 'lesson' in lesson_json:
+        lesson_data = lesson_json
+        lp_spec = lesson_data['lesson'].get('lp')
+    elif 'lp' in lesson_json:
+        lesson_data = {'lesson': lesson_json}
+        lp_spec = lesson_json['lp']
+    else:
+        raise ValueError("Cannot locate 'lp' key in provided data")
+
+    if lp_spec is None:
+        raise ValueError("Lesson has no 'lp' key — add an lp spec before calling build_lp()")
+
+    if _is_new_schema(lp_spec):
+        level_spec = lp_spec.get(level)
+        if level_spec is None:
+            raise ValueError(
+                f"Level '{level}' not found in lp spec. "
+                f"Available: {[k for k in lp_spec if k in ('standard','adapted','further_adapted')]}")
+        lesson = lesson_data['lesson']
+        year = lesson.get('year_group', 'Y5')
+        lesson_meta = {
+            'key_question': lesson.get('key_question', lesson.get('building_block_text', '')),
+            'date': lp_spec.get('date', ''),
+            'lf':   lesson.get('what', lesson.get('lo', '')),
+            'ican1': '',
+            'ican2': '',
+        }
+        # Split success criteria into two I can statements if possible
+        success = lesson.get('success', '')
+        if success:
+            parts = success.split(',')
+            lesson_meta['ican1'] = parts[0].strip()
+            lesson_meta['ican2'] = ', '.join(parts[1:]).strip() if len(parts) > 1 else ''
+        return _build_one_level(lesson_data, level_spec, level, lp_spec,
+                                out_path, resource_base, lesson_meta, year=year)
+    else:
+        return _build_legacy(lesson_data, lp_spec, out_path, resource_base)
+
+
+def build_lp_all_levels(lesson_json_or_path, out_dir, resource_base=None,
+                         base_name=None):
+    """
+    Build all three LP levels from a lesson with a new three-level lp spec.
+
+    Args:
+        lesson_json_or_path: path or dict (same as build_lp).
+        out_dir:             directory to write the three PPTX files.
+        resource_base:       images / assets directory.
+        base_name:           filename prefix, e.g. 'L1_Universe_LP'.
+                             Defaults to 'LP'.
+
+    Returns:
+        dict: {'standard': path, 'adapted': path, 'further_adapted': path}
+              Only levels present in the lp spec are included.
+    """
+    if isinstance(lesson_json_or_path, (str, os.PathLike)):
+        json_path = str(lesson_json_or_path)
+        with open(json_path) as f:
+            lesson_json = json.load(f)
+        if resource_base is None:
+            resource_base = os.path.dirname(os.path.abspath(json_path))
+    else:
+        lesson_json = lesson_json_or_path
+        if resource_base is None:
+            resource_base = _DEFAULT_RESOURCE_BASE
+
+    if 'lesson' in lesson_json:
+        lesson_data = lesson_json
+    elif 'lp' in lesson_json:
+        lesson_data = {'lesson': lesson_json}
+    else:
+        raise ValueError("Cannot locate lesson data in provided dict")
+
+    lp_spec = lesson_data['lesson'].get('lp')
+    if lp_spec is None:
+        raise ValueError("Lesson has no 'lp' key")
+    if not _is_new_schema(lp_spec):
+        raise ValueError("build_lp_all_levels() requires new three-level schema. "
+                         "For legacy schema use build_lp().")
+
+    os.makedirs(out_dir, exist_ok=True)
+    prefix = base_name or 'LP'
+    level_suffixes = {
+        'standard':        '_S',
+        'adapted':         '_A',
+        'further_adapted': '_FA',
+    }
+
+    results = {}
+    for level in ('standard', 'adapted', 'further_adapted'):
+        if level not in lp_spec:
+            continue
+        out_path = os.path.join(out_dir, f'{prefix}{level_suffixes[level]}.pptx')
+        build_lp(lesson_data, out_path, resource_base=resource_base, level=level)
+        results[level] = out_path
+
+    return results
+
+
 if __name__ == '__main__':
     import argparse
     ap = argparse.ArgumentParser(description='Build an enquiry LP from a lesson JSON.')
     ap.add_argument('lesson_json')
     ap.add_argument('out_pptx')
     ap.add_argument('--resource-base', default=None)
+    ap.add_argument('--level', default='standard',
+                    choices=['standard', 'adapted', 'further_adapted'],
+                    help='Differentiation level (new schema only)')
+    ap.add_argument('--all-levels', action='store_true',
+                    help='Build all three levels into the same directory as out_pptx')
     args = ap.parse_args()
-    build_lp(args.lesson_json, args.out_pptx, resource_base=args.resource_base)
+
+    if args.all_levels:
+        out_dir = os.path.dirname(os.path.abspath(args.out_pptx))
+        base = os.path.splitext(os.path.basename(args.out_pptx))[0]
+        paths = build_lp_all_levels(args.lesson_json, out_dir,
+                                     resource_base=args.resource_base,
+                                     base_name=base)
+        for lvl, p in paths.items():
+            print(f"  {lvl}: {p}")
+    else:
+        build_lp(args.lesson_json, args.out_pptx,
+                 resource_base=args.resource_base, level=args.level)
