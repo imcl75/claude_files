@@ -71,13 +71,14 @@ FONT_BODY = 'Twinkl Cursive Looped'
 # _LHF: line-height as a multiple of point size (1.45 × pt / 72 = inches/line).
 # _TPAD: fixed padding added to both textbox height and y-advance. Gives the
 #        text frame headroom against rounding error without burning much space.
-_TCF  = 0.58    # chars per (pt × inch) — Twinkl Cursive calibration
-_LHF  = 1.45    # line-height factor (× size_pt / 72 = inches per line)
-_TPAD = 0.06    # textbox padding added to both height and y-advance (inches)
+_TCF       = 0.58   # chars per (pt × inch) — Twinkl Cursive calibration
+_APTOS_TCF = 0.50   # chars per (pt × inch) — Aptos (used for cloze blank width)
+_LHF       = 1.90   # line-height factor: 12pt × 1.90 / 72 = 0.317 in ≈ 8 mm
+_TPAD      = 0.06   # textbox padding added to both height and y-advance (inches)
 
 # answer_lines sub-layout gaps (all in inches):
-_AL_LABEL_LINE_GAP   = 0.05   # between bottom of label text and first ruled line
-_AL_STARTER_LINE_GAP = 0.04   # between bottom of sentence starter and first ruled line
+_AL_LABEL_LINE_GAP   = 0.315  # 8 mm gap between bottom of label and first ruled line
+_AL_STARTER_LINE_GAP = 0.0    # starter sits ON the first line — no extra gap
 _AL_LINE_PITCH       = 0.315  # ruled-line pitch (≈ 8 mm) — matches exercise-book ruling
 _AL_POST_GAP         = 0.13   # breathing room after last ruled line before next element
 
@@ -152,6 +153,7 @@ def _add_textbox(slide, x, y, w, h):
 def _set_para(para, text, bold=False, italic=False, size_pt=10,
               color=None, font=FONT_BODY, align=PP_ALIGN.LEFT, underline=False):
     para.alignment = align
+    para.line_spacing = _LHF   # enforce 8 mm ruling at 12 pt (scales with size_pt)
     run = para.add_run()
     run.text = text
     rf = run.font
@@ -633,17 +635,22 @@ def _render_answer_lines(slide, y, sec):
                   size_pt=size_pt, color=DARK)
         y += h + _AL_LABEL_LINE_GAP
 
-    # ── 2. Sentence starter ───────────────────────────────────────────────────
+    # ── 2 + 3. Ruled lines (with optional sentence starter on line 1) ────────
     if starter:
-        st_pt = _safe_pt(size_pt - 0.5, MIN_PT_SUBLABEL)   # never below sub-label min
-        h = _text_h(starter, w, st_pt) + _TPAD
-        tb = _add_textbox(slide, CONT_X, y, w, h)
-        tb.text_frame.word_wrap = True
+        st_pt    = _safe_pt(size_pt, MIN_PT_SUBLABEL)
+        line_h   = st_pt * _LHF / 72   # height of one text line ≈ 8 mm at 12pt
+        # Draw the first ruled line; starter text sits on top of it
+        _add_line(slide, x, y, w)
+        # Textbox positioned so text baseline lands on the line:
+        # box top = line_y − line_h + small descender clearance
+        tb_top = max(LBL_Y, y - line_h + 0.04)
+        tb = _add_textbox(slide, CONT_X + 0.05, tb_top, w - 0.05, line_h)
+        tb.text_frame.word_wrap = False
         _set_para(tb.text_frame.paragraphs[0], starter, italic=True,
                   size_pt=st_pt, color=BLUE)
-        y += h + _AL_STARTER_LINE_GAP
+        y += gap        # advance same pitch as a regular line
+        n -= 1          # one line used for the starter
 
-    # ── 3. Ruled lines ────────────────────────────────────────────────────────
     for _ in range(n):
         _add_line(slide, x, y, w)
         y += gap
@@ -660,9 +667,12 @@ def _render_cloze(slide, y, sec, resource_base=None):
            "blanks": ["universe", "Big Bang"],
            "word_bank": "Big Bang  •  universe  •  Milky Way",
            "show_answers": false}
-    On the task slide: renders text as-is with blanks shown as ___.
-    On the marking slide: caller sets show_answers=True and blanks replace
-    ___ in green.
+
+    Task slide: each ___ is replaced with an inline underscore string sized
+    for the answer word — approx 5 mm per letter, plus a space either side.
+    "universe" (8 letters) → ~4.5 cm of underscores.
+
+    Marking slide (show_answers=True): answer word inserted in green bold.
     """
     text     = sec['text']
     blanks   = sec.get('blanks', [])
@@ -670,15 +680,32 @@ def _render_cloze(slide, y, sec, resource_base=None):
     w        = sec.get('w', CONT_W)
     show_ans = sec.get('show_answers', False)
 
-    # Height from text-wrap model; never below MIN_PT_BODY
-    h = _text_h(text, w, size_pt) + _TPAD
+    def _blank_underscores(word):
+        """Underscore string (Aptos font — solid underline) sized for the answer.
+        Target: 5 mm per letter. Aptos underscore ≈ 25.4 × pt × _APTOS_TCF / 72 mm.
+        Spaces either side give natural padding before/after the writing area."""
+        char_w_mm  = 25.4 * size_pt * _APTOS_TCF / 72   # mm per Aptos char at size_pt
+        desired_mm = len(str(word)) * 5                   # 5 mm per letter of answer
+        n          = max(5, round(desired_mm / char_w_mm))
+        return ' ' + '_' * n + ' '
+
+    parts = text.split('___')
+
+    # Build display text for height calculation
+    if show_ans:
+        display_parts = [parts[i] + (blanks[i] if i < len(blanks) else '') for i in range(len(parts))]
+    else:
+        display_parts = [parts[i] + (_blank_underscores(blanks[i]) if i < len(blanks) else '') for i in range(len(parts))]
+    display_text = ''.join(display_parts)
+
+    h = _text_h(display_text, w, size_pt) + _TPAD
+    tb = _add_textbox(slide, CONT_X, y, w, h)
+    tf = tb.text_frame
+    tf.word_wrap = True
+    para = tf.paragraphs[0]
+    para.line_spacing = _LHF   # multi-run paragraph — must set explicitly
 
     if show_ans:
-        parts = text.split('___')
-        tb = _add_textbox(slide, CONT_X, y, w, h)
-        tf = tb.text_frame
-        tf.word_wrap = True
-        para = tf.paragraphs[0]
         for i, part in enumerate(parts):
             r = para.add_run()
             r.text = part
@@ -692,13 +719,21 @@ def _render_cloze(slide, y, sec, resource_base=None):
                 rb.font.size = Pt(size_pt)
                 rb.font.bold = True
                 rb.font.color.rgb = GREEN
-        y += h + 0.06
     else:
-        tb = _add_textbox(slide, CONT_X, y, w, h)
-        tf = tb.text_frame
-        tf.word_wrap = True
-        _set_para(tf.paragraphs[0], text, size_pt=size_pt, color=DARK)
-        y += h + 0.06
+        for i, part in enumerate(parts):
+            r = para.add_run()
+            r.text = part
+            r.font.name = FONT_BODY
+            r.font.size = Pt(size_pt)
+            r.font.color.rgb = DARK
+            if i < len(blanks):
+                rb = para.add_run()
+                rb.text = _blank_underscores(blanks[i])
+                rb.font.name = 'Aptos'   # Aptos _ is a solid line; Twinkl _ is dotted
+                rb.font.size = Pt(size_pt)
+                rb.font.color.rgb = DARK
+
+    y += h + 0.06
 
     wb = sec.get('word_bank', '')
     if wb and not show_ans:
@@ -719,9 +754,12 @@ def _render_matching(slide, y, sec, resource_base=None):
     Pupil draws arrows in the gap. On marking station, show_answers=True
     adds answer_pairs as coloured bullet connections.
     """
-    left  = sec['left']
-    right = sec['right']
-    size_pt = _safe_pt(sec.get('size_pt', 11), MIN_PT_SUBLABEL)
+    import random as _random
+    left         = sec['left']
+    right        = sec['right']
+    answer_pairs = sec.get('answer_pairs', [[i, i] for i in range(len(left))])
+    show_ans     = sec.get('show_answers', False)
+    size_pt      = _safe_pt(sec.get('size_pt', 11), MIN_PT_SUBLABEL)
     # Minimum row height: always at least one write-box height so children can draw arrows
     min_row_h = max(sec.get('row_height', _write_box_h(1)), _write_box_h(1))
 
@@ -729,55 +767,99 @@ def _render_matching(slide, y, sec, resource_base=None):
     col_mid_w   = CONT_W * 0.08
     col_right_w = CONT_W * 0.60
 
+    if show_ans:
+        # Answer slide: right column re-ordered to match left (correct pair on each row)
+        # answer_pairs = [[left_idx, right_idx], …] — build a left→right lookup
+        pair_map = {lp[0]: lp[1] for lp in answer_pairs}
+        right_ordered = [right[pair_map[i]] if i in pair_map else '' for i in range(len(left))]
+        right_display = right_ordered
+        hdr_l, hdr_r = 'Word', 'Meaning ✓'
+    else:
+        # Task slide: shuffle right column deterministically so it never lines up
+        rng = _random.Random(sum(ord(c) for c in ''.join(right)))
+        right_display = list(right)
+        rng.shuffle(right_display)
+        # Keep shuffling until no element sits opposite its correct match
+        # (safety: max 20 tries, then accept whatever we have)
+        right_orig_indices = {v: i for i, v in enumerate(right)}
+        for _ in range(20):
+            pair_map = {lp[0]: lp[1] for lp in answer_pairs}
+            if not any(
+                right_orig_indices.get(right_display[i]) == pair_map.get(i)
+                for i in range(len(right_display))
+                if i in pair_map
+            ):
+                break
+            rng.shuffle(right_display)
+        hdr_l, hdr_r = 'Word', 'Meaning'
+
     # Column headers
     hdr_h = max(
-        _text_h('Word',    col_left_w  - 0.08, size_pt) + _TPAD,
-        _text_h('Meaning', col_right_w - 0.08, size_pt) + _TPAD,
+        _text_h(hdr_l, col_left_w  - 0.08, size_pt) + _TPAD,
+        _text_h(hdr_r, col_right_w - 0.08, size_pt) + _TPAD,
         0.28,
     )
     tb_l = _add_textbox(slide, CONT_X, y, col_left_w, hdr_h)
-    _set_para(tb_l.text_frame.paragraphs[0], 'Word', bold=True, size_pt=size_pt, color=BLUE)
+    _set_para(tb_l.text_frame.paragraphs[0], hdr_l, bold=True, size_pt=size_pt, color=BLUE)
     tb_r = _add_textbox(slide, CONT_X + col_left_w + col_mid_w, y, col_right_w, hdr_h)
-    _set_para(tb_r.text_frame.paragraphs[0], 'Meaning', bold=True, size_pt=size_pt, color=BLUE)
-    y += hdr_h + 0.04
+    _set_para(tb_r.text_frame.paragraphs[0], hdr_r, bold=True, size_pt=size_pt, color=BLUE)
+    # Light divider under headers only (not between rows)
+    _add_line(slide, CONT_X, y + hdr_h, CONT_W)
+    y += hdr_h + 0.08
 
-    n = max(len(left), len(right))
+    n = max(len(left), len(right_display))
     for i in range(n):
-        l_text = left[i]  if i < len(left)  else ''
-        r_text = right[i] if i < len(right) else ''
+        l_text = left[i]         if i < len(left)          else ''
+        r_text = right_display[i] if i < len(right_display) else ''
 
         lh = (_text_h(l_text, col_left_w  - 0.08, size_pt) + _TPAD) if l_text else 0
         rh = (_text_h(r_text, col_right_w - 0.08, size_pt) + _TPAD) if r_text else 0
         this_h = max(min_row_h, lh, rh)
         fill = RGBColor(0xF5, 0xF5, 0xF5) if i % 2 == 0 else WHITE
+        # On answer slide, highlight the right column in green
+        r_color = GREEN if show_ans else DARK
 
-        # Left cell
-        _add_rect(slide, CONT_X, y, col_left_w, this_h,
-                  fill_rgb=fill, line_rgb=LGREY, line_pt=0.5)
+        # Left column: bold term + dot marker at right edge (task slide only)
         if l_text:
-            tb = _add_textbox(slide, CONT_X + 0.05, y + 0.05,
-                               col_left_w - 0.10, this_h - 0.08)
+            display_l = l_text if show_ans else f'{l_text}  ●'
+            tb = _add_textbox(slide, CONT_X, y + _WRITE_BOX_PAD,
+                               col_left_w - 0.05, this_h - 2 * _WRITE_BOX_PAD)
             tb.text_frame.word_wrap = True
-            _set_para(tb.text_frame.paragraphs[0], l_text,
-                      size_pt=size_pt, color=DARK, bold=True)
+            para = tb.text_frame.paragraphs[0]
+            para.line_spacing = _LHF
+            para.alignment = PP_ALIGN.LEFT
+            # Word in bold dark, dot in grey (task) or just text (answer)
+            r1 = para.add_run(); r1.text = l_text
+            r1.font.name = FONT_BODY; r1.font.size = Pt(size_pt)
+            r1.font.bold = True; r1.font.color.rgb = DARK
+            if not show_ans:
+                r2 = para.add_run(); r2.text = '  ●'
+                r2.font.name = 'Aptos'; r2.font.size = Pt(size_pt - 2)
+                r2.font.bold = False; r2.font.color.rgb = LGREY
 
-        # Right cell
+        # Right column: dot marker at left edge + meaning (task slide only)
         rx = CONT_X + col_left_w + col_mid_w
-        _add_rect(slide, rx, y, col_right_w, this_h,
-                  fill_rgb=fill, line_rgb=LGREY, line_pt=0.5)
         if r_text:
-            tb = _add_textbox(slide, rx + 0.05, y + 0.05,
-                               col_right_w - 0.10, this_h - 0.08)
+            tb = _add_textbox(slide, rx, y + _WRITE_BOX_PAD,
+                               col_right_w, this_h - 2 * _WRITE_BOX_PAD)
             tb.text_frame.word_wrap = True
-            _set_para(tb.text_frame.paragraphs[0], r_text,
-                      size_pt=size_pt, color=DARK)
+            para = tb.text_frame.paragraphs[0]
+            para.line_spacing = _LHF
+            para.alignment = PP_ALIGN.LEFT
+            if not show_ans:
+                r1 = para.add_run(); r1.text = '● '
+                r1.font.name = 'Aptos'; r1.font.size = Pt(size_pt - 2)
+                r1.font.bold = False; r1.font.color.rgb = LGREY
+            r2 = para.add_run(); r2.text = r_text
+            r2.font.name = FONT_BODY; r2.font.size = Pt(size_pt)
+            r2.font.bold = show_ans; r2.font.color.rgb = r_color
 
-        # Arrow hint dot in gap
-        mid_x = CONT_X + col_left_w + 0.02
-        _add_rect(slide, mid_x, y + this_h / 2 - 0.02, col_mid_w - 0.04, 0.04,
-                  fill_rgb=LGREY)
+        # On the answer slide only: draw a horizontal connector to show the match
+        if show_ans:
+            mid_x = CONT_X + col_left_w
+            _add_line(slide, mid_x, y + this_h / 2, col_mid_w)
 
-        y += this_h + 0.04
+        y += this_h + 0.06   # row gap — visible rhythm without any border lines
 
     return y + 0.06
 
