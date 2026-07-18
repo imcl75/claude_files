@@ -36,7 +36,7 @@ import science_registry as REG
 # ── Sandbox compatibility patch ───────────────────────────────────────────────
 import lib_ooxml as _lo_mod
 from pathlib import Path as _Path
-_SESSION_TMP = '/sessions/admiring-sleepy-wozniak'
+_SESSION_TMP = '/tmp/bsl_work'
 _lo_src_cache = {}
 
 def _patched_src_dir(pptx, k=None):
