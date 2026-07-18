@@ -1,0 +1,11 @@
+{
+    "standard": {
+        "count": 20
+    },
+    "adapted": {
+        "children": ["Charlie B", "Ellie M", "Sam T", "Isla C", "Noah W"]
+    },
+    "further_adapted": {
+        "children": ["Alex R", "Nia P"]
+    }
+}

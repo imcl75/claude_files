@@ -77,7 +77,7 @@ _LHF       = 1.90   # line-height factor: 12pt × 1.90 / 72 = 0.317 in ≈ 8 mm
 _TPAD      = 0.06   # textbox padding added to both height and y-advance (inches)
 
 # answer_lines sub-layout gaps (all in inches):
-_AL_LABEL_LINE_GAP   = 0.315  # 8 mm gap between bottom of label and first ruled line
+_AL_LABEL_LINE_GAP   = 0.05   # between bottom of label text and first ruled line
 _AL_STARTER_LINE_GAP = 0.0    # starter sits ON the first line — no extra gap
 _AL_LINE_PITCH       = 0.315  # ruled-line pitch (≈ 8 mm) — matches exercise-book ruling
 _AL_POST_GAP         = 0.13   # breathing room after last ruled line before next element
@@ -313,9 +313,15 @@ def _render_write_lines(slide, y, sec):
 
 def _render_word_bank(slide, y, sec):
     words = sec['words']
-    # words can be a list or a string
+    # words can be a list or a bullet-separated string
     if isinstance(words, list):
-        words = '  •  '.join(words)
+        word_list = words
+    else:
+        word_list = [w.strip() for w in words.split('•') if w.strip()]
+    # Shuffle so order doesn't hint at cloze answers
+    import random as _rnd
+    _rnd.shuffle(word_list)
+    words = '  •  '.join(word_list)
     size_pt = _safe_pt(sec.get('size_pt', 12))
     w = sec.get('w', CONT_W)
     inner_w = w - 0.10
@@ -635,22 +641,17 @@ def _render_answer_lines(slide, y, sec):
                   size_pt=size_pt, color=DARK)
         y += h + _AL_LABEL_LINE_GAP
 
-    # ── 2 + 3. Ruled lines (with optional sentence starter on line 1) ────────
+    # ── 2. Sentence starter ───────────────────────────────────────────────────
     if starter:
-        st_pt    = _safe_pt(size_pt, MIN_PT_SUBLABEL)
-        line_h   = st_pt * _LHF / 72   # height of one text line ≈ 8 mm at 12pt
-        # Draw the first ruled line; starter text sits on top of it
-        _add_line(slide, x, y, w)
-        # Textbox positioned so text baseline lands on the line:
-        # box top = line_y − line_h + small descender clearance
-        tb_top = max(LBL_Y, y - line_h + 0.04)
-        tb = _add_textbox(slide, CONT_X + 0.05, tb_top, w - 0.05, line_h)
-        tb.text_frame.word_wrap = False
+        st_pt = _safe_pt(size_pt - 0.5, MIN_PT_SUBLABEL)
+        h = _text_h(starter, w, st_pt) + _TPAD
+        tb = _add_textbox(slide, CONT_X, y, w, h)
+        tb.text_frame.word_wrap = True
         _set_para(tb.text_frame.paragraphs[0], starter, italic=True,
                   size_pt=st_pt, color=BLUE)
-        y += gap        # advance same pitch as a regular line
-        n -= 1          # one line used for the starter
+        y += h + _AL_STARTER_LINE_GAP
 
+    # ── 3. Ruled lines ────────────────────────────────────────────────────────
     for _ in range(n):
         _add_line(slide, x, y, w)
         y += gap
@@ -1028,9 +1029,6 @@ def _build_one_level(lesson_data, level_spec, level, lp_top, out_path,
     y1 = _add_label(s1, lf, ican1, ican2, date_s, key_q,
                     resource_base, png_dest, year=year)
 
-    # Level badge on slide 1
-    _add_level_badge(s1, level)
-
     # Slide 1: elements up to first 'marking_station'
     elements = level_spec.get('elements', [])
     try:
@@ -1259,6 +1257,221 @@ def build_lp_all_levels(lesson_json_or_path, out_dir, resource_base=None,
         out_path = os.path.join(out_dir, f'{prefix}{level_suffixes[level]}.pptx')
         build_lp(lesson_data, out_path, resource_base=resource_base, level=level)
         results[level] = out_path
+
+    return results
+
+
+# ══════════════════════════════════════════════════════════════════
+# Named LP output (class-level multi-copy files)
+# ══════════════════════════════════════════════════════════════════
+
+def _add_child_name_badge(slide, child_name, level):
+    """
+    Add child name in the top-left corner, italic grey.
+    Subtle enough that children won't notice but clear for the teacher handing out.
+    No 'for:' prefix, no level colour — mid-grey keeps it readable but unobtrusive.
+    """
+    NAME_GREY = RGBColor(0x88, 0x88, 0x88)
+    tb = _add_textbox(slide, CONT_X, LBL_Y + 0.02, 4.0, 0.22)
+    tf = tb.text_frame
+    p = tf.paragraphs[0]
+    p.alignment = PP_ALIGN.LEFT
+    p.line_spacing = _LHF
+    r = p.add_run()
+    r.text = child_name
+    r.font.name = FONT_BODY
+    r.font.size = Pt(10)
+    r.font.italic = True
+    r.font.color.rgb = NAME_GREY
+
+
+def _build_named_level(lesson_data, lp_spec, level, resource_base,
+                        lesson_meta, children, out_path):
+    """
+    Build a multi-slide PPTX for one named differentiation level.
+
+    Output structure:
+        Slide 1 … N   Task slide for each child (name badge in top-left)
+        Slide N+1     Shared marking station (no name)
+
+    All slides are rendered directly into a single Presentation object so
+    that embedded images (the learning label PNG) are shared via python-pptx's
+    content-hash deduplication — no wasteful copies.
+    """
+    level_spec = lp_spec[level]
+    year = lesson_data.get('lesson', {}).get('year_group', 'Y5')
+
+    prs = Presentation()
+    prs.slide_width  = Emu(SW)
+    prs.slide_height = Emu(SH)
+    blank = prs.slide_layouts[6]
+
+    # Resolve label fields shared by all slides
+    lf    = level_spec.get('lf')    or lesson_meta.get('lf', '')
+    ican1 = level_spec.get('ican1') or lesson_meta.get('ican1', '')
+    ican2 = level_spec.get('ican2') or lesson_meta.get('ican2', '')
+    date_s = lp_spec.get('date', '') or lesson_meta.get('date', '')
+    key_q  = lesson_meta.get('key_question', '')
+
+    # Pre-compute which elements go on the task slide vs marking station
+    elements = level_spec.get('elements', [])
+    split_at = next((i for i, e in enumerate(elements)
+                     if e['type'] == 'marking_station'), len(elements))
+    task_elements     = elements[:split_at]
+    s2_elements       = elements[split_at:]
+    answers           = level_spec.get('answers', [])
+
+    # Single label PNG path — regenerated per slide but identical bytes each
+    # time so python-pptx deduplicates to one embedded part.
+    png_dest = f'/tmp/_lp_lbl_{os.getpid()}_{level}.png'
+
+    for child_name in children:
+        slide = prs.slides.add_slide(blank)
+        _clear_slide(slide)
+
+        y = _add_label(slide, lf, ican1, ican2, date_s, key_q,
+                       resource_base, png_dest, year=year)
+        _add_child_name_badge(slide, child_name, level)
+
+        for el in task_elements:
+            y = _render_section(slide, el, y, resource_base)
+
+    # Clean up label temp file
+    try:
+        if os.path.exists(png_dest):
+            os.remove(png_dest)
+    except OSError:
+        pass
+
+    # Shared marking station slide
+    m_slide = prs.slides.add_slide(blank)
+    _clear_slide(m_slide)
+    y2 = 0.30
+    y2 = _render_marking_station(m_slide, y2, {'title': 'Marking Station'})
+    _add_level_badge(m_slide, level)
+    if answers:
+        for el in answers:
+            y2 = _render_section(m_slide, el, y2, resource_base)
+    else:
+        for el in s2_elements:
+            y2 = _render_section(m_slide, el, y2, resource_base)
+
+    os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
+    prs.save(out_path)
+    size_kb = os.path.getsize(out_path) // 1024
+    print(f"  LP [{level}] named → {out_path} "
+          f"({len(children)} children + marking, {size_kb} KB)")
+    return out_path
+
+
+def build_lp_named_output(lesson_json_or_path, out_dir, base_name,
+                           resource_base=None, class_config=None):
+    """
+    Build the full named LP set for one lesson.
+
+    Produces up to three files in out_dir:
+        '{base_name} - Standard - x{n}.pptx'   — normal 2-slide LP (print n copies)
+        '{base_name} - Adapted.pptx'            — task slide per adapted child + marking
+        '{base_name} - Further Adapted.pptx'    — same for further adapted children
+
+    Args:
+        lesson_json_or_path:  path to lesson JSON or loaded dict.
+        out_dir:              output directory.
+        base_name:            filename stem, e.g. 'T1W1 - Monday - L1'.
+        resource_base:        images / ll_assets directory.
+        class_config:         dict or path to JSON file:
+            {
+                "standard":        {"count": 22},
+                "adapted":         {"children": ["Charlie B", "Ellie M", "Sam T"]},
+                "further_adapted": {"children": ["Alex W", "Nia P"]}
+            }
+            If None, standard gets x1 and named levels each get one 'Unnamed' slide.
+
+    Returns:
+        dict {level: path} for each level built.
+    """
+    # ── Load lesson data ──────────────────────────────────────────────────────
+    if isinstance(lesson_json_or_path, (str, os.PathLike)):
+        json_path = str(lesson_json_or_path)
+        with open(json_path) as f:
+            lesson_json = json.load(f)
+        if resource_base is None:
+            resource_base = os.path.dirname(os.path.abspath(json_path))
+    else:
+        lesson_json = lesson_json_or_path
+        if resource_base is None:
+            resource_base = _DEFAULT_RESOURCE_BASE
+
+    if 'lesson' in lesson_json:
+        lesson_data = lesson_json
+    elif 'lp' in lesson_json:
+        lesson_data = {'lesson': lesson_json}
+    else:
+        raise ValueError("Cannot locate lesson data in provided dict")
+
+    lp_spec = lesson_data['lesson'].get('lp')
+    if lp_spec is None:
+        raise ValueError("Lesson has no 'lp' key")
+    if not _is_new_schema(lp_spec):
+        raise ValueError("build_lp_named_output() requires three-level schema.")
+
+    # ── Load class config ─────────────────────────────────────────────────────
+    if isinstance(class_config, (str, os.PathLike)):
+        with open(str(class_config)) as f:
+            class_config = json.load(f)
+    class_config = class_config or {}
+
+    # ── Build lesson_meta (shared across levels) ──────────────────────────────
+    lesson = lesson_data['lesson']
+    year   = lesson.get('year_group', 'Y5')
+    lesson_meta = {
+        'key_question': lesson.get('key_question', lesson.get('building_block_text', '')),
+        'date':  lp_spec.get('date', ''),
+        'lf':    lesson.get('what', lesson.get('lo', '')),
+        'ican1': '',
+        'ican2': '',
+    }
+    success = lesson.get('success', '')
+    if success:
+        parts = success.split(',')
+        lesson_meta['ican1'] = parts[0].strip()
+        lesson_meta['ican2'] = ', '.join(parts[1:]).strip() if len(parts) > 1 else ''
+
+    os.makedirs(out_dir, exist_ok=True)
+    results = {}
+
+    # ── Standard ──────────────────────────────────────────────────────────────
+    if 'standard' in lp_spec:
+        std_cfg = class_config.get('standard', {})
+        if isinstance(std_cfg, dict):
+            children_list = std_cfg.get('children', [])
+            count = std_cfg.get('count', len(children_list) or 1)
+        else:
+            count = int(std_cfg) if std_cfg else 1
+        out_path = os.path.join(out_dir,
+                                f'{base_name} - Standard - x{count}.pptx')
+        build_lp(lesson_data, out_path, resource_base=resource_base, level='standard')
+        results['standard'] = out_path
+
+    # ── Adapted ───────────────────────────────────────────────────────────────
+    if 'adapted' in lp_spec:
+        adapt_cfg = class_config.get('adapted', {})
+        children = (adapt_cfg.get('children', ['Unnamed'])
+                    if isinstance(adapt_cfg, dict) else list(adapt_cfg))
+        out_path = os.path.join(out_dir, f'{base_name} - Adapted.pptx')
+        _build_named_level(lesson_data, lp_spec, 'adapted', resource_base,
+                           lesson_meta, children, out_path)
+        results['adapted'] = out_path
+
+    # ── Further Adapted ───────────────────────────────────────────────────────
+    if 'further_adapted' in lp_spec:
+        fa_cfg = class_config.get('further_adapted', {})
+        children = (fa_cfg.get('children', ['Unnamed'])
+                    if isinstance(fa_cfg, dict) else list(fa_cfg))
+        out_path = os.path.join(out_dir, f'{base_name} - Further Adapted.pptx')
+        _build_named_level(lesson_data, lp_spec, 'further_adapted', resource_base,
+                           lesson_meta, children, out_path)
+        results['further_adapted'] = out_path
 
     return results
 
