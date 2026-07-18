@@ -627,8 +627,16 @@ def force_shrink_to_fit(s, min_sz=1400, step=100):
 
     for r in runs:
         rpr = r.find(f'{{{A}}}rPr')
-        if rpr is not None:
-            rpr.set('sz', str(sz))
+        if rpr is None:
+            # Run has no rPr — create one and insert it as the first child
+            # of the run so PowerPoint picks it up. Without this, runs that
+            # inherit all formatting from the paragraph/lstStyle defaults
+            # have no element on which to write the computed sz, and the
+            # shrink is silently skipped.
+            rpr = etree.SubElement(r, f'{{{A}}}rPr')
+            r.remove(rpr)          # SubElement appends; we need it first
+            r.insert(0, rpr)
+        rpr.set('sz', str(sz))
 
     bodyPr = None
     for ns in [P, A]:
