@@ -631,45 +631,39 @@ def build_recap_quiz(work, quiz_template_pptx, lesson):
     def _q_para(text, num):
         p = _et.Element(f'{{{_A_NS}}}p')
         pPr = _et.SubElement(p, f'{{{_A_NS}}}pPr')
-        pPr.set('marL', '514350'); pPr.set('indent', '-514350')
+        pPr.set('marL', '457200'); pPr.set('indent', '-457200')
         buFont = _et.SubElement(pPr, f'{{{_A_NS}}}buFont'); buFont.set('typeface', '+mj-lt')
         buAutoNum = _et.SubElement(pPr, f'{{{_A_NS}}}buAutoNum'); buAutoNum.set('type', 'arabicPeriod')
         if num > 1:
             buAutoNum.set('startAt', str(num))
         r = _et.SubElement(p, f'{{{_A_NS}}}r')
         rPr = _et.SubElement(r, f'{{{_A_NS}}}rPr')
-        rPr.set('lang', 'en-GB'); rPr.set('dirty', '0')
+        rPr.set('lang', 'en-GB'); rPr.set('sz', '2000'); rPr.set('dirty', '0')
         t_ = _et.SubElement(r, f'{{{_A_NS}}}t'); t_.text = text
         return p
 
     def _a_para(text):
+        # Answer paragraph: dark green, bold, → prefix, indented, sz=1600
         p = _et.Element(f'{{{_A_NS}}}p')
         pPr = _et.SubElement(p, f'{{{_A_NS}}}pPr')
-        pPr.set('marL', '0'); pPr.set('indent', '0')
+        pPr.set('marL', '457200')
         _et.SubElement(pPr, f'{{{_A_NS}}}buNone')
         r = _et.SubElement(p, f'{{{_A_NS}}}r')
         rPr = _et.SubElement(r, f'{{{_A_NS}}}rPr')
-        rPr.set('lang', 'en-GB'); rPr.set('b', '1'); rPr.set('dirty', '0')
+        rPr.set('lang', 'en-GB'); rPr.set('sz', '1600'); rPr.set('b', '1'); rPr.set('dirty', '0')
         fill = _et.SubElement(rPr, f'{{{_A_NS}}}solidFill')
-        clr = _et.SubElement(fill, f'{{{_A_NS}}}srgbClr'); clr.set('val', '00B050')
-        sym = _et.SubElement(rPr, f'{{{_A_NS}}}sym')
-        sym.set('typeface', 'Wingdings'); sym.set('pitchFamily', '2'); sym.set('charset', '2')
-        t_ = _et.SubElement(r, f'{{{_A_NS}}}t'); t_.text = ' ' + text
+        clr = _et.SubElement(fill, f'{{{_A_NS}}}srgbClr'); clr.set('val', '1A5C2A')
+        t_ = _et.SubElement(r, f'{{{_A_NS}}}t'); t_.text = '→ ' + text
         return p
 
     def _spacer_para():
         p = _et.Element(f'{{{_A_NS}}}p')
-        pPr = _et.SubElement(p, f'{{{_A_NS}}}pPr')
-        pPr.set('marL', '0'); pPr.set('indent', '0')
-        _et.SubElement(pPr, f'{{{_A_NS}}}buNone')
         endPr = _et.SubElement(p, f'{{{_A_NS}}}endParaRPr')
         endPr.set('lang', 'en-GB'); endPr.set('sz', '600'); endPr.set('dirty', '0')
-        sym = _et.SubElement(endPr, f'{{{_A_NS}}}sym')
-        sym.set('typeface', 'Wingdings'); sym.set('pitchFamily', '2'); sym.set('charset', '2')
         return p
 
     sp, rp = clone(work, quiz_template_pptx, 1, copy_hdphoto=True)
-    title_text = lesson.get('quiz_title', 'Recap – Quiz Time')
+    title_text = lesson.get('quiz_title', 'Recap Quiz')
     tree = xr(sp)
     title_shape = find_sp(tree, 'Title 2')
     if title_shape is not None:
@@ -773,11 +767,16 @@ def build_recap_quiz(work, quiz_template_pptx, lesson):
 
 def build_key_vocabulary(work, lesson):
     """
-    Vocabulary table: school-style header bar + alternating rows.
-    Word column (left 30%) and definition column (right 70%).
-    Each word+definition pair clicks in separately.
+    Vocabulary slide matching the shared enquiry deck format:
+    bold term (sz=1400) + indented dark-green definition (sz=1200, colour 1A5C2A).
+    Term and definition reveal on separate clicks, spacer paragraphs between words.
     Up to 5 words from lesson['vocabulary'].
     """
+    from lxml import etree as _et
+
+    _A_NS = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+    _P_NS = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+
     sp, rp = fresh(work, 'We do')
     t, st = get_spTree(sp)
     st.append(title_sp(2, 'Key Vocabulary', REG.TITLE_FONT))
@@ -789,114 +788,134 @@ def build_key_vocabulary(work, lesson):
         print('  [7] vocabulary (empty)')
         return sp
 
-    tbl_x   = _MARGIN
-    tbl_top = 1100000
-    tbl_w   = SW - 2 * _MARGIN
-    word_w  = int(tbl_w * 0.27)
-    def_x   = tbl_x + word_w
-    def_w   = tbl_w - word_w
-    hdr_h   = 480000
-    # Available height below header, shared equally between words
-    avail_h = SH - tbl_top - hdr_h - 200000
-    row_h   = avail_h // n
-
-    # Alternating row fills (school blue family)
-    ROW_FILLS = ['EBF4FB', 'FFFFFF', 'EBF4FB', 'FFFFFF', 'EBF4FB']
-
-    sid = 10
-    steps = []
-
-    # ── Header bar ────────────────────────────────────────────────────────────
-    for ci, (hx, hw, label) in enumerate([
-        (tbl_x,   word_w, 'Word'),
-        (def_x,   def_w,  'Definition'),
-    ]):
-        t2, st2 = get_spTree(sp)
-        st2.append(xp(
-            f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
-            f'<p:nvSpPr><p:cNvPr id="{sid}" name="VHdrBG{ci}"/>'
-            f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
-            f'<p:spPr><a:xfrm><a:off x="{hx}" y="{tbl_top}"/>'
-            f'<a:ext cx="{hw}" cy="{hdr_h}"/></a:xfrm>'
-            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
-            f'<a:solidFill><a:srgbClr val="1798D3"/></a:solidFill>'
-            f'<a:ln w="9525"><a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill></a:ln>'
-            f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
-        ))
-        save(t2, sp); sid += 1
-        t2, st2 = get_spTree(sp)
-        st2.append(tbox(
-            sid, label, hx + 30000, tbl_top + 10000, hw - 60000, hdr_h - 20000,
-            sz=1800, bold=True, color='FFFFFF', align='ctr'
-        ))
-        save(t2, sp); sid += 1
-
-    # ── Word + definition rows ─────────────────────────────────────────────────
+    # Build paragraphs matching the reference format exactly
+    # Structure per word: term para, definition para, spacer (except after last word)
+    paras_xml = []
     for i, item in enumerate(vocab):
-        ry   = tbl_top + hdr_h + i * row_h
-        fill = ROW_FILLS[i % len(ROW_FILLS)]
         word = item.get('word', '')
         defn = item.get('definition', '')
 
-        # Word cell background
-        t2, st2 = get_spTree(sp)
-        st2.append(xp(
-            f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
-            f'<p:nvSpPr><p:cNvPr id="{sid}" name="VWordBG{i}"/>'
-            f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
-            f'<p:spPr><a:xfrm><a:off x="{tbl_x}" y="{ry}"/>'
-            f'<a:ext cx="{word_w}" cy="{row_h}"/></a:xfrm>'
-            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
-            f'<a:solidFill><a:srgbClr val="D6EAF8"/></a:solidFill>'
-            f'<a:ln w="9525"><a:solidFill><a:srgbClr val="AED6F1"/></a:solidFill></a:ln>'
-            f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
-        ))
-        save(t2, sp)
-        wbg_id = sid; sid += 1
+        # Term paragraph: bold, sz=1400, black (no fill = inherits)
+        term_p = _et.Element(f'{{{_A_NS}}}p')
+        r = _et.SubElement(term_p, f'{{{_A_NS}}}r')
+        rPr = _et.SubElement(r, f'{{{_A_NS}}}rPr')
+        rPr.set('lang', 'en-GB'); rPr.set('sz', '1400'); rPr.set('b', '1'); rPr.set('dirty', '0')
+        _et.SubElement(r, f'{{{_A_NS}}}t').text = word
+        paras_xml.append(term_p)
 
-        # Word text
-        word_sz = max(1600, 2200 - len(word) * 30)
-        t2, st2 = get_spTree(sp)
-        st2.append(tbox(
-            sid, word,
-            tbl_x + 25000, ry + 20000, word_w - 50000, row_h - 40000,
-            sz=word_sz, bold=True, color='0D3C61', align='ctr'
-        ))
-        save(t2, sp)
-        wtxt_id = sid; sid += 1
+        # Definition paragraph: sz=1200, dark green 1A5C2A, indented
+        def_p = _et.Element(f'{{{_A_NS}}}p')
+        pPr = _et.SubElement(def_p, f'{{{_A_NS}}}pPr')
+        pPr.set('marL', '457200')
+        r2 = _et.SubElement(def_p, f'{{{_A_NS}}}r')
+        rPr2 = _et.SubElement(r2, f'{{{_A_NS}}}rPr')
+        rPr2.set('lang', 'en-GB'); rPr2.set('sz', '1200'); rPr2.set('dirty', '0')
+        fill = _et.SubElement(rPr2, f'{{{_A_NS}}}solidFill')
+        _et.SubElement(fill, f'{{{_A_NS}}}srgbClr').set('val', '1A5C2A')
+        _et.SubElement(r2, f'{{{_A_NS}}}t').text = defn
+        paras_xml.append(def_p)
 
-        steps.append([wbg_id, wtxt_id])  # click 1: word reveals
+        # Spacer paragraph between words (not after last)
+        if i < n - 1:
+            sp_p = _et.Element(f'{{{_A_NS}}}p')
+            endPr = _et.SubElement(sp_p, f'{{{_A_NS}}}endParaRPr')
+            endPr.set('lang', 'en-GB'); endPr.set('sz', '600'); endPr.set('dirty', '0')
+            paras_xml.append(sp_p)
 
-        # Definition cell background
-        t2, st2 = get_spTree(sp)
-        st2.append(xp(
-            f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
-            f'<p:nvSpPr><p:cNvPr id="{sid}" name="VDefBG{i}"/>'
-            f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
-            f'<p:spPr><a:xfrm><a:off x="{def_x}" y="{ry}"/>'
-            f'<a:ext cx="{def_w}" cy="{row_h}"/></a:xfrm>'
-            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
-            f'<a:solidFill><a:srgbClr val="{fill}"/></a:solidFill>'
-            f'<a:ln w="9525"><a:solidFill><a:srgbClr val="AED6F1"/></a:solidFill></a:ln>'
-            f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
-        ))
-        save(t2, sp)
-        dbg_id = sid; sid += 1
+    # Content shape — same position as VocabContent in reference
+    content_sid = 10
+    content_xml = (
+        f'<p:sp xmlns:p="{_P_NS}" xmlns:a="{_A_NS}">'
+        f'<p:nvSpPr>'
+        f'<p:cNvPr id="{content_sid}" name="VocabContent"/>'
+        f'<p:cNvSpPr/><p:nvPr/>'
+        f'</p:nvSpPr>'
+        f'<p:spPr>'
+        f'<a:xfrm><a:off x="246888" y="1826167"/><a:ext cx="11684402" cy="4900000"/></a:xfrm>'
+        f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+        f'<a:noFill/>'
+        f'</p:spPr>'
+        f'<p:txBody>'
+        f'<a:bodyPr wrap="square" anchor="t"/>'
+        f'<a:lstStyle/>'
+        f'</p:txBody>'
+        f'</p:sp>'
+    )
+    t2, st2 = get_spTree(sp)
+    content_el = xp(content_xml)
+    st2.append(content_el)
+    save(t2, sp)
 
-        # Definition text
-        t2, st2 = get_spTree(sp)
-        st2.append(tbox(
-            sid, defn,
-            def_x + 30000, ry + 20000, def_w - 60000, row_h - 40000,
-            sz=1700, color='1A1A1A', align='l'
-        ))
-        save(t2, sp)
-        dtxt_id = sid; sid += 1
+    # Insert paragraphs into the txBody
+    tree = xr(sp)
+    vocab_sp = find_sp(tree, 'VocabContent')
+    txBody = vocab_sp.find(f'{{{_P_NS}}}txBody')
+    for p in paras_xml:
+        txBody.append(p)
+    xw(tree, sp)
 
-        steps.append([dbg_id, dtxt_id])  # click 2: definition reveals
+    # Animate: term on one click, definition on next click
+    # Para indices: term=i*3, def=i*3+1, spacer=i*3+2 (except last word has no spacer)
+    # Step size: 3 for words 0..n-2, 2 for last word
+    animated = []
+    for i in range(n):
+        step = 3 if i < n - 1 else 2
+        base = i * 3
+        animated.append(base)       # term
+        animated.append(base + 1)   # definition
 
-    animate(sp, steps)
-    print('  [7] vocabulary (animated)')
+    id_n = [1]
+    def nid(): v = id_n[0]; id_n[0] += 1; return str(v)
+
+    root_id = nid(); seq_id = nid()
+    blocks = []
+    for para_idx in animated:
+        b, inner, click, behav = nid(), nid(), nid(), nid()
+        blocks.append(
+            f'<p:par xmlns:p="{_P_NS}"><p:cTn id="{b}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
+            f'<p:childTnLst><p:par><p:cTn id="{inner}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:par><p:cTn id="{click}" presetID="1" presetClass="entr" '
+            f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:set><p:cBhvr>'
+            f'<p:cTn id="{behav}" dur="1" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
+            f'<p:tgtEl><p:spTgt spid="{content_sid}"><p:txEl>'
+            f'<p:pRg st="{para_idx}" end="{para_idx}"/></p:txEl></p:spTgt></p:tgtEl>'
+            f'<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst>'
+            f'</p:cBhvr><p:to><p:strVal val="visible"/></p:to></p:set>'
+            f'</p:childTnLst></p:cTn></p:par>'
+            f'</p:childTnLst></p:cTn></p:par>'
+            f'</p:childTnLst></p:cTn></p:par>'
+        )
+
+    timing_xml = (
+        f'<p:timing xmlns:p="{_P_NS}" xmlns:a="{A}">'
+        f'<p:tnLst><p:par><p:cTn id="{root_id}" dur="indefinite" restart="never" '
+        f'nodeType="tmRoot"><p:childTnLst>'
+        f'<p:seq concurrent="1" nextAc="seek">'
+        f'<p:cTn id="{seq_id}" dur="indefinite" nodeType="mainSeq">'
+        f'<p:childTnLst>{"".join(blocks)}</p:childTnLst></p:cTn>'
+        f'<p:prevCondLst><p:cond evt="onPrev" delay="0">'
+        f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>'
+        f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
+        f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
+        f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
+        f'<p:bldLst><p:bldP spid="{content_sid}" grpId="0" build="p"/></p:bldLst>'
+        f'</p:timing>'
+    )
+
+    tree = xr(sp)
+    root = tree.getroot()
+    existing = root.find(f'{{{_P_NS}}}timing')
+    if existing is not None:
+        root.remove(existing)
+    root.append(_et.fromstring(timing_xml))
+    xw(tree, sp)
+
+    print(f'  [7] vocabulary ({n} words, animated)')
     return sp
 
 
