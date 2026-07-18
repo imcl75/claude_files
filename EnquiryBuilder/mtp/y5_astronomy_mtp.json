@@ -58,7 +58,7 @@
             "Our Milky Way galaxy formed about 13.5 billion years ago.",
             "Our solar system formed about 4.5 billion years ago inside the Milky Way."
           ],
-          "image_path": "TODO: insert Big Bang / universe scale diagram"
+          "image_path": "/sessions/clever-relaxed-ramanujan/mnt/outputs/sci_L1_ido_diagram.png"
         },
         {
           "type": "youdo_task",
@@ -68,238 +68,18 @@
             "Write one sentence explaining what the Big Bang theory is.",
             "Challenge: Estimate \u2014 if the universe were the size of Earth, how big would our solar system be?"
           ]
+        },
+        {
+          "type": "learning_review",
+          "title": "What have we learned?",
+          "starters": [
+            "I used to think... but now I know...",
+            "The most interesting thing I learned about the universe was...",
+            "As a scientist this lesson helped me to..."
+          ]
         }
       ],
-      "lp": {
-        "recording": "lp",
-        "standard": {
-          "title": "The Scale of the Universe",
-          "lf": "understand how the universe began and the scale of space",
-          "ican1": "describe the Big Bang theory",
-          "ican2": "place our solar system within the universe",
-          "elements": [
-            {
-              "type": "instruction",
-              "text": "Use the vocabulary from today's learning to answer the questions below.",
-              "size_pt": 12
-            },
-            {
-              "type": "answer_lines",
-              "label": "1. What is the universe?",
-              "n": 2,
-              "sentence_starter": "The universe is..."
-            },
-            {
-              "type": "answer_lines",
-              "label": "2. What galaxy is our solar system in?",
-              "n": 2
-            },
-            {
-              "type": "answer_lines",
-              "label": "3. Describe the Big Bang theory in your own words.",
-              "n": 3,
-              "sentence_starter": "The Big Bang theory says that..."
-            },
-            {
-              "type": "answer_lines",
-              "label": "4. Put these in order from smallest to largest: universe, galaxy, solar system, planet, star",
-              "n": 2
-            },
-            {
-              "type": "word_bank",
-              "words": "universe  \u2022  galaxy  \u2022  Milky Way  \u2022  Big Bang  \u2022  solar system  \u2022  astronomy  \u2022  13.8 billion years"
-            }
-          ],
-          "answers": [
-            {
-              "type": "answer_text",
-              "text": "1. The universe is everything that exists \u2014 all space, matter and energy.",
-              "size_pt": 9.5
-            },
-            {
-              "type": "answer_text",
-              "text": "2. Our solar system is in the Milky Way galaxy.",
-              "size_pt": 9.5
-            },
-            {
-              "type": "answer_text",
-              "text": "3. Accept: The universe began about 13.8 billion years ago from a single point. A huge explosion (the Big Bang) caused everything to expand outward. Space, matter and energy have been spreading out ever since.",
-              "size_pt": 9.5
-            },
-            {
-              "type": "answer_text",
-              "text": "4. planet \u2192 star \u2192 solar system \u2192 galaxy \u2192 universe",
-              "size_pt": 9.5
-            }
-          ]
-        },
-        "adapted": {
-          "title": "The Scale of the Universe (Adapted)",
-          "lf": "understand how the universe began",
-          "ican1": "fill in facts about the universe using a word bank",
-          "ican2": "match words about space to their meanings",
-          "elements": [
-            {
-              "type": "instruction",
-              "text": "Fill in the gaps using the word bank. Then match each word to its meaning.",
-              "size_pt": 12
-            },
-            {
-              "type": "cloze",
-              "text": "The universe began with the ___, about ___ billion years ago. Our solar system is inside the ___ galaxy. A galaxy is a huge collection of millions of ___ held together by gravity.",
-              "blanks": [
-                "Big Bang",
-                "13.8",
-                "Milky Way",
-                "stars"
-              ],
-              "word_bank": "Big Bang  \u2022  13.8  \u2022  Milky Way  \u2022  stars  \u2022  universe  \u2022  astronomy"
-            },
-            {
-              "type": "spacer",
-              "h": 0.12
-            },
-            {
-              "type": "instruction",
-              "text": "Match each word to its meaning. Draw a line to join them.",
-              "size_pt": 12
-            },
-            {
-              "type": "matching",
-              "left": [
-                "universe",
-                "galaxy",
-                "Big Bang",
-                "astronomy"
-              ],
-              "right": [
-                "everything that exists",
-                "huge collection of millions of stars",
-                "how the universe began 13.8 billion years ago",
-                "the study of space"
-              ],
-              "answer_pairs": [
-                [
-                  0,
-                  0
-                ],
-                [
-                  1,
-                  1
-                ],
-                [
-                  2,
-                  2
-                ],
-                [
-                  3,
-                  3
-                ]
-              ]
-            }
-          ],
-          "answers": [
-            {
-              "type": "answer_text",
-              "text": "Cloze: Big Bang | 13.8 | Milky Way | stars",
-              "bold": true,
-              "size_pt": 9.5
-            },
-            {
-              "type": "spacer",
-              "h": 0.08
-            },
-            {
-              "type": "answer_text",
-              "text": "Matching: universe = everything that exists  |  galaxy = huge collection of millions of stars  |  Big Bang = how the universe began  |  astronomy = the study of space",
-              "size_pt": 9.5
-            }
-          ]
-        },
-        "further_adapted": {
-          "title": "The Scale of the Universe (Further Adapted)",
-          "lf": "know where Earth is in space",
-          "ican1": "name our galaxy",
-          "ican2": "match key space words to their meanings",
-          "elements": [
-            {
-              "type": "instruction",
-              "text": "Match each word to its meaning. Draw a line.",
-              "size_pt": 12
-            },
-            {
-              "type": "matching",
-              "left": [
-                "universe",
-                "galaxy",
-                "Big Bang"
-              ],
-              "right": [
-                "everything that exists",
-                "a huge group of stars",
-                "how the universe began"
-              ],
-              "answer_pairs": [
-                [
-                  0,
-                  0
-                ],
-                [
-                  1,
-                  1
-                ],
-                [
-                  2,
-                  2
-                ]
-              ]
-            },
-            {
-              "type": "spacer",
-              "h": 0.15
-            },
-            {
-              "type": "instruction",
-              "text": "Fill in the blank. Use the word bank to help you.",
-              "size_pt": 12
-            },
-            {
-              "type": "cloze",
-              "text": "Our solar system is in the ___ galaxy.",
-              "blanks": [
-                "Milky Way"
-              ],
-              "word_bank": "Milky Way  \u2022  Andromeda  \u2022  Big Dipper",
-              "size_pt": 12
-            },
-            {
-              "type": "cloze",
-              "text": "The universe began about ___ years ago.",
-              "blanks": [
-                "13.8 billion"
-              ],
-              "word_bank": "100  \u2022  13.8 billion  \u2022  1 million",
-              "size_pt": 12
-            }
-          ],
-          "answers": [
-            {
-              "type": "answer_text",
-              "text": "Matching: universe \u2192 everything that exists  |  galaxy \u2192 a huge group of stars  |  Big Bang \u2192 how the universe began",
-              "size_pt": 9.5
-            },
-            {
-              "type": "spacer",
-              "h": 0.08
-            },
-            {
-              "type": "answer_text",
-              "text": "Blanks: Milky Way | 13.8 billion",
-              "size_pt": 9.5
-            }
-          ]
-        }
-      }
+      "lp": null
     },
     {
       "lesson_number": 2,
@@ -364,7 +144,7 @@
             "Jupiter is the largest planet \u2014 more than 11 times wider than Earth.",
             "Saturn's famous rings are made of ice and rock."
           ],
-          "image_path": "TODO: solar system order diagram"
+          "image_path": "/sessions/clever-relaxed-ramanujan/mnt/outputs/sci_L2_ido_diagram.png"
         },
         {
           "type": "youdo_task",
@@ -374,8 +154,18 @@
             "Write one interesting fact about each of the four inner planets.",
             "Challenge: Explain in your own words why the Sun is a star and not a planet."
           ]
+        },
+        {
+          "type": "learning_review",
+          "title": "What have we learned?",
+          "starters": [
+            "I used to think... but now I know...",
+            "The most interesting thing I learned about our solar system was...",
+            "As a scientist this lesson helped me to..."
+          ]
         }
-      ]
+      ],
+      "lp": null
     },
     {
       "lesson_number": 3,
@@ -430,7 +220,7 @@
             "Pattern: the further a planet is from the Sun, the longer its year (orbital period).",
             "Pattern: the four inner planets are much smaller than the four outer planets."
           ],
-          "image_path": "TODO: planet size comparison diagram or data table"
+          "image_path": "/sessions/clever-relaxed-ramanujan/mnt/outputs/sci_L3_ido_diagram.png"
         },
         {
           "type": "youdo_task",
@@ -440,8 +230,18 @@
             "Describe one pattern you can see in the data.",
             "Challenge: Plot distance from the Sun against length of year \u2014 what do you notice?"
           ]
+        },
+        {
+          "type": "learning_review",
+          "title": "What have we learned?",
+          "starters": [
+            "I used to think... but now I know...",
+            "The most interesting thing I learned about sizes and distances was...",
+            "As a scientist this lesson helped me to..."
+          ]
         }
-      ]
+      ],
+      "lp": null
     },
     {
       "lesson_number": 4,
@@ -504,7 +304,7 @@
               "statement": "We have seasons because the Sun gets hotter and cooler throughout the year."
             }
           ],
-          "image_path": "TODO: image showing Earth's orbit with tilt visible"
+          "image_path": "/sessions/clever-relaxed-ramanujan/mnt/outputs/sci_L4_concept_cartoon.png"
         },
         {
           "type": "ido_diagram",
@@ -515,7 +315,7 @@
             "Seasons: Earth's axis is tilted at 23.5\u00b0. As Earth orbits the Sun, each hemisphere tilts towards or away.",
             "When the Northern Hemisphere tilts towards the Sun \u2192 summer. Tilts away \u2192 winter."
           ],
-          "image_path": "TODO: Earth rotation and orbit/tilt diagram"
+          "image_path": "/sessions/clever-relaxed-ramanujan/mnt/outputs/sci_L4_ido_diagram.png"
         },
         {
           "type": "youdo_task",
@@ -525,8 +325,18 @@
             "Write a paragraph explaining why we have seasons \u2014 make sure you correct the common misconception.",
             "Challenge: Why do countries near the equator have less noticeable seasons?"
           ]
+        },
+        {
+          "type": "learning_review",
+          "title": "What have we learned?",
+          "starters": [
+            "I used to think... but now I know...",
+            "The most interesting thing I learned about day, night and seasons was...",
+            "As a scientist this lesson helped me to..."
+          ]
         }
-      ]
+      ],
+      "lp": null
     },
     {
       "lesson_number": 5,
@@ -591,7 +401,7 @@
             "Lunar eclipses only happen at full Moon.",
             "The Moon is always present \u2014 we just can't always see it clearly."
           ],
-          "image_path": "TODO: Moon phases diagram and lunar eclipse diagram"
+          "image_path": "/sessions/clever-relaxed-ramanujan/mnt/outputs/sci_L5_ido_diagram.png"
         },
         {
           "type": "youdo_task",
@@ -601,8 +411,18 @@
             "Explain in your own words what causes a lunar eclipse.",
             "Challenge: Explain why the Moon appears to change shape \u2014 and what it is NOT caused by."
           ]
+        },
+        {
+          "type": "learning_review",
+          "title": "What have we learned?",
+          "starters": [
+            "I used to think... but now I know...",
+            "The most interesting thing I learned about the moon was...",
+            "As a scientist this lesson helped me to..."
+          ]
         }
-      ]
+      ],
+      "lp": null
     },
     {
       "lesson_number": 6,
@@ -657,7 +477,7 @@
             "Temperature pattern: the closer a planet is to the Sun, the higher its average temperature.",
             "Exception: Venus is hotter than Mercury despite being further away \u2014 because of its thick atmosphere."
           ],
-          "image_path": "TODO: rocky vs gas giant comparison images"
+          "image_path": "/sessions/clever-relaxed-ramanujan/mnt/outputs/sci_L6_ido_diagram.png"
         },
         {
           "type": "youdo_task",
@@ -667,8 +487,18 @@
             "Write your prediction with evidence: 'I predict that Planet X is... because the data shows...'",
             "Challenge: What else might you expect to find on Planet X? Gravity? Atmosphere? Moons?"
           ]
+        },
+        {
+          "type": "learning_review",
+          "title": "What have we learned?",
+          "starters": [
+            "I used to think... but now I know...",
+            "The most interesting thing I learned about planet conditions was...",
+            "As a scientist this lesson helped me to..."
+          ]
         }
-      ]
+      ],
+      "lp": null
     },
     {
       "lesson_number": 7,
@@ -719,7 +549,7 @@
             "The relative clause is usually separated from the main clause by commas.",
             "Without the relative clause the sentence still makes sense: 'Saturn is the sixth planet from the Sun.'"
           ],
-          "image_path": "TODO: annotated sentence examples on slide"
+          "image_path": null
         },
         {
           "type": "youdo_task",
@@ -729,8 +559,18 @@
             "Example: 'Jupiter, which is the largest planet in our solar system, has at least 95 known moons.'",
             "Challenge: Write a sentence using a relative clause that also includes a scientific fact you learned earlier in this enquiry."
           ]
+        },
+        {
+          "type": "learning_review",
+          "title": "What have we learned?",
+          "starters": [
+            "I used to think... but now I know...",
+            "I can now use this grammar feature by...",
+            "Using this in my writing will help me to..."
+          ]
         }
-      ]
+      ],
+      "lp": null
     },
     {
       "lesson_number": 8,
@@ -781,7 +621,7 @@
             "Commas: 'Venus, the hottest planet in our solar system, has a thick atmosphere of carbon dioxide.'",
             "All three add extra information \u2014 the main sentence must still make sense if you remove the parenthesis."
           ],
-          "image_path": "TODO: annotated examples slide"
+          "image_path": null
         },
         {
           "type": "youdo_task",
@@ -791,8 +631,18 @@
             "Make sure the main sentence still makes sense if you remove the parenthesis.",
             "Challenge: Combine a relative clause AND parenthesis in a single sentence about a planet."
           ]
+        },
+        {
+          "type": "learning_review",
+          "title": "What have we learned?",
+          "starters": [
+            "I used to think... but now I know...",
+            "I can now use this grammar feature by...",
+            "Using this in my writing will help me to..."
+          ]
         }
-      ]
+      ],
+      "lp": null
     },
     {
       "lesson_number": 9,
@@ -847,7 +697,7 @@
             "Paragraph 3 \u2014 Comparison: how does your chosen planet compare to Earth? Size, temperature, day length, conditions.",
             "Each paragraph begins with a topic sentence that tells the reader what is coming."
           ],
-          "image_path": "TODO: three-paragraph planning frame visual"
+          "image_path": null
         },
         {
           "type": "youdo_task",
@@ -858,8 +708,18 @@
             "Add at least three supporting facts under each topic sentence.",
             "Challenge: Note where you will use a relative clause and where you will use parenthesis."
           ]
+        },
+        {
+          "type": "learning_review",
+          "title": "What have we learned?",
+          "starters": [
+            "I used to think... but now I know...",
+            "In my writing today I tried to...",
+            "One thing I want to improve in my next lesson is..."
+          ]
         }
-      ]
+      ],
+      "lp": null
     },
     {
       "lesson_number": 10,
@@ -902,7 +762,7 @@
             "Introduce the solar system, Earth's place, and your chosen planet.",
             "End with a sentence that leads the reader into paragraph 2."
           ],
-          "image_path": "TODO: model text on slide for shared writing"
+          "image_path": null
         },
         {
           "type": "youdo_task",
@@ -912,8 +772,18 @@
             "Include at least one relative clause and one example of parenthesis.",
             "Read your introduction back \u2014 does it make a reader want to read on?"
           ]
+        },
+        {
+          "type": "learning_review",
+          "title": "What have we learned?",
+          "starters": [
+            "I used to think... but now I know...",
+            "In my writing today I tried to...",
+            "One thing I want to improve in my next lesson is..."
+          ]
         }
-      ]
+      ],
+      "lp": null
     },
     {
       "lesson_number": 11,
@@ -943,7 +813,7 @@
             "Vary your sentence structure \u2014 mix relative clauses, parenthesis and simple factual statements.",
             "Use precise scientific vocabulary: diameter, orbit, atmosphere, satellite, rotate."
           ],
-          "image_path": "TODO: model text / worked example on slide"
+          "image_path": null
         },
         {
           "type": "youdo_task",
@@ -953,8 +823,18 @@
             "Tick off each fact from your plan as you include it.",
             "Read your paragraph aloud \u2014 does every sentence make sense? Does it flow?"
           ]
+        },
+        {
+          "type": "learning_review",
+          "title": "What have we learned?",
+          "starters": [
+            "I used to think... but now I know...",
+            "In my writing today I tried to...",
+            "One thing I want to improve in my next lesson is..."
+          ]
         }
-      ]
+      ],
+      "lp": null
     },
     {
       "lesson_number": 12,
@@ -993,7 +873,7 @@
             "Use comparative language: larger, colder, further, more massive, unlike Earth...",
             "Write a brief conclusion \u2014 what is the most striking difference between your planet and Earth?"
           ],
-          "image_path": "TODO: comparison table Earth vs chosen planet on slide"
+          "image_path": null
         },
         {
           "type": "youdo_task",
@@ -1004,8 +884,18 @@
             "Write a concluding sentence or short paragraph to end your information text.",
             "Read your complete text from start to finish \u2014 does it make sense as a whole?"
           ]
+        },
+        {
+          "type": "learning_review",
+          "title": "What have we learned?",
+          "starters": [
+            "I used to think... but now I know...",
+            "In my writing today I tried to...",
+            "One thing I want to improve in my next lesson is..."
+          ]
         }
-      ]
+      ],
+      "lp": null
     },
     {
       "lesson_number": 13,
@@ -1047,7 +937,7 @@
             "2. Grammar and punctuation \u2014 relative clauses correctly punctuated with commas? Parenthesis balanced?",
             "3. Vocabulary \u2014 can any vague words be replaced with more precise scientific terms?"
           ],
-          "image_path": "TODO: editing checklist visual"
+          "image_path": null
         },
         {
           "type": "youdo_task",
@@ -1057,8 +947,18 @@
             "Make at least three edits \u2014 mark them clearly.",
             "Swap with a partner \u2014 can they spot any further improvements?"
           ]
+        },
+        {
+          "type": "learning_review",
+          "title": "What have we learned?",
+          "starters": [
+            "I used to think... but now I know...",
+            "The most surprising thing I learned about space was...",
+            "As a scientist this enquiry helped me to..."
+          ]
         }
-      ]
+      ],
+      "lp": null
     },
     {
       "lesson_number": 14,
@@ -1098,7 +998,8 @@
             "As a scientist this enquiry helped me to..."
           ]
         }
-      ]
+      ],
+      "lp": null
     }
   ],
   "knowledge_organiser": {
