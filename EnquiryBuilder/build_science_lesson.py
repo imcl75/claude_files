@@ -89,6 +89,13 @@ def build_kq_challenge(work, templates, enquiry, lesson):
         if task_shape is None:
             raise RuntimeError(f"kq_challenge: '{REG.KQ_CHALLENGE_TASK_SHAPE_NAME}' not found")
         set_text(task_shape, f"Our Challenge is: \n{enquiry['challenge']}")
+        # TextBox 17 has spAutoFit — the box grows to fit and overlaps the
+        # student images below. force_shrink_to_fit computes an explicit sz
+        # on each rPr so the text stays inside the fixed box in both
+        # LibreOffice and real PowerPoint (normAutofit alone doesn't work
+        # in LibreOffice — it ignores the instruction and renders at default
+        # size, confirmed by visual QA on v2_slide_1.png).
+        force_shrink_to_fit(task_shape)
     xw(tree, sp)
     print('  [1] key_question')
     return sp
@@ -117,9 +124,11 @@ def build_discipline(work, templates, enquiry):
     pptx = templates[REG.COMPONENTS['discipline']['template']]
     sn = find_slide_by_anchor(pptx, REG.DISCIPLINE_ANCHORS[strand], REG.DISCIPLINE_HINTS[strand])
     sp, rp = clone(work, pptx, sn, copy_hdphoto=True)
-    strip_timing(sp)
     steps = REG.DISCIPLINE_ANIMATION_SHAPE_NAMES.get(strand)
     if steps:
+        # Only strip+rebuild timing for strands where we have confirmed shape names.
+        # For all other strands, keep the template's own animations intact.
+        strip_timing(sp)
         tree = xr(sp)
         id_steps = []
         for step_names in steps:
@@ -131,6 +140,7 @@ def build_discipline(work, templates, enquiry):
                 ids.append(sid)
             id_steps.append(ids)
         animate(sp, id_steps)
+    # else: template animations cloned as-is — do NOT strip them
     print('  [3] discipline')
     return sp
 
@@ -263,7 +273,7 @@ def _atom_nucleus_xml(sid, topic):
         f'<a:r><a:rPr lang="en-GB" sz="800" b="1" dirty="0">'
         f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
         f'<a:latin typeface="Aptos"/></a:rPr>'
-        f'<a:t>{{topic}}</a:t></a:r></a:p>'
+        f'<a:t>{topic}</a:t></a:r></a:p>'
         f'</p:txBody>'
         f'</p:sp>'
     )
@@ -403,7 +413,17 @@ def build_building_blocks_atom(work, templates, enquiry, lesson, all_lessons):
 
     sp, rp = fresh(work, 'I do')
     t, st = get_spTree(sp)
-    st.append(title_sp(2, f'Building Blocks: {topic}', REG.TITLE_FONT))
+    # Use an explicit tbox positioned in the top-left corner, clear of the orbit.
+    # The outermost orbit left-edge is at ~x=3,300,000 so x=300,000–3,000,000
+    # is safe. The orbit's top is at ~y=694,000 so y=120,000–680,000 is clear
+    # of all electrons. Do NOT use title_sp (layout placeholder) — it puts the
+    # title in the slide's default title area which overlaps the top orbit arc.
+    st.append(tbox(
+        2, f'Building Blocks: {topic}',
+        300000, 120000, 2900000, 580000,
+        sz=2000, bold=False, color='1A3A5C', align='l',
+        name='Title 2',
+    ))
     save(t, sp)
 
     tree    = xr(sp)
@@ -430,11 +450,10 @@ def build_building_blocks_atom(work, templates, enquiry, lesson, all_lessons):
                 _atom_electron_xml(sid, left, top, ecx, ecy,
                                    'E57D24', 'A35610', 19050, str(les), 'FFFFFF')
             ))
-        else:                   # current or future — grey, abbreviated text
-            abbr = _ATOM_ABBREV[i] if i < len(_ATOM_ABBREV) else ''
+        else:                   # current or future — grey, no text (clean circles)
             sp_tree.append(etree.fromstring(
                 _atom_electron_xml(sid, left, top, ecx, ecy,
-                                   'EBEBEB', 'BBBBBB', 19050, abbr, 'AAAAAA')
+                                   'EBEBEB', 'BBBBBB', 19050, '', 'AAAAAA')
             ))
         sid += 1
 
@@ -490,6 +509,23 @@ def build_lo(work, templates, enquiry, lesson):
         s = find_sp(tree, shape_name)
         if s is not None:
             set_text(s, val or '')
+            if shape_name == 'Title 27':
+                # KQ_LO.pptx has anchor="b" on Title 27 — text grows upward and
+                # clips off the top for long key questions. Change to anchor="t"
+                # and add normAutofit so the text shrinks to fit instead.
+                from lxml import etree as _et
+                A_NS = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+                txBody = s.find(f'{{{A_NS}}}txBody')
+                if txBody is not None:
+                    bodyPr = txBody.find(f'{{{A_NS}}}bodyPr')
+                    if bodyPr is not None:
+                        bodyPr.set('anchor', 't')
+                        # Remove any existing autofit child elements
+                        for tag in ('normAutofit', 'noAutofit', 'spAutoFit'):
+                            el = bodyPr.find(f'{{{A_NS}}}{tag}')
+                            if el is not None:
+                                bodyPr.remove(el)
+                        _et.SubElement(bodyPr, f'{{{A_NS}}}normAutofit')
         else:
             raise RuntimeError(f"LO slide: shape '{shape_name}' not found — template drift")
     xw(tree, sp)
@@ -738,7 +774,8 @@ def build_recap_quiz(work, quiz_template_pptx, lesson):
 
 def build_key_vocabulary(work, lesson):
     """
-    Word cards: coloured word panel (left) + definition panel (right).
+    Vocabulary table: school-style header bar + alternating rows.
+    Word column (left 30%) and definition column (right 70%).
     Each word+definition pair clicks in separately.
     Up to 5 words from lesson['vocabulary'].
     """
@@ -753,79 +790,111 @@ def build_key_vocabulary(work, lesson):
         print('  [7] vocabulary (empty)')
         return sp
 
-    card_top = 1200000
-    card_gap = 50000
-    card_h   = (SH - card_top - 200000 - (n - 1) * card_gap) // n
-    card_w   = SW - 2 * _MARGIN
-    word_w   = int(card_w * 0.28)
-    def_x    = _MARGIN + word_w + 20000
-    def_w    = card_w - word_w - 20000
+    tbl_x   = _MARGIN
+    tbl_top = 1100000
+    tbl_w   = SW - 2 * _MARGIN
+    word_w  = int(tbl_w * 0.27)
+    def_x   = tbl_x + word_w
+    def_w   = tbl_w - word_w
+    hdr_h   = 480000
+    # Available height below header, shared equally between words
+    avail_h = SH - tbl_top - hdr_h - 200000
+    row_h   = avail_h // n
 
-    WORD_FILLS = ['DAE3F3', 'FFE6CC', 'D5E8D4', 'F8CECC', 'E1D5E7']
+    # Alternating row fills (school blue family)
+    ROW_FILLS = ['EBF4FB', 'FFFFFF', 'EBF4FB', 'FFFFFF', 'EBF4FB']
 
     sid = 10
     steps = []
 
-    for i, item in enumerate(vocab):
-        cy = card_top + i * (card_h + card_gap)
-        fill = WORD_FILLS[i % len(WORD_FILLS)]
-
-        # Word panel (coloured, left)
+    # ── Header bar ────────────────────────────────────────────────────────────
+    for ci, (hx, hw, label) in enumerate([
+        (tbl_x,   word_w, 'Word'),
+        (def_x,   def_w,  'Definition'),
+    ]):
         t2, st2 = get_spTree(sp)
         st2.append(xp(
             f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
-            f'<p:nvSpPr><p:cNvPr id="{sid}" name="WordBG{i}"/>'
+            f'<p:nvSpPr><p:cNvPr id="{sid}" name="VHdrBG{ci}"/>'
             f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
-            f'<p:spPr><a:xfrm><a:off x="{_MARGIN}" y="{cy}"/>'
-            f'<a:ext cx="{word_w}" cy="{card_h}"/></a:xfrm>'
-            f'<a:prstGeom prst="roundRect">'
-            f'<a:avLst><a:gd name="adj" fmla="val 8000"/></a:avLst></a:prstGeom>'
-            f'<a:solidFill><a:srgbClr val="{fill}"/></a:solidFill>'
-            f'<a:ln w="19050"><a:solidFill><a:srgbClr val="1798D3"/></a:solidFill></a:ln>'
+            f'<p:spPr><a:xfrm><a:off x="{hx}" y="{tbl_top}"/>'
+            f'<a:ext cx="{hw}" cy="{hdr_h}"/></a:xfrm>'
+            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+            f'<a:solidFill><a:srgbClr val="1798D3"/></a:solidFill>'
+            f'<a:ln w="9525"><a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill></a:ln>'
+            f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+        ))
+        save(t2, sp); sid += 1
+        t2, st2 = get_spTree(sp)
+        st2.append(tbox(
+            sid, label, hx + 30000, tbl_top + 10000, hw - 60000, hdr_h - 20000,
+            sz=1800, bold=True, color='FFFFFF', align='ctr'
+        ))
+        save(t2, sp); sid += 1
+
+    # ── Word + definition rows ─────────────────────────────────────────────────
+    for i, item in enumerate(vocab):
+        ry   = tbl_top + hdr_h + i * row_h
+        fill = ROW_FILLS[i % len(ROW_FILLS)]
+        word = item.get('word', '')
+        defn = item.get('definition', '')
+
+        # Word cell background
+        t2, st2 = get_spTree(sp)
+        st2.append(xp(
+            f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+            f'<p:nvSpPr><p:cNvPr id="{sid}" name="VWordBG{i}"/>'
+            f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+            f'<p:spPr><a:xfrm><a:off x="{tbl_x}" y="{ry}"/>'
+            f'<a:ext cx="{word_w}" cy="{row_h}"/></a:xfrm>'
+            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+            f'<a:solidFill><a:srgbClr val="D6EAF8"/></a:solidFill>'
+            f'<a:ln w="9525"><a:solidFill><a:srgbClr val="AED6F1"/></a:solidFill></a:ln>'
             f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
         ))
         save(t2, sp)
         wbg_id = sid; sid += 1
 
+        # Word text
+        word_sz = max(1600, 2200 - len(word) * 30)
         t2, st2 = get_spTree(sp)
-        word_sz = max(1400, 2000 - len(item.get('word', '')) * 20)
         st2.append(tbox(
-            sid, item.get('word', ''),
-            _MARGIN + 20000, cy + 20000, word_w - 40000, card_h - 40000,
-            sz=word_sz, bold=True, color='1A3A5C', align='ctr'
+            sid, word,
+            tbl_x + 25000, ry + 20000, word_w - 50000, row_h - 40000,
+            sz=word_sz, bold=True, color='0D3C61', align='ctr'
         ))
         save(t2, sp)
         wtxt_id = sid; sid += 1
 
-        steps.append([wbg_id, wtxt_id])  # word clicks in first
+        steps.append([wbg_id, wtxt_id])  # click 1: word reveals
 
-        # Definition panel (white, right)
+        # Definition cell background
         t2, st2 = get_spTree(sp)
         st2.append(xp(
             f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
-            f'<p:nvSpPr><p:cNvPr id="{sid}" name="DefBG{i}"/>'
+            f'<p:nvSpPr><p:cNvPr id="{sid}" name="VDefBG{i}"/>'
             f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
-            f'<p:spPr><a:xfrm><a:off x="{def_x}" y="{cy}"/>'
-            f'<a:ext cx="{def_w}" cy="{card_h}"/></a:xfrm>'
-            f'<a:prstGeom prst="roundRect">'
-            f'<a:avLst><a:gd name="adj" fmla="val 5000"/></a:avLst></a:prstGeom>'
-            f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill>'
-            f'<a:ln w="19050"><a:solidFill><a:srgbClr val="1798D3"/></a:solidFill></a:ln>'
+            f'<p:spPr><a:xfrm><a:off x="{def_x}" y="{ry}"/>'
+            f'<a:ext cx="{def_w}" cy="{row_h}"/></a:xfrm>'
+            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+            f'<a:solidFill><a:srgbClr val="{fill}"/></a:solidFill>'
+            f'<a:ln w="9525"><a:solidFill><a:srgbClr val="AED6F1"/></a:solidFill></a:ln>'
             f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
         ))
         save(t2, sp)
         dbg_id = sid; sid += 1
 
+        # Definition text
         t2, st2 = get_spTree(sp)
         st2.append(tbox(
-            sid, item.get('definition', ''),
-            def_x + 20000, cy + 20000, def_w - 40000, card_h - 40000,
-            sz=1600, color='222222', align='l'
+            sid, defn,
+            def_x + 30000, ry + 20000, def_w - 60000, row_h - 40000,
+            sz=1700, color='1A1A1A', align='l'
         ))
         save(t2, sp)
         dtxt_id = sid; sid += 1
 
-        steps.append([dbg_id, dtxt_id])  # definition clicks in second
+        steps.append([dbg_id, dtxt_id])  # click 2: definition reveals
 
     animate(sp, steps)
     print('  [7] vocabulary (animated)')
@@ -880,12 +949,15 @@ def _build_ido_diagram(work, spec):
     if spec.get('image_path'):
         if not os.path.exists(spec['image_path']):
             raise RuntimeError(f"ido_diagram: image_path '{spec['image_path']}' missing")
-        add_img(sp, rp, work, spec['image_path'], 5400000, 1600000, 6500000, 4800000, 3)
+        # Larger image: starts further left (4600000) and is wider (7400000)
+        # so diagram labels are readable at the back of the classroom.
+        add_img(sp, rp, work, spec['image_path'], 4600000, 1400000, 7400000, 5200000, 3)
     sid = 10; groups = []
     for i, bullet in enumerate(spec['bullets']):
         by = 1550000 + i * 1540000
         t2, st2 = get_spTree(sp)
-        st2.append(tbox(sid, bullet, 180000, by, 5000000, 1500000, sz=1900, color='1A3A5C', align='l'))
+        # Bullet text area narrowed slightly to give image more room
+        st2.append(tbox(sid, bullet, 180000, by, 4200000, 1500000, sz=1800, color='1A3A5C', align='l'))
         save(t2, sp); groups.append([sid]); sid += 1
     animate(sp, groups)
     return sp
