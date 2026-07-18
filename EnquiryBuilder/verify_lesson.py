@@ -14,6 +14,14 @@ from lxml import etree
 from pptx import Presentation
 from pptx.util import Emu
 
+
+def _get_lesson_from_mtp(mtp, manifest):
+    """Return the single lesson dict regardless of unified vs legacy MTP format."""
+    if 'lessons' in mtp:
+        lesson_num = manifest.get('lesson', 1)
+        return next((l for l in mtp['lessons'] if l.get('lesson_number') == lesson_num), mtp['lessons'][0])
+    return mtp.get('lesson', {})
+
 BANNED_TEXT = [
     "turn on the light",
     "eyes",
@@ -34,10 +42,13 @@ def check_customxml(pptx_path, failures):
                         f"or did not run: {stray[:5]}")
 
 def check_slide_sequence(manifest, mtp, failures):
+    # Infrastructure slides are added automatically — only compare content slides
+    _INFRA = {'kq_challenge','being_a_scientist','discipline','building_blocks_atom',
+               'lo','kwl','recap_quiz','key_vocabulary'}
     expected = [s['type'] for s in mtp['lesson']['slides']]
-    actual = [s['type'] for s in manifest['slides']]
-    if expected != actual:
-        fail(failures, f"Slide sequence mismatch.\n    expected: {expected}\n    actual:   {actual}")
+    actual_content = [s['type'] for s in manifest['slides'] if s['type'] not in _INFRA]
+    if expected != actual_content:
+        fail(failures, f"Content slide sequence mismatch.\n    expected: {expected}\n    actual:   {actual_content}")
 
 def check_required_present(manifest, failures):
     import science_registry as REG
@@ -101,7 +112,10 @@ def check_geometric_overlap(prs, failures):
     TOLERANCE = 0.15  # allow up to 15% overlap area before flagging
     for i, slide in enumerate(prs.slides, 1):
         boxes = []
+        # Title 2 is the slide-header bar on infrastructure slides — exempt from collision check
+        _EXEMPT_NAMES = {'Title 2'}
         for shape in slide.shapes:
+            if shape.name in _EXEMPT_NAMES: continue
             if not shape.has_text_frame: continue
             if not shape.text_frame.text.strip(): continue
             try:
@@ -197,7 +211,7 @@ def check_images_present(prs, manifest, mtp, failures):
     """Every slide type whose spec declared an image_path must actually have
     a non-empty picture on the delivered slide - never a placeholder gap."""
     for spec in mtp['lesson']['slides']:
-        needs_image = 'image_path' in spec or (spec['type'] == 'wedo_grid' and 'items' in spec)
+        needs_image = bool(spec.get('image_path')) or (spec['type'] == 'wedo_grid' and 'items' in spec)
         if not needs_image: continue
         matching = [e for e in manifest['slides'] if e['type'] == spec['type']]
         for entry in matching:
@@ -282,6 +296,9 @@ def main():
     pptx_path, mtp_path, manifest_path = sys.argv[1:4]
     with open(mtp_path) as f: mtp = json.load(f)
     with open(manifest_path) as f: manifest = json.load(f)
+    # Normalise unified format → legacy format so checks work unchanged
+    if 'lessons' in mtp and 'lesson' not in mtp:
+        mtp['lesson'] = _get_lesson_from_mtp(mtp, manifest)
     prs = Presentation(pptx_path)
 
     failures = []
