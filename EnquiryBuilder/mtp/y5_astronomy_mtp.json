@@ -1100,5 +1100,90 @@
         }
       ]
     }
-  ]
+  ],
+  "knowledge_organiser": {
+    "key_facts": [
+      "The Big Bang began the universe about 13.8 billion years ago.",
+      "Our solar system sits inside the Milky Way galaxy.",
+      "Eight planets orbit the Sun, from Mercury to Neptune.",
+      "The inner planets are rocky; the outer ones are gas giants.",
+      "Earth rotates once every 24 hours, causing day and night.",
+      "Earth's 23.5° tilt gives us the four seasons as we orbit the Sun.",
+      "The Moon orbits Earth every 27–29 days and reflects sunlight.",
+      "Planets vary in size, distance from the Sun and temperature."
+    ],
+    "key_skills": [
+      "Reading and interpreting data tables",
+      "Comparing planets using evidence and data",
+      "Drawing and labelling scientific diagrams",
+      "Making predictions using patterns in data",
+      "Writing an information text about space"
+    ],
+    "vocabulary": [
+      [
+        "astronomy",
+        "the study of stars, planets and space"
+      ],
+      [
+        "universe",
+        "everything that exists — all space, matter and energy"
+      ],
+      [
+        "galaxy",
+        "a huge collection of stars held together by gravity"
+      ],
+      [
+        "Milky Way",
+        "the galaxy that contains our solar system"
+      ],
+      [
+        "Big Bang",
+        "the theory that the universe began from a tiny point 13.8 billion years ago"
+      ],
+      [
+        "solar system",
+        "the Sun and everything that orbits it, including the eight planets"
+      ],
+      [
+        "orbit",
+        "the path one object takes around another due to gravity"
+      ],
+      [
+        "star",
+        "a ball of burning gas that produces its own heat and light"
+      ],
+      [
+        "planet",
+        "a large, roughly spherical body that orbits a star"
+      ],
+      [
+        "diameter",
+        "the distance across a sphere through its centre"
+      ],
+      [
+        "rotate",
+        "to spin on an axis"
+      ],
+      [
+        "axis",
+        "an imaginary line through Earth's centre, North Pole to South Pole"
+      ],
+      [
+        "satellite",
+        "a body that orbits a planet (the Moon is Earth's natural satellite)"
+      ],
+      [
+        "atmosphere",
+        "the layer of gases surrounding a planet"
+      ]
+    ],
+    "strip_image": {
+      "prompt": "Eight planets of the solar system in a horizontal row left to right — Mercury to Neptune — against a deep black space background, photorealistic, dramatic lighting, 1792x1024",
+      "filename": "ko_strip.png"
+    },
+    "notes_image": {
+      "prompt": "Earth and Moon together in deep space, black background, photorealistic, close-up showing surface detail and dramatic lighting, 1024x1024",
+      "filename": "ko_notes.png"
+    }
+  }
 }
