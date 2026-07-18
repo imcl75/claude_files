@@ -1476,6 +1476,183 @@ def build_lp_named_output(lesson_json_or_path, out_dir, base_name,
     return results
 
 
+# ══════════════════════════════════════════════════════════════════
+# CLASS LP GROUPS — multi-class cohort support
+# ══════════════════════════════════════════════════════════════════
+
+def load_class_lp_groups(path):
+    """
+    Load class_lp_groups.json and return the parsed dict.
+    Raises ValueError if required fields are missing or null.
+    """
+    with open(path) as f:
+        groups = json.load(f)
+    for cls in groups.get('classes', []):
+        if not cls.get('class_size'):
+            raise ValueError(
+                f"class_lp_groups.json: class '{cls.get('name', '?')}' "
+                f"has no class_size — please fill it in.")
+    return groups
+
+
+def class_config_for(groups, class_name=None):
+    """
+    Convert one class entry from class_lp_groups.json into the
+    internal class_config dict used by build_lp_named_output().
+
+    If class_name is None and there is exactly one class, that class
+    is used automatically.
+
+    Returns (class_entry_dict, class_config_dict).
+    """
+    classes = groups.get('classes', [])
+    if not classes:
+        raise ValueError('class_lp_groups.json has no classes defined.')
+
+    if class_name is None:
+        if len(classes) == 1:
+            cls = classes[0]
+        else:
+            names = [c['name'] for c in classes]
+            raise ValueError(
+                f'Multiple classes defined: {names}. '
+                f'Specify class_name=.')
+    else:
+        cls = next((c for c in classes
+                    if c['name'].lower() == class_name.lower()), None)
+        if cls is None:
+            raise ValueError(f"Class '{class_name}' not found in groups file.")
+
+    adapted        = cls.get('adapted', [])
+    further        = cls.get('further_adapted', [])
+    class_size     = cls['class_size']
+    standard_count = class_size - len(adapted) - len(further)
+
+    if standard_count < 0:
+        raise ValueError(
+            f"Class '{cls['name']}': adapted ({len(adapted)}) + "
+            f"further_adapted ({len(further)}) exceeds class_size ({class_size}).")
+
+    config = {
+        'standard':        {'count': standard_count},
+        'adapted':         {'children': adapted},
+        'further_adapted': {'children': further},
+    }
+    return cls, config
+
+
+def build_lp_cohort_output(lesson_json_or_path, out_dir, base_name,
+                            resource_base=None, groups_path=None,
+                            groups=None, class_name=None):
+    """
+    Build the full LP set for one lesson for a cohort defined in
+    class_lp_groups.json.
+
+    Handles single-class and multi-class cohorts. With a single class
+    the filenames match the existing convention:
+        '{base_name} - Standard - x{n}.pptx'
+        '{base_name} - Adapted.pptx'
+        '{base_name} - Further Adapted.pptx'
+
+    With multiple classes the class name is inserted:
+        '{base_name} - 5IM - Standard - x{n}.pptx'
+        ...
+
+    Args:
+        lesson_json_or_path: path or loaded lesson dict.
+        out_dir:             output directory.
+        base_name:           filename stem.
+        resource_base:       images / ll_assets directory.
+        groups_path:         path to class_lp_groups.json (or pass groups=).
+        groups:              pre-loaded groups dict (alternative to groups_path).
+        class_name:          build only this class (default: all classes).
+
+    Returns:
+        {class_name: {level: path, ...}, ...}
+    """
+    if groups is None:
+        if groups_path is None:
+            raise ValueError('Provide groups_path or groups.')
+        groups = load_class_lp_groups(groups_path)
+
+    classes = groups.get('classes', [])
+    if class_name:
+        classes = [c for c in classes
+                   if c['name'].lower() == class_name.lower()]
+    multi = len(classes) > 1
+
+    all_results = {}
+    for cls in classes:
+        _, config = class_config_for(groups, cls['name'])
+        stem = f"{base_name} - {cls['name']}" if multi else base_name
+        paths = build_lp_named_output(
+            lesson_json_or_path, out_dir, stem,
+            resource_base=resource_base,
+            class_config=config,
+        )
+        all_results[cls['name']] = paths
+        print(f"  [{cls['name']}] standard x{config['standard']['count']} | "
+              f"adapted: {len(config['adapted']['children'])} | "
+              f"further adapted: {len(config['further_adapted']['children'])}")
+
+    return all_results
+
+
+def prompt_lp_groups(existing_path=None):
+    """
+    Interactive CLI prompt to create or update class_lp_groups.json.
+    Returns the groups dict (without writing to disk — caller decides path).
+
+    Usage: call from the enquiry skill before the first LP build.
+    """
+    print('\n── LP Group Setup ─────────────────────────────────────────')
+
+    if existing_path and os.path.exists(existing_path):
+        with open(existing_path) as f:
+            groups = json.load(f)
+        print(f'Existing groups loaded from {existing_path}')
+        for cls in groups.get('classes', []):
+            n_a  = len(cls.get('adapted', []))
+            n_fa = len(cls.get('further_adapted', []))
+            n_s  = (cls.get('class_size') or 0) - n_a - n_fa
+            print(f"  {cls['name']}: {n_s} standard | {n_a} adapted | {n_fa} further adapted")
+        ans = input('\nKeep these groups? [Y/n] ').strip().lower()
+        if ans != 'n':
+            return groups
+        print()
+
+    year_group    = input('Year group (e.g. Y5): ').strip() or 'Y5'
+    acad_year     = input('Academic year (e.g. 2026-27): ').strip() or '2026-27'
+    cohort_size   = int(input('Total cohort size: ').strip())
+    n_classes     = int(input('Number of classes: ').strip() or '1')
+
+    classes = []
+    for i in range(n_classes):
+        print(f'\n  Class {i+1} of {n_classes}:')
+        cls_name   = input('  Class name (e.g. 5IM): ').strip()
+        class_size = int(input(f'  Class size: ').strip())
+        print('  Adapted children (comma-separated, or blank for none):')
+        raw_a = input('  ').strip()
+        adapted = [n.strip() for n in raw_a.split(',') if n.strip()] if raw_a else []
+        print('  Further adapted children (comma-separated, or blank for none):')
+        raw_fa = input('  ').strip()
+        further = [n.strip() for n in raw_fa.split(',') if n.strip()] if raw_fa else []
+        classes.append({
+            'name':            cls_name,
+            'class_size':      class_size,
+            'adapted':         adapted,
+            'further_adapted': further,
+        })
+
+    groups = {
+        'year_group':    year_group,
+        'academic_year': acad_year,
+        'cohort_size':   cohort_size,
+        'classes':       classes,
+    }
+    return groups
+
+
 if __name__ == '__main__':
     import argparse
     ap = argparse.ArgumentParser(description='Build an enquiry LP from a lesson JSON.')
