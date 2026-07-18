@@ -1,15 +1,35 @@
 {
-    "_comment": "LP differentiation groups for Y5 2026-27. Standard count is derived automatically (class_size minus adapted and further_adapted). Update adapted/further_adapted lists if groupings change.",
+    "_comment": "LP differentiation groups for Y5 2026-27. Standard count is derived automatically (class_size minus adapted and further_adapted). Update lists if groupings change.",
     "year_group": "Y5",
     "academic_year": "2026-27",
-    "cohort_size": null,
+    "cohort_size": 60,
     "classes": [
         {
             "name": "5IM",
             "teacher": "Innes McLean",
-            "class_size": null,
-            "adapted": [],
+            "class_size": 30,
+            "adapted": [
+                "Asimenia Chatzinathanail",
+                "Bailey Silvers",
+                "Reggie Greenwood",
+                "Roland Farago",
+                "Samuel Nutt",
+                "Teddie Richards"
+            ],
             "further_adapted": []
+        },
+        {
+            "name": "5LS",
+            "teacher": "",
+            "class_size": 30,
+            "adapted": [
+                "Daisy Chase-Williams"
+            ],
+            "further_adapted": [
+                "Adnan Sadat",
+                "Callum Teddy",
+                "Hope Dempsey"
+            ]
         }
     ]
 }

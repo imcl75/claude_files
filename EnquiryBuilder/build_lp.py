@@ -1456,22 +1456,28 @@ def build_lp_named_output(lesson_json_or_path, out_dir, base_name,
     # ── Adapted ───────────────────────────────────────────────────────────────
     if 'adapted' in lp_spec:
         adapt_cfg = class_config.get('adapted', {})
-        children = (adapt_cfg.get('children', ['Unnamed'])
+        children = (adapt_cfg.get('children', [])
                     if isinstance(adapt_cfg, dict) else list(adapt_cfg))
-        out_path = os.path.join(out_dir, f'{base_name} - Adapted.pptx')
-        _build_named_level(lesson_data, lp_spec, 'adapted', resource_base,
-                           lesson_meta, children, out_path)
-        results['adapted'] = out_path
+        if children:
+            out_path = os.path.join(out_dir, f'{base_name} - Adapted.pptx')
+            _build_named_level(lesson_data, lp_spec, 'adapted', resource_base,
+                               lesson_meta, children, out_path)
+            results['adapted'] = out_path
+        else:
+            print(f"  LP [adapted] skipped — no children assigned")
 
     # ── Further Adapted ───────────────────────────────────────────────────────
     if 'further_adapted' in lp_spec:
         fa_cfg = class_config.get('further_adapted', {})
-        children = (fa_cfg.get('children', ['Unnamed'])
+        children = (fa_cfg.get('children', [])
                     if isinstance(fa_cfg, dict) else list(fa_cfg))
-        out_path = os.path.join(out_dir, f'{base_name} - Further Adapted.pptx')
-        _build_named_level(lesson_data, lp_spec, 'further_adapted', resource_base,
-                           lesson_meta, children, out_path)
-        results['further_adapted'] = out_path
+        if children:
+            out_path = os.path.join(out_dir, f'{base_name} - Further Adapted.pptx')
+            _build_named_level(lesson_data, lp_spec, 'further_adapted', resource_base,
+                               lesson_meta, children, out_path)
+            results['further_adapted'] = out_path
+        else:
+            print(f"  LP [further_adapted] skipped — no children assigned")
 
     return results
 
