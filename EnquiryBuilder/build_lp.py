@@ -1485,11 +1485,34 @@ def build_lp_named_output(lesson_json_or_path, out_dir, base_name,
 # ══════════════════════════════════════════════════════════════════
 # CLASS LP GROUPS — multi-class cohort support
 # ══════════════════════════════════════════════════════════════════
+#
+# SOURCE OF TRUTH: EnquiryBuilder/class_lp_groups.json in the GitHub repo.
+#
+# HOW TO UPDATE LP GROUPS (e.g. a child moves level, new child joins):
+#
+#   Option 1 — Tell Claude verbally in a new session:
+#       "Move Teddie Richards to standard in 5IM"
+#       Claude updates the JSON and pushes to the repo.
+#
+#   Option 2 — Re-upload the Learning Adaptation Excel:
+#       If groupings have changed significantly, upload the spreadsheet
+#       and Claude re-parses it to rebuild class_lp_groups.json from scratch.
+#
+#   Option 3 — Edit the JSON directly in the repo:
+#       EnquiryBuilder/class_lp_groups.json is plain, human-readable JSON.
+#       standard_count is DERIVED (class_size minus adapted minus further_adapted)
+#       — do NOT add a standard_count field, it is computed automatically.
+#
+# Groups do not change per-enquiry. One file covers all enquiries for the year.
+# ══════════════════════════════════════════════════════════════════
 
 def load_class_lp_groups(path):
     """
     Load class_lp_groups.json and return the parsed dict.
     Raises ValueError if required fields are missing or null.
+
+    The file lives at EnquiryBuilder/class_lp_groups.json in the GitHub repo.
+    To update LP group assignments, see the comment block above this function.
     """
     with open(path) as f:
         groups = json.load(f)
