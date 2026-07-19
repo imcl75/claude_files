@@ -51,6 +51,12 @@ from lib_ooxml import (
 import history_registry as REG
 from lxml import etree
 
+# ── Shared image layout system ───────────────────────────────────────────────
+try:
+    from image_layouts import get_layout as _get_img_layout
+except ImportError:
+    _get_img_layout = None
+
 # ── Sandbox path patch (mirrors science builder) ──────────────────────────────
 import lib_ooxml as _lo_mod
 _lo_src_cache = {}
@@ -1127,12 +1133,192 @@ def build_concept_cartoon(work, slide_spec, lesson_data, mtp, colours):
 
     return sp
 
+def build_image_slide(work, slide_spec, lesson, enquiry, colours):
+    """
+    Generic image slide for history builder.
+    Uses the shared image_layouts coordinate system.
+    Always uses the 'Blank' layout + concept colour BG applied programmatically.
+    Badge (I Do / We Do etc.) is also added in code (not from layout).
+
+    slide_spec keys:
+      layout_key  — key into image_layouts.LAYOUTS (required)
+      badge       — 'I Do' | 'We Do' | 'You Do' | 'You Do (Trio)' (default 'I Do')
+      title       — slide title text
+      images      — list of image file paths
+      text        — body / task text
+      caption     — caption (layout C only)
+      subtitle    — subtitle in banner (layout A only)
+      speech_a/b/c — speech bubble text (concept_cartoon only)
+    """
+    if _get_img_layout is None:
+        raise RuntimeError("image_layouts.py not found — cannot build image_slide")
+
+    key    = slide_spec['layout_key']
+    layout = _get_img_layout(key)
+    images = slide_spec.get('images', [])
+    bg, bd = colours['bg'], colours['border']
+
+    sp, rp = fresh(work, 'Blank')
+    _apply_concept_bg(sp, bg, bd)
+
+    t, st = get_spTree(sp)
+    sid = 10
+
+    # Badge (programmatic — same pattern as _build_content_slide)
+    badge_label = slide_spec.get('badge', 'I Do')
+    badge_colours = {
+        'I Do':         ('1F3864', 'FFFFFF'),
+        'We Do':        ('1A5C2A', 'FFFFFF'),
+        'You Do':       ('7D2200', 'FFFFFF'),
+        'You Do (Trio)':('4B0082', 'FFFFFF'),
+    }
+    bfill, btext = badge_colours.get(badge_label, ('333333', 'FFFFFF'))
+    st.append(xp(
+        f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+        f'<p:nvSpPr><p:cNvPr id="{sid}" name="TypeBadge"/>'
+        f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+        f'<p:spPr><a:xfrm><a:off x="{SW - MARGIN_X - 1600000}" y="80000"/>'
+        f'<a:ext cx="1500000" cy="380000"/></a:xfrm>'
+        f'<a:prstGeom prst="roundRect"><a:avLst><a:gd name="adj" fmla="val 16667"/></a:avLst></a:prstGeom>'
+        f'<a:solidFill><a:srgbClr val="{bfill}"/></a:solidFill>'
+        f'<a:ln><a:noFill/></a:ln></p:spPr>'
+        f'<p:txBody><a:bodyPr anchor="ctr"/><a:lstStyle/><a:p><a:pPr algn="ctr"/>'
+        f'<a:r><a:rPr lang="en-GB" sz="1600" b="1" dirty="0">'
+        f'<a:solidFill><a:srgbClr val="{btext}"/></a:solidFill></a:rPr>'
+        f'<a:t>{ex(badge_label)}</a:t></a:r></a:p></p:txBody></p:sp>'
+    ))
+    sid += 1
+    save(t, sp)
+
+    ttl = slide_spec.get('title', '')
+
+    def tb(text, pos, sz=1800, bold=False, align='l', name=None):
+        nonlocal sid
+        t2, st2 = get_spTree(sp)
+        st2.append(_styled_tbox(
+            sid, text, pos['x'], pos['y'], pos['cx'], pos['cy'],
+            sz=sz, bold=bold, color='1A3A5C', align=align,
+            name=name or f'TB{sid}'
+        ))
+        save(t2, sp)
+        sid += 1
+
+    def img(path, pos):
+        nonlocal sid
+        add_img(sp, rp, work, path, pos['x'], pos['y'], pos['cx'], pos['cy'], sid)
+        sid += 1
+
+    if key == 'A_full_bleed':
+        if images:
+            img(images[0], layout['image'])
+        b = layout['banner']
+        t2, st2 = get_spTree(sp)
+        st2.append(xp(
+            f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+            f'<p:nvSpPr><p:cNvPr id="{sid}" name="Banner"/>'
+            f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+            f'<p:spPr><a:xfrm><a:off x="{b["x"]}" y="{b["y"]}"/>'
+            f'<a:ext cx="{b["cx"]}" cy="{b["cy"]}"/></a:xfrm>'
+            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+            f'<a:solidFill><a:srgbClr val="{bg}">'
+            f'<a:alpha val="85000"/></a:srgbClr></a:solidFill>'
+            f'<a:ln><a:noFill/></a:ln></p:spPr>'
+            f'<p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+        ))
+        save(t2, sp); sid += 1
+        tb(ttl, layout['title_box'], sz=3200, bold=True, name='SlideTitle')
+        if slide_spec.get('subtitle'):
+            tb(slide_spec['subtitle'], layout['subtitle'], sz=2000)
+
+    elif key == 'B1_hero_image_left':
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        if images:
+            img(images[0], layout['image'])
+        if slide_spec.get('text'):
+            tb(slide_spec['text'], layout['text_box'])
+
+    elif key == 'B2_hero_2images_left':
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        for img_key, img_path in zip(('image_top', 'image_bottom'), images[:2]):
+            img(img_path, layout[img_key])
+        if slide_spec.get('text'):
+            tb(slide_spec['text'], layout['text_box'])
+
+    elif key == 'B3_hero_2images_right':
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        if slide_spec.get('text'):
+            tb(slide_spec['text'], layout['text_box'])
+        for img_key, img_path in zip(('image_top', 'image_bottom'), images[:2]):
+            img(img_path, layout[img_key])
+
+    elif key == 'C_supporting_illustration':
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        if slide_spec.get('text'):
+            tb(slide_spec['text'], layout['text_box'])
+        if images:
+            img(images[0], layout['image'])
+        if slide_spec.get('caption'):
+            tb(slide_spec['caption'], layout['caption'], sz=1400, align='c')
+
+    elif key == 'D_diagram_focus':
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        if images:
+            img(images[0], layout['image'])
+        if slide_spec.get('text'):
+            tb(slide_spec['text'], layout['text_box'])
+
+    elif key in ('gallery_5row', 'gallery_6x2'):
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        if slide_spec.get('text'):
+            tb(slide_spec['text'], layout['task_box'])
+        for idx, pos in enumerate(layout['images']):
+            if idx < len(images):
+                img(images[idx], pos)
+
+    elif key == 'gallery_1wide':
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        if slide_spec.get('text'):
+            tb(slide_spec['text'], layout['task_box'])
+        if images:
+            img(images[0], layout['image'])
+
+    elif key == 'concept_cartoon':
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        if images:
+            img(images[0], layout['central_image'])
+        for char in ('a', 'b', 'c'):
+            bl = layout[f'bubble_{char}']
+            t2, st2 = get_spTree(sp)
+            st2.append(xp(
+                f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+                f'<p:nvSpPr><p:cNvPr id="{sid}" name="Bubble{char.upper()}"/>'
+                f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+                f'<p:spPr><a:xfrm><a:off x="{bl["x"]}" y="{bl["y"]}"/>'
+                f'<a:ext cx="{bl["cx"]}" cy="{bl["cy"]}"/></a:xfrm>'
+                f'<a:prstGeom prst="roundRect"><a:avLst>'
+                f'<a:gd name="adj" fmla="val 16667"/></a:avLst></a:prstGeom>'
+                f'<a:solidFill><a:srgbClr val="{bd}"/></a:solidFill>'
+                f'<a:ln><a:noFill/></a:ln></p:spPr>'
+                f'<p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+            ))
+            save(t2, sp); sid += 1
+            speech = slide_spec.get(f'speech_{char}', '')
+            tb(speech, layout[f'text_{char}'], sz=1600)
+
+    else:
+        raise ValueError(f"build_image_slide: unknown layout_key {key!r}")
+
+    _append_border(sp, bd)
+    return sp
+
+
 VARIABLE_DISPATCH = {
     'i_do':         build_i_do,
     'we_do':        build_we_do,
     'you_do':       build_you_do,
     'you_do_trio':  build_you_do_trio,
     'concept_cartoon': build_concept_cartoon,
+    'image_slide':     build_image_slide,
 }
 
 
