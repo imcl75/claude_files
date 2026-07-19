@@ -65,6 +65,55 @@ rezip = _patched_rezip
 
 _MARGIN = 381000  # ~1cm side margin in EMU
 
+_TCL   = 'Twinkl Cursive Looped'
+_TCL_L = 'Twinkl Cursive Looped Light'
+
+
+def _normalise_fonts(sp):
+    """Ensure every text run in the slide uses Twinkl Cursive Looped.
+
+    Three passes:
+    1. Replace any explicit <a:latin typeface="..."> that isn't TCL/TCL-Light.
+    2. Add <a:latin typeface="TCL"> to any <a:rPr> that has no <a:latin> child
+       (these would otherwise inherit the theme font, which is Aptos).
+    3. Add <a:rPr><a:latin .../></a:rPr> to any <a:r> that has no <a:rPr>
+       at all.
+    Theme-relative refs (+mj-lt, +mn-lt) are left alone.
+    """
+    import lxml.etree as _et_nf
+    _A = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+    _KEEP = {_TCL, _TCL_L}
+    tree = xr(sp)
+    root = tree.getroot()
+    changed = False
+
+    # Pass 1: fix existing wrong <a:latin>, <a:ea>, <a:cs> typefaces
+    for tag in ('latin', 'ea', 'cs'):
+        for el in root.iter(f'{{{_A}}}{tag}'):
+            tf = el.get('typeface', '')
+            if tf and tf not in _KEEP and not tf.startswith('+'):
+                el.set('typeface', _TCL)
+                changed = True
+
+    # Pass 2: add <a:latin> to <a:rPr> elements that have none
+    for rpr in root.iter(f'{{{_A}}}rPr'):
+        if rpr.find(f'{{{_A}}}latin') is None:
+            latin_el = _et_nf.SubElement(rpr, f'{{{_A}}}latin')
+            latin_el.set('typeface', _TCL)
+            changed = True
+
+    # Pass 3: add <a:rPr><a:latin/></a:rPr> to bare <a:r> runs with no rPr
+    for run in root.iter(f'{{{_A}}}r'):
+        if run.find(f'{{{_A}}}rPr') is None:
+            rpr_el = _et_nf.Element(f'{{{_A}}}rPr')
+            latin_el = _et_nf.SubElement(rpr_el, f'{{{_A}}}latin')
+            latin_el.set('typeface', _TCL)
+            run.insert(0, rpr_el)
+            changed = True
+
+    if changed:
+        xw(tree, sp)
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  Fixed slide 1: Key Question + challenge
@@ -76,6 +125,7 @@ def build_kq_challenge(work, templates, enquiry, lesson):
     sp, rp = clone(work, pptx, sn, copy_hdphoto=True)
     delete_shapes_by_id(sp, REG.KQ_CHALLENGE_STRIP_IDS)
     delete_shape_by_name(sp, REG.KQ_CHALLENGE_STRIP_NAME)
+    delete_shape_by_name(sp, 'TextBox 8')   # phantom "Being a Scientist" shape from template
     has_challenge = bool(enquiry.get('challenge'))
     if not has_challenge:
         delete_shape_by_name(sp, REG.KQ_CHALLENGE_TASK_SHAPE_NAME)
@@ -84,6 +134,15 @@ def build_kq_challenge(work, templates, enquiry, lesson):
     if kq_shape is None:
         raise RuntimeError(f"kq_challenge: '{REG.KQ_CHALLENGE_KQ_SHAPE_NAME}' not found")
     set_text(kq_shape, enquiry['key_question'])
+    # Reposition TextBox 16 to match ground-truth layout
+    # (template has it too far left/up; IM positions it at x=3372690,y=600429)
+    _A_kq0 = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+    _kq_xfrm = kq_shape.find(f'.//{{{_A_kq0}}}xfrm')
+    if _kq_xfrm is not None:
+        _off = _kq_xfrm.find(f'{{{_A_kq0}}}off')
+        _ext = _kq_xfrm.find(f'{{{_A_kq0}}}ext')
+        if _off is not None: _off.set('x', '3469844'); _off.set('y', '590611')
+        if _ext is not None: _ext.set('cx', '6005225'); _ext.set('cy', '1092607')
     if has_challenge:
         task_shape = find_sp(tree, REG.KQ_CHALLENGE_TASK_SHAPE_NAME)
         if task_shape is None:
@@ -101,7 +160,15 @@ def build_kq_challenge(work, templates, enquiry, lesson):
                 _rpr_el = _et_kq.Element(f'{{{_A_NS_kq}}}rPr')
                 _r.insert(0, _rpr_el)
             _rpr_el.set('sz', '2000')
+        # Also reposition TextBox 17 to match ground-truth layout
+        _task_xfrm = task_shape.find(f'.//{{{_A_NS_kq}}}xfrm')
+        if _task_xfrm is not None:
+            _t_off = _task_xfrm.find(f'{{{_A_NS_kq}}}off')
+            _t_ext = _task_xfrm.find(f'{{{_A_NS_kq}}}ext')
+            if _t_off is not None: _t_off.set('x', '3847217'); _t_off.set('y', '1343210')
+            if _t_ext is not None: _t_ext.set('cx', '4838084'); _t_ext.set('cy', '1075899')
     xw(tree, sp)
+    _normalise_fonts(sp)
     print('  [1] key_question')
     return sp
 
@@ -114,6 +181,21 @@ def build_being_a_scientist(work, templates):
     pptx = templates[REG.COMPONENTS['being_a_scientist']['template']]
     sn = find_slide_by_anchor(pptx, REG.BEING_A_SCIENTIST_ANCHOR, REG.BEING_A_SCIENTIST_HINT)
     sp, rp = clone(work, pptx, sn, copy_hdphoto=True)
+    # Fix TitleBeing to match IM position (template has it full-width; IM has it left-aligned)
+    import lxml.etree as _et_bas
+    _P_bas = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+    _A_bas = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+    _tr_bas = xr(sp); _ro_bas = _tr_bas.getroot()
+    for _sp_el in _ro_bas.iter(f'{{{_P_bas}}}sp'):
+        _cnv = _sp_el.find(f'.//{{{_P_bas}}}cNvPr')
+        if _cnv is not None and _cnv.get('name') == 'TitleBeing':
+            _xf = _sp_el.find(f'.//{{{_A_bas}}}xfrm')
+            if _xf is not None:
+                _of = _xf.find(f'{{{_A_bas}}}off'); _ex = _xf.find(f'{{{_A_bas}}}ext')
+                if _of is not None: _of.set('x', '-157987'); _of.set('y', '150000')
+                if _ex is not None: _ex.set('cx', '4076843'); _ex.set('cy', '684013')
+    xw(_tr_bas, sp)
+    _normalise_fonts(sp)
     print('  [2] being_a_scientist')
     return sp
 
@@ -146,6 +228,7 @@ def build_discipline(work, templates, enquiry):
             id_steps.append(ids)
         animate(sp, id_steps)
     # else: template animations cloned as-is — do NOT strip them
+    _normalise_fonts(sp)
     print('  [3] discipline')
     return sp
 
@@ -156,38 +239,37 @@ def build_discipline(work, templates, enquiry):
 #  No external template file required.
 # ══════════════════════════════════════════════════════════════════════════════
 
-# ── Coordinate transform constants (Group 205 in atom-IM.pptx) ────────────────
-# Slide coords = GRP_OX + (child_x − CH_OX) * SX,  similarly for Y.
-_ATOM_GRP_OX = 3264196
-_ATOM_GRP_OY = 464046
-_ATOM_SX = 8452884 / 6371657   # ~1.3266
-_ATOM_SY = 6166392 / 5090000   # ~1.2115
-_ATOM_CH_OX = 2910171
-_ATOM_CH_OY = 1110000
-_ATOM_ELECTRON_R = 190000       # half-radius in child coords
+# ── Hardcoded atom geometry (exact positions from out_L5-IM.pptx slide 4) ─────
+# Atom/ring centre in slide EMU
+_ATOM_NUC_X = 7340476
+_ATOM_NUC_Y = 3621797
 
-# Nucleus (child centre 6096000, 3750000 → slide)
-_ATOM_NUC_X  = int(_ATOM_GRP_OX + (6096000 - _ATOM_CH_OX) * _ATOM_SX)
-_ATOM_NUC_Y  = int(_ATOM_GRP_OY + (3750000 - _ATOM_CH_OY) * _ATOM_SY)
-_ATOM_NUC_RX = int(530000 * _ATOM_SX)
-_ATOM_NUC_RY = int(440000 * _ATOM_SY)
-
-# Orbital ring semi-axes in slide coords (child radii scaled)
+# Orbital ring semi-radii — circles (rx = ry), drawn M→L→K (back to front)
 _ATOM_RING_PARAMS = [
-    (int(900000  * _ATOM_SX), int(760000  * _ATOM_SY)),   # K shell
-    (int(2050000 * _ATOM_SX), int(1720000 * _ATOM_SY)),   # L shell
-    (int(3150000 * _ATOM_SX), int(2450000 * _ATOM_SY)),   # M shell
+    (1224000, 1224000),   # K shell
+    (2190855, 2190855),   # L shell
+    (3078000, 3078000),   # M shell
 ]
 
-# Electron centres in child coords (14 active lessons)
-_ATOM_CHILD_CENTRES = [
-    (6096000, 2990000), (6096000, 4510000),
-    (6096000, 2030000), (7545568, 2533776),
-    (8146000, 3750000), (7545568, 4966223),
-    (6096000, 5470000), (4646431, 4966223),
-    (4046000, 3750000), (4646431, 2533776),
-    (6096000, 1300000), (9091828, 2992908),
-    (7947523, 5732091), (4244476, 5732091),
+# Nucleus bounding box (x, y, cx, cy) — exact from IM
+_ATOM_NUC_BOX = (6695747, 2979815, 1283964, 1283964)
+
+# Electron bounding boxes (x, y, cx, cy) — exact from IM, lessons 1–14
+_ATOM_ELECTRON_BOXES = [
+    (7107584, 2127275, 460289, 460289),  # lesson  1
+    (7107584, 4539955, 460289, 460289),  # lesson  2
+    (7107583, 1173366, 460289, 460289),  # lesson  3
+    (8611589, 1774681, 460290, 460290),  # lesson  4
+    (9275861, 3373719, 460290, 460290),  # lesson  5
+    (8782321, 4873710, 460290, 460290),  # lesson  6
+    (7107583, 5622904, 460289, 460289),  # lesson  7
+    (5473742, 4921418, 460290, 460290),  # lesson  8
+    (4883938, 3370225, 460290, 460290),  # lesson  9
+    (5525527, 1848336, 460290, 460290),  # lesson 10
+    (4326346, 2002224, 460289, 460289),  # lesson 11
+    (9923556, 2092219, 460290, 460290),  # lesson 12
+    (8913391, 5926246, 460290, 460290),  # lesson 13
+    (5303723, 5902700, 460290, 460290),  # lesson 14
 ]
 
 _ATOM_LESSON_NAMES = [
@@ -197,22 +279,23 @@ _ATOM_LESSON_NAMES = [
     "Writing 1", "Writing 2", "Writing 3", "Editing", "Sharing",
 ]
 
-# Label positions (slide coords, hand-tuned by teacher on atom-IM.pptx slide 4)
+# Label positions (slide coords, exact from out_L5-IM.pptx slide 4)
+# Lessons 1–5 verified; 6–14 are unverified (not visible in L5 IM)
 _ATOM_LABEL_POS = [
-    (7208270,  2226344, 1162498, 307777),
-    (6874683,  4812456, 1527982, 307777),
-    (6719341,  1069430, 1704313, 307777),
-    (8521921,  1449189, 1726888, 523220),
-    (9769736,  3093923,  939680, 307777),
-    (8783924,  4648576, 1547218, 307777),
-    (6927582,  5963340, 1422184, 307777),
-    (5027247,  4577164, 1064715, 307777),
-    (4344495,  3106286,  875560, 307777),
-    (5113635,  1667649,  878767, 307777),
-    (7038427,   151511,  904415, 307777),
-    (10849956, 2194282,  899605, 307777),
-    (9641910,  6293759,  728083, 307777),
-    (4606235,  6267824,  780983, 307777),
+    (6737820,  1848336, 1300125, 307777),  # lesson  1  The Universe
+    (6576026,  4997675, 1623714, 307777),  # lesson  2  Our Solar System
+    (6482385,   922255, 1710683, 307777),  # lesson  3  Sizes and Distances
+    (8125023,  1262390, 1576735, 523220),  # lesson  4  Day, Night and the Seasons
+    (8782321,  3065942, 1264538, 307777),  # lesson  5  The Moon
+    (8783924,  4648576, 1547218, 307777),  # lesson  6  (unverified)
+    (6927582,  5963340, 1422184, 307777),  # lesson  7  (unverified)
+    (5027247,  4577164, 1064715, 307777),  # lesson  8  (unverified)
+    (4344495,  3106286,  875560, 307777),  # lesson  9  (unverified)
+    (5113635,  1667649,  878767, 307777),  # lesson 10  (unverified)
+    (7038427,   151511,  904415, 307777),  # lesson 11  (unverified)
+    (10849956, 2194282,  899605, 307777),  # lesson 12  (unverified)
+    (9641910,  6293759,  728083, 307777),  # lesson 13  (unverified)
+    (4606235,  6267824,  780983, 307777),  # lesson 14  (unverified)
 ]
 
 _ATOM_ABBREV = [
@@ -226,18 +309,11 @@ _ATOM_LABEL_ID  = 1001
 
 
 # ── Coordinate helpers ─────────────────────────────────────────────────────────
+# (electron_rect is now a direct lookup — no child-coord transform needed)
 
-def _atom_child_to_slide(cx, cy):
-    return (
-        int(_ATOM_GRP_OX + (cx - _ATOM_CH_OX) * _ATOM_SX),
-        int(_ATOM_GRP_OY + (cy - _ATOM_CH_OY) * _ATOM_SY),
-    )
-
-def _atom_electron_rect(ccx, ccy):
-    r = _ATOM_ELECTRON_R
-    tl_x, tl_y = _atom_child_to_slide(ccx - r, ccy - r)
-    br_x, br_y = _atom_child_to_slide(ccx + r, ccy + r)
-    return tl_x, tl_y, br_x - tl_x, br_y - tl_y
+def _atom_electron_rect(lesson_index):
+    """Return (x, y, cx, cy) for electron at zero-based lesson_index."""
+    return _ATOM_ELECTRON_BOXES[lesson_index]
 
 
 # ── XML factories (use P and A from lib_ooxml) ────────────────────────────────
@@ -260,15 +336,14 @@ def _atom_ring_xml(sid, rx, ry):
     )
 
 def _atom_nucleus_xml(sid, topic):
-    nx, ny = _ATOM_NUC_X, _ATOM_NUC_Y
-    rx, ry = _ATOM_NUC_RX, _ATOM_NUC_RY
+    nx, ny, cnx, cny = _ATOM_NUC_BOX
     return (
         f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
         f'<p:nvSpPr><p:cNvPr id="{sid}" name="Nucleus"/>'
         f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
         f'<p:spPr>'
-        f'<a:xfrm><a:off x="{nx-rx}" y="{ny-ry}"/>'
-        f'<a:ext cx="{2*rx}" cy="{2*ry}"/></a:xfrm>'
+        f'<a:xfrm><a:off x="{nx}" y="{ny}"/>'
+        f'<a:ext cx="{cnx}" cy="{cny}"/></a:xfrm>'
         f'<a:prstGeom prst="ellipse"><a:avLst/></a:prstGeom>'
         f'<a:solidFill><a:srgbClr val="0A3D62"/></a:solidFill>'
         f'</p:spPr>'
@@ -468,7 +543,7 @@ def build_building_blocks_atom(work, templates, enquiry, lesson, all_lessons):
     t2, st2 = get_spTree(sp)
     st2.append(tbox(
         3, discipline_title,
-        1249164, 223255, 2236999, 738664,
+        1249164, 223255, 2621087, 738664,
         sz=2400, bold=True, color='1A3A5C', align='l',
         name='DisciplineTitle',
     ))
@@ -478,7 +553,7 @@ def build_building_blocks_atom(work, templates, enquiry, lesson, all_lessons):
     t3, st3 = get_spTree(sp)
     st3.append(tbox(
         4, discipline_text,
-        158742, 1069430, 2490988, 3283440,
+        158742, 1430942, 2490988, 3283440,
         bold=False, color='1A3A5C', align='l',
         name='DisciplineDesc',
     ))
@@ -500,9 +575,8 @@ def build_building_blocks_atom(work, templates, enquiry, lesson, all_lessons):
     sid += 1
 
     # Base electrons (grey or orange depending on state)
-    for i, (ccx, ccy) in enumerate(_ATOM_CHILD_CENTRES):
+    for i, (left, top, ecx, ecy) in enumerate(_ATOM_ELECTRON_BOXES):
         les = i + 1
-        left, top, ecx, ecy = _atom_electron_rect(ccx, ccy)
         if les < lesson_num:    # done — orange, lesson number
             sp_tree.append(etree.fromstring(
                 _atom_electron_xml(sid, left, top, ecx, ecy,
@@ -524,8 +598,7 @@ def build_building_blocks_atom(work, templates, enquiry, lesson, all_lessons):
 
     # Orange overlay + label for current lesson (hidden until click)
     ci = lesson_num - 1
-    ccx, ccy = _ATOM_CHILD_CENTRES[ci]
-    left, top, ecx, ecy = _atom_electron_rect(ccx, ccy)
+    left, top, ecx, ecy = _ATOM_ELECTRON_BOXES[ci]
     sp_tree.append(etree.fromstring(
         _atom_orange_overlay_xml(_ATOM_ORANGE_ID, left, top, ecx, ecy, lesson_num)
     ))
@@ -594,6 +667,7 @@ def build_lo(work, templates, enquiry, lesson):
     if not all(ids):
         raise RuntimeError("LO slide: could not resolve shape IDs for animation")
     animate(sp, [[i] for i in ids])
+    _normalise_fonts(sp)
     print('  [5] lo')
     return sp
 
@@ -1228,32 +1302,87 @@ def _build_ido_diagram(work, spec):
         if not os.path.exists(spec['image_path']):
             raise RuntimeError(f"ido_diagram: image_path '{spec['image_path']}' missing")
         if bullets:
-            # Eclipse layout: image LEFT side
-            # x=200000, y=1947731, cx=8200000, cy=4154538 (from ground-truth analysis)
+            # Eclipse layout: image LEFT side (exact IM position)
             add_img(sp, rp, work, spec['image_path'], 200000, 1947731, 8200000, 4154538, 3)
         else:
-            # Phases layout: full content area
-            add_img(sp, rp, work, spec['image_path'], 838200, 1400000, 10515600, 5200000, 3)
+            # Phases layout (IM slide 10): large image filling most of slide,
+            # narrow right column for text boxes.
+            # Image: x=189744, y=1089793, cx=9035107, cy=5042848 (aspect-correct for 1376x768)
+            add_img(sp, rp, work, spec['image_path'], 189744, 1089793, 9035107, 5042848, 3)
+            # Force exact position (add_img may centre within supplied box)
+            _P_im = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+            _A_im = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+            _tr_im = xr(sp)
+            _ro_im = _tr_im.getroot()
+            _pics = _ro_im.findall(f'.//{{{_P_im}}}pic')
+            if _pics:
+                _xf = _pics[-1].find(f'.//{{{_A_im}}}xfrm')
+                if _xf is not None:
+                    _of = _xf.find(f'{{{_A_im}}}off')
+                    _ex = _xf.find(f'{{{_A_im}}}ext')
+                    if _of is not None: _of.set('x', '189744'); _of.set('y', '1089793')
+                    if _ex is not None: _ex.set('cx', '9035107'); _ex.set('cy', '5042848')
+            xw(_tr_im, sp)
 
     sid = 10; groups = []
     if bullets:
-        n_bullets = len(bullets)
-        _BULLET_TOP = 1947731
-        _BULLET_BOT = 6700000
-        _avail = _BULLET_BOT - _BULLET_TOP
-        step = _avail // n_bullets
-        box_h = step - 40000
+        # Eclipse RIGHT-side bullets: y=1500000,3200000,4900000 cy=1660000 cx=3400000
+        # (IM ground truth — evenly spaced, not derived from image height)
+        _ECLIPSE_YS = [1500000, 3200000, 4900000]
         for i, bullet in enumerate(bullets):
-            by = _BULLET_TOP + i * step
+            by = _ECLIPSE_YS[i] if i < len(_ECLIPSE_YS) else 1500000 + i * 1700000
             t2, st2 = get_spTree(sp)
-            # Bullets RIGHT side: x=8600000, width = SW - 8800000
-            st2.append(tbox(sid, bullet, 8600000, by, SW - 8800000, box_h, sz=1800, color='1A3A5C', align='l'))
+            st2.append(tbox(sid, bullet, 8600000, by, 3400000, 1660000, sz=1800, color='1A3A5C', align='l'))
             save(t2, sp); groups.append([sid]); sid += 1
         animate(sp, groups)
+    else:
+        # Phases middle and right column text boxes
+        text_boxes = spec.get('text_boxes', [])
+        for tb in text_boxes:
+            t2, st2 = get_spTree(sp)
+            st2.append(tbox(sid, tb['text'], tb['x'], tb['y'], tb['cx'], tb['cy'],
+                            sz=1800, color='1A3A5C', align='l'))
+            save(t2, sp); sid += 1
+        # Phases numbered list (TextBox 13 style) from phases_list field
+        phases = spec.get('phases_list', [])
+        if phases:
+            from lxml import etree as _et_ph
+            _P_ph = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+            _A_ph = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+            _color = '1A3A5C'
+            # Header paragraph
+            hdr_para = (f'<a:p xmlns:a="{_A_ph}"><a:pPr algn="l"/><a:r>'
+                        f'<a:rPr lang="en-GB" sz="2800" b="1" u="sng" dirty="0">'
+                        f'<a:solidFill><a:srgbClr val="{_color}"/></a:solidFill>'
+                        f'<a:latin typeface="Twinkl Cursive Looped" panose="02000000000000000000" pitchFamily="2" charset="77"/>'
+                        f'</a:rPr><a:t>Phases, in order: </a:t></a:r></a:p>')
+            list_paras = ''.join(
+                f'<a:p xmlns:a="{_A_ph}"><a:pPr marL="457200" indent="-457200" algn="l">'
+                f'<a:buFont typeface="+mj-lt"/><a:buAutoNum type="arabicPeriod"/></a:pPr><a:r>'
+                f'<a:rPr lang="en-GB" sz="2400" dirty="0">'
+                f'<a:solidFill><a:srgbClr val="{_color}"/></a:solidFill>'
+                f'<a:latin typeface="Twinkl Cursive Looped" panose="02000000000000000000" pitchFamily="2" charset="77"/>'
+                f'</a:rPr><a:t>{ex(ph)}</a:t></a:r></a:p>'
+                for ph in phases
+            )
+            phases_sp_xml = (
+                f'<p:sp xmlns:p="{_P_ph}" xmlns:a="{_A_ph}">'
+                f'<p:nvSpPr><p:cNvPr id="{sid}" name="TextBox {sid}"/>'
+                f'<p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr>'
+                f'<p:spPr><a:xfrm><a:off x="8421297" y="1483563"/>'
+                f'<a:ext cx="3400000" cy="5065518"/></a:xfrm>'
+                f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr>'
+                f'<p:txBody><a:bodyPr wrap="square"><a:noAutofit/></a:bodyPr><a:lstStyle/>'
+                f'{hdr_para}{list_paras}</p:txBody></p:sp>'
+            )
+            t2, st2 = get_spTree(sp)
+            st2.append(_et_ph.fromstring(phases_sp_xml))
+            save(t2, sp); sid += 1
 
     if spec.get('speaker_notes'):
         _add_speaker_notes(sp, rp, work, spec['speaker_notes'])
 
+    _normalise_fonts(sp)
     return sp
 
 def _build_youdo_provocation(work, spec):
@@ -1537,6 +1666,12 @@ def build_lesson(mtp_path, templates_dir, out_path, manifest_path, lesson_num=1)
     removed = strip_orphaned_media(work)
     if removed:
         print(f"  stripped {len(removed)} orphaned media file(s)")
+
+    # Blanket font normalisation over every slide before zipping.
+    import glob as _glob
+
+    for _sp in sorted(_glob.glob(os.path.join(work, 'ppt', 'slides', 'slide*.xml'))):
+        _normalise_fonts(_sp)
 
     rezip(work, out_path)
     with open(manifest_path, 'w') as f:

@@ -303,8 +303,8 @@
       "day_label": "L5",
       "building_block_text": "The Moon",
       "what": "describe the Moon's movement and explain what causes its phases and lunar eclipses",
-      "why": "to understand how the Moon orbits Earth and correct common misconceptions about the Moon",
-      "success": "describe the phases of the Moon and explain what causes them; explain what a lunar eclipse is; correct the misconception that the Moon is only visible at night",
+      "why": "the Moon is Earth's closest neighbour and understanding it can help us learn about our own planet.",
+      "success": "describing and explaining the phases of the Moon and explaining what causes a lunar eclipse.",
       "vocabulary": [
         {
           "word": "satellite",
@@ -357,16 +357,39 @@
           "title": "The eight phases of the Moon",
           "image_path": "sci_L5_phases_v3.png",
           "bullets": [],
-          "speaker_notes": "KEY TEACHING POINTS — talk through the diagram:\n\n1. The Moon orbits Earth every 27–29 days. As it moves, we see different amounts of the lit half — these are the phases.\n\n2. “Waxing” = the lit area is GROWING (right side). “Waning” = the lit area is SHRINKING (left side).\n\n3. MISCONCEPTION: The phases are NOT caused by Earth’s shadow — that only happens during a lunar eclipse (see next slide). The phases are caused by which part of the Moon’s sunlit half we can see from Earth.\n\n4. Walk through each phase: 1 New Moon → 2 Waxing Crescent → 3 First Quarter → 4 Waxing Gibbous → 5 Full Moon → 6 Waning Gibbous → 7 Third Quarter → 8 Waning Crescent.\n\nQuestions to ask: “What comes after the Full Moon?” (Waning Gibbous). “Why can’t we see the New Moon?” (dark side faces us). “What causes a First Quarter?” (Moon is 90° from the Sun in its orbit)."
+          "speaker_notes": "KEY TEACHING POINTS — talk through the diagram:\n\n1. The Moon orbits Earth every 27–29 days. As it moves, we see different amounts of the lit half — these are the phases.\n\n2. “Waxing” = the lit area is GROWING (right side). “Waning” = the lit area is SHRINKING (left side).\n\n3. MISCONCEPTION: The phases are NOT caused by Earth’s shadow — that only happens during a lunar eclipse (see next slide). The phases are caused by which part of the Moon’s sunlit half we can see from Earth.\n\n4. Walk through each phase: 1 New Moon → 2 Waxing Crescent → 3 First Quarter → 4 Waxing Gibbous → 5 Full Moon → 6 Waning Gibbous → 7 Third Quarter → 8 Waning Crescent.\n\nQuestions to ask: “What comes after the Full Moon?” (Waning Gibbous). “Why can’t we see the New Moon?” (dark side faces us). “What causes a First Quarter?” (Moon is 90° from the Sun in its orbit).",
+          "text_boxes": [
+            {
+              "x": 9361172,
+              "y": 1251534,
+              "cx": 2641084,
+              "cy": 798357,
+              "text": "The Moon orbits Earth every 27–29 days."
+            },
+            {
+              "x": 9361172,
+              "y": 2351217,
+              "cx": 2641084,
+              "cy": 1260000,
+              "text": "As it orbits, the amount of the lit side we can see changes — these are the eight phases."
+            },
+            {
+              "x": 9361172,
+              "y": 3996054,
+              "cx": 2641084,
+              "cy": 1016362,
+              "text": "The phases are NOT caused by Earth’s shadow — they are caused by the Moon’s position."
+            }
+          ]
         },
         {
           "type": "ido_diagram",
           "title": "What is a lunar eclipse?",
           "image_path": "sci_L5_eclipse_v2.png",
           "bullets": [
-            "A lunar eclipse happens when Earth passes directly between the Sun and the Moon, casting its shadow on the Moon.",
-            "Earth’s shadow has two parts: the umbra (full shadow) and the penumbra (partial shadow).",
-            "During a total lunar eclipse the Moon turns red because Earth’s atmosphere bends red light onto it — this is called a Blood Moon."
+            "A lunar eclipse happens when Earth moves between the Sun and the Moon.",
+            "Earth’s shadow falls on the Moon — it can turn red.",
+            "Lunar eclipses only happen at full Moon."
           ]
         },
         {
@@ -376,6 +399,14 @@
             "Draw and label the eight phases of the Moon in order.",
             "Explain in your own words what causes a lunar eclipse.",
             "Challenge: Explain why the Moon appears to change shape — and what some people might think it IS caused by."
+          ]
+        },
+        {
+          "type": "learning_review",
+          "starters": [
+            "I used to think... but now I know...",
+            "The most interesting thing I learned about the moon was...",
+            "As a scientist this lesson helped me to..."
           ]
         }
       ]
