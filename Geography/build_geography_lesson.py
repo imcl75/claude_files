@@ -40,7 +40,7 @@ from lib_ooxml import (
     unzip, rezip, clear_slides, build_layout_map,
     find_slide_by_anchor, clone,
     get_spTree, save,
-    add_img, animate,
+    add_img, animate, tbox,
     xr, xw, xp, ex,
     SW, SH, next_sn, next_mn,
     strip_orphaned_media,
@@ -48,6 +48,12 @@ from lib_ooxml import (
 )
 import geography_registry as REG
 from lxml import etree
+
+# ── Shared image layout system ───────────────────────────────────────────────
+try:
+    from image_layouts import get_layout as _get_img_layout
+except ImportError:
+    _get_img_layout = None
 
 # ── Sandbox path patch ────────────────────────────────────────────────────────
 import lib_ooxml as _lo_mod
@@ -368,54 +374,11 @@ def _fill_ph(sp_path, ph_idx, text, sz=None, bold=False, color=None):
     Append a placeholder-filling <p:sp> to the slide's spTree.
     The shape inherits all formatting from the layout's matching placeholder.
     Newlines in text become separate paragraphs.
-
-    Universal overflow prevention (two-layer):
-      Layer 1 — explicit font cap:
-        When no sz is given, cap based on the longest line's character count
-        so text is never written at a size that guarantees overflow.
-        Thresholds are conservative for Twinkl Cursive Looped which runs
-        ~20% wider than screen-render fonts.
-          ≤35 chars → inherit from layout/master (no cap)
-          36–55 chars → 1800 (18 pt)
-          >55 chars  → 1600 (16 pt)
-
-      Layer 2 — normAutofit:
-        Applied in the bodyPr so PowerPoint will shrink any remaining
-        overflow at render time regardless of font or layout size.
-
-    bodyPr strategy:
-      ph_idx == 0 (title): standard margins, wrap, normAutofit.
-      ph_idx 1–9  (std body): standard margins, wrap, normAutofit.
-      ph_idx ≥10  (custom layout PHs — LR speech bubbles, KQ callout, etc.):
-        zero internal margins to match the layout placeholder definition,
-        wrap, top-anchor, normAutofit.  These layouts define bodyPr with
-        lIns=tIns=rIns=bIns=0 so our slide-level override must match to
-        avoid adding unexpected padding that reduces the effective text area.
     """
-    # ── Layer 1: font sizing for idx >= 10 PHs ──────────────────────────────
-    # Custom-indexed PHs (LR speech bubbles, KQ callout, etc.) are small shapes
-    # whose master-inherited font size is typically 28–32pt — too large to fit
-    # multi-line questions without overflow.  We set an explicit base of 2000
-    # (20pt) so normAutofit has a sensible starting point, then cap further for
-    # genuinely long strings.  This avoids relying on normAutofit's minimum-
-    # font-size floor, which varies across PowerPoint versions.
-    #
-    # LR bubble dimensions: 3370263 × 1096962 EMU (≈3.69" × 1.20").
-    # At 20pt + Twinkl Cursive Looped (~20% wider): ~18 chars/line.
-    # 3 lines at 20pt = 0.96" → fits.  4 lines = 1.28" → overflows.
-    # Threshold: >65 chars likely needs 4+ lines at 20pt → drop to 16pt.
-    _eff_sz = sz
-    if not _eff_sz and ph_idx >= 10:
-        _max_ch = max(len(l) for l in str(text).split('\n')) if text else 0
-        if _max_ch > 65:
-            _eff_sz = '1600'   # 16pt — 4+ lines at 20pt would overflow
-        else:
-            _eff_sz = '2000'   # 20pt — sensible base; normAutofit backstop
-
     # Run properties
     rpr_parts = ['lang="en-GB" dirty="0"']
-    if _eff_sz:
-        rpr_parts.append(f'sz="{_eff_sz}"')
+    if sz:
+        rpr_parts.append(f'sz="{sz}"')
     if bold:
         rpr_parts.append('b="1"')
     rpr_attrs = ' '.join(rpr_parts)
@@ -440,25 +403,16 @@ def _fill_ph(sp_path, ph_idx, text, sz=None, bold=False, color=None):
     if not paras_xml:
         paras_xml = f'<a:p><a:endParaRPr lang="en-GB" dirty="0"/></a:p>'
 
-    # ── Layer 2: bodyPr with normAutofit ─────────────────────────────────────
     # ph element — title uses type="title"; body must include type="body" so
-    # PowerPoint matches the layout PH exactly.
+    # PowerPoint matches the layout PH exactly (triggers icon-group suppression
+    # and other layout-level behaviours that rely on PH identity matching).
     if ph_idx == 0:
         ph_xml  = '<p:ph type="title"/>'
-        body_pr = '<a:bodyPr wrap="square" anchor="t"><a:normAutofit/></a:bodyPr>'
-    elif ph_idx >= 10:
-        # Custom-indexed layout PHs (LR speech bubbles, KQ callout, etc.).
-        # Layout defines these with zero internal margins — mirror that so our
-        # override doesn't shrink the effective text area.
-        ph_xml  = f'<p:ph type="body" idx="{ph_idx}"/>'
-        body_pr = (
-            '<a:bodyPr spcFirstLastPara="1" wrap="square" '
-            'lIns="0" tIns="0" rIns="0" bIns="0" anchor="t" anchorCtr="0">'
-            '<a:normAutofit/></a:bodyPr>'
-        )
+        body_pr = '<a:bodyPr/>'
     else:
         ph_xml  = f'<p:ph type="body" idx="{ph_idx}"/>'
-        body_pr = '<a:bodyPr wrap="square" anchor="t"><a:normAutofit/></a:bodyPr>'
+        # normAutofit prevents text from overflowing the placeholder box
+        body_pr = '<a:bodyPr><a:normAutofit/></a:bodyPr>'
 
     sp_xml = (
         f'<p:sp xmlns:p="{P}" xmlns:a="{A}" xmlns:r="{R}">'
@@ -522,10 +476,7 @@ def build_key_question(work, base_pptx, lesson, enquiry, master_idx):
     if bg_img and bg_img.get('local_path') and os.path.exists(bg_img['local_path']):
         add_img(sp, rp, work, bg_img['local_path'], 0, 0, SW, SH, 10)
 
-    kq_text   = enquiry.get('key_question', '')
-    challenge = enquiry.get('challenge', '')
-    combined  = kq_text + ('\n\n' + challenge if challenge else '')
-    _fill_ph(sp, 10, combined)
+    _fill_ph(sp, 10, enquiry.get('key_question', ''))
     print('  [1] key_question')
     return sp
 
@@ -657,8 +608,8 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
 
     shape_id = 310
     for icon_file, definition in icon_data:
-        icon_path = REG.ensure_asset(icon_file)
-        if icon_path and os.path.exists(icon_path):
+        icon_path = f'{REG.ASSETS_ROOT}/{icon_file}'
+        if os.path.exists(icon_path):
             add_img(sp, rp, work, icon_path,
                     120000, icon_y, icon_size, icon_size, shape_id)
             shape_id += 1
@@ -704,8 +655,8 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
 
     for yr in range(1, 7):
         strip_path = REG.progression_strip_path(sc, yr)
-        if not strip_path or not os.path.exists(strip_path):
-            print(f'  NOTE: progression strip missing for Y{yr} ({sc})',
+        if not os.path.exists(strip_path):
+            print(f'  NOTE: progression strip missing: {strip_path}',
                   file=sys.stderr)
             strip_shape_ids.append(None)
             strip_id += 1
@@ -789,307 +740,178 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
     return sp
 
 
+def _prep_puzzle_pieces_layout(work, master_idx):
+    """
+    Modify the Puzzle Pieces layout in the work directory before cloning:
+      1. Set hidden="1" on all 15 piece groups.
+      2. Remove the <p:timing> element.
+
+    The layout's timing element makes all pieces appear via visibility
+    animations, meaning without this fix a cloned slide would show pieces
+    both statically (from the cloned spTree) AND from the layout's animation.
+    By hiding all groups here and removing timing, the cloned spTree starts
+    with all pieces hidden; build_puzzle_pieces then selectively un-hides
+    positions 1..N.
+    """
+    lf = _get_layout_file('Puzzle Pieces', master_idx)
+    layout_path = f'{work}/ppt/slideLayouts/{lf}'
+
+    tree = xr(layout_path)
+    root = tree.getroot()
+
+    # Set hidden="1" on all piece groups
+    for grpSp in root.iter(f'{{{P}}}grpSp'):
+        cNvPr = grpSp.find(f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr')
+        if cNvPr is None:
+            continue
+        if cNvPr.get('name', '') in REG.PUZZLE_PIECE_GROUPS_BY_MASTER.get(master_idx, REG.PUZZLE_PIECE_GROUPS):
+            cNvPr.set('hidden', '1')
+
+    # Remove timing (15 click-reveal entrance effects)
+    timing = root.find(f'{{{P}}}timing')
+    if timing is not None:
+        root.remove(timing)
+
+    xw(tree, layout_path)
+
+
 def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_idx):
     """
-    Slide 4: Puzzle Pieces (jigsaw).
+    Slide 4: Puzzle Pieces
+    Clones the Puzzle Pieces layout into the slide so groups can be
+    un-hidden and their TextBox/EMF updated directly.
 
-    For lesson N in the enquiry sequence:
-      - Slot  1       : always visible on slide load — no animation entry
-      - Slots 2..N    : each gets one click-reveal animation (p:set style.visibility → visible)
-      - Slots N+1..15 : not added to slide at all
-
-    Each slot is a p:grpSp built from scratch:
-      - p:pic  : skill-coloured PNG from ASSETS_ROOT/Jigsaw Pieces/
-      - p:sp   : TextBox with lesson_title (11pt Twinkl Cursive Looped)
-
-    Positions come from REG.JIGSAW_PIECE_POSITIONS (EMU coords extracted from
-    jigsaw-animated.pptx 2026-07-14). Slide references 'Revisit' layout which
-    gives the WFA master background without the KQ cloud callout — no double-
-    rendering possible because pieces are built into the slide's own spTree.
+    Piece positions 1..N are shown; positions N+1..15 remain hidden.
+    Each visible piece swaps its EMF rId to the lesson's skill_focus colour.
     """
-    lesson_num  = lesson['lesson_number']
-    positions   = REG.JIGSAW_PIECE_POSITIONS          # list of (x, y, cx, cy)
+    lesson_num = lesson['lesson_number']
 
-    # Jigsaw PNGs are resolved per-piece via REG.ensure_asset so they are
-    # fetched from the GitHub repo automatically when not found locally.
-    # jigsaw_dir is kept as a fallback for any legacy path references.
-    jigsaw_dir = os.path.join(REG.ASSETS_ROOT, 'Jigsaw Pieces')
+    # Pre-process the layout: hide all groups, remove timing animation.
+    # After this, clone_from_layout copies groups that all start hidden.
+    _prep_puzzle_pieces_layout(work, master_idx)
 
-    # Use 'Puzzle Pieces' layout — provides the "Connections" header, WFA
-    # background and globe icon for this slide type.  The layout contains NO
-    # actual puzzle-piece shapes (only decorative text + images), so building
-    # groups into the slide's own spTree causes no double-rendering.
-    sp, rp = fresh_geo(work, 'Puzzle Pieces', master_idx)
+    sp, rp, rId_map = clone_from_layout(work, 'Puzzle Pieces', master_idx)
 
-    # ── Load slide XML ────────────────────────────────────────────────────────
-    tree   = xr(sp)
-    root   = tree.getroot()
-    cSld   = root.find(f'{{{P}}}cSld')
-    spTree = cSld.find(f'{{{P}}}spTree')
+    # Build skill → slide rId lookup (from layout rIds → new slide rIds)
+    skill_to_slide_rid = {
+        skill: rId_map.get(layout_rid)
+        for skill, layout_rid in REG.SKILL_EMF_LAYOUT_RID.items()
+        if rId_map.get(layout_rid)
+    }
 
-    # ── Load rels to append PNG image relationships ───────────────────────────
-    rels_tree = xr(rp)
-    rels_root = rels_tree.getroot()
+    tree = xr(sp)
+    root = tree.getroot()
+    spTree = root.find(f'.//{{{P}}}spTree')
 
-    # Find the highest existing rId number so we can start above it
-    def _max_rid(rels_el):
-        hi = 1
-        for r in rels_el:
-            rid = r.get('Id', 'rId0')
-            try:
-                hi = max(hi, int(rid.replace('rId', '')))
-            except ValueError:
-                pass
-        return hi
+    current_piece_id = None  # shape ID of the current lesson's piece — animated in on click
+    piece_groups = REG.PUZZLE_PIECE_GROUPS_BY_MASTER.get(master_idx, REG.PUZZLE_PIECE_GROUPS)
 
-    next_rid     = _max_rid(rels_root) + 1
-    png_rid_map  = {}   # skill_focus → rId (deduplicate same PNG)
+    for pos_idx, group_name in enumerate(piece_groups):
+        position = pos_idx + 1  # 1-based
 
-    def _add_png_rel(skill):
-        """Copy PNG to media dir and add a relationship. Returns rId or None."""
-        nonlocal next_rid
-        if skill in png_rid_map:
-            return png_rid_map[skill]
-        fname = REG.SKILL_JIGSAW_PNG.get(skill)
-        if not fname:
-            fname = REG.SKILL_JIGSAW_PNG.get('questioning_predicting')
-        # Use ensure_asset so the PNG is fetched from GitHub if not local
-        src = REG.ensure_asset(f'Jigsaw Pieces/{fname}')
-        if not src or not os.path.exists(src):
-            print(f'  WARNING: jigsaw PNG not available: Jigsaw Pieces/{fname}', file=sys.stderr)
-            return None
-        media_dir  = f'{work}/ppt/media'
-        tgt_name   = f'jig_{skill}.png'
-        tgt_path   = f'{media_dir}/{tgt_name}'
-        if not os.path.exists(tgt_path):
-            import shutil as _sh
-            _sh.copy2(src, tgt_path)
-        rid = f'rId{next_rid}'
-        next_rid  += 1
-        rel_el = etree.SubElement(rels_root, 'Relationship')
-        rel_el.set('Id',     rid)
-        rel_el.set('Type',   'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image')
-        rel_el.set('Target', f'../media/{tgt_name}')
-        png_rid_map[skill] = rid
-        return rid
+        # Locate the group element by name
+        group_el = None
+        for child in spTree:
+            if child.tag.split('}')[-1] != 'grpSp':
+                continue
+            cNvPr = child.find(f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr')
+            if cNvPr is not None and cNvPr.get('name') == group_name:
+                group_el = child
+                break
 
-    # ── Build piece groups ────────────────────────────────────────────────────
-    # spids: group=200+i*3, pic=201+i*3, txt=202+i*3  (i=0-indexed slot)
-    BASE_SPID = 200
-    animated_spids = []   # group spids for pieces 2..N (click-revealed)
-
-    for i, lsn in enumerate(all_lessons[:lesson_num]):
-        if i >= len(positions):
-            break
-
-        off_x, off_y, cx, cy = positions[i]
-        skill  = lsn.get('skill_focus', 'questioning_predicting')
-        txt    = (lsn.get('puzzle_piece_text') or
-                  lsn.get('lesson_title') or
-                  f'Lesson {i + 1}')
-        rid    = _add_png_rel(skill)
-        if rid is None:
+        if group_el is None:
+            print(f'  WARNING: puzzle piece group "{group_name}" not found',
+                  file=sys.stderr)
             continue
 
-        grp_spid = BASE_SPID + i * 3
-        pic_spid = grp_spid + 1
-        sp_spid  = grp_spid + 2
-        if i > 0:                    # piece 1 (i=0) is always visible; 2..N animate
-            animated_spids.append(grp_spid)
+        cNvPr = group_el.find(f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr')
 
-        # TextBox sits in the safe body zone of the piece.
-        # Margins hand-tuned by Innes McLean 2026-07-15 from jig_v9_colour_L5.pptx.
-        # 30% side margins (≈ 40% wide), 31% from top, 38% tall.
-        # Child coords map 1-to-1 to slide coords (chOff = off_x, off_y).
-        tb_margin = int(cx * 0.30)
-        tb_x      = off_x + tb_margin
-        tb_y      = off_y + int(cy * 0.31)
-        tb_cx     = cx - 2 * tb_margin
-        tb_cy     = int(cy * 0.38)
+        if position > lesson_num:
+            # Already hidden by _prep_puzzle_pieces_layout — leave as-is.
+            pass
+        else:
+            lsn = all_lessons[pos_idx] if pos_idx < len(all_lessons) else None
 
-        grp_xml = (
-            f'<p:grpSp xmlns:p="{P}" xmlns:a="{A}" xmlns:r="{R}">'
-              f'<p:nvGrpSpPr>'
-                f'<p:cNvPr id="{grp_spid}" name="JigsawPiece_{i+1}"/>'
-                f'<p:cNvGrpSpPr/>'
-                f'<p:nvPr/>'
-              f'</p:nvGrpSpPr>'
-              f'<p:grpSpPr>'
-                f'<a:xfrm>'
-                  f'<a:off x="{off_x}" y="{off_y}"/>'
-                  f'<a:ext cx="{cx}" cy="{cy}"/>'
-                  f'<a:chOff x="{off_x}" y="{off_y}"/>'
-                  f'<a:chExt cx="{cx}" cy="{cy}"/>'
-                f'</a:xfrm>'
-              f'</p:grpSpPr>'
-              # Image — fills the whole group (child coords = slide coords when chOff=off)
-              f'<p:pic>'
-                f'<p:nvPicPr>'
-                  f'<p:cNvPr id="{pic_spid}" name="JigsawImg_{i+1}"/>'
-                  f'<p:cNvPicPr/>'
-                  f'<p:nvPr/>'
-                f'</p:nvPicPr>'
-                f'<p:blipFill>'
-                  f'<a:blip r:embed="{rid}"/>'
-                  f'<a:stretch><a:fillRect/></a:stretch>'
-                f'</p:blipFill>'
-                f'<p:spPr>'
-                  f'<a:xfrm>'
-                    f'<a:off x="{off_x}" y="{off_y}"/>'
-                    f'<a:ext cx="{cx}" cy="{cy}"/>'
-                  f'</a:xfrm>'
-                  f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
-                f'</p:spPr>'
-              f'</p:pic>'
-              # TextBox — lesson title centred in piece body
-              f'<p:sp>'
-                f'<p:nvSpPr>'
-                  f'<p:cNvPr id="{sp_spid}" name="JigsawTxt_{i+1}"/>'
-                  f'<p:cNvSpPr txBox="1"/>'
-                  f'<p:nvPr/>'
-                f'</p:nvSpPr>'
-                f'<p:spPr>'
-                  f'<a:xfrm>'
-                    f'<a:off x="{tb_x}" y="{tb_y}"/>'
-                    f'<a:ext cx="{tb_cx}" cy="{tb_cy}"/>'
-                  f'</a:xfrm>'
-                  f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
-                  f'<a:noFill/>'
-                f'</p:spPr>'
-                f'<p:txBody>'
-                  f'<a:bodyPr wrap="square" rtlCol="0" anchor="ctr">'
-                    f'<a:normAutofit/>'
-                  f'</a:bodyPr>'
-                  f'<a:lstStyle/>'
-                  f'<a:p>'
-                    f'<a:pPr algn="ctr"/>'
-                    f'<a:r>'
-                      f'<a:rPr lang="en-GB" sz="1000" b="1" dirty="0">'
-                        f'<a:latin typeface="Twinkl Cursive Looped"'
-                        f' panose="02000000000000000000"'
-                        f' pitchFamily="2" charset="77"/>'
-                        f'<a:solidFill><a:srgbClr val="1C1C1C"/></a:solidFill>'
-                      f'</a:rPr>'
-                      f'<a:t>{ex(txt)}</a:t>'
-                    f'</a:r>'
-                  f'</a:p>'
-                f'</p:txBody>'
-              f'</p:sp>'
-            f'</p:grpSp>'
-        )
-        spTree.append(etree.fromstring(grp_xml))
+            if cNvPr is not None:
+                cNvPr.attrib.pop('hidden', None)  # un-hide for all visible/current pieces
+            if position == lesson_num:
+                # Current lesson's piece: record id for click-reveal animation.
+                # The shape is un-hidden above; PowerPoint's animation engine
+                # hides it before the click fires, then reveals it on click.
+                current_piece_id = int(cNvPr.get('id', 0)) if cNvPr is not None else None
 
-    # ── Save slide XML ────────────────────────────────────────────────────────
+            # Update EMF colour and TextBox text for all visible/current pieces.
+            if lsn is not None:
+                skill     = lsn.get('skill_focus', 'questioning_predicting')
+                piece_txt = (lsn.get('puzzle_piece_text') or
+                             lsn.get('building_block_text') or
+                             str(lsn['lesson_number']))
+
+                target_rid = skill_to_slide_rid.get(skill)
+                if target_rid:
+                    for sub in group_el:
+                        if sub.tag.split('}')[-1] == 'pic':
+                            blip = sub.find(f'.//{{{A}}}blip')
+                            if blip is not None:
+                                blip.set(R_EMBED, target_rid)
+                            break
+
+                _set_group_textbox_text(group_el, piece_txt)
+
     xw(tree, sp)
 
-    # ── Save updated rels ─────────────────────────────────────────────────────
-    xw(rels_tree, rp)
-
-    # ── Build timing: one click-reveal par block per animated piece ───────────
-    # Piece 1 (i=0) has no timing entry → always visible on slide load.
-    # Pieces 2..N each get one <p:par> in mainSeq that fires on click.
-    # Lesson 1 has only piece 1 → no animations → skip timing entirely
-    # (empty childTnLst / bldLst causes PowerPoint to repair-and-strip the slide).
-    # cTn IDs: each block uses 4 IDs (outer, inner, clickEffect, set).
-    # Structure confirmed from Innes's jig_v6_L15.pptx edit (2026-07-15).
-    # prevCondLst/nextCondLst use evt="onPrev"/"onNext"; tgtEl is direct child
-    # of cond — no <p:tn> wrapper.
-    if not animated_spids:
-        # No animations needed — remove any existing timing and exit
-        existing = root.find(f'{{{P}}}timing')
+    # ── Click-reveal animation for current lesson's piece ─────────────────────
+    if current_piece_id:
+        sid = current_piece_id
+        nid = [1]
+        def _nid(): v = nid[0]; nid[0] += 1; return str(v)
+        root_id = _nid(); seq_id = _nid()
+        b, inn, clk, bhv = _nid(), _nid(), _nid(), _nid()
+        block = (
+            f'<p:par xmlns:p="{P}"><p:cTn id="{b}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
+            f'<p:childTnLst><p:par><p:cTn id="{inn}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:par>'
+            f'<p:cTn id="{clk}" presetID="1" presetClass="entr" '
+            f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:set><p:cBhvr>'
+            f'<p:cTn id="{bhv}" dur="1" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
+            f'<p:tgtEl><p:spTgt spid="{sid}"/></p:tgtEl>'
+            f'<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst>'
+            f'</p:cBhvr>'
+            f'<p:to><p:strVal val="visible"/></p:to>'
+            f'</p:set></p:childTnLst></p:cTn>'
+            f'</p:par></p:childTnLst></p:cTn></p:par>'
+            f'</p:childTnLst></p:cTn></p:par>'
+        )
+        timing_xml = (
+            f'<p:timing xmlns:p="{P}" xmlns:a="{A}">'
+            f'<p:tnLst><p:par><p:cTn id="{root_id}" dur="indefinite" '
+            f'restart="never" nodeType="tmRoot"><p:childTnLst>'
+            f'<p:seq concurrent="1" nextAc="seek">'
+            f'<p:cTn id="{seq_id}" dur="indefinite" nodeType="mainSeq">'
+            f'<p:childTnLst>{block}</p:childTnLst></p:cTn>'
+            f'<p:prevCondLst><p:cond evt="onPrev" delay="0">'
+            f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>'
+            f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
+            f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
+            f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
+            f'<p:bldLst>'
+            f'<p:bldP spid="{sid}" grpId="0" build="p"/>'
+            f'</p:bldLst></p:timing>'
+        )
+        anim_tree = xr(sp)
+        anim_root = anim_tree.getroot()
+        existing = anim_root.find(f'{{{P}}}timing')
         if existing is not None:
-            root.remove(existing)
-        xw(tree, sp)
-        print(f'  [4] puzzle_pieces — {lesson_num}/{len(positions)} pieces  (no animations)')
-        return sp
+            anim_root.remove(existing)
+        anim_root.append(etree.fromstring(timing_xml))
+        xw(anim_tree, sp)
 
-    inner_pars = ''
-    ctn_id = 3
-    for anim_spid in animated_spids:
-        inner_pars += (
-            f'<p:par>'
-              f'<p:cTn id="{ctn_id}" fill="hold">'
-                f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
-                f'<p:childTnLst>'
-                  f'<p:par>'
-                    f'<p:cTn id="{ctn_id+1}" fill="hold">'
-                      f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
-                      f'<p:childTnLst>'
-                        f'<p:par>'
-                          f'<p:cTn id="{ctn_id+2}" presetID="1" presetClass="entr"'
-                          f' presetSubtype="0" fill="hold" nodeType="clickEffect">'
-                            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
-                            f'<p:childTnLst>'
-                              f'<p:set>'
-                                f'<p:cBhvr>'
-                                  f'<p:cTn id="{ctn_id+3}" dur="1" fill="hold">'
-                                    f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
-                                  f'</p:cTn>'
-                                  f'<p:tgtEl><p:spTgt spid="{anim_spid}"/></p:tgtEl>'
-                                  f'<p:attrNameLst>'
-                                    f'<p:attrName>style.visibility</p:attrName>'
-                                  f'</p:attrNameLst>'
-                                f'</p:cBhvr>'
-                                f'<p:to><p:strVal val="visible"/></p:to>'
-                              f'</p:set>'
-                            f'</p:childTnLst>'
-                          f'</p:cTn>'
-                        f'</p:par>'
-                      f'</p:childTnLst>'
-                    f'</p:cTn>'
-                  f'</p:par>'
-                f'</p:childTnLst>'
-              f'</p:cTn>'
-            f'</p:par>'
-        )
-        ctn_id += 4
-
-    timing_xml = (
-        f'<p:timing xmlns:p="{P}" xmlns:a="{A}">'
-          f'<p:tnLst>'
-            f'<p:par>'
-              f'<p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot">'
-                f'<p:childTnLst>'
-                  f'<p:seq concurrent="1" nextAc="seek">'
-                    f'<p:cTn id="2" dur="indefinite" nodeType="mainSeq">'
-                      f'<p:childTnLst>'
-                        f'{inner_pars}'
-                      f'</p:childTnLst>'
-                    f'</p:cTn>'
-                    f'<p:prevCondLst>'
-                      f'<p:cond evt="onPrev" delay="0">'
-                        f'<p:tgtEl><p:sldTgt/></p:tgtEl>'
-                      f'</p:cond>'
-                    f'</p:prevCondLst>'
-                    f'<p:nextCondLst>'
-                      f'<p:cond evt="onNext" delay="0">'
-                        f'<p:tgtEl><p:sldTgt/></p:tgtEl>'
-                      f'</p:cond>'
-                    f'</p:nextCondLst>'
-                  f'</p:seq>'
-                f'</p:childTnLst>'
-              f'</p:cTn>'
-            f'</p:par>'
-          f'</p:tnLst>'
-          f'<p:bldLst>'
-            + ''.join(
-                f'<p:bldP spid="{s}" grpId="0" build="p"/>'
-                for s in animated_spids
-              ) +
-          f'</p:bldLst>'
-        f'</p:timing>'
-    )
-
-    timing_el = etree.fromstring(timing_xml)
-    existing  = root.find(f'{{{P}}}timing')
-    if existing is not None:
-        root.remove(existing)
-    root.append(timing_el)
-    xw(tree, sp)
-
-    anim_count = len(animated_spids)
-    print(f'  [4] puzzle_pieces — {lesson_num}/{len(positions)} pieces'
-          f'  ({anim_count} click-reveal animation{"s" if anim_count != 1 else ""})')
+    print(f'  [4] puzzle_pieces — {lesson_num}/{len(piece_groups)} pieces')
     return sp
 
 
@@ -1100,7 +922,7 @@ def build_lo(work, base_pptx, lesson, enquiry, master_idx):
     static labels 'I am learning to...', 'This is so...', 'I will be successful by...'.
     Content written as explicit text boxes below each label.
     Positions from user-confirmed PPTX edit (2026-07-13).
-    Font: Twinkl Cursive Looped 18pt + normAutofit.
+    Font: Twinkl Cursive Looped 14pt + normAutofit.
     """
     lo_layout = REG.lo_layout_name(master_idx)
     sp, rp = fresh_geo(work, lo_layout, master_idx)
@@ -1125,10 +947,8 @@ def build_lo(work, base_pptx, lesson, enquiry, master_idx):
 
     # ── Explicit content text boxes below each panel label ────────────────────
     # y=4 719 286 sits below the static labels in each rounded-rectangle panel.
-    # sz=1800 (18 pt) + normAutofit handles Twinkl Cursive Looped which runs
+    # sz=1400 (14 pt) + normAutofit handles Twinkl Cursive Looped which runs
     # ~20% wider than screen render fonts, preventing bottom overflow.
-    # Boxes are 2559050 × 1698625 EMU (≈2.8" × 1.86"); at 18pt, typical
-    # LO text (30–70 chars) fits in 3–4 lines (max height ≈1.15") with room.
     LO_BOXES = [
         (698500,   4719286, 2559050, 1698625, walt),  # panel 1 - WALT
         (4877594,  4719287, 2559050, 1698625, tib),   # panel 2 - TIB
@@ -1152,7 +972,7 @@ def build_lo(work, base_pptx, lesson, enquiry, master_idx):
             f'<a:bodyPr wrap="square" anchor="t"><a:normAutofit/></a:bodyPr>'
             f'<a:lstStyle/>'
             f'<a:p><a:r>'
-            f'<a:rPr lang="en-GB" sz="1800" dirty="0">'
+            f'<a:rPr lang="en-GB" sz="1400" dirty="0">'
             f'<a:latin typeface="Twinkl Cursive Looped"/>'
             f'</a:rPr>'
             f'<a:t>{ex(txt)}</a:t>'
@@ -1163,62 +983,7 @@ def build_lo(work, base_pptx, lesson, enquiry, master_idx):
         st.append(etree.fromstring(sp_xml))
     save(t, sp)
 
-    # ── Animate LO boxes 501, 502, 503 on clicks 1, 2, 3 ────────────────────
-    # The layout's timing (if any) only targets layout-level shapes.
-    # The three content text boxes (IDs 501–503) are slide-level shapes and
-    # need explicit slide timing using the same visibility-toggle pattern as
-    # recap_quiz / key_vocabulary.
-    lo_box_ids = [501, 502, 503]
-    nid_counter = [1]
-    def _nid(): v = nid_counter[0]; nid_counter[0] += 1; return str(v)
-
-    root_id = _nid(); seq_id = _nid()
-    lo_blocks = []
-    for lo_bid in lo_box_ids:
-        b, inn, clk, bhv = _nid(), _nid(), _nid(), _nid()
-        lo_blocks.append(
-            f'<p:par xmlns:p="{P}"><p:cTn id="{b}" fill="hold">'
-            f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
-            f'<p:childTnLst><p:par><p:cTn id="{inn}" fill="hold">'
-            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
-            f'<p:childTnLst><p:par><p:cTn id="{clk}" presetID="1" presetClass="entr" '
-            f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
-            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
-            f'<p:childTnLst><p:set><p:cBhvr>'
-            f'<p:cTn id="{bhv}" dur="1" fill="hold">'
-            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
-            f'<p:tgtEl><p:spTgt spid="{lo_bid}"/></p:tgtEl>'
-            f'<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst>'
-            f'</p:cBhvr><p:to><p:strVal val="visible"/></p:to></p:set>'
-            f'</p:childTnLst></p:cTn></p:par>'
-            f'</p:childTnLst></p:cTn></p:par>'
-            f'</p:childTnLst></p:cTn></p:par>'
-        )
-
-    lo_timing_xml = (
-        f'<p:timing xmlns:p="{P}" xmlns:a="{A}">'
-        f'<p:tnLst><p:par><p:cTn id="{root_id}" dur="indefinite" restart="never" '
-        f'nodeType="tmRoot"><p:childTnLst>'
-        f'<p:seq concurrent="1" nextAc="seek">'
-        f'<p:cTn id="{seq_id}" dur="indefinite" nodeType="mainSeq">'
-        f'<p:childTnLst>{"".join(lo_blocks)}</p:childTnLst></p:cTn>'
-        f'<p:prevCondLst><p:cond evt="onPrev" delay="0">'
-        f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>'
-        f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
-        f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
-        f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
-        f'</p:timing>'
-    )
-
-    lo_anim_tree = xr(sp)
-    lo_root = lo_anim_tree.getroot()
-    existing_timing = lo_root.find(f'{{{P}}}timing')
-    if existing_timing is not None:
-        lo_root.remove(existing_timing)
-    lo_root.append(etree.fromstring(lo_timing_xml))
-    xw(lo_anim_tree, sp)
-
-    print('  [5] lo (animated)')
+    print('  [5] lo')
     return sp
 
 def build_kwl(work, base_pptx, lesson, enquiry, master_idx):
@@ -1341,15 +1106,6 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
     # Each Q paragraph and each A paragraph fires on a separate click.
     content_id = 200   # fixed shape ID for the quiz content box
 
-    # Explicit font sizes based on item count — no normAutofit.
-    item_count = len(qna[:5])
-    if item_count <= 4:
-        qn_sz = '2000'   # 20 pt
-        an_sz = '1600'   # 16 pt
-    else:
-        qn_sz = '1600'   # 16 pt  (5 items)
-        an_sz = '1400'   # 14 pt
-
     def _q_para(text, num):
         p = etree.Element(f'{{{A}}}p')
         pPr = etree.SubElement(p, f'{{{A}}}pPr')
@@ -1362,7 +1118,7 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
             buNum.set('startAt', str(num))
         r = etree.SubElement(p, f'{{{A}}}r')
         rPr = etree.SubElement(r, f'{{{A}}}rPr')
-        rPr.set('lang', 'en-GB'); rPr.set('sz', qn_sz); rPr.set('dirty', '0')
+        rPr.set('lang', 'en-GB'); rPr.set('sz', '2000'); rPr.set('dirty', '0')
         t_ = etree.SubElement(r, f'{{{A}}}t'); t_.text = text
         return p
 
@@ -1373,7 +1129,7 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
         etree.SubElement(pPr, f'{{{A}}}buNone')
         r = etree.SubElement(p, f'{{{A}}}r')
         rPr = etree.SubElement(r, f'{{{A}}}rPr')
-        rPr.set('lang', 'en-GB'); rPr.set('sz', an_sz)
+        rPr.set('lang', 'en-GB'); rPr.set('sz', '1800')
         rPr.set('b', '1'); rPr.set('dirty', '0')
         fill = etree.SubElement(rPr, f'{{{A}}}solidFill')
         clr  = etree.SubElement(fill, f'{{{A}}}srgbClr')
@@ -1388,13 +1144,8 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
         f'<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>'
         f'<p:nvPr><p:ph idx="1"/></p:nvPr>'
         f'</p:nvSpPr>'
-        f'<p:spPr>'
-        f'<a:xfrm><a:off x="246888" y="1826167"/>'
-        f'<a:ext cx="11684402" cy="4900000"/></a:xfrm>'
-        f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
-        f'<a:noFill/>'
-        f'</p:spPr>'
-        f'<p:txBody><a:bodyPr wrap="square" anchor="t"/><a:lstStyle/></p:txBody>'
+        f'<p:spPr/>'
+        f'<p:txBody><a:bodyPr/><a:lstStyle/></p:txBody>'
         f'</p:sp>'
     )
     txBody = sp_el.find(f'.//{{{P}}}txBody')
@@ -1409,10 +1160,7 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
         animated_para_idxs.append(para_global); para_global += 1
         if i < len(qna) - 1:
             spacer = etree.Element(f'{{{A}}}p')
-            endPr = etree.SubElement(spacer, f'{{{A}}}endParaRPr')
-            endPr.set('lang', 'en-GB')
-            endPr.set('sz', '600')   # 6pt — stops spacer inheriting 24pt master default
-            endPr.set('dirty', '0')
+            etree.SubElement(spacer, f'{{{A}}}endParaRPr').set('lang', 'en-GB')
             txBody.append(spacer)
             para_global += 1
 
@@ -1498,22 +1246,11 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
 
     content_id = 201  # fixed shape ID for the vocabulary content box
 
-    # Explicit font sizes based on item count — more reliable than normAutofit.
-    # Twinkl Cursive Looped runs ~20% wider than screen fonts; at 5 items the
-    # natural height exceeds the box even with normAutofit, so we size down.
-    item_count = len(vocab)
-    if item_count <= 4:
-        word_sz = '1800'   # 18 pt
-        def_sz  = '1400'   # 14 pt
-    else:
-        word_sz = '1400'   # 14 pt  (5 items)
-        def_sz  = '1200'   # 12 pt
-
     def _word_para(word):
         p = etree.Element(f'{{{A}}}p')
         r = etree.SubElement(p, f'{{{A}}}r')
         rPr = etree.SubElement(r, f'{{{A}}}rPr')
-        rPr.set('lang', 'en-GB'); rPr.set('sz', word_sz); rPr.set('b', '1')
+        rPr.set('lang', 'en-GB'); rPr.set('sz', '2200'); rPr.set('b', '1')
         rPr.set('dirty', '0')
         t_ = etree.SubElement(r, f'{{{A}}}t'); t_.text = word
         return p
@@ -1524,7 +1261,7 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
         pPr.set('marL', '457200')
         r = etree.SubElement(p, f'{{{A}}}r')
         rPr = etree.SubElement(r, f'{{{A}}}rPr')
-        rPr.set('lang', 'en-GB'); rPr.set('sz', def_sz); rPr.set('dirty', '0')
+        rPr.set('lang', 'en-GB'); rPr.set('sz', '1800'); rPr.set('dirty', '0')
         fill = etree.SubElement(rPr, f'{{{A}}}solidFill')
         clr  = etree.SubElement(fill, f'{{{A}}}srgbClr')
         clr.set('val', '1A5C2A')
@@ -1538,13 +1275,8 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
         f'<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>'
         f'<p:nvPr><p:ph idx="1"/></p:nvPr>'
         f'</p:nvSpPr>'
-        f'<p:spPr>'
-        f'<a:xfrm><a:off x="246888" y="1826167"/>'
-        f'<a:ext cx="11684402" cy="4900000"/></a:xfrm>'
-        f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
-        f'<a:noFill/>'
-        f'</p:spPr>'
-        f'<p:txBody><a:bodyPr wrap="square" anchor="t"/><a:lstStyle/></p:txBody>'
+        f'<p:spPr/>'
+        f'<p:txBody><a:bodyPr/><a:lstStyle/></p:txBody>'
         f'</p:sp>'
     )
     txBody = sp_el.find(f'.//{{{P}}}txBody')
@@ -1559,10 +1291,7 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
         animated_para_idxs.append(para_global); para_global += 1
         if i < len(vocab) - 1:
             spacer = etree.Element(f'{{{A}}}p')
-            endPr = etree.SubElement(spacer, f'{{{A}}}endParaRPr')
-            endPr.set('lang', 'en-GB')
-            endPr.set('sz', '600')   # 6pt — stops spacer inheriting 24pt master default
-            endPr.set('dirty', '0')
+            etree.SubElement(spacer, f'{{{A}}}endParaRPr').set('lang', 'en-GB')
             txBody.append(spacer)
             para_global += 1
 
@@ -1674,91 +1403,171 @@ def build_learning_review(work, slide_spec, lesson, enquiry, master_idx, slide_n
 # ══════════════════════════════════════════════════════════════════════════════
 
 
-
-def build_concept_cartoon(work, slide_spec, lesson_data, mtp, master_idx, slide_num):
+def _build_image_slide_geo(work, slide_spec, lesson, enquiry, master_idx, slide_num):
     """
-    Variable slide: Concept Cartoon.
+    Generic image slide for geography builder.
+    Uses the shared image_layouts coordinate system.
+    Badge and theme come from the blank slide layout — nothing added programmatically.
 
-    Clones the concept cartoon slide from Being_a_Scientist_slide_deck.pptx.
-    Requires:
-      slide_spec['title']              — optional title override
-      slide_spec['learners']           — list of 3 dicts with 'statement' key
-      slide_spec['image_path']         — path to the central image PNG (required)
-      mtp['concept_cartoon_pptx']      — path to Being_a_Scientist_slide_deck.pptx
-                                         OR standard fallback paths are tried
+    Blank layout naming (as added by Innes in geographers_template.pptx):
+      masters 0-2 (Yellow / Peach / Blue):  '1_I Do-blank', '1_We Do-blank', etc.
+      masters 3-4 (Green / Purple):          '2_I Do-blank', '2_We Do-blank', etc.
+
+    slide_spec keys:
+      badge       - 'i_do' | 'we_do' | 'you_do_trio' | 'you_do'  (selects blank layout)
+      layout_key  - key into image_layouts.LAYOUTS (required)
+      title       - slide title text
+      images      - list of absolute image file paths
+      text        - body / task text
+      caption     - caption below image (layout C only)
+      subtitle    - subtitle in banner (layout A only)
+      speech_a/b/c - character speech-bubble text (concept_cartoon only)
     """
-    import os as _os
+    if _get_img_layout is None:
+        raise RuntimeError("image_layouts.py not found on sys.path — cannot build image_slide")
 
-    # Locate the template PPTX
-    cc_pptx = mtp.get('concept_cartoon_pptx')
-    if cc_pptx and not _os.path.exists(cc_pptx):
-        cc_pptx = None
-    if not cc_pptx:
-        _this = _os.path.dirname(_os.path.abspath(__file__))
-        candidates = [
-            _os.path.join(_this, '..', 'EnquiryBuilder', 'Being_a_Scientist_slide_deck.pptx'),
-            _os.path.join(_this, 'Being_a_Scientist_slide_deck.pptx'),
-            '/tmp/t6w7/Being_a_Scientist_slide_deck.pptx',
-        ]
-        cc_pptx = next((p for p in candidates if _os.path.exists(p)), None)
-    if not cc_pptx:
-        raise RuntimeError(
-            "concept_cartoon: Being_a_Scientist_slide_deck.pptx not found. "
-            "Set mtp['concept_cartoon_pptx'] to its path."
+    key    = slide_spec['layout_key']
+    layout = _get_img_layout(key)
+    badge  = slide_spec.get('badge', 'i_do')
+    images = slide_spec.get('images', [])
+
+    _blank_prefix = '1_' if master_idx <= 2 else '2_'
+    _blank_bases = {
+        'i_do':        'I Do-blank',
+        'we_do':       'We Do-blank',
+        'you_do_trio': 'You Do Trio-blank',
+        'you_do':      'You Do-blank',
+    }
+    blank_name = _blank_prefix + _blank_bases.get(badge, 'I Do-blank')
+    sp, rp = fresh_geo(work, blank_name, master_idx)
+
+    # Inject title via layout PH except for A_full_bleed (title goes in banner)
+    if key != 'A_full_bleed':
+        _fill_ph(sp, 0, slide_spec.get('title', ''))
+
+    sid = [10]
+
+    def tb(text, pos, sz=1800, bold=False, align='l', name=None):
+        b_attr = ' b="1"' if bold else ''
+        nm     = name or f'TB{sid[0]}'
+        sp_el  = etree.fromstring(
+            f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+            f'<p:nvSpPr><p:cNvPr id="{sid[0]}" name="{ex(nm)}"/>'
+            f'<p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr>'
+            f'<p:spPr><a:xfrm><a:off x="{pos["x"]}" y="{pos["y"]}"/>'
+            f'<a:ext cx="{pos["cx"]}" cy="{pos["cy"]}"/></a:xfrm>'
+            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+            f'<a:noFill/></p:spPr>'
+            f'<p:txBody><a:bodyPr wrap="square" anchor="t"/><a:lstStyle/>'
+            f'<a:p><a:pPr algn="{align}"/>'
+            f'<a:r><a:rPr lang="en-GB" sz="{sz}"{b_attr} dirty="0">'
+            f'<a:solidFill><a:srgbClr val="1A3A5C"/></a:solidFill></a:rPr>'
+            f'<a:t>{ex(text)}</a:t></a:r></a:p></p:txBody></p:sp>'
         )
+        t2, st2 = get_spTree(sp)
+        st2.append(sp_el)
+        save(t2, sp)
+        sid[0] += 1
 
-    src_dir(cc_pptx)
-    sn = find_slide_by_anchor(cc_pptx, REG.CONCEPT_CARTOON_ANCHOR, REG.CONCEPT_CARTOON_HINT)
-    sp, rp = clone(work, cc_pptx, sn, copy_hdphoto=True)
+    def img(path, pos):
+        add_img(sp, rp, work, path, pos['x'], pos['y'], pos['cx'], pos['cy'], sid[0])
+        sid[0] += 1
 
-    # Title
-    tree = xr(sp)
-    title_s = find_sp(tree, REG.CONCEPT_CARTOON_TITLE_SHAPE_NAME)
-    if title_s is not None and slide_spec.get('title'):
-        set_text(title_s, slide_spec['title'])
+    if key == 'A_full_bleed':
+        if images:
+            img(images[0], layout['image'])
+        b = layout['banner']
+        t2, st2 = get_spTree(sp)
+        st2.append(xp(
+            f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+            f'<p:nvSpPr><p:cNvPr id="{sid[0]}" name="Banner"/>'
+            f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+            f'<p:spPr><a:xfrm><a:off x="{b["x"]}" y="{b["y"]}"/>'
+            f'<a:ext cx="{b["cx"]}" cy="{b["cy"]}"/></a:xfrm>'
+            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+            f'<a:solidFill><a:srgbClr val="DEECF8">'
+            f'<a:alpha val="85000"/></a:srgbClr></a:solidFill>'
+            f'<a:ln><a:noFill/></a:ln></p:spPr>'
+            f'<p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+        ))
+        save(t2, sp); sid[0] += 1
+        tb(slide_spec.get('title', ''), layout['title_box'], sz=3200, bold=True, name='SlideTitle')
+        if slide_spec.get('subtitle'):
+            tb(slide_spec['subtitle'], layout['subtitle'], sz=2000)
 
-    # Learner speech bubbles
-    learners = slide_spec.get('learners', [])
-    if len(learners) != 3:
-        raise ValueError("concept_cartoon requires exactly 3 learners (A/B/C)")
-    for bubble_name, learner in zip(REG.CONCEPT_CARTOON_BUBBLE_NAMES, learners):
-        s = find_sp(tree, bubble_name)
-        if s is None:
-            raise RuntimeError(f"concept_cartoon: bubble '{bubble_name}' not found — template drift")
-        set_text(s, learner['statement'])
-        force_shrink_to_fit(s)
-    xw(tree, sp)
+    elif key == 'B1_hero_image_left':
+        if images:
+            img(images[0], layout['image'])
+        if slide_spec.get('text'):
+            tb(slide_spec['text'], layout['text_box'])
 
-    for bubble_name in REG.CONCEPT_CARTOON_BUBBLE_NAMES:
-        clamp_callout_tail(sp, bubble_name)
+    elif key == 'B2_hero_2images_left':
+        for img_key, img_path in zip(('image_top', 'image_bottom'), images[:2]):
+            img(img_path, layout[img_key])
+        if slide_spec.get('text'):
+            tb(slide_spec['text'], layout['text_box'])
 
-    # Central image
-    img_path = slide_spec.get('image_path', '')
-    if not img_path or not _os.path.exists(img_path):
-        raise RuntimeError(
-            f"concept_cartoon: image_path '{img_path}' is missing — "
-            "refusing to deliver a slide with the default cat/light template image"
-        )
-    tree = xr(sp)
-    pic_id = find_pic_id_by_name(tree, REG.CONCEPT_CARTOON_CENTRAL_IMAGE_SHAPE_NAME)
-    if pic_id is None:
-        raise RuntimeError("concept_cartoon: central image shape not found")
-    replace_image(sp, rp, work, pic_id, img_path)
+    elif key == 'B3_hero_2images_right':
+        if slide_spec.get('text'):
+            tb(slide_spec['text'], layout['text_box'])
+        for img_key, img_path in zip(('image_top', 'image_bottom'), images[:2]):
+            img(img_path, layout[img_key])
 
-    # Animation
-    tree = xr(sp)
-    id_steps = []
-    for step_names in REG.CONCEPT_CARTOON_ANIMATION_STEPS:
-        ids = []
-        for name in step_names:
-            sid = get_shape_id_by_name(tree, name)
-            if sid is None:
-                raise RuntimeError(f"concept_cartoon: animated shape '{name}' not found")
-            ids.append(sid)
-        id_steps.append(ids)
-    animate(sp, id_steps)
+    elif key == 'C_supporting_illustration':
+        if slide_spec.get('text'):
+            tb(slide_spec['text'], layout['text_box'])
+        if images:
+            img(images[0], layout['image'])
+        if slide_spec.get('caption'):
+            tb(slide_spec['caption'], layout['caption'], sz=1400, align='c')
 
+    elif key == 'D_diagram_focus':
+        if images:
+            img(images[0], layout['image'])
+        if slide_spec.get('text'):
+            tb(slide_spec['text'], layout['text_box'])
+
+    elif key in ('gallery_5row', 'gallery_6x2'):
+        if slide_spec.get('text'):
+            tb(slide_spec['text'], layout['task_box'])
+        for idx, pos in enumerate(layout['images']):
+            if idx < len(images):
+                img(images[idx], pos)
+
+    elif key == 'gallery_1wide':
+        if slide_spec.get('text'):
+            tb(slide_spec['text'], layout['task_box'])
+        if images:
+            img(images[0], layout['image'])
+
+    elif key == 'concept_cartoon':
+        if images:
+            img(images[0], layout['central_image'])
+        for char in ('a', 'b', 'c'):
+            bl = layout[f'bubble_{char}']
+            t2, st2 = get_spTree(sp)
+            st2.append(xp(
+                f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+                f'<p:nvSpPr><p:cNvPr id="{sid[0]}" name="Bubble{char.upper()}"/>'
+                f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+                f'<p:spPr><a:xfrm><a:off x="{bl["x"]}" y="{bl["y"]}"/>'
+                f'<a:ext cx="{bl["cx"]}" cy="{bl["cy"]}"/></a:xfrm>'
+                f'<a:prstGeom prst="roundRect"><a:avLst>'
+                f'<a:gd name="adj" fmla="val 16667"/></a:avLst></a:prstGeom>'
+                f'<a:solidFill><a:srgbClr val="FFC000"/></a:solidFill>'
+                f'<a:ln><a:noFill/></a:ln></p:spPr>'
+                f'<p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+            ))
+            save(t2, sp); sid[0] += 1
+            speech = slide_spec.get(f'speech_{char}', '')
+            tb(speech, layout[f'text_{char}'], sz=1600)
+
+    else:
+        raise ValueError(f"_build_image_slide_geo: unknown layout_key {key!r}")
+
+    print(f'  [{slide_num}] image_slide ({key}): {slide_spec.get("title", "")}')
     return sp
+
 
 VARIABLE_DISPATCH = {
     'i_do':            lambda work, spec, lsn, enq, mi, n:
@@ -1769,19 +1578,15 @@ VARIABLE_DISPATCH = {
                            _build_content_slide(work, 'you_do_trio',spec, lsn, mi, n),
     'you_do':          lambda work, spec, lsn, enq, mi, n:
                            _build_content_slide(work, 'you_do',     spec, lsn, mi, n),
-    'learning_review':   lambda work, spec, lsn, enq, mi, n:
+    'learning_review': lambda work, spec, lsn, enq, mi, n:
                            build_learning_review(work, spec, lsn, enq, mi, n),
-    'concept_cartoon':  lambda work, spec, lsn, enq, mi, n:
-                           build_concept_cartoon(work, spec, lsn, enq, mi, n),
+    'image_slide':     lambda work, spec, lsn, enq, mi, n:
+                           _build_image_slide_geo(work, spec, lsn, enq, mi, n),
 }
 
 
 def build_one_lesson(mtp, lesson_num, base_pptx, out_pptx):
     """Build one lesson PPTX from the MTP dict."""
-    # Install Twinkl Cursive Looped as a system font so any render step
-    # (LibreOffice, thumbnail export, etc.) uses the real font, not a fallback.
-    REG.install_render_fonts()
-
     lesson_data = next(
         (l for l in mtp['lessons'] if l['lesson_number'] == lesson_num), None
     )
