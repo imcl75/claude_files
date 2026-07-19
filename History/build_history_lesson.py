@@ -6,17 +6,17 @@ Produces one PPTX per lesson from an Ancient Egypt (or any history) MTP JSON.
 
 Usage:
     # Build all lessons:
-    python3 build_history_lesson.py egypt_mtp.json --base-pptx /path/to/science-example.pptx --out-dir ./Egypt_Lessons
+    python3 build_history_lesson.py egypt_mtp.json --base-pptx /path/to/history-example.pptx --out-dir ./Egypt_Lessons
 
     # Build one lesson:
-    python3 build_history_lesson.py egypt_mtp.json --lesson 1 --base-pptx /path/to/science-example.pptx --out-pptx ./L1.pptx
+    python3 build_history_lesson.py egypt_mtp.json --lesson 1 --base-pptx /path/to/history-example.pptx --out-pptx ./L1.pptx
 
 Requires:
   - lib_ooxml.py      (in same directory or on sys.path)
   - history_registry.py (in same directory or on sys.path)
   - Pillow            (pip install pillow --break-system-packages)
   - lxml              (pip install lxml --break-system-packages)
-  - A base PPTX that contains the named slide layouts (science-example.pptx works)
+  - A base PPTX that contains the named slide layouts (history-example.pptx — use EnquiryBuilder/templates/history-example.pptx)
   - Image assets at the paths defined in history_registry.ASSETS_ROOT
 
 Design decisions (locked in transfer file, 2026-07-12):
@@ -1232,7 +1232,7 @@ def main():
     parser = argparse.ArgumentParser(description='History lesson PPTX builder')
     parser.add_argument('mtp_json',   help='Path to the enquiry MTP JSON file')
     parser.add_argument('--base-pptx', required=True,
-                        help='Base PPTX containing the slide layouts (science-example.pptx works)')
+                        help='Base PPTX containing the slide layouts (history-example.pptx — use EnquiryBuilder/templates/history-example.pptx)')
     parser.add_argument('--out-dir',  default='./History_Lessons',
                         help='Output directory for all lesson PPTXs (default: ./History_Lessons)')
     parser.add_argument('--lesson',   type=int, default=None,
