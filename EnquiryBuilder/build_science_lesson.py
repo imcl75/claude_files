@@ -32,6 +32,18 @@ from lib_ooxml import (
     xr, xw, xp, ex, SW, SH,
 )
 import science_registry as REG
+# ── Shared image layout system ───────────────────────────────────────────────
+try:
+    from image_layouts import get_layout as _get_img_layout
+except ImportError:
+    _get_img_layout = None
+
+_BLANK_LAYOUTS = {
+    'i_do':        'I Do - Blank',
+    'we_do':       'We do - Blank',
+    'you_do_trio': 'You Do Trio - Blank',
+    'you_do':      'You do Ind - Blank',
+}
 
 # ── Sandbox compatibility patch ───────────────────────────────────────────────
 import lib_ooxml as _lo_mod
@@ -1516,6 +1528,151 @@ def _build_learning_review(work, templates, spec):
 
 
 # Variable slide dispatch — content slides ONLY (not infrastructure)
+def _build_image_slide(work, spec):
+    """
+    Generic image slide using the shared image_layouts coordinate system.
+
+    spec keys:
+      phase       — 'i_do' | 'we_do' | 'you_do_trio' | 'you_do' (default 'i_do')
+      layout_key  — key into image_layouts.LAYOUTS (required)
+      title       — slide title text
+      images      — list of image file paths
+      text        — body / task text alongside the image(s)
+      caption     — caption below image (layout C only)
+      subtitle    — subtitle in banner (layout A only)
+      speech_a/b/c — character speech-bubble text (concept_cartoon only)
+    """
+    if _get_img_layout is None:
+        raise RuntimeError("image_layouts.py not found on sys.path — cannot build image_slide")
+
+    key    = spec['layout_key']
+    layout = _get_img_layout(key)
+    phase  = spec.get('phase', 'i_do')
+    blank  = _BLANK_LAYOUTS.get(phase, 'I Do - Blank')
+    images = spec.get('images', [])
+
+    sp, rp = fresh(work, blank)
+    sid = 10
+
+    def tb(text, pos, sz=1800, bold=False, align='l', name=None):
+        nonlocal sid
+        t2, st2 = get_spTree(sp)
+        st2.append(tbox(sid, text, pos['x'], pos['y'], pos['cx'], pos['cy'],
+                        sz=sz, bold=bold, color='1A3A5C', align=align,
+                        name=name or f'TB{sid}'))
+        save(t2, sp)
+        sid += 1
+
+    def img(path, pos):
+        nonlocal sid
+        add_img(sp, rp, work, path, pos['x'], pos['y'], pos['cx'], pos['cy'], sid)
+        sid += 1
+
+    ttl = spec.get('title', '')
+
+    if key == 'A_full_bleed':
+        if images:
+            img(images[0], layout['image'])
+        b = layout['banner']
+        t2, st2 = get_spTree(sp)
+        st2.append(xp(
+            f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+            f'<p:nvSpPr><p:cNvPr id="{sid}" name="Banner"/>'
+            f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+            f'<p:spPr><a:xfrm><a:off x="{b["x"]}" y="{b["y"]}"/>'
+            f'<a:ext cx="{b["cx"]}" cy="{b["cy"]}"/></a:xfrm>'
+            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+            f'<a:solidFill><a:srgbClr val="DEECF8">'
+            f'<a:alpha val="85000"/></a:srgbClr></a:solidFill>'
+            f'<a:ln><a:noFill/></a:ln></p:spPr>'
+            f'<p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+        ))
+        save(t2, sp); sid += 1
+        tb(ttl, layout['title_box'], sz=3200, bold=True, name='SlideTitle')
+        if spec.get('subtitle'):
+            tb(spec['subtitle'], layout['subtitle'], sz=2000)
+
+    elif key == 'B1_hero_image_left':
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        if images:
+            img(images[0], layout['image'])
+        if spec.get('text'):
+            tb(spec['text'], layout['text_box'])
+
+    elif key == 'B2_hero_2images_left':
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        for img_key, img_path in zip(('image_top', 'image_bottom'), images[:2]):
+            img(img_path, layout[img_key])
+        if spec.get('text'):
+            tb(spec['text'], layout['text_box'])
+
+    elif key == 'B3_hero_2images_right':
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        if spec.get('text'):
+            tb(spec['text'], layout['text_box'])
+        for img_key, img_path in zip(('image_top', 'image_bottom'), images[:2]):
+            img(img_path, layout[img_key])
+
+    elif key == 'C_supporting_illustration':
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        if spec.get('text'):
+            tb(spec['text'], layout['text_box'])
+        if images:
+            img(images[0], layout['image'])
+        if spec.get('caption'):
+            tb(spec['caption'], layout['caption'], sz=1400, align='c')
+
+    elif key == 'D_diagram_focus':
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        if images:
+            img(images[0], layout['image'])
+        if spec.get('text'):
+            tb(spec['text'], layout['text_box'])
+
+    elif key in ('gallery_5row', 'gallery_6x2'):
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        if spec.get('text'):
+            tb(spec['text'], layout['task_box'])
+        for idx, pos in enumerate(layout['images']):
+            if idx < len(images):
+                img(images[idx], pos)
+
+    elif key == 'gallery_1wide':
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        if spec.get('text'):
+            tb(spec['text'], layout['task_box'])
+        if images:
+            img(images[0], layout['image'])
+
+    elif key == 'concept_cartoon':
+        tb(ttl, layout['title'], sz=2800, bold=True, name='SlideTitle')
+        if images:
+            img(images[0], layout['central_image'])
+        for char in ('a', 'b', 'c'):
+            bl = layout[f'bubble_{char}']
+            t2, st2 = get_spTree(sp)
+            st2.append(xp(
+                f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+                f'<p:nvSpPr><p:cNvPr id="{sid}" name="Bubble{char.upper()}"/>'
+                f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+                f'<p:spPr><a:xfrm><a:off x="{bl["x"]}" y="{bl["y"]}"/>'
+                f'<a:ext cx="{bl["cx"]}" cy="{bl["cy"]}"/></a:xfrm>'
+                f'<a:prstGeom prst="roundRect"><a:avLst>'
+                f'<a:gd name="adj" fmla="val 16667"/></a:avLst></a:prstGeom>'
+                f'<a:solidFill><a:srgbClr val="FFC000"/></a:solidFill>'
+                f'<a:ln><a:noFill/></a:ln></p:spPr>'
+                f'<p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
+            ))
+            save(t2, sp); sid += 1
+            speech = spec.get(f'speech_{char}', '')
+            tb(speech, layout[f'text_{char}'], sz=1600)
+
+    else:
+        raise ValueError(f"_build_image_slide: unknown layout_key {key!r}")
+
+    return sp
+
+
 DISPATCH = {
     'wedo_hook':         lambda work, templates, spec: _build_wedo_hook(work, spec),
     'wedo_grid':         lambda work, templates, spec: _build_wedo_grid(work, spec),
@@ -1524,6 +1681,7 @@ DISPATCH = {
     'youdo_task':        lambda work, templates, spec: _build_youdo_task(work, spec),
     'concept_cartoon':   lambda work, templates, spec: _build_concept_cartoon(work, templates, spec),
     'learning_review':   lambda work, templates, spec: _build_learning_review(work, templates, spec),
+    'image_slide':        lambda work, templates, spec: _build_image_slide(work, spec),
 }
 
 CONTENT_SLIDE_TYPES = set(DISPATCH.keys())
