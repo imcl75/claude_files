@@ -36,7 +36,7 @@ import science_registry as REG
 # ── Sandbox compatibility patch ───────────────────────────────────────────────
 import lib_ooxml as _lo_mod
 from pathlib import Path as _Path
-_SESSION_TMP = '/tmp/bsl_work'
+_SESSION_TMP = '/tmp/ezb_bsl_work'
 _lo_src_cache = {}
 
 def _patched_src_dir(pptx, k=None):
@@ -65,6 +65,55 @@ rezip = _patched_rezip
 
 _MARGIN = 381000  # ~1cm side margin in EMU
 
+_TCL   = 'Twinkl Cursive Looped'
+_TCL_L = 'Twinkl Cursive Looped Light'
+
+
+def _normalise_fonts(sp):
+    """Ensure every text run in the slide uses Twinkl Cursive Looped.
+
+    Three passes:
+    1. Replace any explicit <a:latin typeface="..."> that isn't TCL/TCL-Light.
+    2. Add <a:latin typeface="TCL"> to any <a:rPr> that has no <a:latin> child
+       (these would otherwise inherit the theme font, which is Aptos).
+    3. Add <a:rPr><a:latin .../></a:rPr> to any <a:r> that has no <a:rPr>
+       at all.
+    Theme-relative refs (+mj-lt, +mn-lt) are left alone.
+    """
+    import lxml.etree as _et_nf
+    _A = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+    _KEEP = {_TCL, _TCL_L}
+    tree = xr(sp)
+    root = tree.getroot()
+    changed = False
+
+    # Pass 1: fix existing wrong <a:latin>, <a:ea>, <a:cs> typefaces
+    for tag in ('latin', 'ea', 'cs'):
+        for el in root.iter(f'{{{_A}}}{tag}'):
+            tf = el.get('typeface', '')
+            if tf and tf not in _KEEP and not tf.startswith('+'):
+                el.set('typeface', _TCL)
+                changed = True
+
+    # Pass 2: add <a:latin> to <a:rPr> elements that have none
+    for rpr in root.iter(f'{{{_A}}}rPr'):
+        if rpr.find(f'{{{_A}}}latin') is None:
+            latin_el = _et_nf.SubElement(rpr, f'{{{_A}}}latin')
+            latin_el.set('typeface', _TCL)
+            changed = True
+
+    # Pass 3: add <a:rPr><a:latin/></a:rPr> to bare <a:r> runs with no rPr
+    for run in root.iter(f'{{{_A}}}r'):
+        if run.find(f'{{{_A}}}rPr') is None:
+            rpr_el = _et_nf.Element(f'{{{_A}}}rPr')
+            latin_el = _et_nf.SubElement(rpr_el, f'{{{_A}}}latin')
+            latin_el.set('typeface', _TCL)
+            run.insert(0, rpr_el)
+            changed = True
+
+    if changed:
+        xw(tree, sp)
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  Fixed slide 1: Key Question + challenge
@@ -84,19 +133,41 @@ def build_kq_challenge(work, templates, enquiry, lesson):
     if kq_shape is None:
         raise RuntimeError(f"kq_challenge: '{REG.KQ_CHALLENGE_KQ_SHAPE_NAME}' not found")
     set_text(kq_shape, enquiry['key_question'])
+    # Reposition TextBox 16 to match ground-truth layout
+    # (template has it too far left/up; IM positions it at x=3372690,y=600429)
+    _A_kq0 = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+    _kq_xfrm = kq_shape.find(f'.//{{{_A_kq0}}}xfrm')
+    if _kq_xfrm is not None:
+        _off = _kq_xfrm.find(f'{{{_A_kq0}}}off')
+        _ext = _kq_xfrm.find(f'{{{_A_kq0}}}ext')
+        if _off is not None: _off.set('x', '3372690'); _off.set('y', '600429')
+        if _ext is not None: _ext.set('cx', '6005225'); _ext.set('cy', '1092607')
     if has_challenge:
         task_shape = find_sp(tree, REG.KQ_CHALLENGE_TASK_SHAPE_NAME)
         if task_shape is None:
             raise RuntimeError(f"kq_challenge: '{REG.KQ_CHALLENGE_TASK_SHAPE_NAME}' not found")
-        set_text(task_shape, f"Our Challenge is: \n{enquiry['challenge']}")
-        # TextBox 17 has spAutoFit — the box grows to fit and overlaps the
-        # student images below. force_shrink_to_fit computes an explicit sz
-        # on each rPr so the text stays inside the fixed box in both
-        # LibreOffice and real PowerPoint (normAutofit alone doesn't work
-        # in LibreOffice — it ignores the instruction and renders at default
-        # size, confirmed by visual QA on v2_slide_1.png).
+        set_text(task_shape, f"Our Challenge:\n{enquiry['challenge']}")
+        # force_shrink_to_fit runs first — it creates <a:rPr> on runs that
+        # set_text() left bare (when the template run had no rPr child).
+        # Once rPr elements exist we override sz to the target 2000.
         force_shrink_to_fit(task_shape)
+        from lxml import etree as _et_kq
+        _A_NS_kq = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+        for _r in task_shape.iter(f'{{{_A_NS_kq}}}r'):
+            _rpr_el = _r.find(f'{{{_A_NS_kq}}}rPr')
+            if _rpr_el is None:
+                _rpr_el = _et_kq.Element(f'{{{_A_NS_kq}}}rPr')
+                _r.insert(0, _rpr_el)
+            _rpr_el.set('sz', '2000')
+        # Also reposition TextBox 17 to match ground-truth layout
+        _task_xfrm = task_shape.find(f'.//{{{_A_NS_kq}}}xfrm')
+        if _task_xfrm is not None:
+            _t_off = _task_xfrm.find(f'{{{_A_NS_kq}}}off')
+            _t_ext = _task_xfrm.find(f'{{{_A_NS_kq}}}ext')
+            if _t_off is not None: _t_off.set('x', '3676958'); _t_off.set('y', '1666355')
+            if _t_ext is not None: _t_ext.set('cx', '4838084'); _t_ext.set('cy', '1075899')
     xw(tree, sp)
+    _normalise_fonts(sp)
     print('  [1] key_question')
     return sp
 
@@ -109,6 +180,21 @@ def build_being_a_scientist(work, templates):
     pptx = templates[REG.COMPONENTS['being_a_scientist']['template']]
     sn = find_slide_by_anchor(pptx, REG.BEING_A_SCIENTIST_ANCHOR, REG.BEING_A_SCIENTIST_HINT)
     sp, rp = clone(work, pptx, sn, copy_hdphoto=True)
+    # Fix TitleBeing to match IM position (template has it full-width; IM has it left-aligned)
+    import lxml.etree as _et_bas
+    _P_bas = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+    _A_bas = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+    _tr_bas = xr(sp); _ro_bas = _tr_bas.getroot()
+    for _sp_el in _ro_bas.iter(f'{{{_P_bas}}}sp'):
+        _cnv = _sp_el.find(f'.//{{{_P_bas}}}cNvPr')
+        if _cnv is not None and _cnv.get('name') == 'TitleBeing':
+            _xf = _sp_el.find(f'.//{{{_A_bas}}}xfrm')
+            if _xf is not None:
+                _of = _xf.find(f'{{{_A_bas}}}off'); _ex = _xf.find(f'{{{_A_bas}}}ext')
+                if _of is not None: _of.set('x', '-157987'); _of.set('y', '150000')
+                if _ex is not None: _ex.set('cx', '4076843'); _ex.set('cy', '684013')
+    xw(_tr_bas, sp)
+    _normalise_fonts(sp)
     print('  [2] being_a_scientist')
     return sp
 
@@ -141,6 +227,7 @@ def build_discipline(work, templates, enquiry):
             id_steps.append(ids)
         animate(sp, id_steps)
     # else: template animations cloned as-is — do NOT strip them
+    _normalise_fonts(sp)
     print('  [3] discipline')
     return sp
 
@@ -151,38 +238,37 @@ def build_discipline(work, templates, enquiry):
 #  No external template file required.
 # ══════════════════════════════════════════════════════════════════════════════
 
-# ── Coordinate transform constants (Group 205 in atom-IM.pptx) ────────────────
-# Slide coords = GRP_OX + (child_x − CH_OX) * SX,  similarly for Y.
-_ATOM_GRP_OX = 3264196
-_ATOM_GRP_OY = 464046
-_ATOM_SX = 8452884 / 6371657   # ~1.3266
-_ATOM_SY = 6166392 / 5090000   # ~1.2115
-_ATOM_CH_OX = 2910171
-_ATOM_CH_OY = 1110000
-_ATOM_ELECTRON_R = 190000       # half-radius in child coords
+# ── Hardcoded atom geometry (exact positions from out_L5-IM.pptx slide 4) ─────
+# Atom/ring centre in slide EMU
+_ATOM_NUC_X = 7340476
+_ATOM_NUC_Y = 3621797
 
-# Nucleus (child centre 6096000, 3750000 → slide)
-_ATOM_NUC_X  = int(_ATOM_GRP_OX + (6096000 - _ATOM_CH_OX) * _ATOM_SX)
-_ATOM_NUC_Y  = int(_ATOM_GRP_OY + (3750000 - _ATOM_CH_OY) * _ATOM_SY)
-_ATOM_NUC_RX = int(530000 * _ATOM_SX)
-_ATOM_NUC_RY = int(440000 * _ATOM_SY)
-
-# Orbital ring semi-axes in slide coords (child radii scaled)
+# Orbital ring semi-radii — circles (rx = ry), drawn M→L→K (back to front)
 _ATOM_RING_PARAMS = [
-    (int(900000  * _ATOM_SX), int(760000  * _ATOM_SY)),   # K shell
-    (int(2050000 * _ATOM_SX), int(1720000 * _ATOM_SY)),   # L shell
-    (int(3150000 * _ATOM_SX), int(2450000 * _ATOM_SY)),   # M shell
+    (1224000, 1224000),   # K shell
+    (2190855, 2190855),   # L shell
+    (3078000, 3078000),   # M shell
 ]
 
-# Electron centres in child coords (14 active lessons)
-_ATOM_CHILD_CENTRES = [
-    (6096000, 2990000), (6096000, 4510000),
-    (6096000, 2030000), (7545568, 2533776),
-    (8146000, 3750000), (7545568, 4966223),
-    (6096000, 5470000), (4646431, 4966223),
-    (4046000, 3750000), (4646431, 2533776),
-    (6096000, 1300000), (9091828, 2992908),
-    (7947523, 5732091), (4244476, 5732091),
+# Nucleus bounding box (x, y, cx, cy) — exact from IM
+_ATOM_NUC_BOX = (6695747, 2979815, 1283964, 1283964)
+
+# Electron bounding boxes (x, y, cx, cy) — exact from IM, lessons 1–14
+_ATOM_ELECTRON_BOXES = [
+    (7107584, 2127275, 460289, 460289),  # lesson  1
+    (7107584, 4539955, 460289, 460289),  # lesson  2
+    (7107583, 1173366, 460289, 460289),  # lesson  3
+    (8611589, 1774681, 460290, 460290),  # lesson  4
+    (9275861, 3373719, 460290, 460290),  # lesson  5
+    (8782321, 4873710, 460290, 460290),  # lesson  6
+    (7107583, 5622904, 460289, 460289),  # lesson  7
+    (5473742, 4921418, 460290, 460290),  # lesson  8
+    (4883938, 3370225, 460290, 460290),  # lesson  9
+    (5525527, 1848336, 460290, 460290),  # lesson 10
+    (4326346, 2002224, 460289, 460289),  # lesson 11
+    (9923556, 2092219, 460290, 460290),  # lesson 12
+    (8913391, 5926246, 460290, 460290),  # lesson 13
+    (5303723, 5902700, 460290, 460290),  # lesson 14
 ]
 
 _ATOM_LESSON_NAMES = [
@@ -192,22 +278,23 @@ _ATOM_LESSON_NAMES = [
     "Writing 1", "Writing 2", "Writing 3", "Editing", "Sharing",
 ]
 
-# Label positions (slide coords, hand-tuned by teacher on atom-IM.pptx slide 4)
+# Label positions (slide coords, exact from out_L5-IM.pptx slide 4)
+# Lessons 1–5 verified; 6–14 are unverified (not visible in L5 IM)
 _ATOM_LABEL_POS = [
-    (7208270,  2226344, 1162498, 307777),
-    (6874683,  4812456, 1527982, 307777),
-    (6719341,  1069430, 1704313, 307777),
-    (8521921,  1449189, 1726888, 523220),
-    (9769736,  3093923,  939680, 307777),
-    (8783924,  4648576, 1547218, 307777),
-    (6927582,  5963340, 1422184, 307777),
-    (5027247,  4577164, 1064715, 307777),
-    (4344495,  3106286,  875560, 307777),
-    (5113635,  1667649,  878767, 307777),
-    (7038427,   151511,  904415, 307777),
-    (10849956, 2194282,  899605, 307777),
-    (9641910,  6293759,  728083, 307777),
-    (4606235,  6267824,  780983, 307777),
+    (6737820,  1848336, 1300125, 307777),  # lesson  1  The Universe
+    (6576026,  4997675, 1623714, 307777),  # lesson  2  Our Solar System
+    (6482385,   922255, 1710683, 307777),  # lesson  3  Sizes and Distances
+    (8125023,  1262390, 1576735, 523220),  # lesson  4  Day, Night and the Seasons
+    (8782321,  3065942, 1264538, 307777),  # lesson  5  The Moon
+    (8783924,  4648576, 1547218, 307777),  # lesson  6  (unverified)
+    (6927582,  5963340, 1422184, 307777),  # lesson  7  (unverified)
+    (5027247,  4577164, 1064715, 307777),  # lesson  8  (unverified)
+    (4344495,  3106286,  875560, 307777),  # lesson  9  (unverified)
+    (5113635,  1667649,  878767, 307777),  # lesson 10  (unverified)
+    (7038427,   151511,  904415, 307777),  # lesson 11  (unverified)
+    (10849956, 2194282,  899605, 307777),  # lesson 12  (unverified)
+    (9641910,  6293759,  728083, 307777),  # lesson 13  (unverified)
+    (4606235,  6267824,  780983, 307777),  # lesson 14  (unverified)
 ]
 
 _ATOM_ABBREV = [
@@ -221,18 +308,11 @@ _ATOM_LABEL_ID  = 1001
 
 
 # ── Coordinate helpers ─────────────────────────────────────────────────────────
+# (electron_rect is now a direct lookup — no child-coord transform needed)
 
-def _atom_child_to_slide(cx, cy):
-    return (
-        int(_ATOM_GRP_OX + (cx - _ATOM_CH_OX) * _ATOM_SX),
-        int(_ATOM_GRP_OY + (cy - _ATOM_CH_OY) * _ATOM_SY),
-    )
-
-def _atom_electron_rect(ccx, ccy):
-    r = _ATOM_ELECTRON_R
-    tl_x, tl_y = _atom_child_to_slide(ccx - r, ccy - r)
-    br_x, br_y = _atom_child_to_slide(ccx + r, ccy + r)
-    return tl_x, tl_y, br_x - tl_x, br_y - tl_y
+def _atom_electron_rect(lesson_index):
+    """Return (x, y, cx, cy) for electron at zero-based lesson_index."""
+    return _ATOM_ELECTRON_BOXES[lesson_index]
 
 
 # ── XML factories (use P and A from lib_ooxml) ────────────────────────────────
@@ -255,15 +335,14 @@ def _atom_ring_xml(sid, rx, ry):
     )
 
 def _atom_nucleus_xml(sid, topic):
-    nx, ny = _ATOM_NUC_X, _ATOM_NUC_Y
-    rx, ry = _ATOM_NUC_RX, _ATOM_NUC_RY
+    nx, ny, cnx, cny = _ATOM_NUC_BOX
     return (
         f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
         f'<p:nvSpPr><p:cNvPr id="{sid}" name="Nucleus"/>'
         f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
         f'<p:spPr>'
-        f'<a:xfrm><a:off x="{nx-rx}" y="{ny-ry}"/>'
-        f'<a:ext cx="{2*rx}" cy="{2*ry}"/></a:xfrm>'
+        f'<a:xfrm><a:off x="{nx}" y="{ny}"/>'
+        f'<a:ext cx="{cnx}" cy="{cny}"/></a:xfrm>'
         f'<a:prstGeom prst="ellipse"><a:avLst/></a:prstGeom>'
         f'<a:solidFill><a:srgbClr val="0A3D62"/></a:solidFill>'
         f'</p:spPr>'
@@ -279,6 +358,16 @@ def _atom_nucleus_xml(sid, topic):
     )
 
 def _atom_electron_xml(sid, left, top, ecx, ecy, fill, border, bw, text, tcol):
+    # When text is empty (grey electrons), emit a truly empty txBody with no run
+    # so no colour bleeds through in any renderer.
+    if text:
+        run_xml = (
+            f'<a:r><a:rPr b="1" dirty="0">'
+            f'<a:solidFill><a:srgbClr val="{tcol}"/></a:solidFill>'
+            f'</a:rPr><a:t>{text}</a:t></a:r>'
+        )
+    else:
+        run_xml = ''
     return (
         f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
         f'<p:nvSpPr><p:cNvPr id="{sid}" name="El{sid}"/>'
@@ -291,10 +380,7 @@ def _atom_electron_xml(sid, left, top, ecx, ecy, fill, border, bw, text, tcol):
         f'</p:spPr>'
         f'<p:txBody>'
         f'<a:bodyPr lIns="0" tIns="0" rIns="0" bIns="0" anchor="ctr"/><a:lstStyle/>'
-        f'<a:p><a:pPr algn="ctr"/>'
-        f'<a:r><a:rPr b="1" dirty="0">'
-        f'<a:solidFill><a:srgbClr val="{tcol}"/></a:solidFill>'
-        f'</a:rPr><a:t>{text}</a:t></a:r></a:p>'
+        f'<a:p><a:pPr algn="ctr"/>{run_xml}</a:p>'
         f'</p:txBody>'
         f'</p:sp>'
     )
@@ -411,20 +497,66 @@ def build_building_blocks_atom(work, templates, enquiry, lesson, all_lessons):
     lesson_num = lesson['lesson_number']
     topic = enquiry.get('topic', 'Science')
 
+    strand = enquiry.get('strand', 'Earth and Space Science')
+
+    # Discipline description lookup (left-panel text below the icon)
+    _DISCIPLINE_DESC = {
+        'Earth and Space Science': (
+            "4.5 billion years ago a cloud of space dust coalesced to form a star "
+            "surrounded by a group of planets and other material. The story of this "
+            "is Earth and Space Science.\nThe study of the Earth itself is Geography."
+        ),
+        'Biology': (
+            "Biology is the study of living things — how they are built, how they "
+            "function, how they reproduce, and how they interact with each other "
+            "and their environment."
+        ),
+        'Chemistry': (
+            "Chemistry is the study of matter — what it is made of, how it behaves, "
+            "and how it changes. It explains reactions between substances and the "
+            "properties of materials."
+        ),
+        'Physics': (
+            "Physics is the study of energy, forces and motion. It explains how and "
+            "why objects move, how light and sound travel, and how energy is "
+            "transferred and transformed."
+        ),
+    }
+    discipline_title = REG.DISCIPLINE_ANCHORS.get(strand, f'What is {strand}?')
+    discipline_text  = _DISCIPLINE_DESC.get(strand, '')
+
     sp, rp = fresh(work, 'I do')
     t, st = get_spTree(sp)
-    # Use an explicit tbox positioned in the top-left corner, clear of the orbit.
-    # The outermost orbit left-edge is at ~x=3,300,000 so x=300,000–3,000,000
-    # is safe. The orbit's top is at ~y=694,000 so y=120,000–680,000 is clear
-    # of all electrons. Do NOT use title_sp (layout placeholder) — it puts the
-    # title in the slide's default title area which overlaps the top orbit arc.
-    st.append(tbox(
-        2, f'Building Blocks: {topic}',
-        300000, 120000, 2900000, 580000,
-        sz=2000, bold=False, color='1A3A5C', align='l',
-        name='Title 2',
+
+    # Discipline icon (top-left corner) — extracted from Being_a_Scientist template
+    _icon_candidates = [
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), 'atom_discipline_icon.png'),
+        '/tmp/atom_discipline_icon.png',
+    ]
+    _icon_path = next((p for p in _icon_candidates if os.path.exists(p)), None)
+    save(t, sp)   # save title placeholder first so spTree is initialised
+    if _icon_path:
+        add_img(sp, rp, work, _icon_path, 145387, 105448, 1102706, 856471, sid=2)
+
+    # DisciplineTitle (right of icon, top-left area)
+    t2, st2 = get_spTree(sp)
+    st2.append(tbox(
+        3, discipline_title,
+        1249164, 223255, 2621087, 738664,
+        sz=2400, bold=True, color='1A3A5C', align='l',
+        name='DisciplineTitle',
     ))
-    save(t, sp)
+    save(t2, sp)
+
+    # DisciplineDesc (left column, below icon — no explicit sz, inherits theme)
+    t3, st3 = get_spTree(sp)
+    st3.append(tbox(
+        4, discipline_text,
+        158742, 1430942, 2490988, 3283440,
+        bold=False, color='1A3A5C', align='l',
+        name='DisciplineDesc',
+    ))
+    save(t3, sp)
 
     tree    = xr(sp)
     root    = tree.getroot()
@@ -442,9 +574,8 @@ def build_building_blocks_atom(work, templates, enquiry, lesson, all_lessons):
     sid += 1
 
     # Base electrons (grey or orange depending on state)
-    for i, (ccx, ccy) in enumerate(_ATOM_CHILD_CENTRES):
+    for i, (left, top, ecx, ecy) in enumerate(_ATOM_ELECTRON_BOXES):
         les = i + 1
-        left, top, ecx, ecy = _atom_electron_rect(ccx, ccy)
         if les < lesson_num:    # done — orange, lesson number
             sp_tree.append(etree.fromstring(
                 _atom_electron_xml(sid, left, top, ecx, ecy,
@@ -466,8 +597,7 @@ def build_building_blocks_atom(work, templates, enquiry, lesson, all_lessons):
 
     # Orange overlay + label for current lesson (hidden until click)
     ci = lesson_num - 1
-    ccx, ccy = _ATOM_CHILD_CENTRES[ci]
-    left, top, ecx, ecy = _atom_electron_rect(ccx, ccy)
+    left, top, ecx, ecy = _ATOM_ELECTRON_BOXES[ci]
     sp_tree.append(etree.fromstring(
         _atom_orange_overlay_xml(_ATOM_ORANGE_ID, left, top, ecx, ecy, lesson_num)
     ))
@@ -510,22 +640,24 @@ def build_lo(work, templates, enquiry, lesson):
         if s is not None:
             set_text(s, val or '')
             if shape_name == 'Title 27':
-                # KQ_LO.pptx has anchor="b" on Title 27 — text grows upward and
-                # clips off the top for long key questions. Change to anchor="t"
-                # and add normAutofit so the text shrinks to fit instead.
-                from lxml import etree as _et
-                A_NS = 'http://schemas.openxmlformats.org/drawingml/2006/main'
-                txBody = s.find(f'{{{A_NS}}}txBody')
+                # Fix anchor so long KQs flow down rather than up
+                _P_NS_lo = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+                _A_NS_lo = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+                txBody = s.find(f'{{{_P_NS_lo}}}txBody')
                 if txBody is not None:
-                    bodyPr = txBody.find(f'{{{A_NS}}}bodyPr')
+                    bodyPr = txBody.find(f'{{{_A_NS_lo}}}bodyPr')
                     if bodyPr is not None:
                         bodyPr.set('anchor', 't')
-                        # Remove any existing autofit child elements
-                        for tag in ('normAutofit', 'noAutofit', 'spAutoFit'):
-                            el = bodyPr.find(f'{{{A_NS}}}{tag}')
-                            if el is not None:
-                                bodyPr.remove(el)
-                        _et.SubElement(bodyPr, f'{{{A_NS}}}normAutofit')
+                # force_shrink_to_fit first so it creates <a:rPr> on any
+                # runs that set_text() left bare, then override sz to 3600.
+                force_shrink_to_fit(s)
+                from lxml import etree as _et_lo
+                for _r in s.iter(f'{{{_A_NS_lo}}}r'):
+                    _rpr_el = _r.find(f'{{{_A_NS_lo}}}rPr')
+                    if _rpr_el is None:
+                        _rpr_el = _et_lo.Element(f'{{{_A_NS_lo}}}rPr')
+                        _r.insert(0, _rpr_el)
+                    _rpr_el.set('sz', '3600')
         else:
             raise RuntimeError(f"LO slide: shape '{shape_name}' not found — template drift")
     xw(tree, sp)
@@ -534,6 +666,7 @@ def build_lo(work, templates, enquiry, lesson):
     if not all(ids):
         raise RuntimeError("LO slide: could not resolve shape IDs for animation")
     animate(sp, [[i] for i in ids])
+    _normalise_fonts(sp)
     print('  [5] lo')
     return sp
 
@@ -632,45 +765,39 @@ def build_recap_quiz(work, quiz_template_pptx, lesson):
     def _q_para(text, num):
         p = _et.Element(f'{{{_A_NS}}}p')
         pPr = _et.SubElement(p, f'{{{_A_NS}}}pPr')
-        pPr.set('marL', '514350'); pPr.set('indent', '-514350')
+        pPr.set('marL', '457200'); pPr.set('indent', '-457200')
         buFont = _et.SubElement(pPr, f'{{{_A_NS}}}buFont'); buFont.set('typeface', '+mj-lt')
         buAutoNum = _et.SubElement(pPr, f'{{{_A_NS}}}buAutoNum'); buAutoNum.set('type', 'arabicPeriod')
         if num > 1:
             buAutoNum.set('startAt', str(num))
         r = _et.SubElement(p, f'{{{_A_NS}}}r')
         rPr = _et.SubElement(r, f'{{{_A_NS}}}rPr')
-        rPr.set('lang', 'en-GB'); rPr.set('dirty', '0')
+        rPr.set('lang', 'en-GB'); rPr.set('sz', '3200'); rPr.set('dirty', '0')
         t_ = _et.SubElement(r, f'{{{_A_NS}}}t'); t_.text = text
         return p
 
     def _a_para(text):
+        # Answer paragraph: dark green, bold, → prefix, indented, sz=2400
         p = _et.Element(f'{{{_A_NS}}}p')
         pPr = _et.SubElement(p, f'{{{_A_NS}}}pPr')
-        pPr.set('marL', '0'); pPr.set('indent', '0')
+        pPr.set('marL', '457200')
         _et.SubElement(pPr, f'{{{_A_NS}}}buNone')
         r = _et.SubElement(p, f'{{{_A_NS}}}r')
         rPr = _et.SubElement(r, f'{{{_A_NS}}}rPr')
-        rPr.set('lang', 'en-GB'); rPr.set('b', '1'); rPr.set('dirty', '0')
+        rPr.set('lang', 'en-GB'); rPr.set('sz', '2400'); rPr.set('b', '1'); rPr.set('dirty', '0')
         fill = _et.SubElement(rPr, f'{{{_A_NS}}}solidFill')
-        clr = _et.SubElement(fill, f'{{{_A_NS}}}srgbClr'); clr.set('val', '00B050')
-        sym = _et.SubElement(rPr, f'{{{_A_NS}}}sym')
-        sym.set('typeface', 'Wingdings'); sym.set('pitchFamily', '2'); sym.set('charset', '2')
-        t_ = _et.SubElement(r, f'{{{_A_NS}}}t'); t_.text = ' ' + text
+        clr = _et.SubElement(fill, f'{{{_A_NS}}}srgbClr'); clr.set('val', '1A5C2A')
+        t_ = _et.SubElement(r, f'{{{_A_NS}}}t'); t_.text = '→ ' + text
         return p
 
     def _spacer_para():
         p = _et.Element(f'{{{_A_NS}}}p')
-        pPr = _et.SubElement(p, f'{{{_A_NS}}}pPr')
-        pPr.set('marL', '0'); pPr.set('indent', '0')
-        _et.SubElement(pPr, f'{{{_A_NS}}}buNone')
         endPr = _et.SubElement(p, f'{{{_A_NS}}}endParaRPr')
         endPr.set('lang', 'en-GB'); endPr.set('sz', '600'); endPr.set('dirty', '0')
-        sym = _et.SubElement(endPr, f'{{{_A_NS}}}sym')
-        sym.set('typeface', 'Wingdings'); sym.set('pitchFamily', '2'); sym.set('charset', '2')
         return p
 
     sp, rp = clone(work, quiz_template_pptx, 1, copy_hdphoto=True)
-    title_text = lesson.get('quiz_title', 'Recap – Quiz Time')
+    title_text = lesson.get('quiz_title', 'Recap Quiz')
     tree = xr(sp)
     title_shape = find_sp(tree, 'Title 2')
     if title_shape is not None:
@@ -774,11 +901,16 @@ def build_recap_quiz(work, quiz_template_pptx, lesson):
 
 def build_key_vocabulary(work, lesson):
     """
-    Vocabulary table: school-style header bar + alternating rows.
-    Word column (left 30%) and definition column (right 70%).
-    Each word+definition pair clicks in separately.
+    Vocabulary slide matching the shared enquiry deck format:
+    bold term (sz=1400) + indented dark-green definition (sz=1200, colour 1A5C2A).
+    Term and definition reveal on separate clicks, spacer paragraphs between words.
     Up to 5 words from lesson['vocabulary'].
     """
+    from lxml import etree as _et
+
+    _A_NS = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+    _P_NS = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+
     sp, rp = fresh(work, 'We do')
     t, st = get_spTree(sp)
     st.append(title_sp(2, 'Key Vocabulary', REG.TITLE_FONT))
@@ -790,114 +922,134 @@ def build_key_vocabulary(work, lesson):
         print('  [7] vocabulary (empty)')
         return sp
 
-    tbl_x   = _MARGIN
-    tbl_top = 1100000
-    tbl_w   = SW - 2 * _MARGIN
-    word_w  = int(tbl_w * 0.27)
-    def_x   = tbl_x + word_w
-    def_w   = tbl_w - word_w
-    hdr_h   = 480000
-    # Available height below header, shared equally between words
-    avail_h = SH - tbl_top - hdr_h - 200000
-    row_h   = avail_h // n
-
-    # Alternating row fills (school blue family)
-    ROW_FILLS = ['EBF4FB', 'FFFFFF', 'EBF4FB', 'FFFFFF', 'EBF4FB']
-
-    sid = 10
-    steps = []
-
-    # ── Header bar ────────────────────────────────────────────────────────────
-    for ci, (hx, hw, label) in enumerate([
-        (tbl_x,   word_w, 'Word'),
-        (def_x,   def_w,  'Definition'),
-    ]):
-        t2, st2 = get_spTree(sp)
-        st2.append(xp(
-            f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
-            f'<p:nvSpPr><p:cNvPr id="{sid}" name="VHdrBG{ci}"/>'
-            f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
-            f'<p:spPr><a:xfrm><a:off x="{hx}" y="{tbl_top}"/>'
-            f'<a:ext cx="{hw}" cy="{hdr_h}"/></a:xfrm>'
-            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
-            f'<a:solidFill><a:srgbClr val="1798D3"/></a:solidFill>'
-            f'<a:ln w="9525"><a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill></a:ln>'
-            f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
-        ))
-        save(t2, sp); sid += 1
-        t2, st2 = get_spTree(sp)
-        st2.append(tbox(
-            sid, label, hx + 30000, tbl_top + 10000, hw - 60000, hdr_h - 20000,
-            sz=1800, bold=True, color='FFFFFF', align='ctr'
-        ))
-        save(t2, sp); sid += 1
-
-    # ── Word + definition rows ─────────────────────────────────────────────────
+    # Build paragraphs matching the reference format exactly
+    # Structure per word: term para, definition para, spacer (except after last word)
+    paras_xml = []
     for i, item in enumerate(vocab):
-        ry   = tbl_top + hdr_h + i * row_h
-        fill = ROW_FILLS[i % len(ROW_FILLS)]
         word = item.get('word', '')
         defn = item.get('definition', '')
 
-        # Word cell background
-        t2, st2 = get_spTree(sp)
-        st2.append(xp(
-            f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
-            f'<p:nvSpPr><p:cNvPr id="{sid}" name="VWordBG{i}"/>'
-            f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
-            f'<p:spPr><a:xfrm><a:off x="{tbl_x}" y="{ry}"/>'
-            f'<a:ext cx="{word_w}" cy="{row_h}"/></a:xfrm>'
-            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
-            f'<a:solidFill><a:srgbClr val="D6EAF8"/></a:solidFill>'
-            f'<a:ln w="9525"><a:solidFill><a:srgbClr val="AED6F1"/></a:solidFill></a:ln>'
-            f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
-        ))
-        save(t2, sp)
-        wbg_id = sid; sid += 1
+        # Term paragraph: bold, sz=2800 (no typeface attr — inherits theme font)
+        term_p = _et.Element(f'{{{_A_NS}}}p')
+        r = _et.SubElement(term_p, f'{{{_A_NS}}}r')
+        rPr = _et.SubElement(r, f'{{{_A_NS}}}rPr')
+        rPr.set('lang', 'en-GB'); rPr.set('sz', '2800'); rPr.set('b', '1'); rPr.set('dirty', '0')
+        _et.SubElement(r, f'{{{_A_NS}}}t').text = word
+        paras_xml.append(term_p)
 
-        # Word text
-        word_sz = max(1600, 2200 - len(word) * 30)
-        t2, st2 = get_spTree(sp)
-        st2.append(tbox(
-            sid, word,
-            tbl_x + 25000, ry + 20000, word_w - 50000, row_h - 40000,
-            sz=word_sz, bold=True, color='0D3C61', align='ctr'
-        ))
-        save(t2, sp)
-        wtxt_id = sid; sid += 1
+        # Definition paragraph: sz=2400, dark green 1A5C2A, indented
+        def_p = _et.Element(f'{{{_A_NS}}}p')
+        pPr = _et.SubElement(def_p, f'{{{_A_NS}}}pPr')
+        pPr.set('marL', '457200')
+        r2 = _et.SubElement(def_p, f'{{{_A_NS}}}r')
+        rPr2 = _et.SubElement(r2, f'{{{_A_NS}}}rPr')
+        rPr2.set('lang', 'en-GB'); rPr2.set('sz', '2400'); rPr2.set('dirty', '0')
+        fill = _et.SubElement(rPr2, f'{{{_A_NS}}}solidFill')
+        _et.SubElement(fill, f'{{{_A_NS}}}srgbClr').set('val', '1A5C2A')
+        _et.SubElement(r2, f'{{{_A_NS}}}t').text = defn
+        paras_xml.append(def_p)
 
-        steps.append([wbg_id, wtxt_id])  # click 1: word reveals
+        # Spacer paragraph between words (not after last)
+        if i < n - 1:
+            sp_p = _et.Element(f'{{{_A_NS}}}p')
+            endPr = _et.SubElement(sp_p, f'{{{_A_NS}}}endParaRPr')
+            endPr.set('lang', 'en-GB'); endPr.set('sz', '600'); endPr.set('dirty', '0')
+            paras_xml.append(sp_p)
 
-        # Definition cell background
-        t2, st2 = get_spTree(sp)
-        st2.append(xp(
-            f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
-            f'<p:nvSpPr><p:cNvPr id="{sid}" name="VDefBG{i}"/>'
-            f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
-            f'<p:spPr><a:xfrm><a:off x="{def_x}" y="{ry}"/>'
-            f'<a:ext cx="{def_w}" cy="{row_h}"/></a:xfrm>'
-            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
-            f'<a:solidFill><a:srgbClr val="{fill}"/></a:solidFill>'
-            f'<a:ln w="9525"><a:solidFill><a:srgbClr val="AED6F1"/></a:solidFill></a:ln>'
-            f'</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>'
-        ))
-        save(t2, sp)
-        dbg_id = sid; sid += 1
+    # Content shape — same position as VocabContent in reference
+    content_sid = 10
+    content_xml = (
+        f'<p:sp xmlns:p="{_P_NS}" xmlns:a="{_A_NS}">'
+        f'<p:nvSpPr>'
+        f'<p:cNvPr id="{content_sid}" name="VocabContent"/>'
+        f'<p:cNvSpPr/><p:nvPr/>'
+        f'</p:nvSpPr>'
+        f'<p:spPr>'
+        f'<a:xfrm><a:off x="246888" y="1275907"/><a:ext cx="11684402" cy="5450260"/></a:xfrm>'
+        f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+        f'<a:noFill/>'
+        f'</p:spPr>'
+        f'<p:txBody>'
+        f'<a:bodyPr wrap="square" anchor="t"/>'
+        f'<a:lstStyle/>'
+        f'</p:txBody>'
+        f'</p:sp>'
+    )
+    t2, st2 = get_spTree(sp)
+    content_el = xp(content_xml)
+    st2.append(content_el)
+    save(t2, sp)
 
-        # Definition text
-        t2, st2 = get_spTree(sp)
-        st2.append(tbox(
-            sid, defn,
-            def_x + 30000, ry + 20000, def_w - 60000, row_h - 40000,
-            sz=1700, color='1A1A1A', align='l'
-        ))
-        save(t2, sp)
-        dtxt_id = sid; sid += 1
+    # Insert paragraphs into the txBody
+    tree = xr(sp)
+    vocab_sp = find_sp(tree, 'VocabContent')
+    txBody = vocab_sp.find(f'{{{_P_NS}}}txBody')
+    for p in paras_xml:
+        txBody.append(p)
+    xw(tree, sp)
 
-        steps.append([dbg_id, dtxt_id])  # click 2: definition reveals
+    # Animate: term on one click, definition on next click
+    # Para indices: term=i*3, def=i*3+1, spacer=i*3+2 (except last word has no spacer)
+    # Step size: 3 for words 0..n-2, 2 for last word
+    animated = []
+    for i in range(n):
+        step = 3 if i < n - 1 else 2
+        base = i * 3
+        animated.append(base)       # term
+        animated.append(base + 1)   # definition
 
-    animate(sp, steps)
-    print('  [7] vocabulary (animated)')
+    id_n = [1]
+    def nid(): v = id_n[0]; id_n[0] += 1; return str(v)
+
+    root_id = nid(); seq_id = nid()
+    blocks = []
+    for para_idx in animated:
+        b, inner, click, behav = nid(), nid(), nid(), nid()
+        blocks.append(
+            f'<p:par xmlns:p="{_P_NS}"><p:cTn id="{b}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
+            f'<p:childTnLst><p:par><p:cTn id="{inner}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:par><p:cTn id="{click}" presetID="1" presetClass="entr" '
+            f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:set><p:cBhvr>'
+            f'<p:cTn id="{behav}" dur="1" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
+            f'<p:tgtEl><p:spTgt spid="{content_sid}"><p:txEl>'
+            f'<p:pRg st="{para_idx}" end="{para_idx}"/></p:txEl></p:spTgt></p:tgtEl>'
+            f'<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst>'
+            f'</p:cBhvr><p:to><p:strVal val="visible"/></p:to></p:set>'
+            f'</p:childTnLst></p:cTn></p:par>'
+            f'</p:childTnLst></p:cTn></p:par>'
+            f'</p:childTnLst></p:cTn></p:par>'
+        )
+
+    timing_xml = (
+        f'<p:timing xmlns:p="{_P_NS}" xmlns:a="{A}">'
+        f'<p:tnLst><p:par><p:cTn id="{root_id}" dur="indefinite" restart="never" '
+        f'nodeType="tmRoot"><p:childTnLst>'
+        f'<p:seq concurrent="1" nextAc="seek">'
+        f'<p:cTn id="{seq_id}" dur="indefinite" nodeType="mainSeq">'
+        f'<p:childTnLst>{"".join(blocks)}</p:childTnLst></p:cTn>'
+        f'<p:prevCondLst><p:cond evt="onPrev" delay="0">'
+        f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>'
+        f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
+        f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
+        f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
+        f'<p:bldLst><p:bldP spid="{content_sid}" grpId="0" build="p"/></p:bldLst>'
+        f'</p:timing>'
+    )
+
+    tree = xr(sp)
+    root = tree.getroot()
+    existing = root.find(f'{{{_P_NS}}}timing')
+    if existing is not None:
+        root.remove(existing)
+    root.append(_et.fromstring(timing_xml))
+    xw(tree, sp)
+
+    print(f'  [7] vocabulary ({n} words, animated)')
     return sp
 
 
@@ -905,18 +1057,209 @@ def build_key_vocabulary(work, lesson):
 #  Variable content slide builders
 # ══════════════════════════════════════════════════════════════════════════════
 
+
+def _anim_para_by_para(sp, shape_id, para_indices, _P_NS, _A_NS):
+    """Para-by-para click animation on a single shape (shape_id).
+    para_indices: 0-based paragraph indices, one per click.
+    """
+    from lxml import etree as _et
+    id_n = [1]
+    def nid(): v = id_n[0]; id_n[0] += 1; return str(v)
+
+    root_id = nid(); seq_id = nid()
+    blocks = []
+    for para_idx in para_indices:
+        b, inner, click, behav = nid(), nid(), nid(), nid()
+        blocks.append(
+            f'<p:par xmlns:p="{_P_NS}"><p:cTn id="{b}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
+            f'<p:childTnLst><p:par><p:cTn id="{inner}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:par><p:cTn id="{click}" presetID="1" presetClass="entr" '
+            f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:set><p:cBhvr>'
+            f'<p:cTn id="{behav}" dur="1" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
+            f'<p:tgtEl><p:spTgt spid="{shape_id}"><p:txEl>'
+            f'<p:pRg st="{para_idx}" end="{para_idx}"/></p:txEl></p:spTgt></p:tgtEl>'
+            f'<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst>'
+            f'</p:cBhvr><p:to><p:strVal val="visible"/></p:to></p:set>'
+            f'</p:childTnLst></p:cTn></p:par>'
+            f'</p:childTnLst></p:cTn></p:par>'
+            f'</p:childTnLst></p:cTn></p:par>'
+        )
+
+    timing_xml = (
+        f'<p:timing xmlns:p="{_P_NS}" xmlns:a="{_A_NS}">'
+        f'<p:tnLst><p:par><p:cTn id="{root_id}" dur="indefinite" restart="never" '
+        f'nodeType="tmRoot"><p:childTnLst>'
+        f'<p:seq concurrent="1" nextAc="seek">'
+        f'<p:cTn id="{seq_id}" dur="indefinite" nodeType="mainSeq">'
+        f'<p:childTnLst>{"".join(blocks)}</p:childTnLst></p:cTn>'
+        f'<p:prevCondLst><p:cond evt="onPrev" delay="0">'
+        f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>'
+        f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
+        f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
+        f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
+        f'<p:bldLst><p:bldP spid="{shape_id}" grpId="0" build="p"/></p:bldLst>'
+        f'</p:timing>'
+    )
+
+    tree = xr(sp)
+    root = tree.getroot()
+    existing = root.find(f'{{{_P_NS}}}timing')
+    if existing is not None:
+        root.remove(existing)
+    root.append(_et.fromstring(timing_xml))
+    xw(tree, sp)
+
+
+def _add_speaker_notes(sp, rp, work, notes_text):
+    """Inject a speaker notes slide for the given slide (sp = path to slide XML)."""
+    import re, html as _html
+    R_NS = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
+    P_NS = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+    A_NS = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+    PKG_NS = 'http://schemas.openxmlformats.org/package/2006/relationships'
+
+    sn = int(re.search(r'slide(\d+)\.xml', sp).group(1))
+
+    para_parts = []
+    for line in notes_text.split('\n'):
+        esc = _html.escape(line)
+        if esc:
+            para_parts.append(
+                f'<a:p><a:r><a:rPr lang="en-GB" dirty="0"/><a:t>{esc}</a:t></a:r></a:p>'
+            )
+        else:
+            para_parts.append('<a:p><a:endParaRPr lang="en-GB" dirty="0"/></a:p>')
+    para_body = ''.join(para_parts)
+
+    notes_xml = (
+        "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>"
+        f'<p:notes xmlns:p="{P_NS}" xmlns:a="{A_NS}" xmlns:r="{R_NS}">'
+        f'<p:cSld><p:spTree>'
+        f'<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>'
+        f'<p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/>'
+        f'<a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>'
+        f'<p:sp><p:nvSpPr><p:cNvPr id="2" name="Slide Image Placeholder 1"/>'
+        f'<p:cNvSpPr><a:spLocks noGrp="1" noRot="1" noChangeAspect="1"/></p:cNvSpPr>'
+        f'<p:nvPr><p:ph type="sldImg"/></p:nvPr></p:nvSpPr><p:spPr/></p:sp>'
+        f'<p:sp><p:nvSpPr><p:cNvPr id="3" name="Notes Placeholder 2"/>'
+        f'<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>'
+        f'<p:nvPr><p:ph type="body" idx="1"/></p:nvPr></p:nvSpPr>'
+        f'<p:spPr/><p:txBody><a:bodyPr/><a:lstStyle/>{para_body}</p:txBody></p:sp>'
+        f'</p:spTree></p:cSld>'
+        f'<p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:notes>'
+    )
+
+    os.makedirs(f'{work}/ppt/notesSlides/_rels', exist_ok=True)
+    notes_path = f'{work}/ppt/notesSlides/notesSlide{sn}.xml'
+    with open(notes_path, 'w', encoding='utf-8') as f:
+        f.write(notes_xml)
+
+    notes_rels = (
+        "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>"
+        f'<Relationships xmlns="{PKG_NS}">'
+        f'<Relationship Id="rId1" Type="{R_NS}/notesMaster" Target="../notesMasters/notesMaster1.xml"/>'
+        f'<Relationship Id="rId2" Type="{R_NS}/slide" Target="../slides/slide{sn}.xml"/>'
+        f'</Relationships>'
+    )
+    with open(f'{work}/ppt/notesSlides/_rels/notesSlide{sn}.xml.rels', 'w', encoding='utf-8') as f:
+        f.write(notes_rels)
+
+    with open(rp, 'r', encoding='utf-8') as f:
+        rels_txt = f.read()
+    existing_rids = re.findall(r'Id="rId(\d+)"', rels_txt)
+    next_rid = max(int(x) for x in existing_rids) + 1 if existing_rids else 2
+    notes_rel = (
+        f'<Relationship Id="rId{next_rid}" '
+        f'Type="{R_NS}/notesSlide" '
+        f'Target="../notesSlides/notesSlide{sn}.xml"/>'
+    )
+    rels_txt = rels_txt.replace('</Relationships>', notes_rel + '</Relationships>')
+    with open(rp, 'w', encoding='utf-8') as f:
+        f.write(rels_txt)
+
+    ct_path = f'{work}/[Content_Types].xml'
+    with open(ct_path, 'r', encoding='utf-8') as f:
+        ct_txt = f.read()
+    notes_part = f'/ppt/notesSlides/notesSlide{sn}.xml'
+    if notes_part not in ct_txt:
+        ct_entry = (
+            f'<Override PartName="{notes_part}" '
+            f'ContentType="application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml"/>'
+        )
+        ct_txt = ct_txt.replace('</Types>', ct_entry + '</Types>')
+        with open(ct_path, 'w', encoding='utf-8') as f:
+            f.write(ct_txt)
+
+
 def _build_wedo_hook(work, spec):
+    """Slide 8 — We do hook.
+    Uses Content Placeholder 2 (ph idx=1, id=3) with para-by-para animation.
+    """
+    from lxml import etree as _et
+    _P_NS = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+    _A_NS = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+
     sp, rp = fresh(work, 'We do')
     t, st = get_spTree(sp)
     st.append(title_sp(2, spec['title'], REG.TITLE_FONT))
     save(t, sp)
-    sid = 10; groups = []
-    for i, bullet in enumerate(spec['bullets']):
-        by = 1750000 + i * 1350000
-        t2, st2 = get_spTree(sp)
-        st2.append(tbox(sid, bullet, 700000, by, SW - 1400000, 1250000, sz=2200, color='1A3A5C', align='l'))
-        save(t2, sp); groups.append([sid]); sid += 1
-    animate(sp, groups)
+
+    bullets = spec['bullets']
+    ph_id = 3  # Content Placeholder 2
+
+    # One content para per bullet; empty spacer paras between (not after last)
+    paras = []
+    for i, bullet in enumerate(bullets):
+        p = _et.Element(f'{{{_A_NS}}}p')
+        r = _et.SubElement(p, f'{{{_A_NS}}}r')
+        rpr = _et.SubElement(r, f'{{{_A_NS}}}rPr')
+        rpr.set('lang', 'en-GB'); rpr.set('dirty', '0')
+        fill = _et.SubElement(rpr, f'{{{_A_NS}}}solidFill')
+        _et.SubElement(fill, f'{{{_A_NS}}}srgbClr').set('val', '1A3A5C')
+        _et.SubElement(r, f'{{{_A_NS}}}t').text = bullet
+        paras.append(p)
+        if i < len(bullets) - 1:
+            sp_p = _et.Element(f'{{{_A_NS}}}p')
+            epr = _et.SubElement(sp_p, f'{{{_A_NS}}}endParaRPr')
+            epr.set('lang', 'en-GB'); epr.set('dirty', '0')
+            fill2 = _et.SubElement(epr, f'{{{_A_NS}}}solidFill')
+            _et.SubElement(fill2, f'{{{_A_NS}}}srgbClr').set('val', '1A3A5C')
+            paras.append(sp_p)
+
+    ph_xml = (
+        f'<p:sp xmlns:p="{_P_NS}" xmlns:a="{_A_NS}">'
+        f'<p:nvSpPr>'
+        f'<p:cNvPr id="{ph_id}" name="Content Placeholder 2"/>'
+        f'<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>'
+        f'<p:nvPr><p:ph idx="1"/></p:nvPr>'
+        f'</p:nvSpPr>'
+        f'<p:spPr>'
+        f'<a:xfrm><a:off x="838200" y="1690688"/>'
+        f'<a:ext cx="10515600" cy="4351338"/></a:xfrm>'
+        f'</p:spPr>'
+        f'<p:txBody>'
+        f'<a:bodyPr><a:normAutofit lnSpcReduction="10000"/></a:bodyPr>'
+        f'<a:lstStyle/>'
+        f'</p:txBody>'
+        f'</p:sp>'
+    )
+    ph_el = _et.fromstring(ph_xml)
+    txBody = ph_el.find(f'{{{_P_NS}}}txBody')
+    for p_el in paras:
+        txBody.append(p_el)
+
+    t2, st2 = get_spTree(sp)
+    st2.append(ph_el)
+    save(t2, sp)
+
+    # Animate: content paras are at even indices (0, 2, 4, ...)
+    animated_para_idxs = [i * 2 for i in range(len(bullets))]
+    _anim_para_by_para(sp, ph_id, animated_para_idxs, _P_NS, _A_NS)
     return sp
 
 def _build_wedo_grid(work, spec):
@@ -942,24 +1285,103 @@ def _build_wedo_grid(work, spec):
     return sp
 
 def _build_ido_diagram(work, spec):
+    """I do diagram slide.
+    - Empty bullets → full content-area image (phases slide, slide 9)
+    - Non-empty bullets → image LEFT, bullet TextBoxes RIGHT (eclipse, slide 10)
+    Supports optional speaker_notes field.
+    """
     sp, rp = fresh(work, 'I do')
     t, st = get_spTree(sp)
     st.append(title_sp(2, spec['title'], REG.TITLE_FONT, bold=True))
     save(t, sp)
+
+    bullets = spec.get('bullets', [])
+
     if spec.get('image_path'):
         if not os.path.exists(spec['image_path']):
             raise RuntimeError(f"ido_diagram: image_path '{spec['image_path']}' missing")
-        # Larger image: starts further left (4600000) and is wider (7400000)
-        # so diagram labels are readable at the back of the classroom.
-        add_img(sp, rp, work, spec['image_path'], 4600000, 1400000, 7400000, 5200000, 3)
+        if bullets:
+            # Eclipse layout: image LEFT side (exact IM position)
+            add_img(sp, rp, work, spec['image_path'], 200000, 1947731, 8200000, 4154538, 3)
+        else:
+            # Phases layout (IM slide 10): large image filling most of slide,
+            # narrow right column for text boxes.
+            # Image: x=189744, y=1089793, cx=9035107, cy=5042848 (aspect-correct for 1376x768)
+            add_img(sp, rp, work, spec['image_path'], 189744, 1089793, 9035107, 5042848, 3)
+            # Force exact position (add_img may centre within supplied box)
+            _P_im = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+            _A_im = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+            _tr_im = xr(sp)
+            _ro_im = _tr_im.getroot()
+            _pics = _ro_im.findall(f'.//{{{_P_im}}}pic')
+            if _pics:
+                _xf = _pics[-1].find(f'.//{{{_A_im}}}xfrm')
+                if _xf is not None:
+                    _of = _xf.find(f'{{{_A_im}}}off')
+                    _ex = _xf.find(f'{{{_A_im}}}ext')
+                    if _of is not None: _of.set('x', '189744'); _of.set('y', '1089793')
+                    if _ex is not None: _ex.set('cx', '9035107'); _ex.set('cy', '5042848')
+            xw(_tr_im, sp)
+
     sid = 10; groups = []
-    for i, bullet in enumerate(spec['bullets']):
-        by = 1550000 + i * 1540000
-        t2, st2 = get_spTree(sp)
-        # Bullet text area narrowed slightly to give image more room
-        st2.append(tbox(sid, bullet, 180000, by, 4200000, 1500000, sz=1800, color='1A3A5C', align='l'))
-        save(t2, sp); groups.append([sid]); sid += 1
-    animate(sp, groups)
+    if bullets:
+        # Eclipse RIGHT-side bullets: y=1500000,3200000,4900000 cy=1660000 cx=3400000
+        # (IM ground truth — evenly spaced, not derived from image height)
+        _ECLIPSE_YS = [1500000, 3200000, 4900000]
+        for i, bullet in enumerate(bullets):
+            by = _ECLIPSE_YS[i] if i < len(_ECLIPSE_YS) else 1500000 + i * 1700000
+            t2, st2 = get_spTree(sp)
+            st2.append(tbox(sid, bullet, 8600000, by, 3400000, 1660000, sz=1800, color='1A3A5C', align='l'))
+            save(t2, sp); groups.append([sid]); sid += 1
+        animate(sp, groups)
+    else:
+        # Phases middle and right column text boxes
+        text_boxes = spec.get('text_boxes', [])
+        for tb in text_boxes:
+            t2, st2 = get_spTree(sp)
+            st2.append(tbox(sid, tb['text'], tb['x'], tb['y'], tb['cx'], tb['cy'],
+                            sz=1800, color='1A3A5C', align='l'))
+            save(t2, sp); sid += 1
+        # Phases numbered list (TextBox 13 style) from phases_list field
+        phases = spec.get('phases_list', [])
+        if phases:
+            from lxml import etree as _et_ph
+            _P_ph = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+            _A_ph = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+            _color = '1A3A5C'
+            # Header paragraph
+            hdr_para = (f'<a:p xmlns:a="{_A_ph}"><a:pPr algn="l"/><a:r>'
+                        f'<a:rPr lang="en-GB" sz="2800" b="1" u="sng" dirty="0">'
+                        f'<a:solidFill><a:srgbClr val="{_color}"/></a:solidFill>'
+                        f'<a:latin typeface="Twinkl Cursive Looped" panose="02000000000000000000" pitchFamily="2" charset="77"/>'
+                        f'</a:rPr><a:t>Phases, in order: </a:t></a:r></a:p>')
+            list_paras = ''.join(
+                f'<a:p xmlns:a="{_A_ph}"><a:pPr marL="457200" indent="-457200" algn="l">'
+                f'<a:buFont typeface="+mj-lt"/><a:buAutoNum type="arabicPeriod"/></a:pPr><a:r>'
+                f'<a:rPr lang="en-GB" sz="2400" dirty="0">'
+                f'<a:solidFill><a:srgbClr val="{_color}"/></a:solidFill>'
+                f'<a:latin typeface="Twinkl Cursive Looped" panose="02000000000000000000" pitchFamily="2" charset="77"/>'
+                f'</a:rPr><a:t>{ex(ph)}</a:t></a:r></a:p>'
+                for ph in phases
+            )
+            phases_sp_xml = (
+                f'<p:sp xmlns:p="{_P_ph}" xmlns:a="{_A_ph}">'
+                f'<p:nvSpPr><p:cNvPr id="{sid}" name="TextBox {sid}"/>'
+                f'<p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr>'
+                f'<p:spPr><a:xfrm><a:off x="8421297" y="1483563"/>'
+                f'<a:ext cx="3400000" cy="5065518"/></a:xfrm>'
+                f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr>'
+                f'<p:txBody><a:bodyPr wrap="square"><a:noAutofit/></a:bodyPr><a:lstStyle/>'
+                f'{hdr_para}{list_paras}</p:txBody></p:sp>'
+            )
+            t2, st2 = get_spTree(sp)
+            st2.append(_et_ph.fromstring(phases_sp_xml))
+            save(t2, sp); sid += 1
+
+    if spec.get('speaker_notes'):
+        _add_speaker_notes(sp, rp, work, spec['speaker_notes'])
+
+    _normalise_fonts(sp)
     return sp
 
 def _build_youdo_provocation(work, spec):
@@ -973,17 +1395,68 @@ def _build_youdo_provocation(work, spec):
     return sp
 
 def _build_youdo_task(work, spec):
+    """Slide 11 — You do task.
+    Uses Content Placeholder 2 (ph idx=1, id=3) with para-by-para animation.
+    T is 134872 EMU lower than wedo_hook (y=1825560 vs 1690688).
+    """
+    from lxml import etree as _et
+    _P_NS = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+    _A_NS = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+
     sp, rp = fresh(work, 'You do Ind')
     t, st = get_spTree(sp)
     st.append(title_sp(2, spec['title'], REG.TITLE_FONT))
     save(t, sp)
-    sid = 10; groups = []
-    for i, bullet in enumerate(spec['bullets']):
-        by = 1750000 + i * 1150000
-        t2, st2 = get_spTree(sp)
-        st2.append(tbox(sid, bullet, 700000, by, SW - 1400000, 1050000, sz=2000, color='1A3A5C', align='l'))
-        save(t2, sp); groups.append([sid]); sid += 1
-    animate(sp, groups)
+
+    bullets = spec['bullets']
+    ph_id = 3  # Content Placeholder 2
+
+    paras = []
+    for i, bullet in enumerate(bullets):
+        p = _et.Element(f'{{{_A_NS}}}p')
+        r = _et.SubElement(p, f'{{{_A_NS}}}r')
+        rpr = _et.SubElement(r, f'{{{_A_NS}}}rPr')
+        rpr.set('lang', 'en-GB'); rpr.set('dirty', '0')
+        fill = _et.SubElement(rpr, f'{{{_A_NS}}}solidFill')
+        _et.SubElement(fill, f'{{{_A_NS}}}srgbClr').set('val', '1A3A5C')
+        _et.SubElement(r, f'{{{_A_NS}}}t').text = bullet
+        paras.append(p)
+        if i < len(bullets) - 1:
+            sp_p = _et.Element(f'{{{_A_NS}}}p')
+            epr = _et.SubElement(sp_p, f'{{{_A_NS}}}endParaRPr')
+            epr.set('lang', 'en-GB'); epr.set('dirty', '0')
+            fill2 = _et.SubElement(epr, f'{{{_A_NS}}}solidFill')
+            _et.SubElement(fill2, f'{{{_A_NS}}}srgbClr').set('val', '1A3A5C')
+            paras.append(sp_p)
+
+    ph_xml = (
+        f'<p:sp xmlns:p="{_P_NS}" xmlns:a="{_A_NS}">'
+        f'<p:nvSpPr>'
+        f'<p:cNvPr id="{ph_id}" name="Content Placeholder 2"/>'
+        f'<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>'
+        f'<p:nvPr><p:ph idx="1"/></p:nvPr>'
+        f'</p:nvSpPr>'
+        f'<p:spPr>'
+        f'<a:xfrm><a:off x="838200" y="1825560"/>'
+        f'<a:ext cx="10515600" cy="4351338"/></a:xfrm>'
+        f'</p:spPr>'
+        f'<p:txBody>'
+        f'<a:bodyPr><a:normAutofit lnSpcReduction="10000"/></a:bodyPr>'
+        f'<a:lstStyle/>'
+        f'</p:txBody>'
+        f'</p:sp>'
+    )
+    ph_el = _et.fromstring(ph_xml)
+    txBody = ph_el.find(f'{{{_P_NS}}}txBody')
+    for p_el in paras:
+        txBody.append(p_el)
+
+    t2, st2 = get_spTree(sp)
+    st2.append(ph_el)
+    save(t2, sp)
+
+    animated_para_idxs = [i * 2 for i in range(len(bullets))]
+    _anim_para_by_para(sp, ph_id, animated_para_idxs, _P_NS, _A_NS)
     return sp
 
 def _build_concept_cartoon(work, templates, spec):
@@ -1192,6 +1665,12 @@ def build_lesson(mtp_path, templates_dir, out_path, manifest_path, lesson_num=1)
     removed = strip_orphaned_media(work)
     if removed:
         print(f"  stripped {len(removed)} orphaned media file(s)")
+
+    # Blanket font normalisation over every slide before zipping.
+    import glob as _glob
+
+    for _sp in sorted(_glob.glob(os.path.join(work, 'ppt', 'slides', 'slide*.xml'))):
+        _normalise_fonts(_sp)
 
     rezip(work, out_path)
     with open(manifest_path, 'w') as f:
