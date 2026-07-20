@@ -1,0 +1,1196 @@
+{
+  "_format": "History MTP — Enquiry Builder v1",
+  "key_question": "What was the impact of the Roman Civilisation?",
+  "challenge": "To write a non-chronological report to inform about key legacies of the Roman Civilisation",
+  "concept": "civilisation",
+  "topic": "roman_civilisation",
+  "year_group": "Y5",
+  "term_week_start": "T2W3",
+  "enquiry_vocabulary_top10": [
+    {
+      "word": "civilisation",
+      "definition": "A society with organised laws, culture and ways of living"
+    },
+    {
+      "word": "legacy",
+      "definition": "Something passed down from the past that still affects us today"
+    },
+    {
+      "word": "aqueduct",
+      "definition": "A channel or bridge built to carry fresh water into towns"
+    },
+    {
+      "word": "forum",
+      "definition": "The main public square in a Roman town, used for meetings, markets and courts"
+    },
+    {
+      "word": "emperor",
+      "definition": "The single ruler of Rome who had total power over the empire"
+    },
+    {
+      "word": "mosaic",
+      "definition": "A picture or pattern made from small pieces of coloured stone or tile"
+    },
+    {
+      "word": "gladiator",
+      "definition": "A fighter who trained to compete in public arenas for entertainment"
+    },
+    {
+      "word": "Latin",
+      "definition": "The language of the Romans, which influenced English and many other languages"
+    },
+    {
+      "word": "senate",
+      "definition": "The group of men who advised the emperor and helped make Rome's laws"
+    },
+    {
+      "word": "republic",
+      "definition": "A system of government where leaders are chosen by the people, not born to power"
+    }
+  ],
+  "knowledge_organiser": {
+    "key_facts": [
+      "The Romans built over 400,000 km of roads across their empire — many still follow the same routes as modern roads in Britain.",
+      "The Romans brought clean water to towns through aqueducts. Some are still standing more than 2,000 years later.",
+      "Roman law forms the basis of legal systems used across Europe today.",
+      "Many modern British cities — including London, Bath and York — started as Roman settlements.",
+      "Latin, the Roman language, influenced English and modern European languages including French, Spanish and Italian.",
+      "Christianity became the official religion of the Roman Empire in AD 380 and spread across Europe as a result."
+    ],
+    "key_people": [
+      {
+        "name": "Julius Caesar",
+        "role": "Roman general and dictator; assassinated 44 BC, triggering the end of the Republic"
+      },
+      {
+        "name": "Augustus",
+        "role": "Rome's first emperor; brought the Pax Romana — a long period of peace"
+      },
+      {
+        "name": "Emperor Claudius",
+        "role": "Ordered the invasion of Britain in AD 43"
+      },
+      {
+        "name": "Boudicca",
+        "role": "British queen who led a revolt against Roman rule in AD 60"
+      }
+    ],
+    "timeline": [
+      {
+        "date": "753 BC",
+        "event": "Traditional founding of Rome"
+      },
+      {
+        "date": "509 BC",
+        "event": "Rome becomes a republic"
+      },
+      {
+        "date": "44 BC",
+        "event": "Julius Caesar assassinated; Republic collapses"
+      },
+      {
+        "date": "27 BC",
+        "event": "Augustus becomes Rome's first emperor"
+      },
+      {
+        "date": "AD 43",
+        "event": "Romans invade Britain"
+      },
+      {
+        "date": "AD 476",
+        "event": "Fall of the Western Roman Empire"
+      }
+    ],
+    "ko_images": [
+      {
+        "use": "map",
+        "local_path": null,
+        "image_prompt": "Simple educational map of the Roman Empire at its height around AD 100. Europe, North Africa and Middle East visible. Britain highlighted, Rome marked. Bold outlines, clearly labelled, primary school style."
+      },
+      {
+        "use": "soldier",
+        "local_path": null,
+        "image_prompt": "Illustration of a Roman legionary soldier in full lorica segmentata armour, rectangular scutum shield, pilum spear. Clean educational illustration, white background, suitable for Year 5."
+      },
+      {
+        "use": "city",
+        "local_path": null,
+        "image_prompt": "Illustration of an ancient Roman city with columns, forum, roads and aqueduct in the background. Educational aerial view style, bright colours, suitable for primary school."
+      }
+    ]
+  },
+  "lessons": [
+    {
+      "lesson_number": 1,
+      "day_label": "Day 1",
+      "building_block_text": "Who were the Romans?",
+      "skill_focus": "questioning",
+      "writing_focus": null,
+      "what": "understand who the Romans were and what civilisation means",
+      "why": "we need to understand what a civilisation is before we can judge the impact of the Roman one",
+      "success": "explaining what a civilisation is, where Rome was and naming at least two features of Roman society",
+      "vocabulary": [
+        {
+          "word": "civilisation",
+          "definition": "A society with organised laws, culture and ways of living"
+        },
+        {
+          "word": "empire",
+          "definition": "A large area of land made up of different countries all ruled by one person"
+        },
+        {
+          "word": "republic",
+          "definition": "A system of government where leaders are chosen by the people, not born to power"
+        },
+        {
+          "word": "senate",
+          "definition": "The group of men who advised the emperor and helped make Rome's laws"
+        },
+        {
+          "word": "emperor",
+          "definition": "The single ruler of Rome who had total power over the empire"
+        }
+      ],
+      "lp_task": "KWL grid — two columns: What I already know about the Romans / What I want to find out. Outline map of Europe at the bottom to label the position of Rome and the extent of the empire.",
+      "slides": [
+        {
+          "type": "i_do",
+          "title": "What is a civilisation?",
+          "content": "A civilisation is a society with organised laws, systems of government, culture and ways of living together. The Roman civilisation began in the city of Rome in Italy over 2,500 years ago and grew to become one of the most powerful empires the world has ever seen."
+        },
+        {
+          "type": "image_slide",
+          "layout_key": "B1_hero_image_left",
+          "badge": "I Do",
+          "title": "Where did the Romans come from?",
+          "images": [],
+          "image_prompts": [
+            "Simple educational map showing Italy with Rome marked and the Roman Empire's extent shown. Clear labels, primary school style, bright colours."
+          ],
+          "text": "Rome began as a small city in central Italy. Over hundreds of years, Roman armies conquered surrounding lands until the empire stretched from Britain in the north-west to Egypt and the Middle East in the south-east."
+        },
+        {
+          "type": "we_do",
+          "title": "What makes a civilisation advanced?",
+          "content": "Think about what makes a society civilised. What would you need — laws, buildings, language, art? Discuss which of these the Romans had. Use the sentence starter: I think the Romans were an advanced civilisation because…"
+        },
+        {
+          "type": "you_do",
+          "title": "What do you know — and want to find out?",
+          "content": "On your learning paper, complete the KWL grid. In the left column, write everything you already know about the Romans. In the right column, write your best questions. Be specific — include names, places or events if you can."
+        }
+      ]
+    },
+    {
+      "lesson_number": 2,
+      "day_label": "Day 2",
+      "building_block_text": "The Roman Empire grows",
+      "skill_focus": "chronology",
+      "writing_focus": null,
+      "what": "place key events of the Roman civilisation in chronological order",
+      "why": "understanding when events happened helps us see how the Roman Empire grew and eventually fell",
+      "success": "accurately placing at least six Roman events on a timeline and explaining what changed between them",
+      "vocabulary": [
+        {
+          "word": "republic",
+          "definition": "A system of government where leaders are chosen by the people, not born to power"
+        },
+        {
+          "word": "emperor",
+          "definition": "The single ruler of Rome who had total power over the empire"
+        },
+        {
+          "word": "senate",
+          "definition": "The group of men who advised the emperor and helped make Rome's laws"
+        },
+        {
+          "word": "civilisation",
+          "definition": "A society with organised laws, culture and ways of living"
+        },
+        {
+          "word": "legacy",
+          "definition": "Something passed down from the past that still affects us today"
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What is a civilisation?",
+          "answer": "A society with organised laws, culture and ways of living together"
+        },
+        {
+          "question": "Where did the Roman civilisation begin?",
+          "answer": "In the city of Rome, in Italy"
+        },
+        {
+          "question": "What is a republic?",
+          "answer": "A system where leaders are chosen by the people, not born to power"
+        },
+        {
+          "question": "What was the senate?",
+          "answer": "The group of men who advised the emperor and helped make Rome's laws"
+        }
+      ],
+      "lp_task": "Timeline activity — six key dates provided (753 BC to AD 476). Children add a brief description and significance for each event. A 'What changed?' column asks them to note one difference after each event.",
+      "slides": [
+        {
+          "type": "i_do",
+          "title": "The story of Rome — from city to empire",
+          "content": "Rome began as a small city state in 753 BC. For centuries it was a republic — governed by elected senators. In 44 BC, Julius Caesar was assassinated and the republic collapsed. Augustus became Rome's first emperor in 27 BC. The empire then grew for nearly 500 years before the western half fell in AD 476."
+        },
+        {
+          "type": "image_slide",
+          "layout_key": "D_diagram_focus",
+          "badge": "I Do",
+          "title": "The Roman timeline",
+          "images": [],
+          "image_prompts": [
+            "Educational timeline from 753 BC to AD 476 with key Roman dates: founding, republic, Caesar, Augustus, invasion of Britain, fall of Rome. Bold, colourful, primary school style."
+          ],
+          "text": "753 BC — Rome founded. 509 BC — Republic begins. 44 BC — Caesar assassinated. 27 BC — Augustus first emperor. AD 43 — Britain invaded. AD 476 — Western Empire falls."
+        },
+        {
+          "type": "we_do",
+          "title": "What changed — republic to empire?",
+          "content": "Compare Rome as a republic with Rome as an empire. What was different about how decisions were made? Who had power? Use the sentence starter: When Rome was a republic… but when it became an empire…"
+        },
+        {
+          "type": "you_do",
+          "title": "The Roman timeline",
+          "content": "On your learning paper, complete the timeline. Add a description and significance for each date. Then answer: what do you think was the most significant turning point — and why?"
+        }
+      ]
+    },
+    {
+      "lesson_number": 3,
+      "day_label": "Day 3",
+      "building_block_text": "Roman society and daily life",
+      "skill_focus": "questioning",
+      "writing_focus": "Variety of sentence structures — introduced. Practise writing about Roman society using simple, compound and complex sentences.",
+      "what": "describe how Roman society was organised and what daily life was like for different groups",
+      "why": "understanding who benefited from Roman civilisation — and who did not — helps us make a balanced judgement about its impact",
+      "success": "describing at least three groups in Roman society and explaining one similarity and one difference between the daily lives of a wealthy Roman and a slave",
+      "vocabulary": [
+        {
+          "word": "senate",
+          "definition": "The group of men who advised the emperor and helped make Rome's laws"
+        },
+        {
+          "word": "emperor",
+          "definition": "The single ruler of Rome who had total power over the empire"
+        },
+        {
+          "word": "civilisation",
+          "definition": "A society with organised laws, culture and ways of living"
+        },
+        {
+          "word": "gladiator",
+          "definition": "A fighter who trained to compete in public arenas for entertainment"
+        },
+        {
+          "word": "forum",
+          "definition": "The main public square in a Roman town, used for meetings, markets and courts"
+        }
+      ],
+      "quiz": [
+        {
+          "question": "In what year was Julius Caesar assassinated?",
+          "answer": "44 BC"
+        },
+        {
+          "question": "Who became Rome's first emperor?",
+          "answer": "Augustus"
+        },
+        {
+          "question": "Approximately how long did the Roman Empire last?",
+          "answer": "Around 500 years"
+        },
+        {
+          "question": "In what year did the Western Roman Empire fall?",
+          "answer": "AD 476"
+        }
+      ],
+      "lp_task": "Society pyramid (label groups, add facts) PLUS a sentence-variety writing task: describe the life of one group in Roman society using three different sentence types — one simple, one compound, one complex. Model sentence provided for reference.",
+      "slides": [
+        {
+          "type": "i_do",
+          "title": "Who had power in Rome?",
+          "content": "Roman society was organised in a strict hierarchy. At the top was the emperor, who had absolute power. Below him were the patricians — wealthy noble families who controlled the senate. Most Romans were plebeians — free citizens who could vote but had little political power. At the bottom were slaves, who had no rights and were owned as property."
+        },
+        {
+          "type": "we_do",
+          "title": "Sentence variety — describing Roman life",
+          "content": "Today we are also practising using a variety of sentence structures. Look at these three sentences about Roman slaves: Simple — Slaves had no rights. Compound — Slaves had no rights and they were owned as property. Complex — Although slaves had no rights, some were educated and worked as doctors or teachers. Now write your own three sentences — one simple, one compound, one complex — about the life of a wealthy Roman patrician."
+        },
+        {
+          "type": "image_slide",
+          "layout_key": "B3_hero_2images_right",
+          "badge": "We Do",
+          "title": "Rich and poor in Rome",
+          "images": [],
+          "image_prompts": [
+            "Illustration of a wealthy Roman's domus interior — mosaics, columns, atrium garden, servants. Educational, primary school.",
+            "Illustration of a crowded Roman insula (apartment block) exterior — narrow street, simple clothing, poor Romans. Educational."
+          ],
+          "text": "A wealthy Roman's domus was spacious and decorated. A poor Roman's insula was cramped and basic. Both groups lived under the same laws — but experienced Roman civilisation very differently."
+        },
+        {
+          "type": "you_do",
+          "title": "Roman society — your writing",
+          "content": "Complete the society pyramid on your learning paper, then complete the sentence-variety task. Write three sentences — simple, compound, complex — describing the life of one group in Roman society. Use today's model as a guide."
+        }
+      ]
+    },
+    {
+      "lesson_number": 4,
+      "day_label": "Day 4",
+      "building_block_text": "What the Romans built",
+      "skill_focus": "sources",
+      "writing_focus": "Variety of sentence structures — practised. Writing about Roman engineering using a deliberate mix of sentence types.",
+      "what": "identify and evaluate the engineering achievements of the Roman civilisation",
+      "why": "Roman engineering had a direct impact on Britain and on the modern world — understanding it helps us measure the civilisation's legacy",
+      "success": "describing at least three Roman engineering achievements and writing about one of them using a clear variety of sentence structures",
+      "vocabulary": [
+        {
+          "word": "aqueduct",
+          "definition": "A channel or bridge built to carry fresh water into towns"
+        },
+        {
+          "word": "forum",
+          "definition": "The main public square in a Roman town, used for meetings, markets and courts"
+        },
+        {
+          "word": "legacy",
+          "definition": "Something passed down from the past that still affects us today"
+        },
+        {
+          "word": "mosaic",
+          "definition": "A picture or pattern made from small pieces of coloured stone or tile"
+        },
+        {
+          "word": "Latin",
+          "definition": "The language of the Romans, which influenced English and many other languages"
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Name two groups in Roman society and describe their rights.",
+          "answer": "E.g. patricians — wealthy, controlled senate; slaves — owned as property, no rights"
+        },
+        {
+          "question": "What was the forum?",
+          "answer": "The main public square in a Roman town"
+        },
+        {
+          "question": "Write a complex sentence about Roman society.",
+          "answer": "Accept any grammatically correct complex sentence with a subordinate clause"
+        },
+        {
+          "question": "Who had absolute power in the Roman Empire?",
+          "answer": "The emperor"
+        }
+      ],
+      "lp_task": "Engineering impact grid (roads, aqueducts, public baths, the Colosseum — what was it? why built? what impact today?) PLUS a sentence-variety writing task: write a short paragraph about Roman roads using at least one simple, one compound and one complex sentence.",
+      "slides": [
+        {
+          "type": "i_do",
+          "title": "What did the Romans build?",
+          "content": "The Romans were exceptional engineers. They built an extensive road network — over 400,000 km — that connected the empire. They constructed aqueducts to carry fresh water into cities. They built public baths, temples, amphitheatres and forums. Many of these structures are still standing today."
+        },
+        {
+          "type": "image_slide",
+          "layout_key": "B2_hero_2images_left",
+          "badge": "I Do",
+          "title": "Roman engineering — built to last",
+          "images": [],
+          "image_prompts": [
+            "Photograph or illustration of the Pont du Gard Roman aqueduct in France — stone arches over a river. Educational quality.",
+            "Photograph of a straight Roman road through the British countryside showing Roman roads still used today."
+          ],
+          "text": "The Pont du Gard aqueduct in France still stands after 2,000 years. Many Roman roads in Britain still follow the same routes today. The Romans built to last."
+        },
+        {
+          "type": "we_do",
+          "title": "Sentence variety — writing about engineering",
+          "content": "Let's practise again. Here is the same fact written three ways: Simple — The Romans built roads. Compound — The Romans built roads and these connected every part of the empire. Complex — Because the Romans built roads across Britain, armies could move quickly and trade could flow efficiently. Now you try — write the same fact about Roman aqueducts in three different sentence types."
+        },
+        {
+          "type": "you_do",
+          "title": "Roman engineering — your writing",
+          "content": "Complete the engineering impact grid on your learning paper. Then write a short paragraph about Roman roads using at least one simple, one compound and one complex sentence. Underline each sentence type."
+        }
+      ]
+    },
+    {
+      "lesson_number": 5,
+      "day_label": "Day 5",
+      "building_block_text": "Roman religion and beliefs",
+      "skill_focus": "interpretations",
+      "writing_focus": "Embedded subordinate and relative clauses — introduced. Practise adding clauses mid-sentence when writing about Roman religion.",
+      "what": "describe Roman religious beliefs and explain how they changed over time",
+      "why": "Roman religion changed dramatically from many gods to Christianity — this had a huge impact on the history of Europe",
+      "success": "describing Roman polytheism, explaining why Christianity spread, and writing at least two sentences using embedded relative clauses",
+      "vocabulary": [
+        {
+          "word": "emperor",
+          "definition": "The single ruler of Rome who had total power over the empire"
+        },
+        {
+          "word": "civilisation",
+          "definition": "A society with organised laws, culture and ways of living"
+        },
+        {
+          "word": "legacy",
+          "definition": "Something passed down from the past that still affects us today"
+        },
+        {
+          "word": "forum",
+          "definition": "The main public square in a Roman town, used for meetings, markets and courts"
+        },
+        {
+          "word": "senate",
+          "definition": "The group of men who advised the emperor and helped make Rome's laws"
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Name two Roman engineering achievements.",
+          "answer": "E.g. roads, aqueducts, public baths, Colosseum, temples"
+        },
+        {
+          "question": "What was an aqueduct?",
+          "answer": "A channel or bridge built to carry fresh water into towns"
+        },
+        {
+          "question": "Write a compound sentence about Roman roads.",
+          "answer": "Accept any grammatically correct compound sentence using 'and', 'but', 'so', 'or'"
+        },
+        {
+          "question": "What is a legacy?",
+          "answer": "Something passed down from the past that still affects us today"
+        }
+      ],
+      "lp_task": "Religion comparison table (polytheism vs Christianity) PLUS a clause-writing task: rewrite three plain sentences about Roman religion by adding an embedded relative clause to each. Model provided: 'Jupiter was a Roman god.' → 'Jupiter, who was the king of the gods, was worshipped across the empire.'",
+      "slides": [
+        {
+          "type": "i_do",
+          "title": "What did the Romans believe?",
+          "content": "The Romans were polytheistic — they worshipped many gods, including Jupiter, Mars and Venus. Each god controlled part of the world. Romans also worshipped their emperors as gods. In AD 380, Emperor Theodosius made Christianity the official religion of the Roman Empire. Because Rome controlled so much of Europe, Christianity spread rapidly across the continent."
+        },
+        {
+          "type": "we_do",
+          "title": "Relative clauses — adding detail to our writing",
+          "content": "Today we are learning to add embedded relative clauses. These add detail inside a sentence. Plain: Roman gods were worshipped in temples. With a relative clause: Roman gods, who each controlled a different part of the world, were worshipped in temples across the empire. Now try: take this plain sentence — 'Christianity became the official religion of Rome.' — and add a relative clause to give more detail."
+        },
+        {
+          "type": "you_do",
+          "title": "Roman religion — your writing",
+          "content": "Complete the religion comparison table on your learning paper. Then complete the clause-writing task: rewrite the three plain sentences by adding an embedded relative clause to each one."
+        }
+      ]
+    },
+    {
+      "lesson_number": 6,
+      "day_label": "Day 6",
+      "building_block_text": "Roman government and law",
+      "skill_focus": "questioning",
+      "writing_focus": "Embedded subordinate and relative clauses — practised. Writing about Roman law using clauses to add precision and detail.",
+      "what": "explain how Rome was governed and how Roman law affects us today",
+      "why": "Roman law and systems of government form the basis of many modern legal and political systems",
+      "success": "describing how Roman government worked, giving two examples of Roman law that influence life today, and writing a developed sentence using an embedded clause",
+      "vocabulary": [
+        {
+          "word": "republic",
+          "definition": "A system of government where leaders are chosen by the people, not born to power"
+        },
+        {
+          "word": "senate",
+          "definition": "The group of men who advised the emperor and helped make Rome's laws"
+        },
+        {
+          "word": "emperor",
+          "definition": "The single ruler of Rome who had total power over the empire"
+        },
+        {
+          "word": "legacy",
+          "definition": "Something passed down from the past that still affects us today"
+        },
+        {
+          "word": "Latin",
+          "definition": "The language of the Romans, which influenced English and many other languages"
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What does polytheistic mean?",
+          "answer": "Worshipping many gods"
+        },
+        {
+          "question": "When did Christianity become the official religion of Rome?",
+          "answer": "AD 380"
+        },
+        {
+          "question": "Add a relative clause to this sentence: 'The forum was the centre of Roman life.'",
+          "answer": "Accept: 'The forum, which was a large public square, was the centre of Roman life.'"
+        },
+        {
+          "question": "Why did Christianity spread so widely across Europe?",
+          "answer": "Because the Roman Empire controlled much of Europe and made Christianity its official religion"
+        }
+      ],
+      "lp_task": "Roman law impact activity (five principles — still used today?) PLUS a clause-writing task: write two sentences about Roman law, each containing an embedded subordinate or relative clause. Model: 'Roman law, which applied to all citizens across the empire, forms the basis of many legal systems we still use today.'",
+      "slides": [
+        {
+          "type": "i_do",
+          "title": "How did Rome govern its empire?",
+          "content": "Rome was first governed as a republic — with elected officials and a senate. When Augustus became emperor, power became more centralised. The Romans created a complex legal system with written laws that applied across the whole empire. Many of these legal principles — such as the right to a fair trial and being innocent until proven guilty — are still part of our legal system today."
+        },
+        {
+          "type": "we_do",
+          "title": "Practising clauses — writing about law",
+          "content": "Let us practise embedded clauses with a writing focus. Plain: Roman law applied to all citizens. With embedded clause: Roman law, which was written down and applied across the whole empire, gave citizens rights that had never existed before. Now write your own sentence about the legal principle 'innocent until proven guilty' — include an embedded clause to add detail."
+        },
+        {
+          "type": "you_do",
+          "title": "Roman law — your writing",
+          "content": "Complete the Roman law impact activity on your learning paper. Then write two sentences about Roman law — each must contain an embedded subordinate or relative clause. Highlight the clause in each sentence."
+        }
+      ]
+    },
+    {
+      "lesson_number": 7,
+      "day_label": "Day 7",
+      "building_block_text": "The Roman military",
+      "skill_focus": "sources",
+      "writing_focus": "Conjunctions and connectives for cohesion — introduced. Practise building connected ideas within a paragraph about the Roman army.",
+      "what": "describe how the Roman military was organised and why it was so effective",
+      "why": "the strength of the Roman military was what allowed the empire to grow — and to spread Roman civilisation across Europe",
+      "success": "explaining at least three reasons why the Roman military was effective and writing a short paragraph that uses at least two cohesion connectives",
+      "vocabulary": [
+        {
+          "word": "civilisation",
+          "definition": "A society with organised laws, culture and ways of living"
+        },
+        {
+          "word": "emperor",
+          "definition": "The single ruler of Rome who had total power over the empire"
+        },
+        {
+          "word": "legacy",
+          "definition": "Something passed down from the past that still affects us today"
+        },
+        {
+          "word": "gladiator",
+          "definition": "A fighter who trained to compete in public arenas for entertainment"
+        },
+        {
+          "word": "forum",
+          "definition": "The main public square in a Roman town, used for meetings, markets and courts"
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What is a republic?",
+          "answer": "A system of government where leaders are chosen by the people"
+        },
+        {
+          "question": "Name one Roman legal principle still used in Britain today.",
+          "answer": "E.g. innocent until proven guilty / right to a fair trial"
+        },
+        {
+          "question": "Write a sentence about Roman law with an embedded relative clause.",
+          "answer": "Accept any grammatically correct sentence with a relative clause"
+        },
+        {
+          "question": "Why was Roman law an important legacy?",
+          "answer": "Because it forms the basis of many modern legal and political systems"
+        }
+      ],
+      "lp_task": "Roman soldier fact file (training, weapons, daily life, pay) PLUS a cohesion task: write a short paragraph (3-4 sentences) about why the Roman army was powerful. Must include at least two of: in addition, furthermore, also, additionally, as a result, however.",
+      "slides": [
+        {
+          "type": "i_do",
+          "title": "Why was the Roman army so powerful?",
+          "content": "The Roman army was one of the most disciplined fighting forces in the ancient world. Soldiers trained constantly and followed strict rules. Legions were divided into smaller units called centuries, each led by a centurion. Roman soldiers were also engineers — they built roads, forts and bridges wherever they went, extending Roman civilisation as they advanced."
+        },
+        {
+          "type": "image_slide",
+          "layout_key": "B1_hero_image_left",
+          "badge": "I Do",
+          "title": "The Roman legionary",
+          "images": [],
+          "image_prompts": [
+            "Detailed educational illustration of a Roman legionary in full armour — lorica segmentata, scutum shield, pilum spear, galea helmet — with labels pointing to each item. Clear and informative, Year 5 level."
+          ],
+          "text": "A Roman legionary was heavily armed and well trained. Soldiers wore standardised armour and carried the same weapons — giving every soldier the same advantages in battle."
+        },
+        {
+          "type": "we_do",
+          "title": "Cohesion connectives — building a paragraph",
+          "content": "Today we practise joining ideas within a paragraph. Without connectives: The Roman army was disciplined. Soldiers trained every day. They built roads. With connectives: The Roman army was highly disciplined. In addition, soldiers trained every day without exception. Furthermore, they built roads and forts as they advanced, spreading Roman civilisation across the empire. Now try: write 3-4 sentences about the Roman army using 'in addition', 'also' or 'furthermore'."
+        },
+        {
+          "type": "you_do",
+          "title": "The Roman military — your paragraph",
+          "content": "Complete the soldier fact file on your learning paper. Then write your cohesion paragraph — 3 to 4 sentences about why the Roman army was powerful. Use at least two cohesion connectives and underline them."
+        }
+      ]
+    },
+    {
+      "lesson_number": 8,
+      "day_label": "Day 8",
+      "building_block_text": "Romans in Britain",
+      "skill_focus": "questioning",
+      "writing_focus": "Conjunctions and connectives for cohesion — practised. Building a connected paragraph about Roman Britain.",
+      "what": "explain what the Romans did in Britain and what evidence of their presence remains",
+      "why": "many of the features of modern Britain — its cities, roads and legal system — have roots in the Roman occupation",
+      "success": "naming at least three Roman settlements or structures in Britain and writing a cohesive paragraph using connectives to link ideas",
+      "vocabulary": [
+        {
+          "word": "aqueduct",
+          "definition": "A channel or bridge built to carry fresh water into towns"
+        },
+        {
+          "word": "legacy",
+          "definition": "Something passed down from the past that still affects us today"
+        },
+        {
+          "word": "civilisation",
+          "definition": "A society with organised laws, culture and ways of living"
+        },
+        {
+          "word": "forum",
+          "definition": "The main public square in a Roman town, used for meetings, markets and courts"
+        },
+        {
+          "word": "mosaic",
+          "definition": "A picture or pattern made from small pieces of coloured stone or tile"
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Name two cohesion connectives we practised last lesson.",
+          "answer": "E.g. in addition, furthermore, also, additionally, as a result, however"
+        },
+        {
+          "question": "Write a sentence using 'furthermore' about the Roman army.",
+          "answer": "Accept any grammatically correct sentence using 'furthermore'"
+        },
+        {
+          "question": "What was a centurion?",
+          "answer": "The leader of a century — a smaller unit within a Roman legion"
+        },
+        {
+          "question": "How did the Roman military help spread Roman civilisation?",
+          "answer": "As soldiers advanced, they built roads and forts and brought Roman laws and culture"
+        }
+      ],
+      "lp_task": "Roman Britain map (label Londinium, Aquae Sulis, Eboracum, Hadrian's Wall, key roads) PLUS a cohesion paragraph: write 4-5 sentences about what the Romans left behind in Britain, using at least three different cohesion connectives.",
+      "slides": [
+        {
+          "type": "i_do",
+          "title": "What did the Romans leave behind in Britain?",
+          "content": "The Romans occupied Britain from AD 43 to AD 410 — nearly 400 years. In that time they built towns, roads and forts that shaped the country we know today. Londinium (London) became the capital. Aquae Sulis (Bath) was built around natural hot springs. Eboracum (York) was a major military base. Hadrian's Wall stretched 73 miles across the north of England."
+        },
+        {
+          "type": "image_slide",
+          "layout_key": "B1_hero_image_left",
+          "badge": "I Do",
+          "title": "Hadrian's Wall",
+          "images": [],
+          "image_prompts": [
+            "Photograph of Hadrian's Wall stretching across the northern English landscape — dramatic scenery, wall clearly visible on a ridge. Educational, high quality, suitable for Year 5."
+          ],
+          "text": "Hadrian's Wall was built from AD 122. It stretched 73 miles from the Solway Firth to the River Tyne. Sections of the wall still stand nearly 1,900 years later — one of the most remarkable Roman legacies in Britain."
+        },
+        {
+          "type": "we_do",
+          "title": "Cohesion paragraph — Roman Britain",
+          "content": "Let us build a cohesion paragraph together. Start: The Romans left many lasting features in Britain. In addition… Also… Furthermore… As a result… Let us build this paragraph as a class, each person adding one connected sentence. Remember — each sentence must link to the one before."
+        },
+        {
+          "type": "you_do",
+          "title": "Roman Britain — your cohesion paragraph",
+          "content": "Complete the Roman Britain map on your learning paper. Then write your cohesion paragraph — 4 to 5 sentences about what the Romans left behind in Britain. Use at least three different cohesion connectives and underline each one."
+        }
+      ]
+    },
+    {
+      "lesson_number": 9,
+      "day_label": "Day 9",
+      "building_block_text": "Roman cultural legacies",
+      "skill_focus": "chronology",
+      "writing_focus": "All three features — practised together in a note-gathering frame. Children use varied sentences, embedded clauses and cohesion connectives in their notes.",
+      "what": "explain how Roman culture — language, art and architecture — has influenced the modern world",
+      "why": "the cultural legacy of Rome is one of the most far-reaching: Latin words, Roman numerals and classical architecture are still part of everyday life",
+      "success": "giving three specific examples of Roman cultural influence on modern life and writing notes that use all three writing features studied so far",
+      "vocabulary": [
+        {
+          "word": "Latin",
+          "definition": "The language of the Romans, which influenced English and many other languages"
+        },
+        {
+          "word": "legacy",
+          "definition": "Something passed down from the past that still affects us today"
+        },
+        {
+          "word": "civilisation",
+          "definition": "A society with organised laws, culture and ways of living"
+        },
+        {
+          "word": "mosaic",
+          "definition": "A picture or pattern made from small pieces of coloured stone or tile"
+        },
+        {
+          "word": "aqueduct",
+          "definition": "A channel or bridge built to carry fresh water into towns"
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What was the Roman name for London?",
+          "answer": "Londinium"
+        },
+        {
+          "question": "Write a sentence about Roman Britain with an embedded relative clause.",
+          "answer": "Accept any grammatically correct sentence"
+        },
+        {
+          "question": "How long did the Romans occupy Britain?",
+          "answer": "About 400 years (AD 43 to AD 410)"
+        },
+        {
+          "question": "Use 'in addition' in a sentence about Hadrian's Wall.",
+          "answer": "Accept any grammatically correct sentence using 'in addition'"
+        }
+      ],
+      "lp_task": "Note-gathering frame — three sections: Language legacy / Art and architecture legacy / One other legacy of your choice. For each, children write 2-3 notes using full sentences. Must use: at least one relative clause, at least one cohesion connective, and a variety of sentence lengths. Writing checklist included.",
+      "slides": [
+        {
+          "type": "i_do",
+          "title": "What cultural legacies did Rome leave?",
+          "content": "Latin became the common language of the Roman Empire. After Rome fell, it evolved into French, Spanish, Italian and Portuguese — and thousands of English words have Latin roots. Roman numerals are still used on clock faces and in film credits. Classical Roman architecture — arches, columns, domes — influenced buildings across Europe and the world for 2,000 years."
+        },
+        {
+          "type": "image_slide",
+          "layout_key": "gallery_5row",
+          "badge": "I Do",
+          "title": "Roman culture — still here today",
+          "images": [],
+          "image_prompts": [
+            "Image of a clock face with Roman numerals",
+            "Photograph of a neoclassical building with Roman-style columns (e.g. British Museum)",
+            "Image of a Roman mosaic floor preserved in a museum",
+            "Calendar page showing months with Latin-origin names (January, February, March...)",
+            "Dictionary page with Latin-root words highlighted"
+          ],
+          "text": "Roman culture is visible in everyday life: numerals on clocks, Latin-origin words in English, classical columns on public buildings, Latin month names in our calendar."
+        },
+        {
+          "type": "we_do",
+          "title": "Note-gathering — using all three features",
+          "content": "Today we gather notes for our future report. We will use all three writing features together. Let us write a model note about language legacy: Latin, which was spoken across the Roman Empire, is the root of many English words. In addition, French, Spanish and Italian all developed from Latin. Furthermore, scientific vocabulary is still mostly Latin today. Notice: relative clause, cohesion connectives, variety of lengths."
+        },
+        {
+          "type": "you_do",
+          "title": "Cultural legacies — your notes",
+          "content": "Complete the note-gathering frame on your learning paper. Write 2-3 sentences for each section. Aim to include at least one relative clause, at least one cohesion connective and a variety of sentence types. Tick each one off on your writing checklist."
+        }
+      ]
+    },
+    {
+      "lesson_number": 10,
+      "day_label": "Day 10",
+      "building_block_text": "Why does Rome still matter?",
+      "skill_focus": "interpretations",
+      "writing_focus": "All three features — review and consolidation. Introduction to non-chronological report structure. Preview of the report they will write.",
+      "what": "evaluate the overall impact of the Roman civilisation and understand how their notes will become a non-chronological report",
+      "why": "understanding the shape of the writing outcome helps children see how the knowledge they have gathered fits together",
+      "success": "explaining which aspect of Roman civilisation had the greatest impact and identifying the sections of the non-chronological report they will write",
+      "vocabulary": [
+        {
+          "word": "legacy",
+          "definition": "Something passed down from the past that still affects us today"
+        },
+        {
+          "word": "civilisation",
+          "definition": "A society with organised laws, culture and ways of living"
+        },
+        {
+          "word": "Latin",
+          "definition": "The language of the Romans, which influenced English and many other languages"
+        },
+        {
+          "word": "emperor",
+          "definition": "The single ruler of Rome who had total power over the empire"
+        },
+        {
+          "word": "republic",
+          "definition": "A system of government where leaders are chosen by the people, not born to power"
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Name two English words with Latin roots.",
+          "answer": "E.g. aqua, terra, annus, video, audio"
+        },
+        {
+          "question": "Where can Roman numerals still be seen today?",
+          "answer": "E.g. clock faces, film credits, chapter numbers"
+        },
+        {
+          "question": "Write a sentence about Roman cultural legacy using a connective.",
+          "answer": "Accept any grammatically correct sentence"
+        },
+        {
+          "question": "Give one example of Roman architectural influence today.",
+          "answer": "E.g. columns on government buildings, domed ceilings, arches"
+        }
+      ],
+      "lp_task": "Report preview — children read a model non-chronological report (short, two-paragraph example). They annotate it: circle subheadings, underline topic sentences, highlight cohesion connectives, box relative clauses. Then plan their own report sections.",
+      "slides": [
+        {
+          "type": "i_do",
+          "title": "Pulling it together — what was the Roman impact?",
+          "content": "Across the last nine lessons we have studied Roman civilisation from many angles: society, engineering, religion, law, the military, daily life, cultural spread and Romans in Britain. Now we bring this together. The Romans left legacies in: law and government, language, architecture and engineering, art and culture. Our challenge is to write a non-chronological report explaining the key legacies."
+        },
+        {
+          "type": "image_slide",
+          "layout_key": "C_supporting_illustration",
+          "badge": "I Do",
+          "title": "What a non-chronological report looks like",
+          "images": [],
+          "image_prompts": [
+            "Simple diagram showing the structure of a non-chronological report: Title at top, Introduction paragraph, Subheading + information paragraph, Subheading + information paragraph, Conclusion. Arrows and labels. Clear, educational, primary school style."
+          ],
+          "text": "A non-chronological report has: a title, a brief introduction, one or two information paragraphs (each with a subheading), and a short conclusion. It uses present tense, third person and formal language."
+        },
+        {
+          "type": "we_do",
+          "title": "What will our report contain?",
+          "content": "Let us decide together what the sections of our report will be. We know we need: an introduction, 1-2 information paragraphs and a conclusion. Which legacies will we write about in our paragraphs? Look back at your notes from previous lessons. Discuss with your partner: which two aspects of Roman civilisation do you have the most evidence for?"
+        },
+        {
+          "type": "you_do",
+          "title": "Reading and annotating the model text",
+          "content": "On your learning paper, read the model non-chronological report. Annotate it as directed: circle subheadings, underline topic sentences, highlight connectives, box relative clauses. Then, in the planning section, note which two legacy topics you will write about in your information paragraphs."
+        }
+      ]
+    },
+    {
+      "lesson_number": 11,
+      "day_label": "Day 11",
+      "building_block_text": "Planning our report",
+      "skill_focus": "interpretations",
+      "writing_focus": "Organisational features of non-chronological reports — explicitly taught. Children plan their report using a structured frame.",
+      "what": "plan a non-chronological report about the key legacies of the Roman civilisation",
+      "why": "a clear plan — with a logical structure, topic sentences and supporting evidence — is the foundation of a well-written report",
+      "success": "completing a full report plan with: a title, introduction notes, two legacy sections (each with topic sentence and at least two evidence points), and conclusion notes",
+      "vocabulary": [
+        {
+          "word": "legacy",
+          "definition": "Something passed down from the past that still affects us today"
+        },
+        {
+          "word": "civilisation",
+          "definition": "A society with organised laws, culture and ways of living"
+        },
+        {
+          "word": "Latin",
+          "definition": "The language of the Romans, which influenced English and many other languages"
+        },
+        {
+          "word": "aqueduct",
+          "definition": "A channel or bridge built to carry fresh water into towns"
+        },
+        {
+          "word": "forum",
+          "definition": "The main public square in a Roman town, used for meetings, markets and courts"
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What tense does a non-chronological report use for facts?",
+          "answer": "Present tense"
+        },
+        {
+          "question": "What is a topic sentence?",
+          "answer": "The opening sentence of a paragraph — it tells the reader what the paragraph is about"
+        },
+        {
+          "question": "Name two organisational features of a non-chronological report.",
+          "answer": "E.g. title, subheadings, introduction, conclusion, topic sentences"
+        },
+        {
+          "question": "What person does a non-chronological report use?",
+          "answer": "Third person — he, she, it, they (not I or you)"
+        }
+      ],
+      "lp_task": "Full report planning frame: Title / Introduction (2-3 bullet point notes) / Legacy section 1 — subheading + topic sentence draft + 2-3 evidence bullets / Legacy section 2 — same / Conclusion notes (1-2 sentences). Children complete independently using their notes from previous lessons.",
+      "slides": [
+        {
+          "type": "i_do",
+          "title": "How do we plan a non-chronological report?",
+          "content": "A strong plan makes writing much easier. Our report will have five sections: title, introduction, legacy paragraph 1, legacy paragraph 2 and conclusion. For each information paragraph we need: a subheading, a topic sentence that states what the paragraph is about, and at least two pieces of evidence. The conclusion should link back to the key question."
+        },
+        {
+          "type": "we_do",
+          "title": "Planning our introduction together",
+          "content": "Let us plan the introduction as a class. The introduction should: tell the reader what the report is about, mention that the Romans had a lasting impact, and name the two legacy areas we will discuss. It should be 2-3 sentences only. Draft one together. Remember: present tense, third person, formal tone."
+        },
+        {
+          "type": "you_do",
+          "title": "Complete your report plan",
+          "content": "On your learning paper, complete the full report planning frame. Use your notes from lessons 6-10. For each legacy section: choose a clear subheading, draft your topic sentence, add at least two evidence bullet points. You will use this plan next lesson to begin writing."
+        }
+      ]
+    },
+    {
+      "lesson_number": 12,
+      "day_label": "Day 12",
+      "building_block_text": "Writing our report",
+      "skill_focus": "interpretations",
+      "writing_focus": "All features applied — variety of sentences, embedded clauses, cohesion connectives, organisational features. Writing introduction and legacy paragraph 1.",
+      "what": "write the introduction and first information paragraph of a non-chronological report",
+      "why": "applying all the writing features we have practised in a sustained piece of writing",
+      "success": "writing a clear introduction (2-3 sentences) and a developed information paragraph that uses a topic sentence, embedded clauses, cohesion connectives and a variety of sentence structures",
+      "vocabulary": [
+        {
+          "word": "legacy",
+          "definition": "Something passed down from the past that still affects us today"
+        },
+        {
+          "word": "civilisation",
+          "definition": "A society with organised laws, culture and ways of living"
+        },
+        {
+          "word": "Latin",
+          "definition": "The language of the Romans, which influenced English and many other languages"
+        },
+        {
+          "word": "aqueduct",
+          "definition": "A channel or bridge built to carry fresh water into towns"
+        },
+        {
+          "word": "mosaic",
+          "definition": "A picture or pattern made from small pieces of coloured stone or tile"
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What is the purpose of an introduction in a non-chronological report?",
+          "answer": "To tell the reader what the report is about and introduce the topic"
+        },
+        {
+          "question": "What must every information paragraph begin with?",
+          "answer": "A topic sentence that states what the paragraph is about"
+        },
+        {
+          "question": "Write a topic sentence for a paragraph about Roman engineering.",
+          "answer": "Accept any clear topic sentence in third person, present tense"
+        },
+        {
+          "question": "Name all three writing features we have practised.",
+          "answer": "Variety of sentence structures / embedded clauses / cohesion connectives"
+        }
+      ],
+      "lp_task": "Lined writing paper with report structure cue strip at the top (title, introduction, legacy 1 subheading + paragraph, legacy 2 subheading + paragraph, conclusion). Children write title, introduction and legacy paragraph 1 in this session. Writing checklist at the bottom.",
+      "slides": [
+        {
+          "type": "i_do",
+          "title": "Let us write — modelling the introduction",
+          "content": "Watch as we build the introduction together. Title: Key Legacies of the Roman Civilisation. Introduction: The Roman civilisation, which lasted for nearly 1,000 years, left a lasting impact that can still be seen in modern life today. Roman achievements in law, language and engineering continue to shape the world we live in.  Notice: relative clause, formal tone, present tense, third person."
+        },
+        {
+          "type": "we_do",
+          "title": "Writing legacy paragraph 1 together",
+          "content": "Now we write the first legacy paragraph together using the plan from last lesson. Topic sentence first. Then evidence — using at least two cohesion connectives. Then a closing sentence that links back to impact or legacy. Remember to use a variety of sentence types. Let us draft this on the board together before you write your own."
+        },
+        {
+          "type": "you_do",
+          "title": "Write your introduction and paragraph 1",
+          "content": "Using your plan and today's models, write your title, introduction and first legacy paragraph. Aim for 2-3 sentences in the introduction and 4-6 sentences in the paragraph. When you finish, tick each item on your writing checklist: topic sentence, embedded clause, cohesion connective, variety of sentence types."
+        }
+      ]
+    },
+    {
+      "lesson_number": 13,
+      "day_label": "Day 13",
+      "building_block_text": "Completing our report",
+      "skill_focus": "interpretations",
+      "writing_focus": "All features applied. Writing legacy paragraph 2 and conclusion.",
+      "what": "write the second information paragraph and conclusion of the non-chronological report",
+      "why": "completing the report and reviewing it gives children a finished piece of writing that demonstrates their historical knowledge and writing skills",
+      "success": "completing legacy paragraph 2 and writing a conclusion that links back to the key question, using all three writing features",
+      "vocabulary": [
+        {
+          "word": "legacy",
+          "definition": "Something passed down from the past that still affects us today"
+        },
+        {
+          "word": "civilisation",
+          "definition": "A society with organised laws, culture and ways of living"
+        },
+        {
+          "word": "Latin",
+          "definition": "The language of the Romans, which influenced English and many other languages"
+        },
+        {
+          "word": "emperor",
+          "definition": "The single ruler of Rome who had total power over the empire"
+        },
+        {
+          "word": "republic",
+          "definition": "A system of government where leaders are chosen by the people, not born to power"
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Read back your introduction — does it state what the report is about?",
+          "answer": "Self-assessment"
+        },
+        {
+          "question": "Does your first paragraph start with a clear topic sentence?",
+          "answer": "Self-assessment"
+        },
+        {
+          "question": "Have you used at least two cohesion connectives?",
+          "answer": "Self-assessment"
+        },
+        {
+          "question": "What should your conclusion do?",
+          "answer": "Summarise the key points and link back to the main question or idea"
+        }
+      ],
+      "lp_task": "Continuation of writing paper from L12 — legacy paragraph 2 and conclusion. Peer-edit checklist included: partner ticks off topic sentence, embedded clause, connectives, sentence variety, correct tense and person.",
+      "slides": [
+        {
+          "type": "i_do",
+          "title": "Modelling legacy paragraph 2 and the conclusion",
+          "content": "Let us model the second paragraph and the conclusion. Paragraph 2 follows the same structure as paragraph 1 — topic sentence, evidence with connectives, closing sentence. The conclusion should be 1-3 sentences. It links back to the key question: what was the impact of Roman civilisation? It should not introduce new information — it summarises and gives a final judgement."
+        },
+        {
+          "type": "we_do",
+          "title": "Peer review — checking each other's writing",
+          "content": "Before you write your paragraph 2, swap your work with a partner. Using the peer-edit checklist, check their introduction and paragraph 1. Look for: clear topic sentence, embedded clause, two connectives, variety of sentences. Give one specific positive comment and one specific suggestion for improvement. Then return the work and continue with your own writing."
+        },
+        {
+          "type": "you_do",
+          "title": "Write your paragraph 2 and conclusion",
+          "content": "Write your second legacy paragraph and your conclusion. Use your plan. Aim for 4-6 sentences in the paragraph and 1-3 sentences in the conclusion. When you finish, complete your own self-edit checklist before handing in."
+        }
+      ]
+    },
+    {
+      "lesson_number": 14,
+      "day_label": "Day 14",
+      "building_block_text": "Rome's lasting impact",
+      "skill_focus": "interpretations",
+      "writing_focus": "Final edit and publication. All features reviewed through editing.",
+      "what": "edit, improve and publish the non-chronological report and reflect on the enquiry as a whole",
+      "why": "editing our writing carefully — checking for technical accuracy and the quality of our writing features — is the final step in producing a polished piece",
+      "success": "producing a finished, edited non-chronological report that clearly addresses the key question and demonstrably uses all three writing features studied",
+      "vocabulary": [
+        {
+          "word": "civilisation",
+          "definition": "A society with organised laws, culture and ways of living"
+        },
+        {
+          "word": "legacy",
+          "definition": "Something passed down from the past that still affects us today"
+        },
+        {
+          "word": "Latin",
+          "definition": "The language of the Romans, which influenced English and many other languages"
+        },
+        {
+          "word": "aqueduct",
+          "definition": "A channel or bridge built to carry fresh water into towns"
+        },
+        {
+          "word": "emperor",
+          "definition": "The single ruler of Rome who had total power over the empire"
+        }
+      ],
+      "quiz": [
+        {
+          "question": "What tense should a non-chronological report use?",
+          "answer": "Present tense for facts"
+        },
+        {
+          "question": "Name the five sections our report includes.",
+          "answer": "Title, introduction, legacy paragraph 1, legacy paragraph 2, conclusion"
+        },
+        {
+          "question": "What is an embedded relative clause?",
+          "answer": "A clause added mid-sentence using 'which', 'who', 'that' — gives extra detail"
+        },
+        {
+          "question": "What is the key question of this enquiry?",
+          "answer": "What was the impact of the Roman Civilisation?"
+        }
+      ],
+      "lp_task": "Final editing and publishing — children write or word-process their final version using their draft. Editing checklist: spelling, punctuation, sentence variety, clauses, connectives, tense, person, subheadings. Space for a reflection sentence at the end: 'I am most proud of… because…'",
+      "slides": [
+        {
+          "type": "i_do",
+          "title": "The editing process — what to look for",
+          "content": "Editing is not just checking spelling. It means reading your work as a reader and asking: is this clear? Is this interesting? Does each paragraph have a topic sentence? Have I used a variety of sentence types? Are my connectives doing their job? We will edit our reports today using a structured checklist."
+        },
+        {
+          "type": "we_do",
+          "title": "Editing together — one paragraph as a class",
+          "content": "Here is a draft paragraph about Roman law with some deliberate weaknesses. Let us find and fix them together: missing topic sentence, repeated sentence structure, no connectives, no embedded clause. Edit it on the board as a class — then apply what we have learned to your own work."
+        },
+        {
+          "type": "image_slide",
+          "layout_key": "A_full_bleed",
+          "badge": "We Do",
+          "title": "What was the impact of the Roman Civilisation?",
+          "images": [],
+          "image_prompts": [
+            "Dramatic wide-angle photograph of the Roman Colosseum at sunset — imposing, historic, powerful. High quality, suitable for a full-bleed presentation slide."
+          ],
+          "subtitle": "A civilisation that changed the world"
+        },
+        {
+          "type": "learning_review",
+          "questions": [
+            "What was the most significant legacy of the Roman civilisation — and why?",
+            "Was the Roman civilisation a positive force for everyone who lived under it? Give evidence for both sides.",
+            "What has changed in your thinking since the start of this enquiry?"
+          ]
+        }
+      ]
+    }
+  ],
+  "writing_features": [
+    {
+      "feature": "Variety of sentence structures",
+      "description": "Using simple, compound and complex sentences. Avoiding strings of short sentences or over-long ones.",
+      "introduced_lesson": 3,
+      "practised_lesson": 4,
+      "model_sentence": "The Romans were great builders. They constructed roads, temples and aqueducts across the empire. Because they used concrete and arches, many of their structures still stand today."
+    },
+    {
+      "feature": "Embedded subordinate and relative clauses",
+      "description": "Clauses added mid-sentence using 'which', 'who', 'that', 'where', 'although', 'because', etc.",
+      "introduced_lesson": 5,
+      "practised_lesson": 6,
+      "model_sentence": "Roman law, which applied to all citizens across the empire, forms the basis of many legal systems we still use today."
+    },
+    {
+      "feature": "Conjunctions and connectives for cohesion",
+      "description": "Building on ideas within a paragraph using: in addition, furthermore, also, additionally, however, as a result.",
+      "introduced_lesson": 7,
+      "practised_lesson": 8,
+      "model_sentence": "The Roman military was highly disciplined. In addition, soldiers were trained engineers who built roads and forts. Furthermore, the army's organisation allowed it to conquer vast territories."
+    },
+    {
+      "feature": "Organisational features of non-chronological reports",
+      "description": "Title, brief introduction, subheadings, 1-2 information paragraphs, short concluding paragraph. Present tense for facts. Third person. Formal tone.",
+      "introduced_lesson": 11,
+      "practised_lesson": "12-14",
+      "model_sentence": "Introduction: The Roman civilisation, which lasted for nearly 1,000 years, left a lasting legacy that can still be seen in modern life today."
+    }
+  ]
+}
