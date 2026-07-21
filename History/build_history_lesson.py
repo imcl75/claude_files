@@ -1312,12 +1312,23 @@ def build_image_slide(work, slide_spec, lesson, enquiry, colours):
     return sp
 
 
+def _concept_cartoon_router(work, slide_spec, lesson, enquiry, colours):
+    """
+    Route concept_cartoon slide type through build_image_slide.
+    Injects layout_key='concept_cartoon' so build_image_slide draws fresh rounded-rect
+    speech bubbles from speech_a/b/c — no source PPTX required.
+    MTP slide spec must use speech_a/speech_b/speech_c (not learners[]).
+    """
+    spec = dict(slide_spec, layout_key='concept_cartoon')
+    return build_image_slide(work, spec, lesson, enquiry, colours)
+
+
 VARIABLE_DISPATCH = {
-    'i_do':         build_i_do,
-    'we_do':        build_we_do,
-    'you_do':       build_you_do,
-    'you_do_trio':  build_you_do_trio,
-    'concept_cartoon': build_concept_cartoon,
+    'i_do':            build_i_do,
+    'we_do':           build_we_do,
+    'you_do':          build_you_do,
+    'you_do_trio':     build_you_do_trio,
+    'concept_cartoon': _concept_cartoon_router,   # routes via build_image_slide; no source PPTX needed
     'image_slide':     build_image_slide,
 }
 
@@ -1404,8 +1415,18 @@ def build_all_lessons(mtp_path, base_pptx, out_dir):
 
     for lesson in mtp['lessons']:
         n = lesson['lesson_number']
-        label = lesson.get('building_block_text', f'Lesson {n}').replace(' ', '_').replace('?', '')
-        fname = f'L{n:02d}_{label[:40]}.pptx'
+        topic = (
+            lesson.get('building_block_text', f'Lesson {n}')
+            .replace(' ', '_').replace('?', '').replace('/', '_')
+        )[:40]
+        day_label = lesson.get('day_label', '')
+        # Use full naming convention when day_label is in the new TxWy_nDay format,
+        # e.g. T2W3_1Tue → T2W3_1Tue_L01_Teaching_Who_were_the_Romans.pptx
+        # Fall back to a simpler name when day_label is missing or old-style ("Day 1").
+        if day_label and '_' in day_label and not day_label.startswith('Day '):
+            fname = f'{day_label}_L{n:02d}_Teaching_{topic}.pptx'
+        else:
+            fname = f'L{n:02d}_Teaching_{topic}.pptx'
         out_path = os.path.join(out_dir, fname)
         build_one_lesson(mtp, n, base_pptx, out_path)
         built.append(out_path)
