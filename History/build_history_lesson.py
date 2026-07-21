@@ -1028,13 +1028,13 @@ def _build_content_slide(work, layout_name, slide_spec, lesson, colours, badge_l
 
 
 def build_i_do(work, slide_spec, lesson, enquiry, colours):
-    return _build_content_slide(work, 'I do', slide_spec, lesson, colours, 'I Do')
+    return _build_content_slide(work, 'I Do', slide_spec, lesson, colours, 'I Do')
 
 def build_we_do(work, slide_spec, lesson, enquiry, colours):
-    return _build_content_slide(work, 'We do', slide_spec, lesson, colours, 'We Do')
+    return _build_content_slide(work, 'We Do', slide_spec, lesson, colours, 'We Do')
 
 def build_you_do(work, slide_spec, lesson, enquiry, colours):
-    return _build_content_slide(work, 'You do Ind', slide_spec, lesson, colours, 'You Do')
+    return _build_content_slide(work, 'You Do', slide_spec, lesson, colours, 'You Do')
 
 def build_you_do_trio(work, slide_spec, lesson, enquiry, colours):
     return _build_content_slide(work, 'You Do Trio', slide_spec, lesson, colours, 'You Do (Trio)')
