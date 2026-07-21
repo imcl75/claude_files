@@ -2,8 +2,10 @@
 history_registry.py - Component definitions and asset paths for the history enquiry lesson builder.
 Parallel to science_registry.py.
 
-Asset paths default to Innes's Mac. Override with the HIST_ASSETS_ROOT environment variable
-when building in the cloud: export HIST_ASSETS_ROOT=/path/to/assets
+Asset root is resolved in priority order:
+  1. HIST_ASSETS_ROOT environment variable (explicit override)
+  2. Mac path  /Users/innes/Pictures/PPTX Slide assets/Historians  (running locally)
+  3. assets/Historians/  relative to this file  (repo/cloud fetch layout)
 """
 import os
 
@@ -17,8 +19,14 @@ CONCEPT_COLOURS = {
 }
 
 # ── Asset paths ───────────────────────────────────────────────────────────────
-_DEFAULT_ASSETS_ROOT = '/Users/innes/Pictures/PPTX Slide assets/Historians'
-ASSETS_ROOT = os.environ.get('HIST_ASSETS_ROOT', _DEFAULT_ASSETS_ROOT)
+_MAC_PATH = '/Users/innes/Pictures/PPTX Slide assets/Historians'
+_REPO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'Historians')
+_CANDIDATES = [
+    os.environ.get('HIST_ASSETS_ROOT', ''),
+    _MAC_PATH,
+    _REPO_PATH,
+]
+ASSETS_ROOT = next((p for p in _CANDIDATES if p and os.path.isdir(p)), _MAC_PATH)
 
 STATIC_ASSETS = {
     'hist_icon':    f'{ASSETS_ROOT}/hist-icon.png',
