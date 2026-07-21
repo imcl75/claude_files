@@ -1312,6 +1312,79 @@ def build_image_slide(work, slide_spec, lesson, enquiry, colours):
     return sp
 
 
+def build_learning_review(work, slide_spec, lesson, enquiry, colours):
+    """
+    Variable slide: Learning Review.
+
+    Presents 2–4 reflective/discussion questions at the end of an enquiry.
+    Uses the 'You Do Ind' layout with a teal 'Learning Review' badge.
+
+    slide_spec fields:
+      questions  — list of question strings (required)
+      title      — optional override; defaults to "Look back at what you've learned"
+    """
+    sp, rp = fresh(work, 'Learning Review')
+    bg, bd = colours['bg'], colours['border']
+    _apply_concept_bg(sp, bg, bd)
+
+    t, st = get_spTree(sp)
+    sid = 10
+
+    # Badge — teal to distinguish from standard You Do
+    st.append(xp(
+        f'<p:sp xmlns:p="{P}" xmlns:a="{A}">'
+        f'<p:nvSpPr><p:cNvPr id="{sid}" name="TypeBadge"/>'
+        f'<p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+        f'<p:spPr><a:xfrm><a:off x="{SW - MARGIN_X - 2300000}" y="80000"/>'
+        f'<a:ext cx="2200000" cy="380000"/></a:xfrm>'
+        f'<a:prstGeom prst="roundRect"><a:avLst><a:gd name="adj" fmla="val 16667"/></a:avLst></a:prstGeom>'
+        f'<a:solidFill><a:srgbClr val="1A5C5C"/></a:solidFill>'
+        f'<a:ln><a:noFill/></a:ln></p:spPr>'
+        f'<p:txBody><a:bodyPr anchor="ctr"/><a:lstStyle/><a:p><a:pPr algn="ctr"/>'
+        f'<a:r><a:rPr lang="en-GB" sz="1500" b="1" dirty="0">'
+        f'<a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill></a:rPr>'
+        f'<a:t>Learning Review</a:t></a:r></a:p></p:txBody></p:sp>'
+    ))
+    sid += 1
+
+    # Title
+    title = slide_spec.get('title', 'Look back at what you’ve learned')
+    st.append(_styled_tbox(
+        sid, title,
+        MARGIN_X, 80000, SW - 2 * MARGIN_X - 2400000, 520000,
+        sz=2800, bold=True, color='1A3A5C', font=REG.TITLE_FONT,
+        align='l', name='SlideTitle'
+    ))
+    sid += 1
+    save(t, sp)
+
+    questions = slide_spec.get('questions', [])
+    groups = []
+    y_start = 680000
+    q_height = 1050000
+    gap = 120000
+
+    for i, q in enumerate(questions):
+        by = y_start + i * (q_height + gap)
+        if by + q_height > SH - 150000:
+            break
+        t2, st2 = get_spTree(sp)
+        label = f'{i + 1}.'
+        st2.append(_styled_tbox(
+            sid, f'{label}  {q}',
+            MARGIN_X, by, SW - 2 * MARGIN_X, q_height,
+            sz=1900, color='1A3A5C', align='l', name=f'Question{i + 1}'
+        ))
+        save(t2, sp)
+        groups.append([sid]); sid += 1
+
+    if groups:
+        animate(sp, groups)
+
+    _append_border(sp, bd)
+    return sp
+
+
 def _concept_cartoon_router(work, slide_spec, lesson, enquiry, colours):
     """
     Route concept_cartoon slide type through build_image_slide.
@@ -1328,8 +1401,9 @@ VARIABLE_DISPATCH = {
     'we_do':           build_we_do,
     'you_do':          build_you_do,
     'you_do_trio':     build_you_do_trio,
-    'concept_cartoon': _concept_cartoon_router,   # routes via build_image_slide; no source PPTX needed
-    'image_slide':     build_image_slide,
+    'concept_cartoon':  _concept_cartoon_router,   # routes via build_image_slide; no source PPTX needed
+    'image_slide':      build_image_slide,
+    'learning_review':  build_learning_review,
 }
 
 
