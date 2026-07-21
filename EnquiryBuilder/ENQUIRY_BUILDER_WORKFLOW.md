@@ -157,7 +157,7 @@ Run through this block once per lesson.
 | TIB | ✏️ Free text | "This is because…" — the rationale |
 | ISB | ✏️ Free text | "I will show this by…" — the success criterion |
 | Vocabulary | ✏️ Free text | 5 words + child-friendly definitions for this lesson's vocab slide |
-| Quiz (L2+) | ✏️ Free text | 2–5 question / answer pairs. Skip for lesson 1. |
+| Quiz (L2+) | ✏️ Free text | 4–5 question / answer pairs. Skip for lesson 1. |
 | LP task | ✏️ Free text | What task will children complete on their learning paper? Brief description. |
 
 **Variable slides for this lesson** — use two `AskUserQuestion` calls:
