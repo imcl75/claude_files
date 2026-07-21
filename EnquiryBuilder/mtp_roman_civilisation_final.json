@@ -151,7 +151,6 @@
           "definition": "The single ruler of Rome who had total power over the empire"
         }
       ],
-      "lp_task": "KWL grid — two columns: What I already know about the Romans / What I want to find out. Outline map of Europe at the bottom to label the position of Rome and the extent of the empire.",
       "slides": [
         {
           "type": "i_do",
@@ -179,7 +178,8 @@
           "title": "What do you know — and want to find out?",
           "content": "On your learning paper, complete the KWL grid. In the left column, write everything you already know about the Romans. In the right column, write your best questions. Be specific — include names, places or events if you can."
         }
-      ]
+      ],
+      "lp_note": "KWL grid — two columns: What I already know about the Romans / What I want to find out. Outline map of Europe at the bottom to label the position of Rome and the extent of the empire."
     },
     {
       "lesson_number": 2,
@@ -230,7 +230,6 @@
           "answer": "The group of men who advised the emperor and helped make Rome's laws"
         }
       ],
-      "lp_task": "Timeline activity — six key dates provided (753 BC to AD 476). Children add a brief description and significance for each event. A 'What changed?' column asks them to note one difference after each event.",
       "slides": [
         {
           "type": "i_do",
@@ -258,7 +257,8 @@
           "title": "The Roman timeline",
           "content": "On your learning paper, complete the timeline. Add a description and significance for each date. Then answer: what do you think was the most significant turning point — and why?"
         }
-      ]
+      ],
+      "lp_note": "Timeline activity — six key dates provided (753 BC to AD 476). Children add a brief description and significance for each event. A 'What changed?' column asks them to note one difference after each event."
     },
     {
       "lesson_number": 3,
@@ -309,7 +309,6 @@
           "answer": "AD 476"
         }
       ],
-      "lp_task": "Society pyramid (label groups, add facts) PLUS a sentence-variety writing task: describe the life of one group in Roman society using three different sentence types — one simple, one compound, one complex. Model sentence provided for reference.",
       "slides": [
         {
           "type": "i_do",
@@ -338,7 +337,141 @@
           "title": "Roman society — your writing",
           "content": "Complete the society pyramid on your learning paper, then complete the sentence-variety task. Write three sentences — simple, compound, complex — describing the life of one group in Roman society. Use today's model as a guide."
         }
-      ]
+      ],
+      "lp_note": "Society pyramid (label groups, add facts) PLUS a sentence-variety writing task: describe the life of one group in Roman society using three different sentence types — one simple, one compound, one complex. Model sentence provided for reference.",
+      "lp": {
+        "standard": {
+          "title": "Roman society — writing task",
+          "task": "Label the society pyramid with the correct groups. Then write three sentences about the life of a wealthy Roman patrician — one simple, one compound and one complex.",
+          "elements": [
+            {
+              "type": "instruction",
+              "text": "Label the pyramid. Emperor at the top, then patricians, plebeians, slaves."
+            },
+            {
+              "type": "row_boxes",
+              "rows": 4,
+              "labels": [
+                "Emperor",
+                "Patricians",
+                "Plebeians",
+                "Slaves"
+              ],
+              "empty": true
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "instruction",
+              "text": "Write three sentences about the life of a wealthy Roman patrician."
+            },
+            {
+              "type": "answer_lines",
+              "label": "Simple sentence",
+              "count": 2
+            },
+            {
+              "type": "answer_lines",
+              "label": "Compound sentence (use: and / but / so)",
+              "count": 2
+            },
+            {
+              "type": "answer_lines",
+              "label": "Complex sentence (use: because / although / when)",
+              "count": 2
+            }
+          ]
+        },
+        "adapted": {
+          "task": "Complete the pyramid with the word bank. Then complete the three sentence frames about Roman society.",
+          "elements": [
+            {
+              "type": "word_bank",
+              "words": [
+                "Emperor",
+                "Patricians",
+                "Plebeians",
+                "Slaves",
+                "Senate",
+                "Gladiators"
+              ]
+            },
+            {
+              "type": "row_boxes",
+              "rows": 4,
+              "labels": [
+                "",
+                "",
+                "",
+                ""
+              ],
+              "empty": true
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "instruction",
+              "text": "Complete the sentence frames below."
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Simple",
+              "starter": "A wealthy Roman patrician lived in a "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Compound",
+              "starter": "A wealthy Roman patrician lived in a large house and "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Complex",
+              "starter": "Although many Romans were poor, a wealthy patrician "
+            }
+          ]
+        },
+        "further_adapted": {
+          "task": "Match each group to its description. Then choose one group and complete the sentence frame.",
+          "elements": [
+            {
+              "type": "matching",
+              "left": [
+                "Emperor",
+                "Patricians",
+                "Plebeians",
+                "Slaves"
+              ],
+              "right": [
+                "Owned as property; no rights",
+                "Wealthy noble families; controlled the senate",
+                "Free citizens; could vote but had little power",
+                "Total power over the empire"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "word_bank",
+              "words": [
+                "laws",
+                "house",
+                "vote",
+                "owned",
+                "senate",
+                "power"
+              ]
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Write about one group",
+              "starter": "A __________ in Roman society "
+            }
+          ]
+        }
+      }
     },
     {
       "lesson_number": 4,
@@ -389,7 +522,6 @@
           "answer": "The emperor"
         }
       ],
-      "lp_task": "Engineering impact grid (roads, aqueducts, public baths, the Colosseum — what was it? why built? what impact today?) PLUS a sentence-variety writing task: write a short paragraph about Roman roads using at least one simple, one compound and one complex sentence.",
       "slides": [
         {
           "type": "i_do",
@@ -418,7 +550,152 @@
           "title": "Roman engineering — your writing",
           "content": "Complete the engineering impact grid on your learning paper. Then write a short paragraph about Roman roads using at least one simple, one compound and one complex sentence. Underline each sentence type."
         }
-      ]
+      ],
+      "lp_note": "Engineering impact grid (roads, aqueducts, public baths, the Colosseum — what was it? why built? what impact today?) PLUS a sentence-variety writing task: write a short paragraph about Roman roads using at least one simple, one compound and one complex sentence.",
+      "lp": {
+        "standard": {
+          "title": "Roman engineering — impact grid and paragraph",
+          "task": "Complete the engineering impact grid. Then write a short paragraph about Roman roads using at least one simple, one compound and one complex sentence.",
+          "elements": [
+            {
+              "type": "instruction",
+              "text": "Complete the grid for each Roman engineering achievement."
+            },
+            {
+              "type": "table",
+              "columns": [
+                "Achievement",
+                "What was it?",
+                "Why was it built?",
+                "Impact today?"
+              ],
+              "rows": [
+                "Roads",
+                "Aqueducts",
+                "Public baths",
+                "The Colosseum"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "instruction",
+              "text": "Write a short paragraph about Roman roads. Underline each sentence type."
+            },
+            {
+              "type": "answer_lines",
+              "count": 6
+            }
+          ]
+        },
+        "adapted": {
+          "task": "Complete the grid (one column is done for you). Then complete the paragraph frame about Roman roads.",
+          "elements": [
+            {
+              "type": "table",
+              "columns": [
+                "Achievement",
+                "What was it?",
+                "Why was it built?",
+                "Impact today?"
+              ],
+              "rows": [
+                [
+                  "Roads",
+                  "",
+                  "To move armies and trade quickly",
+                  ""
+                ],
+                [
+                  "Aqueducts",
+                  "A channel to carry fresh water",
+                  "",
+                  ""
+                ],
+                [
+                  "Public baths",
+                  "",
+                  "",
+                  ""
+                ],
+                [
+                  "The Colosseum",
+                  "",
+                  "",
+                  ""
+                ]
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "instruction",
+              "text": "Complete the paragraph about Roman roads."
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Simple",
+              "starter": "The Romans built roads "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Compound",
+              "starter": "The Romans built roads and "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Complex",
+              "starter": "Because the Romans built roads, "
+            }
+          ]
+        },
+        "further_adapted": {
+          "task": "Match each achievement to its purpose. Then choose the right words to complete the sentences.",
+          "elements": [
+            {
+              "type": "matching",
+              "left": [
+                "Roads",
+                "Aqueducts",
+                "Public baths",
+                "Colosseum"
+              ],
+              "right": [
+                "Entertainment for citizens",
+                "Carried fresh water into cities",
+                "Moved armies and linked the empire",
+                "Washing and socialising"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "word_bank",
+              "words": [
+                "roads",
+                "empire",
+                "water",
+                "fresh",
+                "today",
+                "built",
+                "soldiers"
+              ]
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Complete the sentence",
+              "starter": "The Romans built ___ to help ___  move across the ___."
+            },
+            {
+              "type": "answer_lines",
+              "count": 2
+            }
+          ]
+        }
+      }
     },
     {
       "lesson_number": 5,
@@ -469,7 +746,6 @@
           "answer": "Something passed down from the past that still affects us today"
         }
       ],
-      "lp_task": "Religion comparison table (polytheism vs Christianity) PLUS a clause-writing task: rewrite three plain sentences about Roman religion by adding an embedded relative clause to each. Model provided: 'Jupiter was a Roman god.' → 'Jupiter, who was the king of the gods, was worshipped across the empire.'",
       "slides": [
         {
           "type": "i_do",
@@ -486,7 +762,144 @@
           "title": "Roman religion — your writing",
           "content": "Complete the religion comparison table on your learning paper. Then complete the clause-writing task: rewrite the three plain sentences by adding an embedded relative clause to each one."
         }
-      ]
+      ],
+      "lp_note": "Religion comparison table (polytheism vs Christianity) PLUS a clause-writing task: rewrite three plain sentences about Roman religion by adding an embedded relative clause to each. Model provided: 'Jupiter was a Roman god.' → 'Jupiter, who was the king of the gods, was worshipped across the empire.'",
+      "lp": {
+        "standard": {
+          "title": "Roman religion — comparison and clause writing",
+          "task": "Complete the religion comparison table. Then rewrite three plain sentences about Roman religion by adding an embedded relative clause to each.",
+          "elements": [
+            {
+              "type": "table",
+              "columns": [
+                "",
+                "Roman polytheism",
+                "Christianity in Rome"
+              ],
+              "rows": [
+                "How many gods/beliefs?",
+                "Who did they worship?",
+                "How did it spread?",
+                "Impact on Europe?"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "instruction",
+              "text": "Rewrite each sentence by adding an embedded relative clause."
+            },
+            {
+              "type": "answer_lines",
+              "label": "1. Jupiter was a Roman god.",
+              "count": 2
+            },
+            {
+              "type": "answer_lines",
+              "label": "2. Rome adopted Christianity in AD 380.",
+              "count": 2
+            },
+            {
+              "type": "answer_lines",
+              "label": "3. Roman temples were built across the empire.",
+              "count": 2
+            }
+          ]
+        },
+        "adapted": {
+          "task": "Complete the comparison table using the word bank. Then add the relative clause from the box to each sentence.",
+          "elements": [
+            {
+              "type": "word_bank",
+              "words": [
+                "many gods",
+                "one God",
+                "Jupiter",
+                "Jesus",
+                "soldiers",
+                "official religion",
+                "Europe",
+                "empire"
+              ]
+            },
+            {
+              "type": "table",
+              "columns": [
+                "",
+                "Roman polytheism",
+                "Christianity in Rome"
+              ],
+              "rows": [
+                "Number of gods",
+                "Who was worshipped?",
+                "How did it spread?"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "instruction",
+              "text": "Add the relative clause in brackets to complete each sentence."
+            },
+            {
+              "type": "sentence_starter",
+              "label": "1.",
+              "starter": "Jupiter, ___, was the king of the Roman gods. [who controlled the sky and weather]"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "2.",
+              "starter": "Christianity, ___, spread across Europe when Rome adopted it. [which began in the Middle East]"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "3.",
+              "starter": "Roman temples, ___, were found in every major city. [which were built of stone and marble]"
+            }
+          ]
+        },
+        "further_adapted": {
+          "task": "Match the religion fact to the correct column. Then complete the sentence using the word bank.",
+          "elements": [
+            {
+              "type": "sort_table",
+              "columns": [
+                "Roman polytheism",
+                "Christianity"
+              ],
+              "items": [
+                "Worshipped many gods",
+                "Worshipped one God",
+                "Jupiter was king of the gods",
+                "Became official religion AD 380",
+                "Spread by Roman soldiers",
+                "Temples across the empire"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "word_bank",
+              "words": [
+                "who",
+                "which",
+                "temples",
+                "one God",
+                "many gods",
+                "Jupiter"
+              ]
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Complete the sentence",
+              "starter": "The Romans, ___ worshipped ___, built ___ across their empire."
+            }
+          ]
+        }
+      }
     },
     {
       "lesson_number": 6,
@@ -537,7 +950,6 @@
           "answer": "Because the Roman Empire controlled much of Europe and made Christianity its official religion"
         }
       ],
-      "lp_task": "Roman law impact activity (five principles — still used today?) PLUS a clause-writing task: write two sentences about Roman law, each containing an embedded subordinate or relative clause. Model: 'Roman law, which applied to all citizens across the empire, forms the basis of many legal systems we still use today.'",
       "slides": [
         {
           "type": "i_do",
@@ -554,7 +966,154 @@
           "title": "Roman law — your writing",
           "content": "Complete the Roman law impact activity on your learning paper. Then write two sentences about Roman law — each must contain an embedded subordinate or relative clause. Highlight the clause in each sentence."
         }
-      ]
+      ],
+      "lp_note": "Roman law impact activity (five principles — still used today?) PLUS a clause-writing task: write two sentences about Roman law, each containing an embedded subordinate or relative clause. Model: 'Roman law, which applied to all citizens across the empire, forms the basis of many legal systems we still use today.'",
+      "lp": {
+        "standard": {
+          "title": "Roman law — impact activity and clause writing",
+          "task": "Complete the law impact activity. Then write two sentences about Roman law, each containing an embedded subordinate or relative clause.",
+          "elements": [
+            {
+              "type": "instruction",
+              "text": "For each Roman legal principle, say whether we still use it today and give an example."
+            },
+            {
+              "type": "table",
+              "columns": [
+                "Roman legal principle",
+                "Still used today? (Y/N)",
+                "Modern example"
+              ],
+              "rows": [
+                "Innocent until proven guilty",
+                "Right to a fair trial",
+                "Written laws",
+                "Equal treatment under law",
+                "Right to appeal a decision"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "instruction",
+              "text": "Write two sentences about Roman law, each with an embedded clause."
+            },
+            {
+              "type": "answer_lines",
+              "label": "Sentence 1 (use 'which' or 'who')",
+              "count": 3
+            },
+            {
+              "type": "answer_lines",
+              "label": "Sentence 2 (use 'which', 'although' or 'because')",
+              "count": 3
+            }
+          ]
+        },
+        "adapted": {
+          "task": "Complete the law impact table with the word bank. Then complete the two sentence frames.",
+          "elements": [
+            {
+              "type": "word_bank",
+              "words": [
+                "Yes",
+                "No",
+                "courts",
+                "fair trial",
+                "laws",
+                "appeal",
+                "guilty",
+                "innocent",
+                "modern"
+              ]
+            },
+            {
+              "type": "table",
+              "columns": [
+                "Roman legal principle",
+                "Still used today?",
+                "Modern example"
+              ],
+              "rows": [
+                [
+                  "Innocent until proven guilty",
+                  "",
+                  ""
+                ],
+                [
+                  "Right to a fair trial",
+                  "",
+                  "British courts give everyone a ___"
+                ],
+                [
+                  "Written laws",
+                  "",
+                  ""
+                ],
+                [
+                  "Right to appeal",
+                  "",
+                  ""
+                ]
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Sentence 1",
+              "starter": "Roman law, which "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Sentence 2",
+              "starter": "Although Roman law was made 2,000 years ago, "
+            }
+          ]
+        },
+        "further_adapted": {
+          "task": "Match each Roman law principle to its meaning. Then complete the sentence about Roman law.",
+          "elements": [
+            {
+              "type": "matching",
+              "left": [
+                "Innocent until proven guilty",
+                "Right to a fair trial",
+                "Written laws",
+                "Right to appeal"
+              ],
+              "right": [
+                "Laws were recorded so everyone could know them",
+                "You are not guilty until a court decides",
+                "Everyone could ask for a decision to be checked",
+                "Everyone has the right to argue their case in court"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "word_bank",
+              "words": [
+                "which",
+                "laws",
+                "today",
+                "trial",
+                "fair",
+                "guilty",
+                "modern"
+              ]
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Complete the sentence",
+              "starter": "Roman law, ___ included the right to a ___ trial, is still part of ___ life ___."
+            }
+          ]
+        }
+      }
     },
     {
       "lesson_number": 7,
@@ -605,7 +1164,6 @@
           "answer": "Because it forms the basis of many modern legal and political systems"
         }
       ],
-      "lp_task": "Roman soldier fact file (training, weapons, daily life, pay) PLUS a cohesion task: write a short paragraph (3-4 sentences) about why the Roman army was powerful. Must include at least two of: in addition, furthermore, also, additionally, as a result, however.",
       "slides": [
         {
           "type": "i_do",
@@ -633,7 +1191,165 @@
           "title": "The Roman military — your paragraph",
           "content": "Complete the soldier fact file on your learning paper. Then write your cohesion paragraph — 3 to 4 sentences about why the Roman army was powerful. Use at least two cohesion connectives and underline them."
         }
-      ]
+      ],
+      "lp_note": "Roman soldier fact file (training, weapons, daily life, pay) PLUS a cohesion task: write a short paragraph (3-4 sentences) about why the Roman army was powerful. Must include at least two of: in addition, furthermore, also, additionally, as a result, however.",
+      "lp": {
+        "standard": {
+          "title": "Roman military — fact file and cohesion paragraph",
+          "task": "Complete the Roman soldier fact file. Then write a cohesion paragraph (3-4 sentences) about why the Roman army was powerful. Use at least two connectives.",
+          "elements": [
+            {
+              "type": "table",
+              "columns": [
+                "",
+                "Detail"
+              ],
+              "rows": [
+                "Training",
+                "Weapons and armour",
+                "Daily life",
+                "Pay and rewards"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "instruction",
+              "text": "Write your cohesion paragraph below. Underline each connective."
+            },
+            {
+              "type": "answer_lines",
+              "count": 6
+            },
+            {
+              "type": "marking_station",
+              "label": "Connectives used (circle):",
+              "options": [
+                "in addition",
+                "furthermore",
+                "also",
+                "as a result",
+                "additionally",
+                "however"
+              ]
+            }
+          ]
+        },
+        "adapted": {
+          "task": "Complete the fact file using the word bank. Then complete the paragraph using the connectives provided.",
+          "elements": [
+            {
+              "type": "word_bank",
+              "words": [
+                "pilum",
+                "scutum",
+                "centurion",
+                "legion",
+                "forts",
+                "roads",
+                "discipline",
+                "20 years",
+                "daily drills"
+              ]
+            },
+            {
+              "type": "table",
+              "columns": [
+                "",
+                "Detail"
+              ],
+              "rows": [
+                [
+                  "Training",
+                  "Soldiers did ___ every day and were trained in ___"
+                ],
+                [
+                  "Weapons",
+                  "They carried a ___ (spear) and ___ (shield)"
+                ],
+                [
+                  "Daily life",
+                  "Soldiers also built ___ and ___ wherever they went"
+                ],
+                [
+                  "Service",
+                  "Soldiers served for ___ before they could retire"
+                ]
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "instruction",
+              "text": "Complete the cohesion paragraph using the connectives in the boxes."
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Sentence 1",
+              "starter": "The Roman army was powerful because "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Sentence 2 (In addition,)",
+              "starter": "In addition, "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Sentence 3 (Furthermore,)",
+              "starter": "Furthermore, "
+            }
+          ]
+        },
+        "further_adapted": {
+          "task": "Match each fact about the Roman army to the correct category. Then complete the paragraph sentences.",
+          "elements": [
+            {
+              "type": "sort_table",
+              "columns": [
+                "Training",
+                "Weapons",
+                "What else they did"
+              ],
+              "items": [
+                "Daily drills",
+                "Pilum (spear)",
+                "Scutum (shield)",
+                "Built roads",
+                "Constructed forts",
+                "Marched long distances",
+                "Wore lorica segmentata armour",
+                "Served for 20 years"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "word_bank",
+              "words": [
+                "powerful",
+                "trained",
+                "roads",
+                "empire",
+                "also",
+                "in addition"
+              ]
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Sentence 1",
+              "starter": "The Roman army was ___ because soldiers were well ___."
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Sentence 2",
+              "starter": "In addition, soldiers ___ built ___ across the ___."
+            }
+          ]
+        }
+      }
     },
     {
       "lesson_number": 8,
@@ -684,7 +1400,6 @@
           "answer": "As soldiers advanced, they built roads and forts and brought Roman laws and culture"
         }
       ],
-      "lp_task": "Roman Britain map (label Londinium, Aquae Sulis, Eboracum, Hadrian's Wall, key roads) PLUS a cohesion paragraph: write 4-5 sentences about what the Romans left behind in Britain, using at least three different cohesion connectives.",
       "slides": [
         {
           "type": "i_do",
@@ -712,7 +1427,137 @@
           "title": "Roman Britain — your cohesion paragraph",
           "content": "Complete the Roman Britain map on your learning paper. Then write your cohesion paragraph — 4 to 5 sentences about what the Romans left behind in Britain. Use at least three different cohesion connectives and underline each one."
         }
-      ]
+      ],
+      "lp_note": "Roman Britain map (label Londinium, Aquae Sulis, Eboracum, Hadrian's Wall, key roads) PLUS a cohesion paragraph: write 4-5 sentences about what the Romans left behind in Britain, using at least three different cohesion connectives.",
+      "lp": {
+        "standard": {
+          "title": "Roman Britain — map and cohesion paragraph",
+          "task": "Label the Roman Britain map. Then write a cohesion paragraph (4-5 sentences) about what the Romans left behind in Britain. Use at least three connectives.",
+          "elements": [
+            {
+              "type": "instruction",
+              "text": "Label the map: Londinium, Aquae Sulis, Eboracum, Hadrian's Wall, and two Roman roads."
+            },
+            {
+              "type": "reference_image",
+              "placeholder": "[Map of Roman Britain — blank outline]"
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "instruction",
+              "text": "Write your cohesion paragraph. Underline each connective."
+            },
+            {
+              "type": "answer_lines",
+              "count": 8
+            },
+            {
+              "type": "marking_station",
+              "label": "Connectives used (circle):",
+              "options": [
+                "in addition",
+                "furthermore",
+                "also",
+                "as a result",
+                "additionally",
+                "however"
+              ]
+            }
+          ]
+        },
+        "adapted": {
+          "task": "Use the word bank to label the map. Then complete the paragraph frame using connectives from the box.",
+          "elements": [
+            {
+              "type": "word_bank",
+              "words": [
+                "Londinium",
+                "Aquae Sulis",
+                "Eboracum",
+                "Hadrian's Wall",
+                "Roman road"
+              ]
+            },
+            {
+              "type": "reference_image",
+              "placeholder": "[Map of Roman Britain — arrows to label]"
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "instruction",
+              "text": "Complete the cohesion paragraph."
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Sentence 1",
+              "starter": "The Romans left many lasting features in Britain, including "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Sentence 2 (In addition,)",
+              "starter": "In addition, they built "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Sentence 3 (Furthermore,)",
+              "starter": "Furthermore, "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Sentence 4 (As a result,)",
+              "starter": "As a result, "
+            }
+          ]
+        },
+        "further_adapted": {
+          "task": "Match each Roman place in Britain to its modern name and a fact. Then complete the sentence.",
+          "elements": [
+            {
+              "type": "matching",
+              "left": [
+                "Londinium",
+                "Aquae Sulis",
+                "Eboracum",
+                "Hadrian's Wall"
+              ],
+              "right": [
+                "York — a major Roman military base",
+                "Bath — built around hot springs",
+                "London — became the Roman capital",
+                "73-mile wall across northern England"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "word_bank",
+              "words": [
+                "roads",
+                "London",
+                "Bath",
+                "wall",
+                "Britain",
+                "also",
+                "in addition"
+              ]
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Complete the sentence",
+              "starter": "The Romans left behind ___, ___ and a famous ___ in ___."
+            },
+            {
+              "type": "answer_lines",
+              "count": 2
+            }
+          ]
+        }
+      }
     },
     {
       "lesson_number": 9,
@@ -763,7 +1608,6 @@
           "answer": "Accept any grammatically correct sentence using 'in addition'"
         }
       ],
-      "lp_task": "Note-gathering frame — three sections: Language legacy / Art and architecture legacy / One other legacy of your choice. For each, children write 2-3 notes using full sentences. Must use: at least one relative clause, at least one cohesion connective, and a variety of sentence lengths. Writing checklist included.",
       "slides": [
         {
           "type": "i_do",
@@ -795,7 +1639,142 @@
           "title": "Cultural legacies — your notes",
           "content": "Complete the note-gathering frame on your learning paper. Write 2-3 sentences for each section. Aim to include at least one relative clause, at least one cohesion connective and a variety of sentence types. Tick each one off on your writing checklist."
         }
-      ]
+      ],
+      "lp_note": "Note-gathering frame — three sections: Language legacy / Art and architecture legacy / One other legacy of your choice. For each, children write 2-3 notes using full sentences. Must use: at least one relative clause, at least one cohesion connective, and a variety of sentence lengths. Writing checklist included.",
+      "lp": {
+        "standard": {
+          "title": "Cultural legacies — note-gathering frame",
+          "task": "Write 2-3 sentences for each section. Use at least one relative clause, one connective and a variety of sentence types in your notes.",
+          "elements": [
+            {
+              "type": "instruction",
+              "text": "Use your writing features checklist as you write."
+            },
+            {
+              "type": "answer_lines",
+              "label": "Language legacy (Latin, Roman numerals, English words)",
+              "count": 5
+            },
+            {
+              "type": "answer_lines",
+              "label": "Art and architecture legacy (mosaics, columns, domes)",
+              "count": 5
+            },
+            {
+              "type": "answer_lines",
+              "label": "One other legacy of your choice:",
+              "count": 5
+            },
+            {
+              "type": "marking_station",
+              "label": "Writing features checklist:",
+              "options": [
+                "relative clause used",
+                "cohesion connective used",
+                "variety of sentence lengths"
+              ]
+            }
+          ]
+        },
+        "adapted": {
+          "task": "Complete the note-gathering frame using the sentence starters and the word bank.",
+          "elements": [
+            {
+              "type": "word_bank",
+              "words": [
+                "Latin",
+                "English",
+                "numerals",
+                "architecture",
+                "columns",
+                "arches",
+                "mosaics",
+                "which",
+                "in addition",
+                "furthermore"
+              ]
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Language legacy — sentence 1",
+              "starter": "Latin, which was spoken across the Roman Empire, "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Language legacy — sentence 2",
+              "starter": "In addition, many ___ words come from ___."
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Art and architecture — sentence 1",
+              "starter": "Roman ___, which used stone and marble, "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Art and architecture — sentence 2",
+              "starter": "Furthermore, ___ and ___ can still be seen "
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "answer_lines",
+              "label": "One other legacy (your choice):",
+              "count": 3
+            }
+          ]
+        },
+        "further_adapted": {
+          "task": "Sort the statements into the correct legacy column. Then complete one sentence for each legacy.",
+          "elements": [
+            {
+              "type": "sort_table",
+              "columns": [
+                "Language",
+                "Art and architecture"
+              ],
+              "items": [
+                "Latin is the root of many English words",
+                "Roman numerals on clocks",
+                "Columns on public buildings",
+                "Dome-shaped ceilings",
+                "Month names come from Latin",
+                "Mosaic art still in museums",
+                "Scientific words are mostly Latin",
+                "Roman arches in bridges today"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "word_bank",
+              "words": [
+                "Latin",
+                "words",
+                "clocks",
+                "columns",
+                "buildings",
+                "still",
+                "today"
+              ]
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Language sentence",
+              "starter": "___, which is the root of many English ___, is still used on ___ today."
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Architecture sentence",
+              "starter": "Roman ___ and arches can be seen on public ___ ___."
+            }
+          ]
+        }
+      }
     },
     {
       "lesson_number": 10,
@@ -846,7 +1825,6 @@
           "answer": "E.g. columns on government buildings, domed ceilings, arches"
         }
       ],
-      "lp_task": "Report preview — children read a model non-chronological report (short, two-paragraph example). They annotate it: circle subheadings, underline topic sentences, highlight cohesion connectives, box relative clauses. Then plan their own report sections.",
       "slides": [
         {
           "type": "i_do",
@@ -874,7 +1852,149 @@
           "title": "Reading and annotating the model text",
           "content": "On your learning paper, read the model non-chronological report. Annotate it as directed: circle subheadings, underline topic sentences, highlight connectives, box relative clauses. Then, in the planning section, note which two legacy topics you will write about in your information paragraphs."
         }
-      ]
+      ],
+      "lp_note": "Report preview — children read a model non-chronological report (short, two-paragraph example). They annotate it: circle subheadings, underline topic sentences, highlight cohesion connectives, box relative clauses. Then plan their own report sections.",
+      "lp": {
+        "standard": {
+          "title": "Report preview — annotation and planning",
+          "task": "Annotate the model report text. Then plan your own report sections.",
+          "elements": [
+            {
+              "type": "instruction",
+              "text": "Annotate the model text: circle subheadings, underline topic sentences, highlight cohesion connectives, box relative clauses."
+            },
+            {
+              "type": "reference_image",
+              "placeholder": "[Model non-chronological report — two paragraphs]"
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "instruction",
+              "text": "Now plan your own report."
+            },
+            {
+              "type": "answer_lines",
+              "label": "Title:",
+              "count": 1
+            },
+            {
+              "type": "answer_lines",
+              "label": "Introduction (2-3 key ideas):",
+              "count": 3
+            },
+            {
+              "type": "answer_lines",
+              "label": "Legacy section 1 — topic:",
+              "count": 1
+            },
+            {
+              "type": "answer_lines",
+              "label": "Legacy section 2 — topic:",
+              "count": 1
+            },
+            {
+              "type": "answer_lines",
+              "label": "Conclusion idea:",
+              "count": 2
+            }
+          ]
+        },
+        "adapted": {
+          "task": "Annotate the model text using the colour code. Then complete the guided planning frame.",
+          "elements": [
+            {
+              "type": "instruction",
+              "text": "Colour code: orange = subheading, blue = topic sentence, green = connective, yellow = relative clause."
+            },
+            {
+              "type": "reference_image",
+              "placeholder": "[Model non-chronological report — annotated version with some items highlighted]"
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Title",
+              "starter": "Key Legacies of the Roman Civilisation"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Introduction idea 1",
+              "starter": "The Romans left a lasting impact on "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Legacy section 1 — I will write about:",
+              "starter": ""
+            },
+            {
+              "type": "answer_lines",
+              "label": "Two evidence points for section 1:",
+              "count": 2
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Legacy section 2 — I will write about:",
+              "starter": ""
+            }
+          ]
+        },
+        "further_adapted": {
+          "task": "Match each report feature to its purpose. Then complete the planning sentences.",
+          "elements": [
+            {
+              "type": "matching",
+              "left": [
+                "Title",
+                "Subheading",
+                "Topic sentence",
+                "Cohesion connective",
+                "Conclusion"
+              ],
+              "right": [
+                "Joins ideas within a paragraph",
+                "Tells the reader what the report is about",
+                "Opens a new paragraph — states what it is about",
+                "Summarises at the end",
+                "Labels a section of the report"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "word_bank",
+              "words": [
+                "legacy",
+                "Roman",
+                "impact",
+                "law",
+                "language",
+                "engineering",
+                "today"
+              ]
+            },
+            {
+              "type": "sentence_starter",
+              "label": "My report will be about:",
+              "starter": "The ___ of the Roman Civilisation"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Section 1 topic:",
+              "starter": "Roman ___ / ___ / ___"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Section 2 topic:",
+              "starter": "Roman ___ / ___ / ___"
+            }
+          ]
+        }
+      }
     },
     {
       "lesson_number": 11,
@@ -925,7 +2045,6 @@
           "answer": "Third person — he, she, it, they (not I or you)"
         }
       ],
-      "lp_task": "Full report planning frame: Title / Introduction (2-3 bullet point notes) / Legacy section 1 — subheading + topic sentence draft + 2-3 evidence bullets / Legacy section 2 — same / Conclusion notes (1-2 sentences). Children complete independently using their notes from previous lessons.",
       "slides": [
         {
           "type": "i_do",
@@ -942,7 +2061,227 @@
           "title": "Complete your report plan",
           "content": "On your learning paper, complete the full report planning frame. Use your notes from lessons 6-10. For each legacy section: choose a clear subheading, draft your topic sentence, add at least two evidence bullet points. You will use this plan next lesson to begin writing."
         }
-      ]
+      ],
+      "lp_note": "Full report planning frame: Title / Introduction (2-3 bullet point notes) / Legacy section 1 — subheading + topic sentence draft + 2-3 evidence bullets / Legacy section 2 — same / Conclusion notes (1-2 sentences). Children complete independently using their notes from previous lessons.",
+      "lp": {
+        "standard": {
+          "title": "Report planning frame",
+          "task": "Complete the full report planning frame using your notes from lessons 6-10.",
+          "elements": [
+            {
+              "type": "answer_lines",
+              "label": "Title:",
+              "count": 1
+            },
+            {
+              "type": "answer_lines",
+              "label": "Introduction — 2-3 bullet point notes:",
+              "count": 3
+            },
+            {
+              "type": "answer_lines",
+              "label": "Legacy section 1 — subheading:",
+              "count": 1
+            },
+            {
+              "type": "answer_lines",
+              "label": "Topic sentence draft:",
+              "count": 2
+            },
+            {
+              "type": "answer_lines",
+              "label": "Evidence bullet 1:",
+              "count": 1
+            },
+            {
+              "type": "answer_lines",
+              "label": "Evidence bullet 2:",
+              "count": 1
+            },
+            {
+              "type": "answer_lines",
+              "label": "Evidence bullet 3:",
+              "count": 1
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "answer_lines",
+              "label": "Legacy section 2 — subheading:",
+              "count": 1
+            },
+            {
+              "type": "answer_lines",
+              "label": "Topic sentence draft:",
+              "count": 2
+            },
+            {
+              "type": "answer_lines",
+              "label": "Evidence bullet 1:",
+              "count": 1
+            },
+            {
+              "type": "answer_lines",
+              "label": "Evidence bullet 2:",
+              "count": 1
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "answer_lines",
+              "label": "Conclusion — 1-2 linking sentences:",
+              "count": 2
+            }
+          ]
+        },
+        "adapted": {
+          "task": "Complete the planning frame. The guiding questions will help you.",
+          "elements": [
+            {
+              "type": "sentence_starter",
+              "label": "Title",
+              "starter": "Key Legacies of the Roman Civilisation"
+            },
+            {
+              "type": "instruction",
+              "text": "Introduction: What was the Roman civilisation? What impact did it have? What are your two topics?"
+            },
+            {
+              "type": "answer_lines",
+              "label": "Introduction notes:",
+              "count": 3
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "instruction",
+              "text": "Legacy section 1: Choose your topic (law / engineering / language / religion / military)."
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Subheading:",
+              "starter": "Roman "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Topic sentence:",
+              "starter": "One of the most important legacies of the Roman civilisation is "
+            },
+            {
+              "type": "answer_lines",
+              "label": "Two evidence points:",
+              "count": 2
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "instruction",
+              "text": "Legacy section 2: Choose your second topic."
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Subheading:",
+              "starter": "Roman "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Topic sentence:",
+              "starter": "Another significant legacy is "
+            },
+            {
+              "type": "answer_lines",
+              "label": "Two evidence points:",
+              "count": 2
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Conclusion:",
+              "starter": "Overall, the Roman civilisation had a significant impact because "
+            }
+          ]
+        },
+        "further_adapted": {
+          "task": "Complete the planning frame using the sentence starters and word bank.",
+          "elements": [
+            {
+              "type": "word_bank",
+              "words": [
+                "laws",
+                "roads",
+                "Latin",
+                "religion",
+                "military",
+                "legacy",
+                "impact",
+                "today",
+                "still",
+                "civilisation"
+              ]
+            },
+            {
+              "type": "answer_lines",
+              "label": "Title:",
+              "count": 1
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Introduction sentence",
+              "starter": "The Romans had a big ___ on the world, especially through their ___ and ___."
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Section 1 — I will write about:",
+              "starter": "Roman ___"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Topic sentence",
+              "starter": "Roman ___ is important because "
+            },
+            {
+              "type": "answer_lines",
+              "label": "One fact:",
+              "count": 1
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Section 2 — I will write about:",
+              "starter": "Roman ___"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Topic sentence",
+              "starter": "Another important legacy is "
+            },
+            {
+              "type": "answer_lines",
+              "label": "One fact:",
+              "count": 1
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Conclusion",
+              "starter": "Overall, the Romans left a lasting ___ that we can ___ see ___."
+            }
+          ]
+        }
+      }
     },
     {
       "lesson_number": 12,
@@ -993,7 +2332,6 @@
           "answer": "Variety of sentence structures / embedded clauses / cohesion connectives"
         }
       ],
-      "lp_task": "Lined writing paper with report structure cue strip at the top (title, introduction, legacy 1 subheading + paragraph, legacy 2 subheading + paragraph, conclusion). Children write title, introduction and legacy paragraph 1 in this session. Writing checklist at the bottom.",
       "slides": [
         {
           "type": "i_do",
@@ -1010,7 +2348,172 @@
           "title": "Write your introduction and paragraph 1",
           "content": "Using your plan and today's models, write your title, introduction and first legacy paragraph. Aim for 2-3 sentences in the introduction and 4-6 sentences in the paragraph. When you finish, tick each item on your writing checklist: topic sentence, embedded clause, cohesion connective, variety of sentence types."
         }
-      ]
+      ],
+      "lp_note": "Lined writing paper with report structure cue strip at the top (title, introduction, legacy 1 subheading + paragraph, legacy 2 subheading + paragraph, conclusion). Children write title, introduction and legacy paragraph 1 in this session. Writing checklist at the bottom.",
+      "lp": {
+        "standard": {
+          "title": "Report — introduction and legacy paragraph 1",
+          "task": "Write your title, introduction and first legacy paragraph. Use your plan. Tick the checklist when you finish.",
+          "elements": [
+            {
+              "type": "instruction",
+              "text": "Report structure: Title → Introduction (2-3 sentences) → Legacy 1 subheading → Legacy 1 paragraph (4-6 sentences) → [continue next lesson]"
+            },
+            {
+              "type": "answer_lines",
+              "label": "Title:",
+              "count": 1
+            },
+            {
+              "type": "answer_lines",
+              "label": "Introduction:",
+              "count": 4
+            },
+            {
+              "type": "answer_lines",
+              "label": "Subheading — Legacy 1:",
+              "count": 1
+            },
+            {
+              "type": "answer_lines",
+              "label": "Legacy 1 paragraph:",
+              "count": 10
+            },
+            {
+              "type": "marking_station",
+              "label": "Writing checklist:",
+              "options": [
+                "topic sentence ✓",
+                "embedded clause ✓",
+                "2 connectives ✓",
+                "sentence variety ✓",
+                "present tense ✓",
+                "third person ✓"
+              ]
+            }
+          ]
+        },
+        "adapted": {
+          "task": "Write your introduction and first legacy paragraph using the sentence starters and word bank to help.",
+          "elements": [
+            {
+              "type": "word_bank",
+              "words": [
+                "which",
+                "who",
+                "in addition",
+                "furthermore",
+                "also",
+                "however",
+                "legacy",
+                "impact",
+                "civilisation",
+                "lasted",
+                "today"
+              ]
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Title",
+              "starter": "Key Legacies of the Roman Civilisation"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Introduction sentence 1",
+              "starter": "The Roman civilisation, which "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Introduction sentence 2",
+              "starter": "Roman achievements in ___ and ___ continue to "
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "answer_lines",
+              "label": "Subheading:",
+              "count": 1
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Topic sentence",
+              "starter": "One of the most important legacies of the Romans is "
+            },
+            {
+              "type": "answer_lines",
+              "label": "Continue your paragraph (use connectives from the word bank):",
+              "count": 8
+            },
+            {
+              "type": "marking_station",
+              "label": "Checklist:",
+              "options": [
+                "topic sentence ✓",
+                "one connective ✓",
+                "one clause ✓",
+                "present tense ✓"
+              ]
+            }
+          ]
+        },
+        "further_adapted": {
+          "task": "Complete the writing frames to build your introduction and first legacy paragraph.",
+          "elements": [
+            {
+              "type": "word_bank",
+              "words": [
+                "which",
+                "in addition",
+                "also",
+                "lasted",
+                "impact",
+                "legacy",
+                "today",
+                "still",
+                "Romans"
+              ]
+            },
+            {
+              "type": "answer_text",
+              "label": "Title",
+              "text": "Key Legacies of the Roman Civilisation"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Introduction sentence",
+              "starter": "The ___, which ___ for nearly 1,000 years, left a lasting ___ that can still be seen ___."
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Subheading",
+              "starter": "Roman "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Topic sentence",
+              "starter": "One important legacy of the Romans is their ___."
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Sentence 2 (In addition,)",
+              "starter": "In addition, "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Sentence 3 (Also,)",
+              "starter": "Also, "
+            },
+            {
+              "type": "answer_lines",
+              "count": 3
+            }
+          ]
+        }
+      }
     },
     {
       "lesson_number": 13,
@@ -1061,7 +2564,6 @@
           "answer": "Summarise the key points and link back to the main question or idea"
         }
       ],
-      "lp_task": "Continuation of writing paper from L12 — legacy paragraph 2 and conclusion. Peer-edit checklist included: partner ticks off topic sentence, embedded clause, connectives, sentence variety, correct tense and person.",
       "slides": [
         {
           "type": "i_do",
@@ -1078,7 +2580,153 @@
           "title": "Write your paragraph 2 and conclusion",
           "content": "Write your second legacy paragraph and your conclusion. Use your plan. Aim for 4-6 sentences in the paragraph and 1-3 sentences in the conclusion. When you finish, complete your own self-edit checklist before handing in."
         }
-      ]
+      ],
+      "lp_note": "Continuation of writing paper from L12 — legacy paragraph 2 and conclusion. Peer-edit checklist included: partner ticks off topic sentence, embedded clause, connectives, sentence variety, correct tense and person.",
+      "lp": {
+        "standard": {
+          "title": "Report — legacy paragraph 2 and conclusion",
+          "task": "Write your second legacy paragraph and conclusion. Peer-edit a partner's work using the checklist.",
+          "elements": [
+            {
+              "type": "answer_lines",
+              "label": "Subheading — Legacy 2:",
+              "count": 1
+            },
+            {
+              "type": "answer_lines",
+              "label": "Legacy 2 paragraph:",
+              "count": 10
+            },
+            {
+              "type": "answer_lines",
+              "label": "Conclusion (1-3 sentences linking back to the key question):",
+              "count": 4
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "marking_station",
+              "label": "Peer-edit checklist:",
+              "options": [
+                "topic sentence ✓",
+                "embedded clause ✓",
+                "2 connectives ✓",
+                "sentence variety ✓",
+                "correct tense ✓",
+                "third person ✓"
+              ]
+            }
+          ]
+        },
+        "adapted": {
+          "task": "Complete your second legacy paragraph and conclusion using the frames below.",
+          "elements": [
+            {
+              "type": "word_bank",
+              "words": [
+                "which",
+                "also",
+                "in addition",
+                "furthermore",
+                "as a result",
+                "however",
+                "legacy",
+                "today",
+                "still",
+                "impact"
+              ]
+            },
+            {
+              "type": "answer_lines",
+              "label": "Subheading:",
+              "count": 1
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Topic sentence",
+              "starter": "Another significant legacy of the Romans is "
+            },
+            {
+              "type": "answer_lines",
+              "label": "Continue your paragraph (use connectives):",
+              "count": 8
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Conclusion sentence 1",
+              "starter": "Overall, the Romans had a significant impact because "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Conclusion sentence 2",
+              "starter": "Their legacy can still be seen today in "
+            },
+            {
+              "type": "marking_station",
+              "label": "Self-edit:",
+              "options": [
+                "topic sentence ✓",
+                "one connective ✓",
+                "one clause ✓"
+              ]
+            }
+          ]
+        },
+        "further_adapted": {
+          "task": "Complete the writing frames for your second paragraph and conclusion.",
+          "elements": [
+            {
+              "type": "word_bank",
+              "words": [
+                "also",
+                "in addition",
+                "still",
+                "today",
+                "important",
+                "impact",
+                "legacy",
+                "Romans"
+              ]
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Subheading",
+              "starter": "Roman "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Topic sentence",
+              "starter": "___ is another important legacy of the ___."
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Sentence 2 (In addition,)",
+              "starter": "In addition, "
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Sentence 3 (Also,)",
+              "starter": "Also, "
+            },
+            {
+              "type": "answer_lines",
+              "count": 3
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Conclusion",
+              "starter": "Overall, the Romans left a ___ ___ that is ___ seen ___."
+            }
+          ]
+        }
+      }
     },
     {
       "lesson_number": 14,
@@ -1129,7 +2777,6 @@
           "answer": "What was the impact of the Roman Civilisation?"
         }
       ],
-      "lp_task": "Final editing and publishing — children write or word-process their final version using their draft. Editing checklist: spelling, punctuation, sentence variety, clauses, connectives, tense, person, subheadings. Space for a reflection sentence at the end: 'I am most proud of… because…'",
       "slides": [
         {
           "type": "i_do",
@@ -1160,7 +2807,129 @@
             "What has changed in your thinking since the start of this enquiry?"
           ]
         }
-      ]
+      ],
+      "lp_note": "Final editing and publishing — children write or word-process their final version using their draft. Editing checklist: spelling, punctuation, sentence variety, clauses, connectives, tense, person, subheadings. Space for a reflection sentence at the end: 'I am most proud of… because…'",
+      "lp": {
+        "standard": {
+          "title": "Final edit and publish",
+          "task": "Edit your completed report using the checklist. Then write the final version and your reflection sentence.",
+          "elements": [
+            {
+              "type": "instruction",
+              "text": "Work through the editing checklist before writing your final version."
+            },
+            {
+              "type": "marking_station",
+              "label": "Editing checklist:",
+              "options": [
+                "Spelling checked ✓",
+                "Punctuation checked ✓",
+                "Each paragraph has a topic sentence ✓",
+                "Sentence variety (simple/compound/complex) ✓",
+                "At least one embedded clause per paragraph ✓",
+                "At least two connectives per paragraph ✓",
+                "Present tense used for facts ✓",
+                "Third person throughout ✓",
+                "Subheadings in place ✓"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "answer_lines",
+              "label": "Final report (continue on lined paper if needed):",
+              "count": 20
+            },
+            {
+              "type": "answer_lines",
+              "label": "Reflection: I am most proud of… because…",
+              "count": 2
+            }
+          ]
+        },
+        "adapted": {
+          "task": "Use the guided editing checklist to improve your report. Then copy your best paragraph below and complete the reflection.",
+          "elements": [
+            {
+              "type": "instruction",
+              "text": "Check each item on the list. If you cannot tick it, go back and improve that part."
+            },
+            {
+              "type": "marking_station",
+              "label": "Guided editing checklist:",
+              "options": [
+                "I have a clear title ✓",
+                "My introduction tells the reader what the report is about ✓",
+                "Each paragraph starts with a topic sentence ✓",
+                "I have used 'which' or 'who' to add a relative clause ✓",
+                "I have used at least two connectives (in addition / furthermore / also) ✓",
+                "I have used present tense ✓",
+                "I have used third person (he/she/it/they) ✓",
+                "My conclusion links back to the key question ✓"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "answer_lines",
+              "label": "Copy your best paragraph below:",
+              "count": 10
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Reflection",
+              "starter": "I am most proud of ___ because "
+            }
+          ]
+        },
+        "further_adapted": {
+          "task": "Complete the step-by-step editing checklist. Then complete the reflection sentence.",
+          "elements": [
+            {
+              "type": "instruction",
+              "text": "Go through each step. Make the change in your report before ticking."
+            },
+            {
+              "type": "marking_station",
+              "label": "Step-by-step edit:",
+              "options": [
+                "Step 1: Does your report have a title? ✓",
+                "Step 2: Does your introduction mention the Romans? ✓",
+                "Step 3: Does each paragraph have a first sentence about the topic? ✓",
+                "Step 4: Have you used 'in addition' or 'also'? ✓",
+                "Step 5: Have you used 'which' or 'who'? ✓",
+                "Step 6: Does your last paragraph say what was most important? ✓"
+              ]
+            },
+            {
+              "type": "spacer"
+            },
+            {
+              "type": "answer_lines",
+              "label": "Copy one sentence you are proud of:",
+              "count": 2
+            },
+            {
+              "type": "word_bank",
+              "words": [
+                "proud",
+                "because",
+                "improved",
+                "learned",
+                "Romans",
+                "history"
+              ]
+            },
+            {
+              "type": "sentence_starter",
+              "label": "Reflection",
+              "starter": "I am most ___ of ___ because I ___"
+            }
+          ]
+        }
+      }
     }
   ],
   "writing_features": [
