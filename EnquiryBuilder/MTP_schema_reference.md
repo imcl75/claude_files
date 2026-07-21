@@ -1,6 +1,6 @@
 # MTP JSON Schema Reference
 *Enquiry lesson builders — Science, History, Geography*
-*Last updated: 2026-07-20*
+*Last updated: 2026-07-21*
 
 ---
 
@@ -34,7 +34,7 @@ All three builders share the same two-level structure:
 | `challenge` | Yes | Slide 1 — challenge text below KQ |
 | `strand` | Yes | Slide 3 — discipline/strand beaker icon. Values: `"Biology"`, `"Earth and Space Science"`, `"Chemistry"`, `"Physics"` |
 | `topic` | No | Output filename, display only |
-| `year_group` | No | Display only (default `"Y4"`) |
+| `year_group` | No | Display only (default `"Y5"`) |
 | `subject` | No | Display only (default `"science"`) |
 | `lessons` | Yes | Array of lesson objects |
 
@@ -45,6 +45,8 @@ All three builders share the same two-level structure:
 | Field | Required | Where used |
 |---|---|---|
 | `lesson_number` | Yes | Building blocks animation (determines how many atoms are lit); output filename |
+| `day_label` | Yes | Filename sort prefix — `{term_week}_{seq}{Day}` e.g. `T2W3_1Tue`. Computed from Block 1 timetable input. |
+| `term_week` | Yes | Week reference e.g. `T2W3`. Derived from timetable computation. |
 | `building_block_text` | Yes | Slide 4 — text label on the current lesson's atom/electron |
 | `what` | Yes | Slide 5 LO — WALT (I am learning to…) |
 | `why` | Yes | Slide 5 LO — TIB (This is because…) |
@@ -86,6 +88,8 @@ All three builders share the same two-level structure:
 | Field | Required | Where used |
 |---|---|---|
 | `lesson_number` | Yes | Building blocks brick count (bricks 1–N animate in); determines KWL vs Quiz |
+| `day_label` | Yes | Filename sort prefix — `{term_week}_{seq}{Day}` e.g. `T2W3_1Tue`. Computed from Block 1 timetable input. |
+| `term_week` | Yes | Week reference e.g. `T2W3`. Derived from timetable computation. |
 | `building_block_text` | Yes | Slide 4 — text on the current lesson's building block brick |
 | `skill_focus` | Yes | Slide 4 — brick colour. Values: `"questioning"`, `"chronology"`, `"sources"`, `"interpretations"` |
 | `what` | Yes | Slide 5 LO — WALT (I am learning to...) |
@@ -125,6 +129,8 @@ All three builders share the same two-level structure:
 | Field | Required | Where used |
 |---|---|---|
 | `lesson_number` | Yes | Puzzle pieces (pieces 1–N shown); determines KWL vs Quiz; output filename |
+| `day_label` | Yes | Filename sort prefix — `{term_week}_{seq}{Day}` e.g. `T2W3_1Tue`. Computed from Block 1 timetable input. |
+| `term_week` | Yes | Week reference e.g. `T2W3`. Derived from timetable computation. |
 | `lesson_title` | No | Output filename (falls back to `puzzle_piece_text` then `building_block_text`) |
 | `substantive_concept` | No | Overrides `default_substantive_concept`. Selects colour master (Yellow/Peach/Blue/Green/Purple) |
 | `puzzle_piece_text` | Yes | Slide 4 — text on the current lesson's puzzle piece |
