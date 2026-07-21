@@ -427,7 +427,7 @@ def _anim_timing_xml(steps):
     after the first as nodeType="withEffect" instead of "clickEffect", to
     match what PowerPoint itself writes.
     """
-    c = 3; outer_pars = ''; bld_entries = ''
+    c = 3; outer_pars = ''
     for step in steps:
         outer_id = c; c += 1
         middle_id = c; c += 1
@@ -435,26 +435,26 @@ def _anim_timing_xml(steps):
         for idx, sid in enumerate(step):
             node_type = 'clickEffect' if idx == 0 else 'withEffect'
             click_id, cbhvr_id = c, c + 1
+            # No grpId attribute — reference PPTX (T6W4_L1) has none on any cTn element
             inner += (f'<p:par><p:cTn id="{click_id}" presetID="1" presetClass="entr" presetSubtype="0" '
-                      f'fill="hold" grpId="0" nodeType="{node_type}"><p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+                      f'fill="hold" nodeType="{node_type}"><p:stCondLst><p:cond delay="0"/></p:stCondLst>'
                       f'<p:childTnLst><p:set><p:cBhvr><p:cTn id="{cbhvr_id}" dur="1" fill="hold">'
                       f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
                       f'<p:tgtEl><p:spTgt spid="{sid}"/></p:tgtEl>'
                       f'<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst></p:cBhvr>'
                       f'<p:to><p:strVal val="visible"/></p:to></p:set></p:childTnLst></p:cTn></p:par>')
-            bld_entries += f'<p:bldP spid="{sid}" grpId="0"/>'
             c += 2
         middle = (f'<p:par><p:cTn id="{middle_id}" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst>'
                   f'<p:childTnLst>{inner}</p:childTnLst></p:cTn></p:par>')
         outer_pars += (f'<p:par><p:cTn id="{outer_id}" fill="hold"><p:stCondLst><p:cond delay="indefinite"/>'
                         f'</p:stCondLst><p:childTnLst>{middle}</p:childTnLst></p:cTn></p:par>')
+    # No <p:bldLst> — reference PPTX has none; bldLst with bldP for pictures crashes Mac PowerPoint
     return (f'<p:timing xmlns:p="{P}"><p:tnLst><p:par><p:cTn id="1" dur="indefinite" restart="never" '
             f'nodeType="tmRoot"><p:childTnLst><p:seq concurrent="1" nextAc="seek">'
             f'<p:cTn id="2" dur="indefinite" nodeType="mainSeq"><p:childTnLst>{outer_pars}</p:childTnLst></p:cTn>'
             f'<p:prevCondLst><p:cond evt="onPrev" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>'
             f'<p:nextCondLst><p:cond evt="onNext" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
-            f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
-            f'<p:bldLst>{bld_entries}</p:bldLst></p:timing>')
+            f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst></p:timing>')
 
 def animate(sp, steps):
     """steps: list of lists of shape-ids, one list per click."""

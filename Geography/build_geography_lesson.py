@@ -26,11 +26,21 @@ import sys, os, json, argparse, glob, shutil, copy
 from pathlib import Path
 
 # ── Locate companion modules ──────────────────────────────────────────────────
+# Use importlib to force-load the Geography-local lib_ooxml.py, bypassing
+# sys.path ordering issues that arise when /home/claude or ../EnquiryBuilder
+# are already in sys.path and have their own lib_ooxml.py.
 _THIS = os.path.dirname(os.path.abspath(__file__))
-for _p in [_THIS,
-           os.path.join(_THIS, '..', 'EnquiryBuilder'),
+import importlib.util as _ilu
+_geo_lib_spec = _ilu.spec_from_file_location(
+    'lib_ooxml', os.path.join(_THIS, 'lib_ooxml.py'))
+_geo_lib_mod = _ilu.module_from_spec(_geo_lib_spec)
+sys.modules['lib_ooxml'] = _geo_lib_mod
+_geo_lib_spec.loader.exec_module(_geo_lib_mod)
+
+for _p in ['/tmp/EnquiryBuilder',
            '/home/claude',
-           '/tmp/EnquiryBuilder']:
+           os.path.join(_THIS, '..', 'EnquiryBuilder'),
+           _THIS]:
     if _p not in sys.path and os.path.isdir(_p):
         sys.path.insert(0, _p)
 
@@ -691,7 +701,7 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
                 f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
                 f'<p:childTnLst><p:par>'
                 f'<p:cTn id="{clk}" presetID="1" presetClass="entr" '
-                f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
+                f'presetSubtype="0" fill="hold" nodeType="clickEffect">'
                 f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
                 f'<p:childTnLst><p:set><p:cBhvr>'
                 f'<p:cTn id="{bhv}" dur="1" fill="hold">'
@@ -719,12 +729,7 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
             f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
             f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
             f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
-            f'<p:bldLst>'
-            + ''.join(
-                f'<p:bldP spid="{sid}" grpId="0" build="p"/>'
-                for _, sid in visible_strips_anim
-            )
-            + f'</p:bldLst></p:timing>'
+            f'</p:timing>'
         )
 
         tree = xr(sp)
@@ -817,11 +822,12 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
             current_img_id = img_id
             current_txt_id = txt_id if piece_txt else None
 
-    # Hide current lesson's shapes then add single click-reveal for both together
+    # Click-reveal current lesson's piece — the entrance animation (presetClass="entr")
+    # makes the shape start invisible without needing cNvPr hidden="1".
+    # Setting hidden="1" on cNvPr marks the shape as permanently non-rendered
+    # (not printed, not displayed) and conflicts with the animation reveal,
+    # causing PowerPoint on Mac to crash. Rely on the animation engine alone.
     if current_img_id is not None:
-        _hide_shape_by_id(sp, current_img_id)
-        if current_txt_id is not None:
-            _hide_shape_by_id(sp, current_txt_id)
         step = [s for s in [current_img_id, current_txt_id] if s is not None]
         animate(sp, [step])
 
@@ -1099,7 +1105,7 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
             f'<p:childTnLst><p:par><p:cTn id="{inn}" fill="hold">'
             f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
             f'<p:childTnLst><p:par><p:cTn id="{clk}" presetID="1" presetClass="entr" '
-            f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
+            f'presetSubtype="0" fill="hold" nodeType="clickEffect">'
             f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
             f'<p:childTnLst><p:set><p:cBhvr>'
             f'<p:cTn id="{bhv}" dur="1" fill="hold">'
@@ -1125,9 +1131,7 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
         f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
         f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
         f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
-        f'<p:bldLst>'
-        f'<p:bldP spid="{content_id}" grpId="0" build="p"/>'
-        f'</p:bldLst></p:timing>'
+        f'</p:timing>'
     )
 
     tree = xr(sp)
@@ -1230,7 +1234,7 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
             f'<p:childTnLst><p:par><p:cTn id="{inn}" fill="hold">'
             f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
             f'<p:childTnLst><p:par><p:cTn id="{clk}" presetID="1" presetClass="entr" '
-            f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
+            f'presetSubtype="0" fill="hold" nodeType="clickEffect">'
             f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
             f'<p:childTnLst><p:set><p:cBhvr>'
             f'<p:cTn id="{bhv}" dur="1" fill="hold">'
@@ -1256,9 +1260,7 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
         f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
         f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
         f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
-        f'<p:bldLst>'
-        f'<p:bldP spid="{content_id}" grpId="0" build="p"/>'
-        f'</p:bldLst></p:timing>'
+        f'</p:timing>'
     )
 
     tree = xr(sp)
