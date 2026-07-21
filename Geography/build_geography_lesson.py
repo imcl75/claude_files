@@ -814,7 +814,7 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
             txt_el = tbox(
                 txt_id, piece_txt,
                 tx, ty, tcx, tcy,
-                sz=1600, bold=True, color='FFFFFF', align='l',
+                sz=1600, bold=True, color='000000', align='l',
                 name=f'PieceTxt{position}',
             )
             t, st = get_spTree(sp)
