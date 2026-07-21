@@ -1,6 +1,6 @@
 # Enquiry Builder — New Enquiry Workflow
 *Run this form at the start of every new enquiry. Follow each block in order.*
-*Last updated: 2026-07-20*
+*Last updated: 2026-07-21*
 *Default year group: **Y5** (Innes is teaching Year 5 from September 2026)*
 
 ### Input types
@@ -72,6 +72,13 @@ Ask these first, every time.
 3. ✏️ **Topic title** — short label used in filenames (e.g. `roman_civilisation`)
 4. 🔘 **Number of lessons** — `AskUserQuestion`: 12 / 13 / 14 / More (if More, ask free text for exact count)
 5. ✏️ **Start reference** — term and week (e.g. T2W3)
+6. ✏️ **Lesson timetable** — list the days the subject is taught this enquiry, in order, one entry per lesson slot. Repeat a day if two lessons fall in the same week on the same day. E.g. `Tue, Thu` (2 per week) or `Mon, Tue, Tue, Wed, Thu, Thu, Fri` (7 per week).
+
+   From this list Claude computes a `day_label` for every lesson. The label is `{sequence_in_week}{Day}` — the sequence number resets to 1 each new week, and the week reference advances when the list is exhausted. Examples:
+   - `Tue, Thu` × 7 lessons from T2W3 → `T2W3_1Tue_L01`, `T2W3_2Thu_L02`, `T2W4_1Tue_L03`, `T2W4_2Thu_L04` …
+   - `Mon, Tue, Tue, Wed, Thu, Thu, Fri` × 14 lessons from T1W1 → `T1W1_1Mon_L01` … `T1W1_7Fri_L07`, `T1W2_1Mon_L08` … `T1W2_7Fri_L14`
+
+   Claude writes `day_label` (e.g. `T2W3_1Tue`) and `term_week` (e.g. `T2W3`) per lesson into the MTP JSON.
 
 ---
 
