@@ -160,6 +160,203 @@ def _esc(s):
     return (str(s).replace('&', '&amp;').replace('<', '&lt;')
                   .replace('>', '&gt;').replace('"', '&quot;'))
 
+# ── Image slide helpers ───────────────────────────────────────────────
+
+_IMG_CTR = [0]  # session-level counter for unique media filenames
+
+
+def _copy_img_to_media(src_path, media_dir):
+    """Copy an image file to media_dir with a unique name. Returns just the filename."""
+    _IMG_CTR[0] += 1
+    ext = os.path.splitext(src_path)[1].lower() or '.png'
+    name = f'lesson_img_{_IMG_CTR[0]:03d}{ext}'
+    shutil.copy(src_path, os.path.join(media_dir, name))
+    return name
+
+
+def _pic_xml(uid, rid, img_path, box_x, box_y, box_cx, box_cy):
+    """Return <p:pic> XML, scaling image to fit the box with aspect ratio preserved."""
+    try:
+        from PIL import Image as _PILImg
+        iw, ih = _PILImg.open(img_path).size
+        sc = min(box_cx / iw, box_cy / ih)
+        w, h = int(iw * sc), int(ih * sc)
+        x = box_x + (box_cx - w) // 2
+        y = box_y + (box_cy - h) // 2
+    except Exception:
+        x, y, w, h = box_x, box_y, box_cx, box_cy
+    return (f'<p:pic>'
+            f'<p:nvPicPr><p:cNvPr id="{uid}" name="Img{uid}"/>'
+            f'<p:cNvPicPr><a:picLocks noChangeAspect="1"/></p:cNvPicPr>'
+            f'<p:nvPr/></p:nvPicPr>'
+            f'<p:blipFill><a:blip r:embed="{rid}"/>'
+            f'<a:stretch><a:fillRect/></a:stretch></p:blipFill>'
+            f'<p:spPr><a:xfrm><a:off x="{x}" y="{y}"/>'
+            f'<a:ext cx="{w}" cy="{h}"/></a:xfrm>'
+            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>'
+            f'</p:spPr></p:pic>')
+
+
+def _rels_with_images(layout_num, img_names):
+    """Build rels string: rId1 = layout, rId2+ = images."""
+    img_rels = ''.join(
+        f'<Relationship Id="rId{2+i}" Type="{REL_IMG}" Target="../media/{nm}"/>'
+        for i, nm in enumerate(img_names)
+    )
+    return rels_str(layout_num, img_rels)
+
+
+def build_image_slide(spec, media_dir):
+    """
+    Render an image_slide spec. Copies image files to media_dir.
+    Returns (xml_str, rels_str).
+
+    Spec keys:
+        layout_key   : one of 10 layout keys (default 'B1_hero_image_left').
+                       Coordinates imported from image_layouts.py in /home/claude/.
+        badge        : 'I Do' | 'We Do' | 'You Do' | 'You Do (Trio)' (default 'We Do')
+        title        : slide title text
+        text         : body/task text — newlines become separate lines
+        images       : list of absolute paths to already-generated images
+        bubbles      : (concept_cartoon only) list of 3 speech-bubble strings
+    """
+    import sys as _sys
+    if '/home/claude' not in _sys.path:
+        _sys.path.insert(0, '/home/claude')
+    from image_layouts import get_layout
+
+    layout_key = spec.get('layout_key', 'B1_hero_image_left')
+    badge      = spec.get('badge', 'We Do')
+    title      = spec.get('title', '')
+    text       = spec.get('text', '')
+    images     = spec.get('images', [])
+    text_lines = [ln for ln in text.split('\n')] if text else []
+
+    BADGE_LAYOUT = {
+        'I Do':          LAYOUT['i_do'],
+        'We Do':         LAYOUT['we_do'],
+        'You Do (Trio)': LAYOUT['you_do_trio'],
+        'You Do':        LAYOUT['you_do'],
+    }
+    layout_num = BADGE_LAYOUT.get(badge, LAYOUT['we_do'])
+
+    # Copy images to media dir; build rId list
+    valid_images = [p for p in images if os.path.exists(p)]
+    img_names = [_copy_img_to_media(p, media_dir) for p in valid_images]
+
+    coords = get_layout(layout_key)
+    uid = 10
+    shapes = ''
+
+    if layout_key == 'A_full_bleed':
+        layout_num = LAYOUT['blank']
+        if valid_images:
+            ic = coords['image']
+            shapes += _pic_xml(uid, 'rId2', valid_images[0],
+                               ic['x'], ic['y'], ic['cx'], ic['cy'])
+            uid += 1
+        if title:
+            tc = coords['title_box']
+            shapes += text_box(uid, 'TitleBanner', tc['x'], tc['y'], tc['cx'], tc['cy'],
+                               [title], sz=3200, bold=True,
+                               fill='000000', color='FFFFFF', align='ctr')
+            uid += 1
+
+    elif layout_key in ('B1_hero_image_left', 'C_supporting_illustration', 'D_diagram_focus'):
+        # Single image + title + text
+        if title:
+            shapes += ph_title(title, uid=uid)
+            uid += 1
+        if valid_images:
+            ic = coords['image']
+            shapes += _pic_xml(uid, 'rId2', valid_images[0],
+                               ic['x'], ic['y'], ic['cx'], ic['cy'])
+            uid += 1
+        if text_lines and 'text_box' in coords:
+            tc = coords['text_box']
+            shapes += text_box(uid, 'TaskText', tc['x'], tc['y'], tc['cx'], tc['cy'],
+                               text_lines, sz=2000, color='1A3A5C')
+            uid += 1
+
+    elif layout_key in ('B2_hero_2images_left', 'B3_hero_2images_right'):
+        # Two images + title + text
+        if title:
+            shapes += ph_title(title, uid=uid)
+            uid += 1
+        for j, key in enumerate(['image_top', 'image_bottom']):
+            if j < len(valid_images) and key in coords:
+                ic = coords[key]
+                shapes += _pic_xml(uid, f'rId{2+j}', valid_images[j],
+                                   ic['x'], ic['y'], ic['cx'], ic['cy'])
+                uid += 1
+        if text_lines and 'text_box' in coords:
+            tc = coords['text_box']
+            shapes += text_box(uid, 'TaskText', tc['x'], tc['y'], tc['cx'], tc['cy'],
+                               text_lines, sz=2000, color='1A3A5C')
+            uid += 1
+
+    elif layout_key in ('gallery_5row', 'gallery_6x2'):
+        # Grid of images + title + task text
+        if title:
+            shapes += ph_title(title, uid=uid)
+            uid += 1
+        if text_lines and 'task_box' in coords:
+            tc = coords['task_box']
+            shapes += text_box(uid, 'TaskText', tc['x'], tc['y'], tc['cx'], tc['cy'],
+                               text_lines, sz=2000, color='1A3A5C')
+            uid += 1
+        for j, ic in enumerate(coords.get('images', [])):
+            if j < len(valid_images):
+                shapes += _pic_xml(uid, f'rId{2+j}', valid_images[j],
+                                   ic['x'], ic['y'], ic['cx'], ic['cy'])
+                uid += 1
+
+    elif layout_key == 'gallery_1wide':
+        if title:
+            shapes += ph_title(title, uid=uid)
+            uid += 1
+        if text_lines and 'task_box' in coords:
+            tc = coords['task_box']
+            shapes += text_box(uid, 'TaskText', tc['x'], tc['y'], tc['cx'], tc['cy'],
+                               text_lines, sz=2000, color='1A3A5C')
+            uid += 1
+        if valid_images:
+            ic = coords['image']
+            shapes += _pic_xml(uid, 'rId2', valid_images[0],
+                               ic['x'], ic['y'], ic['cx'], ic['cy'])
+            uid += 1
+
+    elif layout_key == 'concept_cartoon':
+        if title:
+            shapes += ph_title(title, uid=uid)
+            uid += 1
+        if valid_images and 'central_image' in coords:
+            ic = coords['central_image']
+            shapes += _pic_xml(uid, 'rId2', valid_images[0],
+                               ic['x'], ic['y'], ic['cx'], ic['cy'])
+            uid += 1
+        bubbles = spec.get('bubbles', ['', '', ''])
+        for bk, bt in zip(['text_a', 'text_b', 'text_c'], bubbles):
+            if bk in coords and bt:
+                bc = coords[bk]
+                shapes += text_box(uid, f'Bubble{uid}',
+                                   bc['x'], bc['y'], bc['cx'], bc['cy'],
+                                   [bt], sz=1800, color='1A3A5C')
+                uid += 1
+
+    else:
+        # Unknown layout — show fallback notice
+        if title:
+            shapes += ph_title(title, uid=uid)
+            uid += 1
+        shapes += text_box(uid, 'Warn', 200_000, 1_500_000, 11_000_000, 500_000,
+                           [f'[image_slide: unsupported layout_key "{layout_key}"]'],
+                           sz=1800, color='CC0000')
+
+    xml  = inject_timer(wrap_slide(shapes))
+    rels = _rels_with_images(layout_num, img_names)
+    return xml, rels
+
 # ── Slide builders ────────────────────────────────────────────────────
 
 def build_cover(spec, base_unpacked, cover_img_dest_name):
@@ -450,6 +647,8 @@ def assemble(args, slide_specs):
             xml, rels = build_book_page(spec)
         elif stype == 'rules':
             xml, rels = build_rules_slide(spec)
+        elif stype == 'image_slide':
+            xml, rels = build_image_slide(spec, media_dir)
         elif stype == 'learning_review':
             xml, rels = build_learning_review(spec, build_tmp)
         else:
