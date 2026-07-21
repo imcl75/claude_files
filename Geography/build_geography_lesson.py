@@ -804,13 +804,16 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
                          lsn.get('building_block_text') or
                          str(lsn['lesson_number']))
         if piece_txt:
-            pad_x = cx // 8
+            # Text box position derived from user-confirmed geo_L1_v6IM.pptx (2026-07-21).
+            # Proportions: x at 30.47% from piece left, y at 33.67% from piece top,
+            # width 38.36% of piece, height 35.42% of piece.
+            tx  = off_x + cx * 3047 // 10000
+            ty  = off_y + cy * 3367 // 10000
+            tcx = cx * 3836 // 10000
+            tcy = cy * 3542 // 10000
             txt_el = tbox(
                 txt_id, piece_txt,
-                off_x + pad_x,
-                off_y + cy * 55 // 100,
-                cx - 2 * pad_x,
-                cy * 40 // 100,
+                tx, ty, tcx, tcy,
                 sz=1600, bold=True, color='FFFFFF', align='l',
                 name=f'PieceTxt{position}',
             )
