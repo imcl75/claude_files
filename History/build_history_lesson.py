@@ -268,14 +268,14 @@ def build_key_question(work, rp_dummy, lesson, enquiry, colours):
     sid += 1
     save(t, sp)
 
-    # Images — only add if files exist (fail gracefully with warning)
+    # Images — only add if files exist; log missing ones (preflight should have caught these)
     def _try_add(path, x, y, mw, mh):
         nonlocal sid
         if os.path.exists(path):
             add_img(sp, rp, work, path, x, y, mw, mh, sid)
             sid += 1
         else:
-            print(f'  WARNING: asset not found, skipping: {path}', file=sys.stderr)
+            print(f'  ERROR: asset missing at build time (should have been caught by preflight): {path}', file=sys.stderr)
 
     # 4-children PNG — centred horizontally, lower half of slide
     _try_add(REG.STATIC_ASSETS['children_kq'],
@@ -320,13 +320,13 @@ def build_concepts_skills(work, rp_dummy, lesson, enquiry, colours):
         add_img(sp, rp, work, left_path, MARGIN_X, img_y, half_w, img_h, sid)
         ids_left.append(sid); sid += 1
     else:
-        print(f'  WARNING: {left_path} not found', file=sys.stderr)
+        print(f'  ERROR: asset missing at build time (preflight missed this?): {left_path}', file=sys.stderr)
 
     if os.path.exists(right_path):
         add_img(sp, rp, work, right_path, SW // 2 + 100000, img_y, half_w, img_h, sid)
         ids_right.append(sid); sid += 1
     else:
-        print(f'  WARNING: {right_path} not found', file=sys.stderr)
+        print(f'  ERROR: asset missing at build time (preflight missed this?): {right_path}', file=sys.stderr)
 
     if ids_left or ids_right:
         steps = [s for s in [ids_left, ids_right] if s]
@@ -349,7 +349,7 @@ def build_concept_card(work, rp_dummy, lesson, enquiry, colours):
 
     concept = enquiry.get('concept', 'civilisation').lower()
     if concept not in REG.CONCEPT_CARD_SPECS:
-        print(f'  WARNING: unknown concept "{concept}", skipping concept card images', file=sys.stderr)
+        print(f'  ERROR: unknown concept "{concept}" — not in CONCEPT_CARD_SPECS. Add it to history_registry.py.', file=sys.stderr)
         _append_border(sp, bd)
         return sp
 
@@ -368,7 +368,7 @@ def build_concept_card(work, rp_dummy, lesson, enquiry, colours):
             steps.append([sid])
             sid += 1
         else:
-            print(f'  WARNING: concept card image not found: {img_path}', file=sys.stderr)
+            print(f'  ERROR: concept card image not found at build time (preflight missed this?): {img_path}', file=sys.stderr)
 
     if steps:
         animate(sp, steps)
@@ -1388,7 +1388,7 @@ def build_one_lesson(mtp, lesson_num, base_pptx, out_pptx):
     for i, slide_spec in enumerate(lesson_data.get('slides', []), start=8):
         stype = slide_spec['type']
         if stype not in VARIABLE_DISPATCH:
-            print(f'  [{i}] WARNING: unknown slide type "{stype}", skipping', file=sys.stderr)
+            print(f'  [{i}] ERROR: unknown slide type "{stype}" — add a handler to VARIABLE_DISPATCH in build_history_lesson.py', file=sys.stderr)
             continue
         print(f'  [{i}] {stype}: {slide_spec.get("title", "")}')
         VARIABLE_DISPATCH[stype](work, slide_spec, lesson_data, mtp, colours)
@@ -1404,10 +1404,55 @@ def build_one_lesson(mtp, lesson_num, base_pptx, out_pptx):
     return out_pptx
 
 
+def preflight_assets(mtp):
+    """
+    Check every asset the builder will need and return a list of missing paths.
+    Call this before building any slides — a non-empty list means the build
+    would produce incomplete slides. Caller should abort and report to the user.
+    """
+    missing = []
+
+    # Static slide assets (key question, concepts & skills)
+    for key, path in REG.STATIC_ASSETS.items():
+        if not os.path.exists(path):
+            missing.append(f'static/{key}: {path}')
+
+    # Concept card images (Y1–Y6 for this enquiry's concept)
+    concept = mtp.get('concept', 'civilisation').lower()
+    if concept in REG.CONCEPT_CARD_SPECS:
+        folder, prefix = REG.CONCEPT_CARD_SPECS[concept]
+        for year in range(1, 7):
+            img_path = os.path.join(REG.ASSETS_ROOT, folder, f'{prefix}-Y{year}.png')
+            if not os.path.exists(img_path):
+                missing.append(f'concept_card/Y{year}: {img_path}')
+
+    # Building block brick images referenced by lessons
+    checked_blocks = set()
+    for lesson in mtp.get('lessons', []):
+        sf = lesson.get('skill_focus')
+        if sf and sf in REG.BUILDING_BLOCK_PNGS and sf not in checked_blocks:
+            checked_blocks.add(sf)
+            path = REG.BUILDING_BLOCK_PNGS[sf]
+            if not os.path.exists(path):
+                missing.append(f'building_block/{sf}: {path}')
+
+    return missing
+
+
 def build_all_lessons(mtp_path, base_pptx, out_dir):
     """Build one PPTX per lesson, saving to out_dir."""
     with open(mtp_path) as f:
         mtp = json.load(f)
+
+    # Pre-flight runs here too so build_all_lessons() is safe when called directly
+    # (not via main). main() also calls it, so this is intentionally duplicated.
+    missing = preflight_assets(mtp)
+    if missing:
+        print('\nERROR: Missing assets — build aborted. No PPTXs were written.\n', file=sys.stderr)
+        for m in missing:
+            print(f'  ✗ {m}', file=sys.stderr)
+        print('\nRun  python restore_history_assets.py  to fix this.', file=sys.stderr)
+        sys.exit(1)
 
     os.makedirs(out_dir, exist_ok=True)
     topic = mtp.get('topic', 'History').replace(' ', '_')
@@ -1453,10 +1498,22 @@ def main():
     if not os.path.exists(args.base_pptx):
         sys.exit(f'Base PPTX not found: {args.base_pptx}')
 
+    # ── Pre-flight: always check assets before building anything ──────────────
+    with open(args.mtp_json) as f:
+        mtp = json.load(f)
+    missing = preflight_assets(mtp)
+    if missing:
+        print('\nERROR: Missing assets — build aborted. No PPTXs were written.\n', file=sys.stderr)
+        print('The following files are required but were not found:', file=sys.stderr)
+        for m in missing:
+            print(f'  ✗ {m}', file=sys.stderr)
+        print('\nFix: run  python restore_history_assets.py  to fetch assets from the repo.', file=sys.stderr)
+        print('If the assets are not yet in the repo, commit them first (see ASSET RULES', file=sys.stderr)
+        print('in the github-sync SKILL.md).', file=sys.stderr)
+        sys.exit(1)
+
     if args.lesson:
         out = args.out_pptx or os.path.join(args.out_dir, f'L{args.lesson:02d}.pptx')
-        with open(args.mtp_json) as f:
-            mtp = json.load(f)
         build_one_lesson(mtp, args.lesson, args.base_pptx, out)
     else:
         build_all_lessons(args.mtp_json, args.base_pptx, args.out_dir)
