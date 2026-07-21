@@ -529,7 +529,7 @@ def _add_strip_img(sp, rp, work, img_path, x, y, w, h, sid):
         f'<p:pic xmlns:p="{P}" xmlns:a="{A}" xmlns:r="{R}">'
         f'<p:nvPicPr>'
         f'<p:cNvPr id="{sid}" name="Strip{sid}"/>'
-        f'<p:cNvPicPr><a:picLocks noChangeAspect="0"/></p:cNvPicPr>'
+        f'<p:cNvPicPr><a:picLocks/></p:cNvPicPr>'
         f'<p:nvPr/>'
         f'</p:nvPicPr>'
         f'<p:blipFill>'
@@ -811,7 +811,7 @@ def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_id
                 off_y + cy * 55 // 100,
                 cx - 2 * pad_x,
                 cy * 40 // 100,
-                sz=1600, bold=True, color='FFFFFF', align='c',
+                sz=1600, bold=True, color='FFFFFF', align='l',
                 name=f'PieceTxt{position}',
             )
             t, st = get_spTree(sp)
@@ -1083,9 +1083,6 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
         animated_para_idxs.append(para_global); para_global += 1
         if i < len(qna) - 1:
             spacer = etree.Element(f'{{{A}}}p')
-            spacer_pPr = etree.SubElement(spacer, f'{{{A}}}pPr')
-            spacer_pPr.set('spcBef', '0')
-            spacer_pPr.set('spcAft', '0')
             spacer_epr = etree.SubElement(spacer, f'{{{A}}}endParaRPr')
             spacer_epr.set('lang', 'en-GB')
             spacer_epr.set('sz', '400')
@@ -1216,12 +1213,9 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
         txBody.append(_def_para(item.get('definition', '')))
         animated_para_idxs.append(para_global); para_global += 1
         if i < len(vocab) - 1:
-            # Tiny spacer — explicit sz="400" and spcBef/spcAft=0 stop it inheriting
-            # the master's massive default line height
+            # Tiny spacer — sz="400" (4pt) on endParaRPr collapses the inherited
+            # master line height to a negligible gap. No pPr needed.
             spacer = etree.Element(f'{{{A}}}p')
-            spacer_pPr = etree.SubElement(spacer, f'{{{A}}}pPr')
-            spacer_pPr.set('spcBef', '0')
-            spacer_pPr.set('spcAft', '0')
             spacer_epr = etree.SubElement(spacer, f'{{{A}}}endParaRPr')
             spacer_epr.set('lang', 'en-GB')
             spacer_epr.set('sz', '400')
