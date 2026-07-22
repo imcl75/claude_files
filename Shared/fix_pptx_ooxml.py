@@ -65,6 +65,8 @@ def fix_pptx(input_path, output_path=None):
         counter = max_n + 1
         for name in sorted(non_std):
             basename = name[len(media_prefix):]
+            if not basename:  # skip bare directory entries
+                continue
             ext = basename.rsplit('.', 1)[-1] if '.' in basename else 'bin'
             rename_map[name] = f'{media_prefix}image{counter}.{ext}'
             counter += 1
@@ -85,7 +87,7 @@ def fix_pptx(input_path, output_path=None):
             for old, new in rename_map.items():
                 old_base = old[len(media_prefix):]
                 new_base = new[len(media_prefix):]
-                if old_base in content:
+                if old_base and old_base in content:
                     content = content.replace(old_base, new_base)
                     changed = True
             if changed:
