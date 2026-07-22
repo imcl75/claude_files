@@ -1,7 +1,7 @@
 {
   "key_question": "How does our planet compare to other planets?",
   "challenge": "Write an information text about a chosen planet.",
-  "strand": "Physics",
+  "strand": "Earth and Space Science",
   "topic": "Astronomy",
   "subject": "science",
   "year_group": "Y5",
@@ -13,12 +13,12 @@
       "day_label": "L1",
       "building_block_text": "The Universe",
       "what": "understand how the universe began and the scale of space",
-      "why": "knowing where Earth sits in the universe puts the rest of our enquiry in context",
-      "success": "describing the Big Bang theory, explaining what a galaxy is and placing our solar system within the Milky Way",
+      "why": "to put our solar system in context and understand how small Earth is in the universe",
+      "success": "describe the Big Bang theory; explain what a galaxy is; say where our solar system sits within the Milky Way",
       "vocabulary": [
         {
           "word": "universe",
-          "definition": "everything that exists \u2014 all space, matter and energy"
+          "definition": "everything that exists — all space, matter and energy"
         },
         {
           "word": "galaxy",
@@ -44,9 +44,9 @@
           "title": "How big is the universe?",
           "bullets": [
             "The universe contains more than 200 billion galaxies.",
-            "Our galaxy, the Milky Way, contains around 200\u2013400 billion stars.",
+            "Our galaxy, the Milky Way, contains around 200–400 billion stars.",
             "Our Sun is just one of those stars.",
-            "The universe is about 13.8 billion years old \u2014 it began with the Big Bang."
+            "The universe is about 13.8 billion years old — it began with the Big Bang."
           ]
         },
         {
@@ -58,36 +58,26 @@
             "Our Milky Way galaxy formed about 13.5 billion years ago.",
             "Our solar system formed about 4.5 billion years ago inside the Milky Way."
           ],
-          "image_path": "/sessions/clever-relaxed-ramanujan/mnt/outputs/sci_L1_ido_diagram.png"
+          "image_path": "TODO: insert Big Bang / universe scale diagram"
         },
         {
           "type": "youdo_task",
           "title": "Zoom in on the universe",
           "bullets": [
-            "Draw and label a diagram showing: universe \u2192 galaxy \u2192 solar system \u2192 Earth.",
+            "Draw and label a diagram showing: universe → galaxy → solar system → Earth.",
             "Write one sentence explaining what the Big Bang theory is.",
-            "Challenge: Estimate \u2014 if the universe were the size of Earth, how big would our solar system be?"
-          ]
-        },
-        {
-          "type": "learning_review",
-          "title": "What have we learned?",
-          "starters": [
-            "I used to think... but now I know...",
-            "The most interesting thing I learned about the universe was...",
-            "As a scientist this lesson helped me to..."
+            "Challenge: Estimate — if the universe were the size of Earth, how big would our solar system be?"
           ]
         }
-      ],
-      "lp": null
+      ]
     },
     {
       "lesson_number": 2,
       "day_label": "L2",
       "building_block_text": "Our Solar System",
       "what": "name and describe the eight planets of our solar system",
-      "why": "understanding the structure of our solar system gives us a framework for the whole enquiry",
-      "success": "naming the eight planets in order from the Sun and explaining why the Sun is a star, not a planet",
+      "why": "to understand the structure of our solar system and Earth's place within it",
+      "success": "name the planets in order from the Sun; describe key differences between them; explain why the Sun is a star, not a planet",
       "vocabulary": [
         {
           "word": "solar system",
@@ -129,9 +119,9 @@
           "type": "wedo_hook",
           "title": "Meet the solar system",
           "bullets": [
-            "My Very Energetic Mother Just Served Us Noodles \u2014 Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune.",
-            "The Sun is a star \u2014 it produces its own heat and light. The planets do not.",
-            "In 2006 Pluto was reclassified as a dwarf planet \u2014 there are now officially 8 planets.",
+            "My Very Energetic Mother Just Served Us Noodles — Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune.",
+            "The Sun is a star — it produces its own heat and light. The planets do not.",
+            "In 2006 Pluto was reclassified as a dwarf planet — there are now officially 8 planets.",
             "Beyond our solar system there are billions of other star systems in the Milky Way."
           ]
         },
@@ -141,39 +131,29 @@
           "bullets": [
             "The four closest planets to the Sun (Mercury, Venus, Earth, Mars) are small and rocky.",
             "The four outer planets (Jupiter, Saturn, Uranus, Neptune) are much larger and made mainly of gas.",
-            "Jupiter is the largest planet \u2014 more than 11 times wider than Earth.",
+            "Jupiter is the largest planet — more than 11 times wider than Earth.",
             "Saturn's famous rings are made of ice and rock."
           ],
-          "image_path": "/sessions/clever-relaxed-ramanujan/mnt/outputs/sci_L2_ido_diagram.png"
+          "image_path": "TODO: solar system order diagram"
         },
         {
           "type": "youdo_task",
           "title": "Solar system challenge",
           "bullets": [
-            "List the eight planets in order from the Sun \u2014 can you do it from memory?",
+            "List the eight planets in order from the Sun — can you do it from memory?",
             "Write one interesting fact about each of the four inner planets.",
             "Challenge: Explain in your own words why the Sun is a star and not a planet."
           ]
-        },
-        {
-          "type": "learning_review",
-          "title": "What have we learned?",
-          "starters": [
-            "I used to think... but now I know...",
-            "The most interesting thing I learned about our solar system was...",
-            "As a scientist this lesson helped me to..."
-          ]
         }
-      ],
-      "lp": null
+      ]
     },
     {
       "lesson_number": 3,
       "day_label": "L3",
       "building_block_text": "Sizes and Distances",
       "what": "compare the sizes and distances of planets using data",
-      "why": "identifying patterns in data is a core scientific skill, and the solar system gives us rich data to work with",
-      "success": "reading a data table of planet sizes, describing a pattern I can see and representing the data as a graph",
+      "why": "to identify patterns in our solar system and develop our data-handling skills",
+      "success": "read and interpret a data table of planet sizes and distances; describe a pattern I can see; represent data in a bar chart or scatter graph",
       "vocabulary": [
         {
           "word": "diameter",
@@ -207,7 +187,7 @@
         },
         {
           "question": "Is the Sun a star or a planet? How do you know?",
-          "answer": "A star \u2014 it produces its own heat and light."
+          "answer": "A star — it produces its own heat and light."
         }
       ],
       "slides": [
@@ -220,7 +200,7 @@
             "Pattern: the further a planet is from the Sun, the longer its year (orbital period).",
             "Pattern: the four inner planets are much smaller than the four outer planets."
           ],
-          "image_path": "/sessions/clever-relaxed-ramanujan/mnt/outputs/sci_L3_ido_diagram.png"
+          "image_path": "TODO: planet size comparison diagram or data table"
         },
         {
           "type": "youdo_task",
@@ -228,28 +208,18 @@
           "bullets": [
             "Use the data table to draw a bar chart comparing the diameters of all eight planets.",
             "Describe one pattern you can see in the data.",
-            "Challenge: Plot distance from the Sun against length of year \u2014 what do you notice?"
-          ]
-        },
-        {
-          "type": "learning_review",
-          "title": "What have we learned?",
-          "starters": [
-            "I used to think... but now I know...",
-            "The most interesting thing I learned about sizes and distances was...",
-            "As a scientist this lesson helped me to..."
+            "Challenge: Plot distance from the Sun against length of year — what do you notice?"
           ]
         }
-      ],
-      "lp": null
+      ]
     },
     {
       "lesson_number": 4,
       "day_label": "L4",
       "building_block_text": "Day, Night and Seasons",
       "what": "explain why we have day and night and why the seasons change",
-      "why": "these are common misconceptions in science, and correcting them deepens our understanding of how Earth moves",
-      "success": "explaining what causes day and night, explaining what causes the seasons and correcting the misconception about Earth's distance from the Sun",
+      "why": "to understand that Earth's rotation causes day and night, and Earth's tilted orbit around the Sun causes the seasons — not its distance from the Sun",
+      "success": "explain what causes day and night; explain what causes the seasons; correct the misconception that seasons are caused by how close Earth is to the Sun",
       "vocabulary": [
         {
           "word": "rotate",
@@ -261,7 +231,7 @@
         },
         {
           "word": "tilt",
-          "definition": "Earth's axis is tilted at 23.5\u00b0 \u2014 this causes the seasons"
+          "definition": "Earth's axis is tilted at 23.5° — this causes the seasons"
         },
         {
           "word": "revolution",
@@ -269,7 +239,7 @@
         },
         {
           "word": "hemisphere",
-          "definition": "half of the Earth \u2014 the Northern Hemisphere or Southern Hemisphere"
+          "definition": "half of the Earth — the Northern Hemisphere or Southern Hemisphere"
         }
       ],
       "quiz": [
@@ -304,7 +274,7 @@
               "statement": "We have seasons because the Sun gets hotter and cooler throughout the year."
             }
           ],
-          "image_path": "/sessions/clever-relaxed-ramanujan/mnt/outputs/sci_L4_concept_cartoon.png"
+          "image_path": "TODO: image showing Earth's orbit with tilt visible"
         },
         {
           "type": "ido_diagram",
@@ -312,43 +282,33 @@
           "bullets": [
             "Day and night: Earth rotates once every 24 hours. The side facing the Sun has day; the side facing away has night.",
             "Sunrise is always in the east; sunset is always in the west.",
-            "Seasons: Earth's axis is tilted at 23.5\u00b0. As Earth orbits the Sun, each hemisphere tilts towards or away.",
-            "When the Northern Hemisphere tilts towards the Sun \u2192 summer. Tilts away \u2192 winter."
+            "Seasons: Earth's axis is tilted at 23.5°. As Earth orbits the Sun, each hemisphere tilts towards or away.",
+            "When the Northern Hemisphere tilts towards the Sun → summer. Tilts away → winter."
           ],
-          "image_path": "/sessions/clever-relaxed-ramanujan/mnt/outputs/sci_L4_ido_diagram.png"
+          "image_path": "TODO: Earth rotation and orbit/tilt diagram"
         },
         {
           "type": "youdo_task",
           "title": "Explain day, night and seasons",
           "bullets": [
             "Draw and label a diagram showing why we have day and night.",
-            "Write a paragraph explaining why we have seasons \u2014 make sure you correct the common misconception.",
+            "Write a paragraph explaining why we have seasons — make sure you correct the common misconception.",
             "Challenge: Why do countries near the equator have less noticeable seasons?"
           ]
-        },
-        {
-          "type": "learning_review",
-          "title": "What have we learned?",
-          "starters": [
-            "I used to think... but now I know...",
-            "The most interesting thing I learned about day, night and seasons was...",
-            "As a scientist this lesson helped me to..."
-          ]
         }
-      ],
-      "lp": null
+      ]
     },
     {
       "lesson_number": 5,
       "day_label": "L5",
       "building_block_text": "The Moon",
       "what": "describe the Moon's movement and explain what causes its phases and lunar eclipses",
-      "why": "the Moon is Earth's closest neighbour and understanding it challenges some widely-held misconceptions",
-      "success": "describing and explaining the phases of the Moon and explaining what causes a lunar eclipse",
+      "why": "the Moon is Earth's closest neighbour and understanding it can help us learn about our own planet.",
+      "success": "describing and explaining the phases of the Moon and explaining what causes a lunar eclipse.",
       "vocabulary": [
         {
           "word": "satellite",
-          "definition": "a body that orbits a planet \u2014 the Moon is Earth's natural satellite"
+          "definition": "a body that orbits a planet — the Moon is Earth's natural satellite"
         },
         {
           "word": "phase",
@@ -364,7 +324,7 @@
         },
         {
           "word": "reflect",
-          "definition": "the Moon does not produce its own light \u2014 it reflects light from the Sun"
+          "definition": "the Moon does not produce its own light — it reflects light from the Sun"
         }
       ],
       "quiz": [
@@ -384,24 +344,53 @@
       "slides": [
         {
           "type": "wedo_hook",
-          "title": "What do you think about the Moon?",
+          "title": "The moon: Key facts and misconceptions",
           "bullets": [
-            "The Moon is always in the sky \u2014 it can be seen during the day as well as at night.",
-            "The Moon does not produce its own light \u2014 it reflects sunlight.",
-            "The Moon orbits Earth once every 27\u201329 days, causing the phases.",
-            "The phases are not caused by Earth's shadow \u2014 they are caused by which part of the lit Moon we can see."
+            "The Moon is always in the sky — it can be seen during the day as well as at night.",
+            "The Moon does not produce its own light — it reflects sunlight.",
+            "The Moon orbits Earth once every 27–29 days, causing the phases.",
+            "The phases are not caused by Earth's shadow — they are caused by which part of the lit Moon we can see."
           ]
         },
         {
           "type": "ido_diagram",
-          "title": "Moon phases and lunar eclipses",
+          "title": "The eight phases of the Moon",
+          "image_path": "sci_L5_phases_v3.png",
+          "bullets": [],
+          "speaker_notes": "KEY TEACHING POINTS — talk through the diagram:\n\n1. The Moon orbits Earth every 27–29 days. As it moves, we see different amounts of the lit half — these are the phases.\n\n2. “Waxing” = the lit area is GROWING (right side). “Waning” = the lit area is SHRINKING (left side).\n\n3. MISCONCEPTION: The phases are NOT caused by Earth’s shadow — that only happens during a lunar eclipse (see next slide). The phases are caused by which part of the Moon’s sunlit half we can see from Earth.\n\n4. Walk through each phase: 1 New Moon → 2 Waxing Crescent → 3 First Quarter → 4 Waxing Gibbous → 5 Full Moon → 6 Waning Gibbous → 7 Third Quarter → 8 Waning Crescent.\n\nQuestions to ask: “What comes after the Full Moon?” (Waning Gibbous). “Why can’t we see the New Moon?” (dark side faces us). “What causes a First Quarter?” (Moon is 90° from the Sun in its orbit).",
+          "text_boxes": [
+            {
+              "x": 9361172,
+              "y": 1251534,
+              "cx": 2641084,
+              "cy": 798357,
+              "text": "The Moon orbits Earth every 27–29 days."
+            },
+            {
+              "x": 9361172,
+              "y": 2351217,
+              "cx": 2641084,
+              "cy": 1260000,
+              "text": "As it orbits, the amount of the lit side we can see changes — these are the eight phases."
+            },
+            {
+              "x": 9361172,
+              "y": 3996054,
+              "cx": 2641084,
+              "cy": 1016362,
+              "text": "The phases are NOT caused by Earth’s shadow — they are caused by the Moon’s position."
+            }
+          ]
+        },
+        {
+          "type": "ido_diagram",
+          "title": "What is a lunar eclipse?",
+          "image_path": "sci_L5_eclipse_v2.png",
           "bullets": [
-            "New Moon \u2192 Crescent \u2192 Half (First Quarter) \u2192 Gibbous \u2192 Full Moon \u2192 Gibbous \u2192 Half (Third Quarter) \u2192 Crescent \u2192 New Moon.",
-            "A lunar eclipse happens when Earth moves between the Sun and the Moon, casting its shadow on the Moon.",
-            "Lunar eclipses only happen at full Moon.",
-            "The Moon is always present \u2014 we just can't always see it clearly."
-          ],
-          "image_path": "/sessions/clever-relaxed-ramanujan/mnt/outputs/sci_L5_ido_diagram.png"
+            "A lunar eclipse happens when Earth moves between the Sun and the Moon.",
+            "Earth’s shadow falls on the Moon — it can turn red.",
+            "Lunar eclipses only happen at full Moon."
+          ]
         },
         {
           "type": "youdo_task",
@@ -409,28 +398,26 @@
           "bullets": [
             "Draw and label the eight phases of the Moon in order.",
             "Explain in your own words what causes a lunar eclipse.",
-            "Challenge: Explain why the Moon appears to change shape \u2014 and what it is NOT caused by."
+            "Challenge: Explain why the Moon appears to change shape — and what some people might think it IS caused by."
           ]
         },
         {
           "type": "learning_review",
-          "title": "What have we learned?",
           "starters": [
             "I used to think... but now I know...",
             "The most interesting thing I learned about the moon was...",
             "As a scientist this lesson helped me to..."
           ]
         }
-      ],
-      "lp": null
+      ]
     },
     {
       "lesson_number": 6,
       "day_label": "L6",
       "building_block_text": "Planet Conditions",
       "what": "classify planets and compare conditions across the solar system",
-      "why": "comparing conditions across planets shows how a planet's position in the solar system shapes everything about it",
-      "success": "grouping planets as rocky or gas giants, describing temperature patterns and making a data-based prediction about Planet X",
+      "why": "to understand how conditions vary between planets and use patterns in data to make scientific predictions",
+      "success": "group planets as rocky or gas giants with reasons; describe how temperature relates to distance from the Sun; predict what conditions might be like on a fictional planet",
       "vocabulary": [
         {
           "word": "atmosphere",
@@ -456,7 +443,7 @@
       "quiz": [
         {
           "question": "What is the Moon's relationship to Earth?",
-          "answer": "The Moon is Earth's natural satellite \u2014 it orbits Earth."
+          "answer": "The Moon is Earth's natural satellite — it orbits Earth."
         },
         {
           "question": "What causes the phases of the Moon?",
@@ -472,41 +459,31 @@
           "type": "ido_diagram",
           "title": "Rocky planets vs gas giants",
           "bullets": [
-            "Rocky (terrestrial) planets: Mercury, Venus, Earth, Mars \u2014 small, solid surface, closer to the Sun.",
-            "Gas giants: Jupiter, Saturn, Uranus, Neptune \u2014 huge, made mainly of gas, further from the Sun.",
+            "Rocky (terrestrial) planets: Mercury, Venus, Earth, Mars — small, solid surface, closer to the Sun.",
+            "Gas giants: Jupiter, Saturn, Uranus, Neptune — huge, made mainly of gas, further from the Sun.",
             "Temperature pattern: the closer a planet is to the Sun, the higher its average temperature.",
-            "Exception: Venus is hotter than Mercury despite being further away \u2014 because of its thick atmosphere."
+            "Exception: Venus is hotter than Mercury despite being further away — because of its thick atmosphere."
           ],
-          "image_path": "/sessions/clever-relaxed-ramanujan/mnt/outputs/sci_L6_ido_diagram.png"
+          "image_path": "TODO: rocky vs gas giant comparison images"
         },
         {
           "type": "youdo_task",
           "title": "Predict Planet X",
           "bullets": [
-            "Planet X orbits the Sun at 3,000 million km \u2014 between Saturn and Uranus. Use the data to predict: Is it rocky or a gas giant? What might its temperature be? How long might its year be?",
+            "Planet X orbits the Sun at 3,000 million km — between Saturn and Uranus. Use the data to predict: Is it rocky or a gas giant? What might its temperature be? How long might its year be?",
             "Write your prediction with evidence: 'I predict that Planet X is... because the data shows...'",
             "Challenge: What else might you expect to find on Planet X? Gravity? Atmosphere? Moons?"
           ]
-        },
-        {
-          "type": "learning_review",
-          "title": "What have we learned?",
-          "starters": [
-            "I used to think... but now I know...",
-            "The most interesting thing I learned about planet conditions was...",
-            "As a scientist this lesson helped me to..."
-          ]
         }
-      ],
-      "lp": null
+      ]
     },
     {
       "lesson_number": 7,
       "day_label": "L7",
       "building_block_text": "Relative Clauses",
       "what": "use relative clauses to add detailed information in sentences about space",
-      "why": "relative clauses let us pack precise detail into our information texts without writing separate sentences for every fact",
-      "success": "identifying relative clauses in examples and writing my own, correctly punctuated with commas, about planets",
+      "why": "to make our information texts more precise by adding extra detail about nouns using relative clauses",
+      "success": "identify relative clauses in example sentences; write my own sentences about planets using 'which', 'who' and 'that'; punctuate relative clauses correctly",
       "vocabulary": [
         {
           "word": "relative clause",
@@ -514,7 +491,7 @@
         },
         {
           "word": "relative pronoun",
-          "definition": "a word that introduces a relative clause \u2014 who, which, that, where, whose"
+          "definition": "a word that introduces a relative clause — who, which, that, where, whose"
         },
         {
           "word": "subordinate clause",
@@ -531,8 +508,8 @@
           "answer": "Rocky/terrestrial planets and gas giants."
         },
         {
-          "question": "Which planet has a higher temperature \u2014 Mercury or Venus? Why?",
-          "answer": "Venus \u2014 its thick atmosphere traps heat despite being further from the Sun."
+          "question": "Which planet has a higher temperature — Mercury or Venus? Why?",
+          "answer": "Venus — its thick atmosphere traps heat despite being further from the Sun."
         },
         {
           "question": "What pattern links distance from the Sun and temperature?",
@@ -549,7 +526,7 @@
             "The relative clause is usually separated from the main clause by commas.",
             "Without the relative clause the sentence still makes sense: 'Saturn is the sixth planet from the Sun.'"
           ],
-          "image_path": null
+          "image_path": "TODO: annotated sentence examples on slide"
         },
         {
           "type": "youdo_task",
@@ -559,26 +536,16 @@
             "Example: 'Jupiter, which is the largest planet in our solar system, has at least 95 known moons.'",
             "Challenge: Write a sentence using a relative clause that also includes a scientific fact you learned earlier in this enquiry."
           ]
-        },
-        {
-          "type": "learning_review",
-          "title": "What have we learned?",
-          "starters": [
-            "I used to think... but now I know...",
-            "I can now use this grammar feature by...",
-            "Using this in my writing will help me to..."
-          ]
         }
-      ],
-      "lp": null
+      ]
     },
     {
       "lesson_number": 8,
       "day_label": "L8",
       "building_block_text": "Parenthesis",
-      "what": "use parenthesis \u2014 brackets, dashes or commas \u2014 to add extra information within sentences",
-      "why": "parenthesis is a key feature of information writing \u2014 it lets us add detail without breaking the flow of a sentence",
-      "success": "identifying parenthesis in examples and writing sentences using brackets, dashes and commas correctly",
+      "what": "use parenthesis — brackets, dashes or commas — to add extra information within sentences",
+      "why": "to develop a key feature of information writing: adding clarification and detail within a sentence without breaking its flow",
+      "success": "identify parenthesis in example texts; write sentences about planets using brackets, dashes and commas to add extra information; choose the right form of parenthesis for the purpose",
       "vocabulary": [
         {
           "word": "parenthesis",
@@ -590,7 +557,7 @@
         },
         {
           "word": "dash",
-          "definition": "a punctuation mark \u2014 used to add emphasis or extra information"
+          "definition": "a punctuation mark — used to add emphasis or extra information"
         },
         {
           "word": "appositive",
@@ -617,44 +584,34 @@
           "title": "Three ways to use parenthesis",
           "bullets": [
             "Brackets: 'Mars (the fourth planet from the Sun) is roughly half the size of Earth.'",
-            "Dashes: 'Neptune \u2014 the furthest planet from the Sun \u2014 takes 165 Earth years to complete one orbit.'",
+            "Dashes: 'Neptune — the furthest planet from the Sun — takes 165 Earth years to complete one orbit.'",
             "Commas: 'Venus, the hottest planet in our solar system, has a thick atmosphere of carbon dioxide.'",
-            "All three add extra information \u2014 the main sentence must still make sense if you remove the parenthesis."
+            "All three add extra information — the main sentence must still make sense if you remove the parenthesis."
           ],
-          "image_path": null
+          "image_path": "TODO: annotated examples slide"
         },
         {
           "type": "youdo_task",
           "title": "Parenthesis practice",
           "bullets": [
-            "Write three sentences about different planets \u2014 one using brackets, one using dashes, one using commas.",
+            "Write three sentences about different planets — one using brackets, one using dashes, one using commas.",
             "Make sure the main sentence still makes sense if you remove the parenthesis.",
             "Challenge: Combine a relative clause AND parenthesis in a single sentence about a planet."
           ]
-        },
-        {
-          "type": "learning_review",
-          "title": "What have we learned?",
-          "starters": [
-            "I used to think... but now I know...",
-            "I can now use this grammar feature by...",
-            "Using this in my writing will help me to..."
-          ]
         }
-      ],
-      "lp": null
+      ]
     },
     {
       "lesson_number": 9,
       "day_label": "L9",
       "building_block_text": "Planning",
       "what": "sort evidence about my chosen planet and plan a three-paragraph information text",
-      "why": "careful planning makes the writing process smoother and helps us produce a well-structured text",
-      "success": "choosing a planet, sorting evidence into three paragraphs and writing a topic sentence for each",
+      "why": "to organise my scientific knowledge into a clear structure before I begin writing",
+      "success": "choose a planet and select relevant facts; sort facts into three paragraphs; write a planning frame with a topic sentence for each paragraph",
       "vocabulary": [
         {
           "word": "introduction",
-          "definition": "the opening paragraph \u2014 sets the context and tells the reader what the text is about"
+          "definition": "the opening paragraph — sets the context and tells the reader what the text is about"
         },
         {
           "word": "paragraph",
@@ -692,42 +649,32 @@
           "type": "ido_diagram",
           "title": "Our three-paragraph structure",
           "bullets": [
-            "Paragraph 1 \u2014 Introduction: the solar system, Earth's place within it, why your chosen planet is interesting.",
-            "Paragraph 2 \u2014 The chosen planet: key facts, conditions, size, distance from Sun, moons, rings, surface.",
-            "Paragraph 3 \u2014 Comparison: how does your chosen planet compare to Earth? Size, temperature, day length, conditions.",
+            "Paragraph 1 — Introduction: the solar system, Earth's place within it, why your chosen planet is interesting.",
+            "Paragraph 2 — The chosen planet: key facts, conditions, size, distance from Sun, moons, rings, surface.",
+            "Paragraph 3 — Comparison: how does your chosen planet compare to Earth? Size, temperature, day length, conditions.",
             "Each paragraph begins with a topic sentence that tells the reader what is coming."
           ],
-          "image_path": null
+          "image_path": "TODO: three-paragraph planning frame visual"
         },
         {
           "type": "youdo_task",
           "title": "Plan my information text",
           "bullets": [
-            "Choose your planet. Sort your facts \u2014 which paragraph does each fact belong in?",
+            "Choose your planet. Sort your facts — which paragraph does each fact belong in?",
             "Write a topic sentence for each of your three paragraphs.",
             "Add at least three supporting facts under each topic sentence.",
             "Challenge: Note where you will use a relative clause and where you will use parenthesis."
           ]
-        },
-        {
-          "type": "learning_review",
-          "title": "What have we learned?",
-          "starters": [
-            "I used to think... but now I know...",
-            "In my writing today I tried to...",
-            "One thing I want to improve in my next lesson is..."
-          ]
         }
-      ],
-      "lp": null
+      ]
     },
     {
       "lesson_number": 10,
       "day_label": "L10",
       "building_block_text": "Writing 1",
       "what": "write the introduction and first paragraph of my information text",
-      "why": "this is where our science knowledge and grammar skills come together in a real piece of writing",
-      "success": "writing a clear introduction and topic sentence for paragraph 2, using scientific vocabulary accurately",
+      "why": "to transfer my scientific knowledge into a well-structured information text using the grammar skills I have practised",
+      "success": "write a clear introduction about the solar system and Earth's place within it; write a topic sentence for paragraph 2; use scientific vocabulary accurately",
       "vocabulary": [
         {
           "word": "formal language",
@@ -735,7 +682,7 @@
         },
         {
           "word": "technical vocabulary",
-          "definition": "specialist words linked to a subject \u2014 e.g. orbit, atmosphere, satellite"
+          "definition": "specialist words linked to a subject — e.g. orbit, atmosphere, satellite"
         }
       ],
       "quiz": [
@@ -757,12 +704,12 @@
           "type": "ido_diagram",
           "title": "Writing the introduction",
           "bullets": [
-            "Model introduction \u2014 teacher writes live: 'Our solar system, which is part of the Milky Way galaxy, contains eight remarkable planets...'",
+            "Model introduction — teacher writes live: 'Our solar system, which is part of the Milky Way galaxy, contains eight remarkable planets...'",
             "Hook the reader with an interesting fact or question.",
             "Introduce the solar system, Earth's place, and your chosen planet.",
             "End with a sentence that leads the reader into paragraph 2."
           ],
-          "image_path": null
+          "image_path": "TODO: model text on slide for shared writing"
         },
         {
           "type": "youdo_task",
@@ -770,32 +717,22 @@
           "bullets": [
             "Use your plan to write your introduction paragraph.",
             "Include at least one relative clause and one example of parenthesis.",
-            "Read your introduction back \u2014 does it make a reader want to read on?"
-          ]
-        },
-        {
-          "type": "learning_review",
-          "title": "What have we learned?",
-          "starters": [
-            "I used to think... but now I know...",
-            "In my writing today I tried to...",
-            "One thing I want to improve in my next lesson is..."
+            "Read your introduction back — does it make a reader want to read on?"
           ]
         }
-      ],
-      "lp": null
+      ]
     },
     {
       "lesson_number": 11,
       "day_label": "L11",
       "building_block_text": "Writing 2",
       "what": "write the second paragraph of my information text about my chosen planet",
-      "why": "this is the heart of our information text \u2014 writing in detail about the planet we have chosen to explore",
-      "success": "writing a paragraph about my chosen planet using technical vocabulary, a relative clause and parenthesis",
+      "why": "to develop our information text by writing in detail about the chosen planet using science knowledge and grammar skills",
+      "success": "write a paragraph about the chosen planet including key facts; use technical vocabulary accurately; include at least one relative clause and one use of parenthesis",
       "vocabulary": [],
       "quiz": [
         {
-          "question": "Read your introduction back \u2014 does it contain a relative clause?",
+          "question": "Read your introduction back — does it contain a relative clause?",
           "answer": "Self-assessment."
         },
         {
@@ -808,12 +745,12 @@
           "type": "ido_diagram",
           "title": "Writing about your chosen planet",
           "bullets": [
-            "Model paragraph 2 \u2014 live writing: 'Saturn (the sixth planet from the Sun) is a gas giant, which means it has no solid surface...'",
-            "Use your fact notes from lesson 9 \u2014 work through each supporting fact in your plan.",
-            "Vary your sentence structure \u2014 mix relative clauses, parenthesis and simple factual statements.",
+            "Model paragraph 2 — live writing: 'Saturn (the sixth planet from the Sun) is a gas giant, which means it has no solid surface...'",
+            "Use your fact notes from lesson 9 — work through each supporting fact in your plan.",
+            "Vary your sentence structure — mix relative clauses, parenthesis and simple factual statements.",
             "Use precise scientific vocabulary: diameter, orbit, atmosphere, satellite, rotate."
           ],
-          "image_path": null
+          "image_path": "TODO: model text / worked example on slide"
         },
         {
           "type": "youdo_task",
@@ -821,28 +758,18 @@
           "bullets": [
             "Write your paragraph about your chosen planet.",
             "Tick off each fact from your plan as you include it.",
-            "Read your paragraph aloud \u2014 does every sentence make sense? Does it flow?"
-          ]
-        },
-        {
-          "type": "learning_review",
-          "title": "What have we learned?",
-          "starters": [
-            "I used to think... but now I know...",
-            "In my writing today I tried to...",
-            "One thing I want to improve in my next lesson is..."
+            "Read your paragraph aloud — does every sentence make sense? Does it flow?"
           ]
         }
-      ],
-      "lp": null
+      ]
     },
     {
       "lesson_number": 12,
       "day_label": "L12",
       "building_block_text": "Writing 3",
       "what": "write the third paragraph comparing my chosen planet to Earth",
-      "why": "completing the text and comparing our planet to Earth shows how much scientific knowledge we have built up",
-      "success": "writing a comparison paragraph using comparative language and bringing the text to a clear conclusion",
+      "why": "to complete our information text and demonstrate scientific understanding through comparison",
+      "success": "write a comparison paragraph about the chosen planet and Earth; use comparative language; write a brief conclusion that ends the text effectively",
       "vocabulary": [
         {
           "word": "comparative",
@@ -850,13 +777,13 @@
         },
         {
           "word": "conclusion",
-          "definition": "the final paragraph \u2014 summarises key points and brings the text to a close"
+          "definition": "the final paragraph — summarises key points and brings the text to a close"
         }
       ],
       "quiz": [
         {
           "question": "What should paragraph 2 be about?",
-          "answer": "The chosen planet \u2014 key facts, conditions and features."
+          "answer": "The chosen planet — key facts, conditions and features."
         },
         {
           "question": "Name one piece of technical vocabulary you used yesterday.",
@@ -868,12 +795,12 @@
           "type": "ido_diagram",
           "title": "Comparing your planet to Earth",
           "bullets": [
-            "Model paragraph 3: 'While Earth supports life, Mars \u2014 which is roughly half the size of our planet \u2014 has a thin atmosphere and average temperatures of -60\u00b0C...'",
+            "Model paragraph 3: 'While Earth supports life, Mars — which is roughly half the size of our planet — has a thin atmosphere and average temperatures of -60°C...'",
             "Compare: size, temperature, length of day, length of year, atmosphere, moons, possibility of life.",
             "Use comparative language: larger, colder, further, more massive, unlike Earth...",
-            "Write a brief conclusion \u2014 what is the most striking difference between your planet and Earth?"
+            "Write a brief conclusion — what is the most striking difference between your planet and Earth?"
           ],
-          "image_path": null
+          "image_path": "TODO: comparison table Earth vs chosen planet on slide"
         },
         {
           "type": "youdo_task",
@@ -882,28 +809,18 @@
             "Write your comparison paragraph using your plan.",
             "Include at least two direct comparisons between your planet and Earth.",
             "Write a concluding sentence or short paragraph to end your information text.",
-            "Read your complete text from start to finish \u2014 does it make sense as a whole?"
-          ]
-        },
-        {
-          "type": "learning_review",
-          "title": "What have we learned?",
-          "starters": [
-            "I used to think... but now I know...",
-            "In my writing today I tried to...",
-            "One thing I want to improve in my next lesson is..."
+            "Read your complete text from start to finish — does it make sense as a whole?"
           ]
         }
-      ],
-      "lp": null
+      ]
     },
     {
       "lesson_number": 13,
       "day_label": "L13",
       "building_block_text": "Editing",
       "what": "edit and revise my information text to improve it",
-      "why": "good writers revise their work \u2014 editing is where we develop the habit of evaluating and improving what we have written",
-      "success": "identifying and making at least three targeted improvements to content, grammar or vocabulary",
+      "why": "to develop our ability to evaluate our own writing and make targeted improvements to content, vocabulary and grammar",
+      "success": "identify at least three improvements to my text; correct any grammar or punctuation errors; improve at least one sentence by upgrading vocabulary or adding a relative clause or parenthesis",
       "vocabulary": [
         {
           "word": "edit",
@@ -925,7 +842,7 @@
         },
         {
           "question": "What is a conclusion?",
-          "answer": "The final part of the text \u2014 it brings it to a close and summarises key points."
+          "answer": "The final part of the text — it brings it to a close and summarises key points."
         }
       ],
       "slides": [
@@ -933,40 +850,30 @@
           "type": "ido_diagram",
           "title": "Three things to check when editing",
           "bullets": [
-            "1. Science accuracy \u2014 are all your facts correct? Check against your notes.",
-            "2. Grammar and punctuation \u2014 relative clauses correctly punctuated with commas? Parenthesis balanced?",
-            "3. Vocabulary \u2014 can any vague words be replaced with more precise scientific terms?"
+            "1. Science accuracy — are all your facts correct? Check against your notes.",
+            "2. Grammar and punctuation — relative clauses correctly punctuated with commas? Parenthesis balanced?",
+            "3. Vocabulary — can any vague words be replaced with more precise scientific terms?"
           ],
-          "image_path": null
+          "image_path": "TODO: editing checklist visual"
         },
         {
           "type": "youdo_task",
           "title": "Edit your information text",
           "bullets": [
             "Read your text carefully. Use the three-point checklist to find improvements.",
-            "Make at least three edits \u2014 mark them clearly.",
-            "Swap with a partner \u2014 can they spot any further improvements?"
-          ]
-        },
-        {
-          "type": "learning_review",
-          "title": "What have we learned?",
-          "starters": [
-            "I used to think... but now I know...",
-            "The most surprising thing I learned about space was...",
-            "As a scientist this enquiry helped me to..."
+            "Make at least three edits — mark them clearly.",
+            "Swap with a partner — can they spot any further improvements?"
           ]
         }
-      ],
-      "lp": null
+      ]
     },
     {
       "lesson_number": 14,
       "day_label": "L14",
       "building_block_text": "Sharing",
       "what": "share our information texts with a Year 4 audience",
-      "why": "reading to a real audience gives our writing a genuine purpose and lets us celebrate what we have learned",
-      "success": "reading my text clearly and confidently to a Year 4 child and giving specific feedback to another writer",
+      "why": "to celebrate our learning and practise reading aloud clearly to a real audience",
+      "success": "read my information text clearly and confidently to a Year 4 child; answer a question about my chosen planet; give specific positive feedback to another writer",
       "vocabulary": [],
       "quiz": [
         {
@@ -984,7 +891,7 @@
           "title": "Our audience: Year 4",
           "bullets": [
             "Today we share what we have learned about our planet with a Year 4 class.",
-            "Read your text clearly \u2014 one paragraph at a time.",
+            "Read your text clearly — one paragraph at a time.",
             "Be ready to answer one question about your chosen planet.",
             "Listen carefully to your partner and give them one piece of specific feedback: 'I liked how you used... because...'"
           ]
@@ -998,401 +905,7 @@
             "As a scientist this enquiry helped me to..."
           ]
         }
-      ],
-      "lp": null
-    }
-  ],
-  "knowledge_organiser": {
-    "key_facts": [
-      "The Big Bang began the universe about 13.8 billion years ago.",
-      "Our solar system sits inside the Milky Way galaxy.",
-      "Eight planets orbit the Sun, from Mercury to Neptune.",
-      "The inner planets are rocky; the outer ones are gas giants.",
-      "Earth rotates once every 24 hours, causing day and night.",
-      "Earth's 23.5\u00b0 tilt gives us the four seasons as we orbit the Sun.",
-      "The Moon orbits Earth every 27\u201329 days and reflects sunlight.",
-      "Planets vary in size, distance from the Sun and temperature."
-    ],
-    "key_skills": [
-      "Reading and interpreting data tables",
-      "Comparing planets using evidence and data",
-      "Drawing and labelling scientific diagrams",
-      "Making predictions using patterns in data",
-      "Writing an information text about space"
-    ],
-    "vocabulary": [
-      [
-        "astronomy",
-        "the study of stars, planets and space"
-      ],
-      [
-        "universe",
-        "everything that exists \u2014 all space, matter and energy"
-      ],
-      [
-        "galaxy",
-        "a huge collection of stars held together by gravity"
-      ],
-      [
-        "Milky Way",
-        "the galaxy that contains our solar system"
-      ],
-      [
-        "Big Bang",
-        "the theory that the universe began from a tiny point 13.8 billion years ago"
-      ],
-      [
-        "solar system",
-        "the Sun and everything that orbits it, including the eight planets"
-      ],
-      [
-        "orbit",
-        "the path one object takes around another due to gravity"
-      ],
-      [
-        "star",
-        "a ball of burning gas that produces its own heat and light"
-      ],
-      [
-        "planet",
-        "a large, roughly spherical body that orbits a star"
-      ],
-      [
-        "diameter",
-        "the distance across a sphere through its centre"
-      ],
-      [
-        "rotate",
-        "to spin on an axis"
-      ],
-      [
-        "axis",
-        "an imaginary line through Earth's centre, North Pole to South Pole"
-      ],
-      [
-        "satellite",
-        "a body that orbits a planet (the Moon is Earth's natural satellite)"
-      ],
-      [
-        "atmosphere",
-        "the layer of gases surrounding a planet"
-      ]
-    ],
-    "strip_image": {
-      "prompt": "Eight planets of the solar system in a horizontal row left to right \u2014 Mercury to Neptune \u2014 against a deep black space background, photorealistic, dramatic lighting, 1792x1024",
-      "filename": "ko_strip.png"
-    },
-    "notes_image": {
-      "prompt": "Earth and Moon together in deep space, black background, photorealistic, close-up showing surface detail and dramatic lighting, 1024x1024",
-      "filename": "ko_notes.png"
-    }
-  },
-  "supporting_resources": {
-    "l1_resources": {
-      "sort_cards": {
-        "title": "Rocky or Gas Giant? \u2014 Sort the Solar System",
-        "items": [
-          {
-            "text": "Mercury \u2014 tiny rocky planet, closest to the Sun, no atmosphere"
-          },
-          {
-            "text": "Venus \u2014 rocky planet, thick cloudy atmosphere, hottest planet"
-          },
-          {
-            "text": "Earth \u2014 rocky planet, liquid water, the only planet known to support life"
-          },
-          {
-            "text": "Mars \u2014 rocky, red surface, thin atmosphere, two small moons"
-          },
-          {
-            "text": "Jupiter \u2014 enormous ball of gas, no solid surface, at least 95 moons"
-          },
-          {
-            "text": "Saturn \u2014 gas giant, famous rings of ice and rock, lighter than water"
-          },
-          {
-            "text": "Uranus \u2014 ice giant, rotates on its side, faint rings"
-          },
-          {
-            "text": "Neptune \u2014 ice giant, strongest winds in the solar system, furthest from Sun"
-          },
-          {
-            "text": "The Sun \u2014 a star that produces its own heat and light (not a planet)"
-          },
-          {
-            "text": "Pluto \u2014 reclassified as a dwarf planet in 2006 \u2014 too small to be a full planet"
-          },
-          {
-            "text": "The Moon \u2014 Earth's natural satellite; orbits Earth, not the Sun"
-          },
-          {
-            "text": "Asteroids \u2014 rocky objects orbiting the Sun, mostly in the asteroid belt between Mars and Jupiter"
-          }
-        ]
-      },
-      "word_cards": {
-        "title": "Astronomy Vocabulary",
-        "note": "Populated from knowledge_organiser.vocabulary at build time"
-      },
-      "statement_sort": {
-        "title": "True or False? \u2014 The Solar System",
-        "statements": [
-          {
-            "text": "The Sun is a planet in our solar system."
-          },
-          {
-            "text": "Earth is the third planet from the Sun."
-          },
-          {
-            "text": "Jupiter is the smallest planet in our solar system."
-          },
-          {
-            "text": "The Moon produces its own light."
-          },
-          {
-            "text": "Earth's seasons are caused by it moving closer to the Sun in summer."
-          },
-          {
-            "text": "The Milky Way is the name of our galaxy."
-          },
-          {
-            "text": "There are nine planets in our solar system."
-          },
-          {
-            "text": "Saturn's rings are made of ice and rock."
-          },
-          {
-            "text": "A lunar eclipse happens when Earth's shadow falls on the Moon."
-          },
-          {
-            "text": "Mercury is the hottest planet because it is closest to the Sun."
-          },
-          {
-            "text": "The Big Bang happened about 13.8 billion years ago."
-          },
-          {
-            "text": "All planets in our solar system rotate at the same speed."
-          }
-        ],
-        "answers": {
-          "false": [
-            1,
-            3,
-            4,
-            5,
-            7,
-            10,
-            12
-          ],
-          "true": [
-            2,
-            6,
-            8,
-            9,
-            11
-          ],
-          "notes": "1 False (star) | 3 False (largest) | 4 False (reflects) | 5 False (axial tilt) | 7 False (8 planets) | 10 False (Venus is hotter) | 12 False (different rotation periods)"
-        }
-      }
-    },
-    "writing_toolkit": {
-      "title": "Writing Toolkit \u2014 Information Text About a Planet",
-      "subtitle": "Use these examples to help you write. Adapt them \u2014 change the details to fit your own chosen planet.",
-      "year_info": "Year 5 | Being a Writer | Astronomy",
-      "footer": "Y5 Astronomy | Information Text About a Planet",
-      "rows": [
-        {
-          "sections": [
-            {
-              "heading": "Relative Clauses",
-              "type": "multi_column_list",
-              "columns": [
-                {
-                  "heading": "which (for things)",
-                  "items": [
-                    "Saturn, which has rings made of ice and rock, is the sixth planet from the Sun.",
-                    "The Milky Way, which contains billions of stars, is our home galaxy.",
-                    "Jupiter, which is eleven times wider than Earth, is the largest planet.",
-                    "Neptune, which takes 165 years to orbit the Sun, is the furthest planet."
-                  ]
-                },
-                {
-                  "heading": "where (for places)",
-                  "items": [
-                    "The asteroid belt, where millions of rocky objects orbit the Sun, lies between Mars and Jupiter.",
-                    "The solar system, where eight planets travel around our star, sits inside the Milky Way.",
-                    "Venus, where temperatures reach 465\u00b0C, is the hottest planet.",
-                    "Mars, where two small moons orbit the planet, has a thin atmosphere."
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "sections": [
-            {
-              "heading": "Parenthesis",
-              "type": "multi_column_list",
-              "columns": [
-                {
-                  "heading": "Brackets ( )",
-                  "items": [
-                    "Mars (the fourth planet from the Sun) is roughly half the size of Earth.",
-                    "Jupiter (the largest planet in our solar system) has at least 95 known moons.",
-                    "The Moon (Earth's only natural satellite) takes 27 days to orbit our planet.",
-                    "Pluto (once considered the ninth planet) was reclassified as a dwarf planet in 2006."
-                  ]
-                },
-                {
-                  "heading": "Dashes \u2014",
-                  "items": [
-                    "Neptune \u2014 the furthest planet from the Sun \u2014 takes 165 Earth years to complete one orbit.",
-                    "Saturn's rings \u2014 made of ice and rock \u2014 stretch up to 282,000 km from the planet.",
-                    "The Big Bang \u2014 the event that began the universe \u2014 happened 13.8 billion years ago.",
-                    "Venus \u2014 despite being further from the Sun than Mercury \u2014 is the hottest planet."
-                  ]
-                },
-                {
-                  "heading": "Commas ,",
-                  "items": [
-                    "Venus, the hottest planet in our solar system, has a thick atmosphere of carbon dioxide.",
-                    "The Milky Way, our home galaxy, contains between 200 and 400 billion stars.",
-                    "Jupiter, a gas giant with no solid surface, spins faster than any other planet.",
-                    "Earth, the only planet known to support life, orbits the Sun once every 365 days."
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "sections": [
-            {
-              "heading": "Scientific Vocabulary for Writing",
-              "type": "word_grid",
-              "columns": [
-                {
-                  "heading": "Space and structure",
-                  "words": [
-                    "universe",
-                    "galaxy",
-                    "solar system",
-                    "orbit",
-                    "satellite",
-                    "asteroid belt",
-                    "Milky Way"
-                  ]
-                },
-                {
-                  "heading": "Planet features",
-                  "words": [
-                    "atmosphere",
-                    "diameter",
-                    "axis",
-                    "rotate",
-                    "revolution",
-                    "gravity",
-                    "surface"
-                  ]
-                },
-                {
-                  "heading": "Describing and comparing",
-                  "words": [
-                    "rocky",
-                    "gaseous",
-                    "terrestrial",
-                    "enormous",
-                    "distant",
-                    "dense",
-                    "spherical"
-                  ]
-                },
-                {
-                  "heading": "Information text connectives",
-                  "words": [
-                    "in contrast",
-                    "similarly",
-                    "unlike Earth",
-                    "however",
-                    "in comparison",
-                    "whereas",
-                    "significantly"
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "sections": [
-            {
-              "heading": "Sentence Starters and Comparisons",
-              "type": "two_panel",
-              "left": {
-                "heading": "Useful sentence openers",
-                "entries": [
-                  {
-                    "label": "Introducing the planet:",
-                    "example": "[Planet], the [position] planet from the Sun, is..."
-                  },
-                  {
-                    "label": "Giving a fact with parenthesis:",
-                    "example": "[Planet] (discovered in [year]) is known for..."
-                  },
-                  {
-                    "label": "Comparing to Earth:",
-                    "example": "Unlike Earth, [planet]..."
-                  },
-                  {
-                    "label": "Topic sentence for comparisons:",
-                    "example": "When compared to our own planet, [planet] differs in several striking ways."
-                  },
-                  {
-                    "label": "Concluding sentence:",
-                    "example": "Of all the planets in our solar system, [planet] is perhaps the most [adjective] because..."
-                  }
-                ]
-              },
-              "right": {
-                "heading": "Comparative language",
-                "categories": [
-                  {
-                    "label": "Size",
-                    "words": [
-                      "larger than",
-                      "smaller than",
-                      "roughly half the size of",
-                      "eleven times wider",
-                      "more massive"
-                    ]
-                  },
-                  {
-                    "label": "Temperature",
-                    "words": [
-                      "far colder",
-                      "considerably hotter",
-                      "reaches",
-                      "averages",
-                      "plunges to"
-                    ]
-                  },
-                  {
-                    "label": "Distance and time",
-                    "words": [
-                      "closer to the Sun",
-                      "further away",
-                      "takes longer to orbit",
-                      "completes one orbit every",
-                      "a year on [planet] lasts"
-                    ]
-                  }
-                ]
-              }
-            }
-          ]
-        }
       ]
     }
-  }
+  ]
 }
