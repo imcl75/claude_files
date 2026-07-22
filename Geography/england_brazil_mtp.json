@@ -8,6 +8,8 @@
       "lesson_title": "Where are England and Brazil?",
       "building_block_text": "Locating England and Brazil",
       "day_label": "Geography",
+      "subject": "geographer",
+      "year_group": "Y4",
       "substantive_concept": "place_space_scale",
       "skill_focus": "questioning_predicting",
       "what": "to locate England and Brazil on a world map and describe their positions",
@@ -21,6 +23,56 @@
         {"word": "Equator", "definition": "the imaginary line at 0° latitude that divides the Earth into the northern and southern hemispheres"}
       ],
       "quiz": [],
+      "lp": {
+        "date": "",
+        "standard": {
+          "elements": [
+            {"type": "instruction", "text": "On the world map below, find and label England and Brazil. Then mark the Equator, the Prime Meridian and the Tropic of Capricorn."},
+            {"type": "spacer"},
+            {"type": "instruction", "text": "Write the continent that each country belongs to."},
+            {"type": "answer_lines", "label": "England is in the continent of", "count": 1},
+            {"type": "answer_lines", "label": "Brazil is in the continent of", "count": 1},
+            {"type": "spacer"},
+            {"type": "instruction", "text": "Make two predictions. What do you think will be different about England and Brazil? Use the word bank to help you."},
+            {"type": "word_bank", "words": ["climate", "landscape", "hemisphere", "temperature", "vegetation", "Equator"]},
+            {"type": "answer_lines", "label": "Prediction 1", "count": 2},
+            {"type": "answer_lines", "label": "Prediction 2", "count": 2},
+            {"type": "marking_station"},
+            {"type": "answer_text", "text": "England → Europe. Brazil → South America.\nPredictions should reference: climate (England cooler/temperate; Brazil hotter/tropical), landscape or vegetation differences linked to proximity to the Equator."}
+          ]
+        },
+        "adapted": {
+          "elements": [
+            {"type": "instruction", "text": "The world map below has England and Brazil marked for you. Write the name of each country in the correct box. Then answer the questions."},
+            {"type": "spacer"},
+            {"type": "cloze", "text": "England is in the continent of ________. It is in the ________ hemisphere.", "words": ["Europe", "northern"]},
+            {"type": "cloze", "text": "Brazil is in the continent of ________. Most of Brazil is in the ________ hemisphere.", "words": ["South America", "southern"]},
+            {"type": "spacer"},
+            {"type": "instruction", "text": "Complete these predictions using the sentence starters below."},
+            {"type": "answer_lines", "label": "I predict England will be colder because", "count": 2},
+            {"type": "answer_lines", "label": "I predict Brazil will have more rainforest because", "count": 2},
+            {"type": "marking_station"},
+            {"type": "answer_text", "text": "England → Europe, northern hemisphere.\nBrazil → South America, southern hemisphere.\nPredictions: England colder because it is further from the Equator. Brazil has rainforest because it is near the Equator / hot and wet."}
+          ]
+        },
+        "further_adapted": {
+          "elements": [
+            {"type": "instruction", "text": "Match each country to its continent and hemisphere. Draw a line to connect them."},
+            {"type": "matching", "pairs": [
+              ["England", "Europe"],
+              ["Brazil", "South America"]
+            ]},
+            {"type": "spacer"},
+            {"type": "instruction", "text": "Tick the correct answer."},
+            {"type": "row_boxes", "rows": 2, "labels": ["England is NORTH / SOUTH of the Equator", "Brazil is mostly NORTH / SOUTH of the Equator"], "empty": true},
+            {"type": "spacer"},
+            {"type": "instruction", "text": "Complete the sentence."},
+            {"type": "cloze", "text": "Brazil is closer to the Equator so I predict it will be ________ than England.", "words": ["hotter"]},
+            {"type": "marking_station"},
+            {"type": "answer_text", "text": "England → Europe. Brazil → South America.\nEngland is NORTH of the Equator. Brazil is mostly SOUTH.\nBrazil is closer to the Equator so it will be hotter."}
+          ]
+        }
+      },
       "slides": [
         {
           "type": "i_do",
@@ -44,6 +96,8 @@
       "lesson_title": "Brazil's physical geography",
       "building_block_text": "Brazil's physical features",
       "day_label": "Geography",
+      "subject": "geographer",
+      "year_group": "Y4",
       "substantive_concept": "physical_geography",
       "skill_focus": "observing_recording",
       "what": "to identify and describe the main physical features of Brazil",
@@ -63,6 +117,54 @@
         {"question": "In which hemisphere is most of Brazil?", "answer": "The southern hemisphere"},
         {"question": "What is a savanna?", "answer": "A tropical grassland with scattered trees"}
       ],
+      "lp": {
+        "date": "",
+        "standard": {
+          "elements": [
+            {"type": "instruction", "text": "On the map of Brazil, label these four physical features: Amazon River, Amazon Rainforest, Cerrado savanna, Atlantic coast. Use different colours for each and add a key."},
+            {"type": "spacer"},
+            {"type": "instruction", "text": "Write a paragraph describing Brazil's physical geography. Include the Amazon Basin, one other physical feature and an explanation of how being near the Equator affects the climate."},
+            {"type": "answer_lines", "label": "Brazil's physical geography", "count": 6},
+            {"type": "marking_station"},
+            {"type": "answer_text", "text": "Map: Amazon River (flowing west to east across northern Brazil), Amazon Rainforest (covering the northern Amazon Basin), Cerrado (central plateau grassland), Atlantic coast (eastern edge).\nParagraph should include: Amazon Basin is the largest river basin in the world. The Amazon Rainforest covers much of northern Brazil. Being near the Equator means the climate is hot and wet all year. Other features: Serra do Mar mountains (Atlantic coast), Cerrado savanna (central Brazil)."}
+          ]
+        },
+        "adapted": {
+          "elements": [
+            {"type": "instruction", "text": "The map of Brazil shows the outline of four features. Write the correct label next to each: Amazon River, Amazon Rainforest, Cerrado savanna, Atlantic coast."},
+            {"type": "spacer"},
+            {"type": "instruction", "text": "Complete these sentences about Brazil's physical geography."},
+            {"type": "cloze", "text": "The Amazon ________ is the largest river in the world by volume.", "words": ["River"]},
+            {"type": "cloze", "text": "The Amazon ________ covers most of northern Brazil.", "words": ["Rainforest"]},
+            {"type": "cloze", "text": "The Cerrado is a type of ________, which is a tropical grassland.", "words": ["savanna"]},
+            {"type": "cloze", "text": "Brazil is near the ________, which makes the climate hot and wet.", "words": ["Equator"]},
+            {"type": "spacer"},
+            {"type": "answer_lines", "label": "One more fact about Brazil's landscape", "count": 2},
+            {"type": "marking_station"},
+            {"type": "answer_text", "text": "Amazon River, Amazon Rainforest, Cerrado savanna, Atlantic coast.\nCloze: River, Rainforest, savanna, Equator."}
+          ]
+        },
+        "further_adapted": {
+          "elements": [
+            {"type": "instruction", "text": "Match each physical feature to its description."},
+            {"type": "matching", "pairs": [
+              ["Amazon River", "the world's largest river by volume"],
+              ["Amazon Rainforest", "a huge dense forest in northern Brazil"],
+              ["Cerrado", "tropical grassland in central Brazil"],
+              ["Atlantic coast", "the eastern edge of Brazil"]
+            ]},
+            {"type": "spacer"},
+            {"type": "instruction", "text": "Tick true or false."},
+            {"type": "row_boxes", "rows": 3, "labels": [
+              "Brazil is near the Equator — TRUE / FALSE",
+              "The Amazon Rainforest is in the south of Brazil — TRUE / FALSE",
+              "The Amazon River is the largest river by volume — TRUE / FALSE"
+            ], "empty": true},
+            {"type": "marking_station"},
+            {"type": "answer_text", "text": "Matching: correct pairs as listed.\nTrue/False: TRUE, FALSE, TRUE."}
+          ]
+        }
+      },
       "slides": [
         {
           "type": "i_do",
@@ -86,6 +188,8 @@
       "lesson_title": "England's physical geography",
       "building_block_text": "England's physical features",
       "day_label": "Geography",
+      "subject": "geographer",
+      "year_group": "Y4",
       "substantive_concept": "physical_geography",
       "skill_focus": "map_skills",
       "what": "to identify and describe the main physical features of England",
@@ -105,6 +209,53 @@
         {"question": "Name one upland region in England.", "answer": "The Pennines, Lake District, Dartmoor or Exmoor"},
         {"question": "What is a floodplain?", "answer": "Flat land beside a river that floods when the river overflows"}
       ],
+      "lp": {
+        "date": "",
+        "standard": {
+          "elements": [
+            {"type": "instruction", "text": "On the map of England, label: the Pennines, the Lake District, the River Severn, the River Thames, and one upland area in the south-west. Add an upland/lowland colour key."},
+            {"type": "spacer"},
+            {"type": "instruction", "text": "Write a paragraph comparing England's physical geography with Brazil's. Use at least three geographical vocabulary words."},
+            {"type": "word_bank", "words": ["upland", "lowland", "temperate", "tropical", "rainforest", "moorland", "estuary", "floodplain"]},
+            {"type": "answer_lines", "label": "Comparing England and Brazil", "count": 6},
+            {"type": "marking_station"},
+            {"type": "answer_text", "text": "Map: Pennines (spine of northern England), Lake District (north-west), River Severn (longest, flows to Wales/Bristol), River Thames (south-east, London), Dartmoor or Exmoor (south-west upland).\nComparison paragraph: England has upland regions in the north and west (Pennines, Lake District) and flat lowlands in the south and east. England's climate is temperate — mild and rainy. Brazil has tropical rainforest in the Amazon Basin and savanna in the centre. Both countries have major river systems."}
+          ]
+        },
+        "adapted": {
+          "elements": [
+            {"type": "instruction", "text": "The map of England has labels for you to complete. Write each label in the correct gap: Pennines, Lake District, River Severn, River Thames, Dartmoor."},
+            {"type": "spacer"},
+            {"type": "instruction", "text": "Use the words in the box to complete the comparison sentences."},
+            {"type": "word_bank", "words": ["upland", "lowland", "temperate", "tropical", "flat", "hilly"]},
+            {"type": "cloze", "text": "England has ________ land in the north and west and ________ land in the south and east.", "words": ["upland/hilly", "lowland/flat"]},
+            {"type": "cloze", "text": "England has a ________ climate. Brazil has a ________ climate near the Equator.", "words": ["temperate", "tropical"]},
+            {"type": "spacer"},
+            {"type": "answer_lines", "label": "One similarity between England and Brazil", "count": 2},
+            {"type": "marking_station"},
+            {"type": "answer_text", "text": "Map labels: Pennines, Lake District, River Severn, River Thames, Dartmoor.\nCloze: upland/hilly, lowland/flat; temperate, tropical.\nSimilarity: both have major rivers / both have different landscape types."}
+          ]
+        },
+        "further_adapted": {
+          "elements": [
+            {"type": "instruction", "text": "Match each physical feature to England or Brazil."},
+            {"type": "matching", "pairs": [
+              ["Pennines", "England"],
+              ["Amazon River", "Brazil"],
+              ["Lake District", "England"],
+              ["Cerrado savanna", "Brazil"]
+            ]},
+            {"type": "spacer"},
+            {"type": "instruction", "text": "Complete the sentences. Choose England or Brazil."},
+            {"type": "cloze", "text": "________ has a cold, rainy, temperate climate.", "words": ["England"]},
+            {"type": "cloze", "text": "________ has a hot, wet, tropical climate near the Equator.", "words": ["Brazil"]},
+            {"type": "spacer"},
+            {"type": "answer_lines", "label": "One thing England and Brazil both have", "count": 1},
+            {"type": "marking_station"},
+            {"type": "answer_text", "text": "Matching: Pennines/Lake District → England; Amazon River/Cerrado → Brazil.\nCloze: England, Brazil.\nSimilarity: both have rivers / different landscapes."}
+          ]
+        }
+      },
       "slides": [
         {
           "type": "i_do",
@@ -128,6 +279,8 @@
       "lesson_title": "How do people live in England and Brazil?",
       "building_block_text": "People and settlements",
       "day_label": "Geography",
+      "subject": "geographer",
+      "year_group": "Y4",
       "substantive_concept": "human_geography",
       "skill_focus": "field_work",
       "what": "to compare population, settlement patterns and land use in England and Brazil",
@@ -147,6 +300,74 @@
         {"question": "What is urbanisation?", "answer": "The movement of people from the countryside to cities"},
         {"question": "Which city is the capital of Brazil?", "answer": "Brasília"}
       ],
+      "lp": {
+        "date": "",
+        "standard": {
+          "elements": [
+            {"type": "instruction", "text": "Complete the comparison table. Use information from the lesson and your notes."},
+            {"type": "table",
+              "headers": [
+                {"text": "Category", "frac": 0.30},
+                {"text": "England", "frac": 0.35},
+                {"text": "Brazil", "frac": 0.35}
+              ],
+              "rows": [
+                ["Population", "", ""],
+                ["Capital city", "", ""],
+                ["Largest city", "", ""],
+                ["Main land use", "", ""],
+                ["Settlement challenge", "", ""]
+              ],
+              "write_rows": [0, 1, 2, 3, 4]
+            },
+            {"type": "spacer"},
+            {"type": "instruction", "text": "Write a conclusion sentence explaining the most striking difference between England and Brazil in terms of how people live."},
+            {"type": "answer_lines", "label": "The most striking difference is", "count": 3},
+            {"type": "marking_station"},
+            {"type": "answer_text", "text": "Table: England — 57 million, London, London, farming/industry/housing, housing costs/urban sprawl. Brazil — 215 million, Brasília, São Paulo, agriculture/cattle/Amazon, favelas/inequality/urbanisation.\nConclusion: should reference population size difference, megacities vs smaller urban centres, favelas."}
+          ]
+        },
+        "adapted": {
+          "elements": [
+            {"type": "instruction", "text": "Complete the comparison table. Some answers have been given to help you."},
+            {"type": "table",
+              "headers": [
+                {"text": "Category", "frac": 0.30},
+                {"text": "England", "frac": 0.35},
+                {"text": "Brazil", "frac": 0.35}
+              ],
+              "rows": [
+                ["Population", "57 million", "________ million"],
+                ["Capital city", "London", "________"],
+                ["Largest city", "________", "São Paulo"],
+                ["Main land use", "farming and industry", "________"],
+                ["One challenge", "", "favelas"]
+              ]
+            },
+            {"type": "word_bank", "words": ["215", "Brasília", "London", "farming and cattle ranching"]},
+            {"type": "spacer"},
+            {"type": "answer_lines", "label": "One difference between England and Brazil that surprised me", "count": 2},
+            {"type": "marking_station"},
+            {"type": "answer_text", "text": "Table: 215 million, Brasília, London, farming and cattle ranching.\nConclusion: accept any valid difference supported by evidence from the lesson."}
+          ]
+        },
+        "further_adapted": {
+          "elements": [
+            {"type": "instruction", "text": "Sort these facts into England, Brazil or Both. Write E, B or EB in the box next to each fact."},
+            {"type": "row_boxes", "rows": 5, "labels": [
+              "Has a capital city",
+              "Has megacities with over 10 million people",
+              "Has settlements called favelas",
+              "Uses land for farming",
+              "Has a population of more than 200 million"
+            ], "empty": true},
+            {"type": "spacer"},
+            {"type": "cloze", "text": "The biggest city in Brazil is ________. The capital city is ________.", "words": ["São Paulo", "Brasília"]},
+            {"type": "marking_station"},
+            {"type": "answer_text", "text": "Sort: EB, B, B, EB, B.\nCloze: São Paulo, Brasília."}
+          ]
+        }
+      },
       "slides": [
         {
           "type": "i_do",
@@ -170,6 +391,8 @@
       "lesson_title": "What have we discovered?",
       "building_block_text": "Our enquiry conclusions",
       "day_label": "Geography",
+      "subject": "geographer",
+      "year_group": "Y4",
       "substantive_concept": "cultural_awareness",
       "skill_focus": "concluding_communicating",
       "what": "to draw conclusions about the similarities and differences between England and Brazil",
@@ -189,6 +412,51 @@
         {"question": "How does Brazil's position near the Equator affect its climate?", "answer": "It makes the climate hot and wet, supporting tropical rainforest"},
         {"question": "What is our enquiry question?", "answer": "How do the geographies of England and Brazil compare?"}
       ],
+      "lp": {
+        "date": "",
+        "standard": {
+          "elements": [
+            {"type": "instruction", "text": "Write a conclusion to answer our enquiry question: 'How do the geographies of England and Brazil compare?' Write three paragraphs: physical geography, human geography, and your overall judgement. Use geographical vocabulary and evidence from your learning."},
+            {"type": "word_bank", "words": ["temperate", "tropical", "upland", "Amazon", "population density", "urbanisation", "favela", "conclusion", "evidence", "comparison"]},
+            {"type": "answer_lines", "label": "Physical geography", "count": 4},
+            {"type": "answer_lines", "label": "Human geography", "count": 4},
+            {"type": "answer_lines", "label": "Overall judgement", "count": 3},
+            {"type": "marking_station"},
+            {"type": "answer_text", "text": "Physical: England has a temperate climate with upland/lowland regions; Brazil has tropical rainforest and savanna. Both have major river systems. Brazil is much larger.\nHuman: Brazil has a larger population (215m vs 57m) concentrated in coastal megacities; England's population is more evenly spread. Brazil has favelas; England has different housing challenges.\nJudgement: The biggest difference is climate and landscape — shaped by their very different positions on the globe, with Brazil near the Equator and England far north."}
+          ]
+        },
+        "adapted": {
+          "elements": [
+            {"type": "instruction", "text": "Use the sentence starters below to write your conclusion. Aim to write at least one sentence for each heading."},
+            {"type": "answer_lines", "label": "Physical geography: England and Brazil are different because...", "count": 3},
+            {"type": "answer_lines", "label": "Human geography: In terms of population and settlement...", "count": 3},
+            {"type": "answer_lines", "label": "One similarity between England and Brazil is...", "count": 2},
+            {"type": "answer_lines", "label": "Overall, I think the most important difference is...", "count": 2},
+            {"type": "marking_station"},
+            {"type": "answer_text", "text": "Accept any valid comparison using evidence from the enquiry. Look for: reference to climate/landscape difference, population difference, at least one similarity (e.g. both have rivers/cities), an overall judgement."}
+          ]
+        },
+        "further_adapted": {
+          "elements": [
+            {"type": "instruction", "text": "Sort these facts about England and Brazil. Write E (England) or B (Brazil) next to each one."},
+            {"type": "row_boxes", "rows": 6, "labels": [
+              "Has the Amazon rainforest",
+              "Has the Pennines mountains",
+              "Has a tropical climate",
+              "Has a temperate climate",
+              "Has favelas in its cities",
+              "Has about 57 million people"
+            ], "empty": true},
+            {"type": "spacer"},
+            {"type": "instruction", "text": "Complete the conclusion sentence."},
+            {"type": "cloze", "text": "England and Brazil are different because England has a ________ climate and Brazil has a ________ climate.", "words": ["temperate", "tropical"]},
+            {"type": "spacer"},
+            {"type": "answer_lines", "label": "One thing England and Brazil both have", "count": 1},
+            {"type": "marking_station"},
+            {"type": "answer_text", "text": "Sort: B, E, B, E, B, E.\nCloze: temperate, tropical.\nSimilarity: both have major rivers / both have large cities."}
+          ]
+        }
+      },
       "slides": [
         {
           "type": "i_do",

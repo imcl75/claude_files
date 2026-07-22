@@ -938,7 +938,7 @@ def _render_section(slide, sec, y, resource_base):
 # ══════════════════════════════════════════════════════════════════
 
 def _add_label(slide, lf, ican1, ican2, date_str, key_question,
-               resource_base, png_dest, year='Y4'):
+               resource_base, png_dest, year='Y4', subject='scientist'):
     """Place the WFA enquiry label and return the y position below it."""
     try:
         if resource_base not in sys.path:
@@ -957,7 +957,7 @@ def _add_label(slide, lf, ican1, ican2, date_str, key_question,
             ican1=ican1,
             ican2=ican2,
             icon_path=None,
-            subject='scientist',
+            subject=subject,
             year=year,
             png_dest=png_dest,
         )
@@ -1005,7 +1005,7 @@ def _is_new_schema(lp_spec):
 # ══════════════════════════════════════════════════════════════════
 
 def _build_one_level(lesson_data, level_spec, level, lp_top, out_path,
-                     resource_base, lesson_meta, year='Y5'):
+                     resource_base, lesson_meta, year='Y5', subject='scientist'):
     """
     Build a single-level LP PPTX from a level_spec dict
     (the standard/adapted/further_adapted sub-dict of lp).
@@ -1027,7 +1027,7 @@ def _build_one_level(lesson_data, level_spec, level, lp_top, out_path,
     _tmp_dir = '/tmp'
     png_dest = os.path.join(_tmp_dir, f'_lp_label_{os.getpid()}_{level}.png')
     y1 = _add_label(s1, lf, ican1, ican2, date_s, key_q,
-                    resource_base, png_dest, year=year)
+                    resource_base, png_dest, year=year, subject=subject)
 
     # Slide 1: elements up to first 'marking_station'
     elements = level_spec.get('elements', [])
@@ -1098,7 +1098,8 @@ def _build_legacy(lesson_data, lp_spec, out_path, resource_base):
     key_q  = lesson.get('key_question', '')
 
     y1 = _add_label(s1, lf, ican1, ican2, date_s, key_q,
-                    resource_base, png_dest, year='Y4')
+                    resource_base, png_dest, year=lesson.get('year_group', 'Y4'),
+                    subject=lesson.get('subject', 'scientist'))
 
     all_sections = lp_spec.get('sections', [])
     try:
@@ -1182,6 +1183,7 @@ def build_lp(lesson_json_or_path, out_path, resource_base=None, level='standard'
                 f"Available: {[k for k in lp_spec if k in ('standard','adapted','further_adapted')]}")
         lesson = lesson_data['lesson']
         year = lesson.get('year_group', 'Y5')
+        subject = lesson.get('subject', 'scientist')
         lesson_meta = {
             'key_question': lesson.get('key_question', lesson.get('building_block_text', '')),
             'date': lp_spec.get('date', ''),
@@ -1196,7 +1198,8 @@ def build_lp(lesson_json_or_path, out_path, resource_base=None, level='standard'
             lesson_meta['ican1'] = parts[0].strip()
             lesson_meta['ican2'] = ', '.join(parts[1:]).strip() if len(parts) > 1 else ''
         return _build_one_level(lesson_data, level_spec, level, lp_spec,
-                                out_path, resource_base, lesson_meta, year=year)
+                                out_path, resource_base, lesson_meta, year=year,
+                                subject=subject)
     else:
         return _build_legacy(lesson_data, lp_spec, out_path, resource_base)
 
