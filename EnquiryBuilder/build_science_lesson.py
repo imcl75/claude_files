@@ -1932,6 +1932,150 @@ def build_lesson(mtp_path, templates_dir, out_path, manifest_path, lesson_num=1)
     return out_path, manifest_path
 
 
+def build_all_lessons(mtp_path, templates_dir, out_dir):
+    """Build every lesson in the MTP, then generate KO PDF, supporting resources,
+    and vocabulary poster.  Mirrors the Geography builder's build_all_lessons.
+    """
+    with open(mtp_path) as f:
+        mtp = json.load(f)
+
+    os.makedirs(out_dir, exist_ok=True)
+    _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+
+    built = []
+    for lesson in mtp['lessons']:
+        n     = lesson['lesson_number']
+        title = (lesson.get('lesson_title') or
+                 lesson.get('building_block_text') or
+                 f'Lesson_{n}')
+        label = title.replace(' ', '_').replace('?', '').replace('/', '-')[:40]
+        out_path     = os.path.join(out_dir, f'L{n:02d}_{label}.pptx')
+        manifest_out = os.path.join(out_dir, f'L{n:02d}_manifest.json')
+        build_lesson(mtp_path, templates_dir, out_path, manifest_out, n)
+        built.append(out_path)
+
+    print(f'\nDone — {len(built)} PPTX(s) written to {out_dir}')
+
+    # ── Supporting resources (enquiry-level, once) ────────────────────────────
+    resources_spec = mtp.get('resources')
+    if not resources_spec:
+        print('  No "resources" block in MTP — skipping supporting resources')
+    else:
+        _res_candidates = [
+            os.path.join(_THIS_DIR, 'build_resources.py'),
+            '/home/claude/build_resources.py',
+        ]
+        _res_script = next((p for p in _res_candidates if os.path.exists(p)), None)
+        if _res_script is None:
+            print('  build_resources.py not found — skipping supporting resources')
+        else:
+            _res_mod_dir = os.path.dirname(os.path.abspath(_res_script))
+            if _res_mod_dir not in sys.path:
+                sys.path.insert(0, _res_mod_dir)
+            import importlib.util as _ilu
+            _res_spec_mod = _ilu.spec_from_file_location('build_resources', _res_script)
+            _res_mod      = _ilu.module_from_spec(_res_spec_mod)
+            _res_spec_mod.loader.exec_module(_res_mod)
+            _yg_res      = mtp.get('year_group', 'Y5')
+            _colour_res  = {'Y3': '#c0157b', 'Y4': '#1798d3', 'Y5': '#e57d24', 'Y6': '#2bae62'}.get(_yg_res, '#e57d24')
+            _colour_cycle = _res_mod.get_colour_cycle(_yg_res)
+            from reportlab.pdfgen import canvas as _rl_canvas
+            from reportlab.lib.pagesizes import A4 as _rl_A4
+            print(f'  Building {len(resources_spec)} supporting resource(s)…')
+            for _res in resources_spec:
+                _rtype   = _res.get('type')
+                _rtitle  = _res.get('title', _rtype or 'resource')
+                _fname   = _res.get('output', f'resource_{_rtype}.pdf')
+                _rout    = os.path.join(out_dir, _fname)
+                _builder = _res_mod.BUILDERS.get(_rtype)
+                if not _builder:
+                    print(f'  Unknown resource type "{_rtype}" — skipping')
+                    continue
+                _cv = _rl_canvas.Canvas(_rout, pagesize=_rl_A4)
+                _cv.setTitle(_rtitle)
+                if _rtype == 'writing_mat':
+                    _builder(_cv, _res, _colour_res, colour_cycle=_colour_cycle)
+                else:
+                    _builder(_cv, _res, _colour_res)
+                _cv.save()
+                print(f'  ✓ {os.path.basename(_rout)}')
+
+    # ── KO PDF (enquiry-level, once) ──────────────────────────────────────────
+    ko_data = mtp.get('ko')
+    if ko_data is None:
+        print('  No "ko" block in MTP — skipping KO PDF')
+    else:
+        _ko_candidates = [
+            os.path.join(_THIS_DIR, 'build_ko_pdf.py'),
+            '/home/claude/build_ko_pdf.py',
+            '/root/.claude/skills/knowledge-organiser/scripts/build_ko_pdf.py',
+        ]
+        _ko_script = next((p for p in _ko_candidates if os.path.exists(p)), None)
+        if _ko_script is None:
+            print('  build_ko_pdf.py not found — skipping KO PDF')
+        else:
+            import subprocess as _sp
+            _yg      = mtp.get('year_group', 'Y5')
+            _subject = mtp.get('subject', 'science')
+            _ll_icons_candidates = [
+                os.path.join(_THIS_DIR, '..', 'LearningPaper', 'll_assets'),
+                '/home/claude/ll_assets',
+            ]
+            _ll_icons_dir = next((d for d in _ll_icons_candidates if os.path.isdir(d)), '')
+            _icon_path = os.path.join(_ll_icons_dir, f'icon_{_subject}.png') if _ll_icons_dir else ''
+            _ko_out = os.path.join(out_dir, 'KO.pdf')
+            _ko_cfg = {
+                'year_group':   _yg,
+                'subject':      _subject,
+                'key_question': mtp.get('key_question', ''),
+                'key_facts':    ko_data.get('key_facts', []),
+                'key_skills':   ko_data.get('key_skills', []),
+                'vocabulary':   ko_data.get('vocabulary', []),
+                'output':       _ko_out,
+            }
+            if _icon_path and os.path.exists(_icon_path):
+                _ko_cfg['icon_path'] = _icon_path
+            if ko_data.get('strip_image') and os.path.exists(ko_data['strip_image']):
+                _ko_cfg['strip_image'] = ko_data['strip_image']
+            if ko_data.get('notes_image') and os.path.exists(ko_data['notes_image']):
+                _ko_cfg['notes_image'] = ko_data['notes_image']
+            _cfg_file = os.path.join(out_dir, '_ko_config.json')
+            with open(_cfg_file, 'w') as _f:
+                json.dump(_ko_cfg, _f, indent=2)
+            print(f'  Building KO PDF → {_ko_out}')
+            _r = _sp.run([sys.executable, _ko_script, _cfg_file],
+                         capture_output=True, text=True)
+            print(_r.stdout.strip())
+            if _r.returncode != 0:
+                print(f'  KO build failed: {_r.stderr.strip()[:200]}', file=sys.stderr)
+            else:
+                os.remove(_cfg_file)
+
+    # ── Top-10 Vocab Poster (enquiry-level, once) ─────────────────────────────
+    vocab_top10 = mtp.get('vocabulary')
+    if not vocab_top10:
+        print('  No "vocabulary" block in MTP — skipping vocab poster')
+    else:
+        _vp_candidates = [
+            os.path.join(_THIS_DIR, '..', 'Shared', 'build_vocab_poster.py'),
+            os.path.join(_THIS_DIR, 'build_vocab_poster.py'),
+            '/home/claude/build_vocab_poster.py',
+        ]
+        _vp_script = next((p for p in _vp_candidates if os.path.exists(p)), None)
+        if _vp_script is None:
+            print('  build_vocab_poster.py not found — skipping vocab poster')
+        else:
+            import importlib.util as _ilu_vp
+            _vp_spec = _ilu_vp.spec_from_file_location('build_vocab_poster', _vp_script)
+            _vp_mod  = _ilu_vp.module_from_spec(_vp_spec)
+            _vp_spec.loader.exec_module(_vp_mod)
+            _vp_out = os.path.join(out_dir, 'Vocab_Poster.html')
+            print(f'  Building vocab poster → {_vp_out}')
+            _vp_mod.build_vocab_poster(mtp, _vp_out)
+
+    return built
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Science enquiry lesson builder v5')
     parser.add_argument('mtp_json')
@@ -1939,5 +2083,11 @@ if __name__ == '__main__':
     parser.add_argument('out_pptx')
     parser.add_argument('manifest_out')
     parser.add_argument('--lesson', type=int, default=1, help='Lesson number to build (default: 1)')
+    parser.add_argument('--all', action='store_true', help='Build all lessons (ignores out_pptx/manifest_out)')
+    parser.add_argument('--out-dir', default=None, help='Output directory for --all mode')
     args = parser.parse_args()
-    build_lesson(args.mtp_json, args.templates_dir, args.out_pptx, args.manifest_out, args.lesson)
+    if args.all:
+        out_dir = args.out_dir or os.path.join(os.path.dirname(args.mtp_json), 'Science_Lessons')
+        build_all_lessons(args.mtp_json, args.templates_dir, out_dir)
+    else:
+        build_lesson(args.mtp_json, args.templates_dir, args.out_pptx, args.manifest_out, args.lesson)

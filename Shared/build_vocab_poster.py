@@ -277,8 +277,9 @@ def build_vocab_poster(mtp_or_path, out_path, images_dir=None):
         return None
 
     year_group  = mtp.get('year_group', 'Y4')
-    subject     = (mtp['lessons'][0].get('subject', 'geographer')
-                   if mtp.get('lessons') else 'geographer')
+    # subject: lesson-level → mtp top-level → fallback 'geographer'
+    subject = (mtp['lessons'][0].get('subject') if mtp.get('lessons') else None) or \
+              mtp.get('subject') or 'geographer'
     key_question = mtp.get('key_question', '')
 
     # Resolve images_dir
