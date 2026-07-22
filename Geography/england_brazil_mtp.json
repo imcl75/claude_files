@@ -64,7 +64,7 @@
             ]},
             {"type": "spacer"},
             {"type": "instruction", "text": "Tick the correct answer."},
-            {"type": "row_boxes", "rows": 2, "labels": ["England is NORTH / SOUTH of the Equator", "Brazil is mostly NORTH / SOUTH of the Equator"], "empty": true},
+            {"type": "row_boxes", "rows": 2, "items": ["England is NORTH / SOUTH of the Equator", "Brazil is mostly NORTH / SOUTH of the Equator"], "empty": true},
             {"type": "spacer"},
             {"type": "instruction", "text": "Complete the sentence."},
             {"type": "cloze", "text": "Brazil is closer to the Equator so I predict it will be ________ than England.", "words": ["hotter"]},
@@ -155,7 +155,7 @@
             ]},
             {"type": "spacer"},
             {"type": "instruction", "text": "Tick true or false."},
-            {"type": "row_boxes", "rows": 3, "labels": [
+            {"type": "row_boxes", "rows": 3, "items": [
               "Brazil is near the Equator — TRUE / FALSE",
               "The Amazon Rainforest is in the south of Brazil — TRUE / FALSE",
               "The Amazon River is the largest river by volume — TRUE / FALSE"
@@ -354,7 +354,7 @@
         "further_adapted": {
           "elements": [
             {"type": "instruction", "text": "Sort these facts into England, Brazil or Both. Write E, B or EB in the box next to each fact."},
-            {"type": "row_boxes", "rows": 5, "labels": [
+            {"type": "row_boxes", "rows": 5, "items": [
               "Has a capital city",
               "Has megacities with over 10 million people",
               "Has settlements called favelas",
@@ -439,7 +439,7 @@
         "further_adapted": {
           "elements": [
             {"type": "instruction", "text": "Sort these facts about England and Brazil. Write E (England) or B (Brazil) next to each one."},
-            {"type": "row_boxes", "rows": 6, "labels": [
+            {"type": "row_boxes", "rows": 6, "items": [
               "Has the Amazon rainforest",
               "Has the Pennines mountains",
               "Has a tropical climate",

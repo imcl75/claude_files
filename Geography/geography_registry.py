@@ -305,12 +305,14 @@ def _geo_token():
     """Read GitHub token from github-sync SKILL.md."""
     import re as _re
     candidates = [
+        '/root/.claude/skills/github-sync/SKILL.md',
         '/mnt/skills/user/github-sync/SKILL.md',
         '/sessions/exciting-cool-cray/mnt/.claude/skills/github-sync/SKILL.md',
         '/var/folders/7w/tbn3l_nd3pj08rjjyfvc31d80000gn/T/claude-hostloop-plugins/20f3261227b068eb/skills/github-sync/SKILL.md',
     ]
     # Also glob for any session path
     candidates += _glob.glob('/sessions/*/mnt/.claude/skills/github-sync/SKILL.md')
+    candidates += _glob.glob('/root/.claude/skills/*/SKILL.md')
     for path in candidates:
         if _os.path.exists(path):
             with open(path) as _f:

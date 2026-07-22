@@ -1663,6 +1663,46 @@ def build_one_lesson(mtp, lesson_num, base_pptx, out_pptx):
     os.makedirs(os.path.dirname(out_pptx) or '.', exist_ok=True)
     _patched_rezip(work, out_pptx)
     print(f'  → {out_pptx} ({os.path.getsize(out_pptx):,} bytes)')
+
+    # ── Build LP ──────────────────────────────────────────────────────────────
+    lp_spec = lesson_data.get('lp')
+    if lp_spec is None:
+        print("  No 'lp' key in lesson — skipping LP build")
+    else:
+        _lp_candidates = [
+            os.path.join(_THIS, '..', 'EnquiryBuilder', 'build_lp.py'),
+            os.path.join(_THIS, 'build_lp.py'),
+            '/home/claude/build_lp.py',
+        ]
+        _lp_script = next((p for p in _lp_candidates if os.path.exists(p)), None)
+        if _lp_script is None:
+            print('  build_lp.py not found — skipping LP')
+        else:
+            _lp_mod_dir = os.path.dirname(os.path.abspath(_lp_script))
+            if _lp_mod_dir not in sys.path:
+                sys.path.insert(0, _lp_mod_dir)
+            from build_lp import build_lp_named_output
+            _lp_out_dir = os.path.dirname(os.path.abspath(out_pptx))
+            _lp_stem = os.path.splitext(os.path.basename(out_pptx))[0]
+            _rb_candidates = [
+                _lp_out_dir,
+                _THIS,
+                os.path.join(_THIS, '..', 'EnquiryBuilder'),
+                '/home/claude',
+                '/tmp/t6w7',
+            ]
+            resource_base = next(
+                (c for c in _rb_candidates if os.path.isdir(os.path.join(c, 'll_assets'))),
+                '/tmp/t6w7'
+            )
+            print(f'  Building LP → {_lp_out_dir}/{_lp_stem} LP [all levels]')
+            build_lp_named_output(
+                {'lesson': lesson_data},
+                _lp_out_dir,
+                _lp_stem + ' LP',
+                resource_base=resource_base,
+            )
+
     return out_pptx
 
 
