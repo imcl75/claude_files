@@ -33,6 +33,61 @@
       ["trade", "the buying and selling of goods and services between countries"]
     ]
   },
+  "resources": [
+    {
+      "type": "word_cards",
+      "title": "Geography Vocabulary — England and Brazil",
+      "words": [
+        {"word": "hemisphere",  "definition": "one half of the Earth, divided at the Equator or Prime Meridian"},
+        {"word": "latitude",    "definition": "imaginary lines running east–west measuring distance north or south of the Equator"},
+        {"word": "longitude",   "definition": "imaginary lines running north–south measuring distance east or west of the Prime Meridian"},
+        {"word": "continent",   "definition": "one of the seven large land masses on Earth"},
+        {"word": "Equator",     "definition": "the imaginary line at 0° latitude dividing Earth into northern and southern hemispheres"},
+        {"word": "rainforest",  "definition": "a dense forest with very high rainfall, found in tropical areas"},
+        {"word": "savanna",     "definition": "a tropical grassland with scattered trees"},
+        {"word": "tributary",   "definition": "a smaller river that flows into a larger river"},
+        {"word": "settlement",  "definition": "a place where people live, from a hamlet to a city"},
+        {"word": "trade",       "definition": "the buying and selling of goods and services between countries"},
+        {"word": "altitude",    "definition": "the height of land above sea level"},
+        {"word": "basin",       "definition": "a large area of land drained by a river and its tributaries"}
+      ],
+      "output": "Word_Cards.pdf"
+    },
+    {
+      "type": "sort_cards",
+      "title": "England or Brazil? Sort Cards",
+      "items": [
+        "Mostly in the southern hemisphere",
+        "Home of the Amazon Rainforest",
+        "In north-west Europe",
+        "Has a temperate maritime climate",
+        "The Amazon River flows through it",
+        "Capital city is London",
+        "Capital city is Brasília",
+        "Has a tropical climate near the Equator",
+        "Population of about 57 million",
+        "Population of about 215 million",
+        "Borders the Atlantic Ocean",
+        "Contains the Cerrado savanna"
+      ],
+      "output": "Sort_Cards.pdf"
+    },
+    {
+      "type": "statement_sort",
+      "title": "True or False? England and Brazil",
+      "statements": [
+        "England is south of the Equator.",
+        "Brazil is on the continent of South America.",
+        "The Amazon Rainforest covers most of Brazil.",
+        "England has a tropical climate.",
+        "The Amazon is the world's largest river by volume.",
+        "London is the capital city of Brazil.",
+        "Brazil has a smaller population than England.",
+        "Both England and Brazil border the Atlantic Ocean."
+      ],
+      "output": "Statement_Sort.pdf"
+    }
+  ],
   "lessons": [
     {
       "lesson_number": 1,

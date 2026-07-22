@@ -1762,6 +1762,52 @@ def build_all_lessons(mtp_path, base_pptx, out_dir):
 
     print(f'\nDone — {len(built)} PPTX(s) written to {out_dir}')
 
+    # ── Build supporting resources (enquiry-level, runs once) ─────────────────
+    resources_spec = mtp.get('resources')
+    if not resources_spec:
+        print('  No "resources" block in MTP — skipping supporting resources')
+    else:
+        _res_candidates = [
+            os.path.join(_THIS, '..', 'EnquiryBuilder', 'build_resources.py'),
+            os.path.join(_THIS, 'build_resources.py'),
+            '/home/claude/build_resources.py',
+        ]
+        _res_script = next((p for p in _res_candidates if os.path.exists(p)), None)
+        if _res_script is None:
+            print('  build_resources.py not found — skipping supporting resources')
+        else:
+            _res_mod_dir = os.path.dirname(os.path.abspath(_res_script))
+            if _res_mod_dir not in sys.path:
+                sys.path.insert(0, _res_mod_dir)
+            import importlib.util as _ilu
+            _res_spec = _ilu.spec_from_file_location('build_resources', _res_script)
+            _res_mod  = _ilu.module_from_spec(_res_spec)
+            _res_spec.loader.exec_module(_res_mod)
+            _yg_res = (mtp['lessons'][0].get('year_group', 'Y4')
+                       if mtp.get('lessons') else 'Y4')
+            _colour_res = {'Y3':'#c0157b','Y4':'#1798d3','Y5':'#e57d24','Y6':'#2bae62'}.get(_yg_res,'#1798d3')
+            from reportlab.pdfgen import canvas as _rl_canvas
+            from reportlab.lib.pagesizes import A4 as _rl_A4
+            _colour_cycle = _res_mod.get_colour_cycle(_yg_res)
+            print(f'  Building {len(resources_spec)} supporting resource(s)…')
+            for _res in resources_spec:
+                _rtype  = _res.get('type')
+                _rtitle = _res.get('title', _rtype or 'resource')
+                _fname  = _res.get('output', f'resource_{_rtype}.pdf')
+                _rout   = os.path.join(out_dir, _fname)
+                _builder = _res_mod.BUILDERS.get(_rtype)
+                if not _builder:
+                    print(f'  Unknown resource type "{_rtype}" — skipping')
+                    continue
+                _cv = _rl_canvas.Canvas(_rout, pagesize=_rl_A4)
+                _cv.setTitle(_rtitle)
+                if _rtype == 'writing_mat':
+                    _builder(_cv, _res, _colour_res, colour_cycle=_colour_cycle)
+                else:
+                    _builder(_cv, _res, _colour_res)
+                _cv.save()
+                print(f'  ✓ {os.path.basename(_rout)}')
+
     # ── Build KO PDF (enquiry-level, runs once after all lessons) ─────────────
     ko_data = mtp.get('ko')
     if ko_data is None:
