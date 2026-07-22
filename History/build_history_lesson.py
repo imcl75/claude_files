@@ -127,16 +127,12 @@ def _border_rect(sid, border_hex):
 def _apply_concept_bg(sp, bg_hex, border_hex):
     """Insert BG fill + border into the slide's spTree, before any other shapes."""
     t, st = get_spTree(sp)
-    # The first child of spTree is always nvGrpSpPr, second is grpSpPr
-    # Insert BG immediately after grpSpPr (index 2)
     grp_idx = 1
     for i, child in enumerate(st):
         if child.tag.endswith('}grpSpPr'):
             grp_idx = i
             break
     st.insert(grp_idx + 1, _bg_fill_rect(990, bg_hex))
-    # Border goes last (drawn on top of everything)
-    # We'll append it at the very end after all content is added
     save(t, sp)
 
 
