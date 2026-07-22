@@ -1861,6 +1861,28 @@ def build_all_lessons(mtp_path, base_pptx, out_dir):
             else:
                 os.remove(_cfg_file)
 
+    # ── Build Top-10 Vocab Poster (enquiry-level, runs once) ─────────────────
+    vocab_top10 = mtp.get('vocabulary')
+    if not vocab_top10:
+        print('  No "vocabulary" block in MTP — skipping vocab poster')
+    else:
+        _vp_candidates = [
+            os.path.join(_THIS, '..', 'Shared', 'build_vocab_poster.py'),
+            os.path.join(_THIS, 'build_vocab_poster.py'),
+            '/home/claude/build_vocab_poster.py',
+        ]
+        _vp_script = next((p for p in _vp_candidates if os.path.exists(p)), None)
+        if _vp_script is None:
+            print('  build_vocab_poster.py not found — skipping vocab poster')
+        else:
+            import importlib.util as _ilu_vp
+            _vp_spec = _ilu_vp.spec_from_file_location('build_vocab_poster', _vp_script)
+            _vp_mod  = _ilu_vp.module_from_spec(_vp_spec)
+            _vp_spec.loader.exec_module(_vp_mod)
+            _vp_out = os.path.join(out_dir, 'Vocab_Poster.html')
+            print(f'  Building vocab poster → {_vp_out}')
+            _vp_mod.build_vocab_poster(mtp, _vp_out)
+
     return built
 
 

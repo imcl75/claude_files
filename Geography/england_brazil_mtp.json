@@ -2,6 +2,18 @@
   "topic": "England and Brazil",
   "key_question": "How do the geographies of England and Brazil compare?",
   "challenge": "Can you explain what makes these two countries so different?",
+  "vocabulary": [
+    {"word": "location",         "definition": "Where a place is in the world.",                                               "image": "vocab_geo_location.png"},
+    {"word": "climate",          "definition": "The typical weather pattern of a place over many years.",                      "image": "vocab_geo_climate.png"},
+    {"word": "physical feature", "definition": "A natural feature of the landscape, such as a river or mountain.",             "image": "vocab_geo_physical.png"},
+    {"word": "human feature",    "definition": "Something built or made by people, such as a road or city.",                   "image": "vocab_geo_human.png"},
+    {"word": "population",       "definition": "The number of people living in a place.",                                      "image": "vocab_geo_population.png"},
+    {"word": "continent",        "definition": "One of the seven large areas of land on Earth.",                               "image": "vocab_geo_continent.png"},
+    {"word": "hemisphere",       "definition": "Half of the Earth, divided north or south of the equator.",                   "image": "vocab_geo_hemisphere.png"},
+    {"word": "trade",            "definition": "Goods and services bought and sold between countries.",                        "image": "vocab_trade.png"},
+    {"word": "migration",        "definition": "When people move from one place to live in another.",                          "image": "vocab_geo_migration.png"},
+    {"word": "comparison",       "definition": "Looking at how two places are alike and how they are different.",              "image": "vocab_geo_comparison.png"}
+  ],
   "ko": {
     "_note": "Fill in key_facts, key_skills and vocabulary to enable automatic KO PDF generation.",
     "key_facts": [
