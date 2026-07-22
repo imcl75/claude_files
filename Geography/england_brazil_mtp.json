@@ -2,6 +2,37 @@
   "topic": "England and Brazil",
   "key_question": "How do the geographies of England and Brazil compare?",
   "challenge": "Can you explain what makes these two countries so different?",
+  "ko": {
+    "_note": "Fill in key_facts, key_skills and vocabulary to enable automatic KO PDF generation.",
+    "key_facts": [
+      "England is in north-west Europe at approximately 52°N; Brazil spans from 5°N to 33°S.",
+      "England has a temperate maritime climate; Brazil has a tropical climate near the Equator.",
+      "The Amazon Rainforest covers about 60% of Brazil and is the world's largest tropical rainforest.",
+      "The Amazon River is the world's largest river by volume of water.",
+      "England has a population of about 57 million; Brazil has about 215 million.",
+      "Brazil's economy relies on agriculture, mining and manufacturing; England's on services and finance.",
+      "Both countries have diverse human geography — cities, rural areas and coastal settlements.",
+      "Brazil and England are on different tectonic plates and have very different physical landscapes."
+    ],
+    "key_skills": [
+      "Locate places on a world map using latitude and longitude.",
+      "Compare physical and human features of two contrasting countries.",
+      "Use geographical vocabulary to describe climate, landscape and settlement.",
+      "Interpret maps, graphs and photographs as geographical sources."
+    ],
+    "vocabulary": [
+      ["hemisphere", "one half of the Earth, divided at the Equator or Prime Meridian"],
+      ["latitude", "imaginary lines running east–west, measuring distance north or south of the Equator"],
+      ["longitude", "imaginary lines running north–south, measuring distance east or west of the Prime Meridian"],
+      ["continent", "one of the seven large land masses on Earth"],
+      ["Equator", "the imaginary line at 0° latitude dividing Earth into northern and southern hemispheres"],
+      ["rainforest", "a dense forest with very high rainfall, found in tropical areas"],
+      ["savanna", "a tropical grassland with scattered trees"],
+      ["tributary", "a smaller river that flows into a larger river"],
+      ["settlement", "a place where people live, from a hamlet to a city"],
+      ["trade", "the buying and selling of goods and services between countries"]
+    ]
+  },
   "lessons": [
     {
       "lesson_number": 1,

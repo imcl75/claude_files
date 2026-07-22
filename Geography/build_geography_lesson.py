@@ -1761,6 +1761,60 @@ def build_all_lessons(mtp_path, base_pptx, out_dir):
         built.append(out_path)
 
     print(f'\nDone — {len(built)} PPTX(s) written to {out_dir}')
+
+    # ── Build KO PDF (enquiry-level, runs once after all lessons) ─────────────
+    ko_data = mtp.get('ko')
+    if ko_data is None:
+        print('  No "ko" block in MTP — skipping KO PDF')
+    else:
+        _ko_candidates = [
+            os.path.join(_THIS, '..', 'EnquiryBuilder', 'build_ko_pdf.py'),
+            os.path.join(_THIS, 'build_ko_pdf.py'),
+            '/home/claude/build_ko_pdf.py',
+            '/root/.claude/skills/knowledge-organiser/scripts/build_ko_pdf.py',
+        ]
+        _ko_script = next((p for p in _ko_candidates if os.path.exists(p)), None)
+        if _ko_script is None:
+            print('  build_ko_pdf.py not found — skipping KO PDF')
+        else:
+            import tempfile, subprocess as _sp
+            _yg      = mtp.get('year_group', 'Y4')
+            _subject = (mtp['lessons'][0].get('subject', 'geographer')
+                        if mtp.get('lessons') else 'geographer')
+            _ll_icons_candidates = [
+                os.path.join(_THIS, '..', 'LearningPaper', 'll_assets'),
+                '/home/claude/ll_assets',
+            ]
+            _ll_icons_dir = next((d for d in _ll_icons_candidates if os.path.isdir(d)), '')
+            _icon_path = os.path.join(_ll_icons_dir, f'icon_{_subject}.png') if _ll_icons_dir else ''
+            _ko_out = os.path.join(out_dir, 'KO.pdf')
+            _ko_cfg = {
+                'year_group':  _yg,
+                'subject':     _subject.replace('geographer', 'geography'),
+                'key_question': mtp.get('key_question', ''),
+                'key_facts':   ko_data.get('key_facts', []),
+                'key_skills':  ko_data.get('key_skills', []),
+                'vocabulary':  ko_data.get('vocabulary', []),
+                'output':      _ko_out,
+            }
+            if _icon_path and os.path.exists(_icon_path):
+                _ko_cfg['icon_path'] = _icon_path
+            if ko_data.get('strip_image') and os.path.exists(ko_data['strip_image']):
+                _ko_cfg['strip_image'] = ko_data['strip_image']
+            if ko_data.get('notes_image') and os.path.exists(ko_data['notes_image']):
+                _ko_cfg['notes_image'] = ko_data['notes_image']
+            _cfg_file = os.path.join(out_dir, '_ko_config.json')
+            with open(_cfg_file, 'w') as _f:
+                json.dump(_ko_cfg, _f, indent=2)
+            print(f'  Building KO PDF → {_ko_out}')
+            _r = _sp.run([sys.executable, _ko_script, _cfg_file],
+                         capture_output=True, text=True)
+            print(_r.stdout.strip())
+            if _r.returncode != 0:
+                print(f'  KO build failed: {_r.stderr.strip()[:200]}', file=sys.stderr)
+            else:
+                os.remove(_cfg_file)
+
     return built
 
 
