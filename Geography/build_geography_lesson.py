@@ -26,21 +26,11 @@ import sys, os, json, argparse, glob, shutil, copy
 from pathlib import Path
 
 # ── Locate companion modules ──────────────────────────────────────────────────
-# Use importlib to force-load the Geography-local lib_ooxml.py, bypassing
-# sys.path ordering issues that arise when /home/claude or ../EnquiryBuilder
-# are already in sys.path and have their own lib_ooxml.py.
 _THIS = os.path.dirname(os.path.abspath(__file__))
-import importlib.util as _ilu
-_geo_lib_spec = _ilu.spec_from_file_location(
-    'lib_ooxml', os.path.join(_THIS, 'lib_ooxml.py'))
-_geo_lib_mod = _ilu.module_from_spec(_geo_lib_spec)
-sys.modules['lib_ooxml'] = _geo_lib_mod
-_geo_lib_spec.loader.exec_module(_geo_lib_mod)
-
-for _p in ['/tmp/EnquiryBuilder',
-           '/home/claude',
+for _p in [_THIS,
            os.path.join(_THIS, '..', 'EnquiryBuilder'),
-           _THIS]:
+           '/home/claude',
+           '/tmp/EnquiryBuilder']:
     if _p not in sys.path and os.path.isdir(_p):
         sys.path.insert(0, _p)
 
@@ -529,7 +519,7 @@ def _add_strip_img(sp, rp, work, img_path, x, y, w, h, sid):
         f'<p:pic xmlns:p="{P}" xmlns:a="{A}" xmlns:r="{R}">'
         f'<p:nvPicPr>'
         f'<p:cNvPr id="{sid}" name="Strip{sid}"/>'
-        f'<p:cNvPicPr><a:picLocks/></p:cNvPicPr>'
+        f'<p:cNvPicPr><a:picLocks noChangeAspect="0"/></p:cNvPicPr>'
         f'<p:nvPr/>'
         f'</p:nvPicPr>'
         f'<p:blipFill>'
@@ -618,8 +608,8 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
 
     shape_id = 310
     for icon_file, definition in icon_data:
-        icon_path = REG.ensure_asset(icon_file)
-        if icon_path:
+        icon_path = f'{REG.ASSETS_ROOT}/{icon_file}'
+        if os.path.exists(icon_path):
             add_img(sp, rp, work, icon_path,
                     120000, icon_y, icon_size, icon_size, shape_id)
             shape_id += 1
@@ -642,7 +632,7 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
             f'<a:lstStyle/>'
             f'<a:p><a:r>'
             f'<a:rPr lang="en-GB" sz="1000" dirty="0">'
-            f'<a:latin typeface="Twinkl Cursive Looped"/>'
+            f'<a:latin typeface="Aptos"/>'
             f'</a:rPr>'
             f'<a:t>{ex(definition)}</a:t>'
             f'</a:r></a:p>'
@@ -701,7 +691,7 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
                 f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
                 f'<p:childTnLst><p:par>'
                 f'<p:cTn id="{clk}" presetID="1" presetClass="entr" '
-                f'presetSubtype="0" fill="hold" nodeType="clickEffect">'
+                f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
                 f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
                 f'<p:childTnLst><p:set><p:cBhvr>'
                 f'<p:cTn id="{bhv}" dur="1" fill="hold">'
@@ -729,7 +719,12 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
             f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
             f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
             f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
-            f'</p:timing>'
+            f'<p:bldLst>'
+            + ''.join(
+                f'<p:bldP spid="{sid}" grpId="0" build="p"/>'
+                for _, sid in visible_strips_anim
+            )
+            + f'</p:bldLst></p:timing>'
         )
 
         tree = xr(sp)
@@ -745,96 +740,178 @@ def build_progression(work, base_pptx, lesson, enquiry, master_idx):
     return sp
 
 
-def _hide_shape_by_id(sp_path, shape_id):
-    """Set hidden='1' on the cNvPr of any shape or pic with the given integer id."""
-    tree = xr(sp_path)
+def _prep_puzzle_pieces_layout(work, master_idx):
+    """
+    Modify the Puzzle Pieces layout in the work directory before cloning:
+      1. Set hidden="1" on all 15 piece groups.
+      2. Remove the <p:timing> element.
+
+    The layout's timing element makes all pieces appear via visibility
+    animations, meaning without this fix a cloned slide would show pieces
+    both statically (from the cloned spTree) AND from the layout's animation.
+    By hiding all groups here and removing timing, the cloned spTree starts
+    with all pieces hidden; build_puzzle_pieces then selectively un-hides
+    positions 1..N.
+    """
+    lf = _get_layout_file('Puzzle Pieces', master_idx)
+    layout_path = f'{work}/ppt/slideLayouts/{lf}'
+
+    tree = xr(layout_path)
     root = tree.getroot()
-    sid_str = str(shape_id)
-    modified = False
-    for el in root.iter():
-        tag = etree.QName(el).localname
-        if tag not in ('sp', 'pic'):
+
+    # Set hidden="1" on all piece groups
+    for grpSp in root.iter(f'{{{P}}}grpSp'):
+        cNvPr = grpSp.find(f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr')
+        if cNvPr is None:
             continue
-        for nv_path in (f'{{{P}}}nvSpPr/{{{P}}}cNvPr', f'{{{P}}}nvPicPr/{{{P}}}cNvPr'):
-            nv = el.find(nv_path)
-            if nv is not None and nv.get('id') == sid_str:
-                nv.set('hidden', '1')
-                modified = True
-    if modified:
-        xw(tree, sp_path)
+        if cNvPr.get('name', '') in REG.PUZZLE_PIECE_GROUPS_BY_MASTER.get(master_idx, REG.PUZZLE_PIECE_GROUPS):
+            cNvPr.set('hidden', '1')
+
+    # Remove timing (15 click-reveal entrance effects)
+    timing = root.find(f'{{{P}}}timing')
+    if timing is not None:
+        root.remove(timing)
+
+    xw(tree, layout_path)
 
 
 def build_puzzle_pieces(work, base_pptx, lesson, enquiry, all_lessons, master_idx):
     """
     Slide 4: Puzzle Pieces
-    Places coloured jigsaw piece PNGs at calibrated JIGSAW_PIECE_POSITIONS.
-    Uses SKILL_JIGSAW_PNG to pick the right colour per lesson skill_focus.
-    Pieces 1..(lesson_num-1) placed visible immediately.
-    Piece lesson_num placed hidden, revealed on one click.
-    Positions > lesson_num left empty.
+    Clones the Puzzle Pieces layout into the slide so groups can be
+    un-hidden and their TextBox/EMF updated directly.
+
+    Piece positions 1..N are shown; positions N+1..15 remain hidden.
+    Each visible piece swaps its EMF rId to the lesson's skill_focus colour.
     """
     lesson_num = lesson['lesson_number']
-    sp, rp = fresh_geo(work, 'Puzzle Pieces', master_idx)
 
-    current_img_id = None
-    current_txt_id = None
+    # Pre-process the layout: hide all groups, remove timing animation.
+    # After this, clone_from_layout copies groups that all start hidden.
+    _prep_puzzle_pieces_layout(work, master_idx)
 
-    for pos_idx in range(min(lesson_num, len(REG.JIGSAW_PIECE_POSITIONS))):
-        lsn       = all_lessons[pos_idx] if pos_idx < len(all_lessons) else None
-        position  = pos_idx + 1
-        off_x, off_y, cx, cy = REG.JIGSAW_PIECE_POSITIONS[pos_idx]
-        img_id    = 200 + pos_idx * 2   # 200, 202, 204 …
-        txt_id    = 201 + pos_idx * 2   # 201, 203, 205 …
+    sp, rp, rId_map = clone_from_layout(work, 'Puzzle Pieces', master_idx)
 
-        # Choose the coloured jigsaw PNG for this lesson's skill_focus
-        lsn_skill = (lsn.get('skill_focus', 'questioning_predicting')
-                     if lsn else lesson.get('skill_focus', 'questioning_predicting'))
-        png_file  = REG.SKILL_JIGSAW_PNG.get(lsn_skill, 'new-Jig-orange-questioning.png')
-        png_path  = REG.ensure_asset(f'Jigsaw Pieces/{png_file}')
+    # Build skill → slide rId lookup (from layout rIds → new slide rIds)
+    skill_to_slide_rid = {
+        skill: rId_map.get(layout_rid)
+        for skill, layout_rid in REG.SKILL_EMF_LAYOUT_RID.items()
+        if rId_map.get(layout_rid)
+    }
 
-        if png_path:
-            add_img(sp, rp, work, png_path, off_x, off_y, cx, cy, img_id)
+    tree = xr(sp)
+    root = tree.getroot()
+    spTree = root.find(f'.//{{{P}}}spTree')
+
+    current_piece_id = None  # shape ID of the current lesson's piece — animated in on click
+    piece_groups = REG.PUZZLE_PIECE_GROUPS_BY_MASTER.get(master_idx, REG.PUZZLE_PIECE_GROUPS)
+
+    for pos_idx, group_name in enumerate(piece_groups):
+        position = pos_idx + 1  # 1-based
+
+        # Locate the group element by name
+        group_el = None
+        for child in spTree:
+            if child.tag.split('}')[-1] != 'grpSp':
+                continue
+            cNvPr = child.find(f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr')
+            if cNvPr is not None and cNvPr.get('name') == group_name:
+                group_el = child
+                break
+
+        if group_el is None:
+            print(f'  WARNING: puzzle piece group "{group_name}" not found',
+                  file=sys.stderr)
+            continue
+
+        cNvPr = group_el.find(f'{{{P}}}nvGrpSpPr/{{{P}}}cNvPr')
+
+        if position > lesson_num:
+            # Already hidden by _prep_puzzle_pieces_layout — leave as-is.
+            pass
         else:
-            print(f'  WARNING: jigsaw PNG not found: Jigsaw Pieces/{png_file}', file=sys.stderr)
+            lsn = all_lessons[pos_idx] if pos_idx < len(all_lessons) else None
 
-        # Text label in lower half of the piece, centred
-        piece_txt = ''
-        if lsn:
-            piece_txt = (lsn.get('puzzle_piece_text') or
-                         lsn.get('building_block_text') or
-                         str(lsn['lesson_number']))
-        if piece_txt:
-            # Text box position derived from user-confirmed geo_L1_v6IM.pptx (2026-07-21).
-            # Proportions: x at 30.47% from piece left, y at 33.67% from piece top,
-            # width 38.36% of piece, height 35.42% of piece.
-            tx  = off_x + cx * 3047 // 10000
-            ty  = off_y + cy * 3367 // 10000
-            tcx = cx * 3836 // 10000
-            tcy = cy * 3542 // 10000
-            txt_el = tbox(
-                txt_id, piece_txt,
-                tx, ty, tcx, tcy,
-                sz=1600, bold=True, color='000000', align='l',
-                name=f'PieceTxt{position}',
-            )
-            t, st = get_spTree(sp)
-            st.append(txt_el)
-            save(t, sp)
+            if cNvPr is not None:
+                cNvPr.attrib.pop('hidden', None)  # un-hide for all visible/current pieces
+            if position == lesson_num:
+                # Current lesson's piece: record id for click-reveal animation.
+                # The shape is un-hidden above; PowerPoint's animation engine
+                # hides it before the click fires, then reveals it on click.
+                current_piece_id = int(cNvPr.get('id', 0)) if cNvPr is not None else None
 
-        if position == lesson_num:
-            current_img_id = img_id
-            current_txt_id = txt_id if piece_txt else None
+            # Update EMF colour and TextBox text for all visible/current pieces.
+            if lsn is not None:
+                skill     = lsn.get('skill_focus', 'questioning_predicting')
+                piece_txt = (lsn.get('puzzle_piece_text') or
+                             lsn.get('building_block_text') or
+                             str(lsn['lesson_number']))
 
-    # Click-reveal current lesson's piece — the entrance animation (presetClass="entr")
-    # makes the shape start invisible without needing cNvPr hidden="1".
-    # Setting hidden="1" on cNvPr marks the shape as permanently non-rendered
-    # (not printed, not displayed) and conflicts with the animation reveal,
-    # causing PowerPoint on Mac to crash. Rely on the animation engine alone.
-    if current_img_id is not None:
-        step = [s for s in [current_img_id, current_txt_id] if s is not None]
-        animate(sp, [step])
+                target_rid = skill_to_slide_rid.get(skill)
+                if target_rid:
+                    for sub in group_el:
+                        if sub.tag.split('}')[-1] == 'pic':
+                            blip = sub.find(f'.//{{{A}}}blip')
+                            if blip is not None:
+                                blip.set(R_EMBED, target_rid)
+                            break
 
-    print(f'  [4] puzzle_pieces — {lesson_num}/{len(REG.JIGSAW_PIECE_POSITIONS)} pieces')
+                _set_group_textbox_text(group_el, piece_txt)
+
+    xw(tree, sp)
+
+    # ── Click-reveal animation for current lesson's piece ─────────────────────
+    if current_piece_id:
+        sid = current_piece_id
+        nid = [1]
+        def _nid(): v = nid[0]; nid[0] += 1; return str(v)
+        root_id = _nid(); seq_id = _nid()
+        b, inn, clk, bhv = _nid(), _nid(), _nid(), _nid()
+        block = (
+            f'<p:par xmlns:p="{P}"><p:cTn id="{b}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
+            f'<p:childTnLst><p:par><p:cTn id="{inn}" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:par>'
+            f'<p:cTn id="{clk}" presetID="1" presetClass="entr" '
+            f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+            f'<p:childTnLst><p:set><p:cBhvr>'
+            f'<p:cTn id="{bhv}" dur="1" fill="hold">'
+            f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
+            f'<p:tgtEl><p:spTgt spid="{sid}"/></p:tgtEl>'
+            f'<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst>'
+            f'</p:cBhvr>'
+            f'<p:to><p:strVal val="visible"/></p:to>'
+            f'</p:set></p:childTnLst></p:cTn>'
+            f'</p:par></p:childTnLst></p:cTn></p:par>'
+            f'</p:childTnLst></p:cTn></p:par>'
+        )
+        timing_xml = (
+            f'<p:timing xmlns:p="{P}" xmlns:a="{A}">'
+            f'<p:tnLst><p:par><p:cTn id="{root_id}" dur="indefinite" '
+            f'restart="never" nodeType="tmRoot"><p:childTnLst>'
+            f'<p:seq concurrent="1" nextAc="seek">'
+            f'<p:cTn id="{seq_id}" dur="indefinite" nodeType="mainSeq">'
+            f'<p:childTnLst>{block}</p:childTnLst></p:cTn>'
+            f'<p:prevCondLst><p:cond evt="onPrev" delay="0">'
+            f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>'
+            f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
+            f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
+            f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
+            f'<p:bldLst>'
+            f'<p:bldP spid="{sid}" grpId="0" build="p"/>'
+            f'</p:bldLst></p:timing>'
+        )
+        anim_tree = xr(sp)
+        anim_root = anim_tree.getroot()
+        existing = anim_root.find(f'{{{P}}}timing')
+        if existing is not None:
+            anim_root.remove(existing)
+        anim_root.append(etree.fromstring(timing_xml))
+        xw(anim_tree, sp)
+
+    print(f'  [4] puzzle_pieces — {lesson_num}/{len(piece_groups)} pieces')
     return sp
 
 
@@ -905,9 +982,6 @@ def build_lo(work, base_pptx, lesson, enquiry, master_idx):
         )
         st.append(etree.fromstring(sp_xml))
     save(t, sp)
-
-    # Click-reveal animations: one click per panel (WALT → TIB → ISB)
-    animate(sp, [[501], [502], [503]])
 
     print('  [5] lo')
     return sp
@@ -1086,9 +1160,7 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
         animated_para_idxs.append(para_global); para_global += 1
         if i < len(qna) - 1:
             spacer = etree.Element(f'{{{A}}}p')
-            spacer_epr = etree.SubElement(spacer, f'{{{A}}}endParaRPr')
-            spacer_epr.set('lang', 'en-GB')
-            spacer_epr.set('sz', '400')
+            etree.SubElement(spacer, f'{{{A}}}endParaRPr').set('lang', 'en-GB')
             txBody.append(spacer)
             para_global += 1
 
@@ -1110,7 +1182,7 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
             f'<p:childTnLst><p:par><p:cTn id="{inn}" fill="hold">'
             f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
             f'<p:childTnLst><p:par><p:cTn id="{clk}" presetID="1" presetClass="entr" '
-            f'presetSubtype="0" fill="hold" nodeType="clickEffect">'
+            f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
             f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
             f'<p:childTnLst><p:set><p:cBhvr>'
             f'<p:cTn id="{bhv}" dur="1" fill="hold">'
@@ -1136,7 +1208,9 @@ def build_recap_quiz(work, base_pptx, lesson, enquiry, master_idx):
         f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
         f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
         f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
-        f'</p:timing>'
+        f'<p:bldLst>'
+        f'<p:bldP spid="{content_id}" grpId="0" build="p"/>'
+        f'</p:bldLst></p:timing>'
     )
 
     tree = xr(sp)
@@ -1202,7 +1276,7 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
         f'<p:nvPr><p:ph idx="1"/></p:nvPr>'
         f'</p:nvSpPr>'
         f'<p:spPr/>'
-        f'<p:txBody><a:bodyPr><a:normAutofit/></a:bodyPr><a:lstStyle/></p:txBody>'
+        f'<p:txBody><a:bodyPr/><a:lstStyle/></p:txBody>'
         f'</p:sp>'
     )
     txBody = sp_el.find(f'.//{{{P}}}txBody')
@@ -1216,12 +1290,8 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
         txBody.append(_def_para(item.get('definition', '')))
         animated_para_idxs.append(para_global); para_global += 1
         if i < len(vocab) - 1:
-            # Tiny spacer — sz="400" (4pt) on endParaRPr collapses the inherited
-            # master line height to a negligible gap. No pPr needed.
             spacer = etree.Element(f'{{{A}}}p')
-            spacer_epr = etree.SubElement(spacer, f'{{{A}}}endParaRPr')
-            spacer_epr.set('lang', 'en-GB')
-            spacer_epr.set('sz', '400')
+            etree.SubElement(spacer, f'{{{A}}}endParaRPr').set('lang', 'en-GB')
             txBody.append(spacer)
             para_global += 1
 
@@ -1243,7 +1313,7 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
             f'<p:childTnLst><p:par><p:cTn id="{inn}" fill="hold">'
             f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
             f'<p:childTnLst><p:par><p:cTn id="{clk}" presetID="1" presetClass="entr" '
-            f'presetSubtype="0" fill="hold" nodeType="clickEffect">'
+            f'presetSubtype="0" fill="hold" grpId="0" nodeType="clickEffect">'
             f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
             f'<p:childTnLst><p:set><p:cBhvr>'
             f'<p:cTn id="{bhv}" dur="1" fill="hold">'
@@ -1269,7 +1339,9 @@ def build_key_vocabulary(work, base_pptx, lesson, enquiry, master_idx):
         f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
         f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
         f'</p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
-        f'</p:timing>'
+        f'<p:bldLst>'
+        f'<p:bldP spid="{content_id}" grpId="0" build="p"/>'
+        f'</p:bldLst></p:timing>'
     )
 
     tree = xr(sp)
