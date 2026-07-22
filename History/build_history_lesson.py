@@ -204,7 +204,7 @@ def build_key_question(work, rp_dummy, lesson, enquiry, colours):
       - hist-icon PNG + 'Being an Historian' text — bottom centre
       - Day label — bottom left, large bold
     """
-    sp, rp = fresh(work, 'Blank')
+    sp, rp = fresh(work, 'DEFAULT')
     bg, bd = colours['bg'], colours['border']
     _apply_concept_bg(sp, bg, bd)
 
@@ -298,7 +298,7 @@ def build_concepts_skills(work, rp_dummy, lesson, enquiry, colours):
       Right: Hist-skill.png         (skills wheel)
     Each clicks in separately.
     """
-    sp, rp = fresh(work, 'Blank')
+    sp, rp = fresh(work, 'DEFAULT')
     bg, bd = colours['bg'], colours['border']
     _apply_concept_bg(sp, bg, bd)
 
@@ -339,7 +339,7 @@ def build_concept_card(work, rp_dummy, lesson, enquiry, colours):
     Stacks 6 images (Y1 bottom → Y6 top), each appearing on its own click.
     Images path: ASSETS_ROOT/[ConceptFolder]/[prefix]-Y1.png … -Y6.png
     """
-    sp, rp = fresh(work, 'Blank')
+    sp, rp = fresh(work, 'DEFAULT')
     bg, bd = colours['bg'], colours['border']
     _apply_concept_bg(sp, bg, bd)
 
@@ -384,7 +384,7 @@ def build_building_blocks(work, rp_dummy, lesson, enquiry, all_lessons, colours)
     Brick PNG selected by skill_focus of that lesson.
     Text = building_block_text of that lesson.
     """
-    sp, rp = fresh(work, 'Blank')
+    sp, rp = fresh(work, 'DEFAULT')
     bg, bd = colours['bg'], colours['border']
     _apply_concept_bg(sp, bg, bd)
 
@@ -517,7 +517,7 @@ def build_lo(work, rp_dummy, lesson, enquiry, colours):
     Panels: 'I am learning… [what]' / 'This is so… [why]' / 'I will be successful by… [success]'
     Each panel clicks in.
     """
-    sp, rp = fresh(work, 'Blank')
+    sp, rp = fresh(work, 'DEFAULT')
     bg, bd = colours['bg'], colours['border']
     _apply_concept_bg(sp, bg, bd)
 
@@ -604,7 +604,7 @@ def build_kwl(work, rp_dummy, lesson, enquiry, colours):
     2-column table: 'Prior Knowledge and Skill' | 'I am curious about…'
     (Teacher fills in live on the interactive whiteboard.)
     """
-    sp, rp = fresh(work, 'Blank')
+    sp, rp = fresh(work, 'DEFAULT')
     bg, bd = colours['bg'], colours['border']
     _apply_concept_bg(sp, bg, bd)
 
@@ -690,7 +690,7 @@ def build_recap_quiz(work, rp_dummy, lesson, enquiry, colours):
     Animation: Q1 clicks in → A1 clicks in → Q2 → A2 → …
     Uses paragraph-level animation on a single text box.
     """
-    sp, rp = fresh(work, 'Blank')
+    sp, rp = fresh(work, 'DEFAULT')
     bg, bd = colours['bg'], colours['border']
     _apply_concept_bg(sp, bg, bd)
 
@@ -834,7 +834,7 @@ def build_key_vocabulary(work, rp_dummy, lesson, enquiry, colours):
     Animation: Word 1 clicks in → Definition 1 clicks in → Word 2 → …
     Each pair in a visually distinct card.
     """
-    sp, rp = fresh(work, 'Blank')
+    sp, rp = fresh(work, 'DEFAULT')
     bg, bd = colours['bg'], colours['border']
     _apply_concept_bg(sp, bg, bd)
 
@@ -1154,7 +1154,7 @@ def build_image_slide(work, slide_spec, lesson, enquiry, colours):
     images = slide_spec.get('images', [])
     bg, bd = colours['bg'], colours['border']
 
-    sp, rp = fresh(work, 'Blank')
+    sp, rp = fresh(work, 'DEFAULT')
     _apply_concept_bg(sp, bg, bd)
 
     t, st = get_spTree(sp)
@@ -1319,7 +1319,7 @@ def build_learning_review(work, slide_spec, lesson, enquiry, colours):
       questions  — list of question strings (required)
       title      — optional override; defaults to "Look back at what you've learned"
     """
-    sp, rp = fresh(work, 'Learning Review')
+    sp, rp = fresh(work, 'Learning_Review')
     bg, bd = colours['bg'], colours['border']
     _apply_concept_bg(sp, bg, bd)
 
