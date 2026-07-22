@@ -1897,6 +1897,38 @@ def build_lesson(mtp_path, templates_dir, out_path, manifest_path, lesson_num=1)
             from build_lp import build_lp
             build_lp(mtp_path, lp_path, resource_base=resource_base)
 
+    # ── Build label sheet ─────────────────────────────────────────────────────
+    _label_candidates = [
+        os.path.join(_this_dir, '..', 'Shared', 'generate_wfa_labels_pdf.py'),
+        os.path.join(_this_dir, 'generate_wfa_labels_pdf.py'),
+        '/home/claude/generate_wfa_labels_pdf.py',
+    ]
+    _label_script = next((p for p in _label_candidates if os.path.exists(p)), None)
+    if _label_script is None:
+        print('  generate_wfa_labels_pdf.py not found — skipping label sheet')
+    else:
+        _label_mod_dir = os.path.dirname(os.path.abspath(_label_script))
+        if _label_mod_dir not in sys.path:
+            sys.path.insert(0, _label_mod_dir)
+        from generate_wfa_labels_pdf import build_pdf as _build_labels_pdf
+        _label_out = os.path.splitext(out_path)[0] + ' Labels.pdf'
+        _subject   = lesson.get('subject', 'scientist')
+        _question  = mtp.get('key_question', '') if isinstance(mtp, dict) else ''
+        _lf        = lesson.get('what', lesson.get('lo', ''))
+        _success   = lesson.get('success', '')
+        _parts     = [p.strip() for p in _success.split(',')]
+        _ican1     = _parts[0] if len(_parts) > 0 else ''
+        _ican2     = ', '.join(_parts[1:]) if len(_parts) > 1 else ''
+        _date      = lesson.get('lp', {}).get('date', '') if isinstance(lesson.get('lp'), dict) else ''
+        _ll_icons_candidates = [
+            os.path.join(_this_dir, '..', 'LearningPaper', 'll_assets'),
+            '/home/claude/ll_assets',
+        ]
+        _ll_icons_dir = next((d for d in _ll_icons_candidates if os.path.isdir(d)), '/home/claude/ll_assets')
+        print(f'  Building label sheet → {_label_out}')
+        _build_labels_pdf('enquiry', _subject, _date, _question, _lf, _ican1, _ican2,
+                          _label_out, ll_icons_dir=_ll_icons_dir)
+
     return out_path, manifest_path
 
 

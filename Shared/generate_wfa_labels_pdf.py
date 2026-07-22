@@ -82,14 +82,17 @@ ICON_DIMS = {
 ICON_CACHE = {}
 
 def get_icon(subject, ll_icons_dir='/home/claude/ll_icons'):
-    if subject in ICON_CACHE:
-        return ICON_CACHE[subject]
-    path = os.path.join(ll_icons_dir, f'{subject}.png')
-    if os.path.exists(path):
-        with open(path, 'rb') as f:
-            img = ImageReader(io.BytesIO(f.read()))
-        ICON_CACHE[subject] = img
-        return img
+    cache_key = (subject, ll_icons_dir)
+    if cache_key in ICON_CACHE:
+        return ICON_CACHE[cache_key]
+    # Try bare name first, then icon_ prefix (ll_assets convention)
+    for fname in (f'{subject}.png', f'icon_{subject}.png'):
+        path = os.path.join(ll_icons_dir, fname)
+        if os.path.exists(path):
+            with open(path, 'rb') as f:
+                img = ImageReader(io.BytesIO(f.read()))
+            ICON_CACHE[cache_key] = img
+            return img
     return None
 
 
@@ -98,7 +101,7 @@ def register_fonts():
     pass   # Helvetica, Helvetica-Bold are always available in ReportLab
 
 
-def draw_label(c, lx, ly, mode, date, question, lf, ican1, ican2, subject):
+def draw_label(c, lx, ly, mode, date, question, lf, ican1, ican2, subject, ll_icons_dir='/home/claude/ll_icons'):
     """
     Draw one label.
     lx, ly = bottom-left corner of label in pt (ReportLab coordinates, y up).
@@ -143,7 +146,7 @@ def draw_label(c, lx, ly, mode, date, question, lf, ican1, ican2, subject):
 
     # ── Icon column ──────────────────────────────────────────────
     icon_x = lx + LABEL_W - icon_col_w
-    icon_img = get_icon(subject)
+    icon_img = get_icon(subject, ll_icons_dir=ll_icons_dir)
     if icon_img:
         pw, ph = ICON_DIMS.get(subject, (38, 37))
         iw = pw / 96 * 72   # px → pt at 96 dpi
@@ -160,7 +163,7 @@ def draw_label(c, lx, ly, mode, date, question, lf, ican1, ican2, subject):
         c.drawString(cx, iy - SZ_CAP * 0.84, cap_text)
 
 
-def build_pdf(mode, subject, date, question, lf, ican1, ican2, out_path):
+def build_pdf(mode, subject, date, question, lf, ican1, ican2, out_path, ll_icons_dir='/home/claude/ll_icons'):
     register_fonts()
 
     # Strip common prefixes if caller passed full strings
@@ -176,7 +179,7 @@ def build_pdf(mode, subject, date, question, lf, ican1, ican2, out_path):
             lx = LEFT_M + col * (LABEL_W + GAP_W)
             # ReportLab y=0 at bottom; row 0 is at top of page
             ly = PAGE_H - TOP_M - (row + 1) * LABEL_H
-            draw_label(c, lx, ly, mode, date, question, lf, ican1, ican2, subject)
+            draw_label(c, lx, ly, mode, date, question, lf, ican1, ican2, subject, ll_icons_dir=ll_icons_dir)
 
     c.save()
     print(f'✓ {out_path}')
