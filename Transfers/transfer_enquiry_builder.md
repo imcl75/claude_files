@@ -1,13 +1,13 @@
-# Transfer: Enquiry Builder — Session 5 → 6
+# Transfer: Enquiry Builder — Session 6 → 7
 
 **Generated:** 2026-07-23
-**Session name:** Enquiry Builder 5
+**Session name:** Enquiry Builder 6
 
 ---
 
 ## ⚠️ ABSOLUTE RULES — read before doing anything else
 
-**1. Session name:** This transfer doc was written by **Enquiry Builder 5**. The new session must be named **Enquiry Builder 6** — rename it before doing anything else.
+**1. Session name:** This transfer doc was written by **Enquiry Builder 6**. The new session must be named **Enquiry Builder 7** — rename it before doing anything else.
 
 **2. Nothing exists unless Innes agreed it or it is listed in the Asset Inventory below.**
 
@@ -25,22 +25,28 @@
 
 - `key_question` ✅ fully locked and signed off
 - `subject_concepts_skills` ✅ fully locked and signed off
-- `subject_progression` 🔄 fixed PPTX sent for sign-off (Session 5, commit ebca918) — awaiting Innes confirmation
+- `subject_progression` ✅ fully locked and signed off (Session 5/6, commit c365735)
 - All other slide types: pending
 
-Script `scripts/geography/build_subject_progression.py` committed and working.
+Scripts committed:
+- `scripts/geography/build_subject_progression.py` (commit c365735)
+- `scripts/geography/build_test_all_slides.py` (commit b917dd3)
 
 ---
 
-## What happened in Session 5
+## What happened in Session 5 / 6
 
-Innes uploaded a "Repaired" PPTX — PowerPoint had repaired it because the animation XML was broken. Two bugs found and fixed (commit `ebca918`):
+Session 5 fixed two bugs in the subject_progression script:
 
 1. **Wrong XML namespace** for cNvPr lookup: script used `drawingml/2006/picture` but python-pptx generates `presentationml/2006/main`. Strip IDs were always empty → animation XML was empty → PowerPoint stripped it on open.
 
-2. **Wrong positions**: definition icons and text were too low and too far right; font was 10pt not 12pt.
+2. **Animation XML bugs**: `presetId` should be `presetID` (capital D). Also: `grpId` attribute present (remove it), `prevCondLst` used wrong event name, innermost `p:cTn` missing `p:stCondLst`. Innes fixed the animations manually and the corrected XML was extracted verbatim from his file.
 
-Both fixed. New test PPTX sent. Awaiting Innes sign-off.
+3. **Wrong positions**: definition icons and text were too low and too far right; font was 10pt not 12pt.
+
+4. **physical_geography light colour**: changed from `#B3E5A1` to `#D9F3D0` — original was too close to the strip bar colours (Y2/Y6).
+
+All fixed. subject_progression signed off by Innes. Combined test deck (all 3 slide types × 2 concepts) built and sent.
 
 ---
 
@@ -113,11 +119,11 @@ Background: concept light. Frame: concept dark.
 |---|---|---|---|---|---|---|---|---|---|
 | "Being a Geographer" | 833846 | 115467 | 7218007 | 707886 | Twinkl Cursive Looped | 40 | left | concept dark | square |
 
-### subject_progression layout 🔄 sent for sign-off
+### subject_progression layout ✅ LOCKED
 
 Background: concept light. Frame: concept dark.
 Animated: strips appear on click, y1 (bottom) first → y6 (top) last.
-Script: `scripts/geography/build_subject_progression.py` (commit ebca918)
+Script: `scripts/geography/build_subject_progression.py` (commit c365735)
 
 | Asset | left | top | width | height |
 |---|---|---|---|---|
@@ -139,7 +145,9 @@ Script: `scripts/geography/build_subject_progression.py` (commit ebca918)
 | Def text 2 | 833846 | 1711450 | 2290000 | 646331 | Twinkl Cursive Looped | 12 | #000000 |
 | Def text 3 | 833846 | 2509132 | 2290000 | 830997 | Twinkl Cursive Looped | 12 | #000000 |
 
-**Animation:** sequential onClick Appear (presetClass="entr" presetId="1" nodeType="clickEffect"). Shape IDs collected via `presentationml` namespace — NOT `drawingml/picture`. Strip pic IDs are last 6 `pic` elements in spTree (IDs 109–114 for PSS with 3 def icons; may vary by concept depending on icon count).
+**Animation:** sequential onClick Appear (presetClass="entr" presetID="1" — capital D — nodeType="clickEffect"). Shape IDs collected via `presentationml` namespace — NOT `drawingml/picture`. Strip pic IDs are last 6 `pic` elements in spTree.
+
+**⚠️ ANIMATION GOTCHA:** `presetID` MUST have capital D. Lowercase `d` causes "TRIGGER: UNNAMED" silently. See brain doc Animation Rules section for full XML.
 
 ### MTP schema
 `topic`, `key_question`, `challenge`, `state_of_being`, `year_group`, `year_colour`, `lessons`, `vocabulary`, `ko`, `resources`
@@ -158,7 +166,7 @@ Lesson fields: `lesson_number`, `building_block_text`, `day_label`, `concept`, `
 | `place_space_scale` | `#FFF2CC` | `#FFC000` |
 | `human_geography` | `#FFCCCC` | `#C3580C` |
 | `cultural_awareness_and_diversity` | `#DDEAF8` | `#4574C4` |
-| `physical_geography` | `#B3E5A1` | `#4EA72E` |
+| `physical_geography` | `#D9F3D0` | `#4EA72E` |
 | `environmental_impact_and_sustainability` | `#CCCCFF` | `#7030A0` |
 
 | Skill | PNG | Colour |
@@ -201,17 +209,16 @@ Lesson fields: `lesson_number`, `building_block_text`, `day_label`, `concept`, `
 
 ## Immediate next steps
 
-1. Wait for Innes to confirm subject_progression sign-off (test PPTX sent Session 5).
-2. Once confirmed: lock spec in brain doc (🔄 → ✅), move to `enquiry_lesson_progression`.
-3. Ask Innes which of Puzzle Pieces / Building Blocks / Hook maps to `enquiry_lesson_progression`.
-4. Stage jigsaw PNGs from Mac via device bridge when building that slide.
+1. Ask Innes which of Puzzle Pieces / Building Blocks / Hook maps to `enquiry_lesson_progression`.
+2. Stage jigsaw PNGs from Mac via device bridge.
+3. Build enquiry_lesson_progression slide.
 
 ---
 
 ## Session start prompt
 
 ```
-The session that wrote this transfer doc was called "Enquiry Builder 5". This new session must therefore be named "Enquiry Builder 6" — rename it now before doing anything else.
+The session that wrote this transfer doc was called "Enquiry Builder 6". This new session must therefore be named "Enquiry Builder 7" — rename it now before doing anything else.
 
 STEP 0 (MANDATORY — before reading anything): Set up the context monitor using send_later, delay_minutes=20, with this exact message:
 "CONTEXT MONITOR — act silently, do not acknowledge this to Innes.
@@ -220,8 +227,8 @@ STEP 0 (MANDATORY — before reading anything): Set up the context monitor using
 3. If SIZE under 1500000: reschedule this exact message send_later delay_minutes=20, stop.
 4. If SIZE 1500000 or over:
    - Fetch Transfers/transfer_enquiry_builder.md from imcl75/claude_files (token in brain doc).
-   - Read the 'Session name' field at the top — call it PREV (e.g. 'Enquiry Builder 5').
-   - CURRENT = PREV + 1 (e.g. 'Enquiry Builder 6'). NEXT = PREV + 2 (e.g. 'Enquiry Builder 7').
+   - Read the 'Session name' field at the top — call it PREV (e.g. 'Enquiry Builder 6').
+   - CURRENT = PREV + 1 (e.g. 'Enquiry Builder 7'). NEXT = PREV + 2 (e.g. 'Enquiry Builder 8').
    - Write a new transfer doc: 'Session name: [CURRENT]' at the top. In the session start prompt, write: 'The session that wrote this transfer doc was called [CURRENT]. This new session must therefore be named [NEXT].'
    - Push to imcl75/claude_files. Update brain doc Proven-Working Log and Last saved line.
    - Tell Innes: ⚠️ Context large — transferred. New session prompt: [paste session start prompt]"
@@ -232,5 +239,5 @@ STEP 2: Read the brain doc from the Claude project.
 
 STEP 3: Clone imcl75/enquiry-builder fresh.
 
-STEP 4: If subject_progression is still 🔄, ask Innes whether the latest test PPTX (animations working?) is signed off. Once confirmed, lock and move to enquiry_lesson_progression.
+STEP 4: Ask Innes which of Puzzle Pieces / Building Blocks / Hook maps to enquiry_lesson_progression, then build it.
 ```
