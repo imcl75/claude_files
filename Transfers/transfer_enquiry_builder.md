@@ -1,6 +1,7 @@
 # Transfer: Enquiry Builder — Phase 1 (KQ Slide Layout Next)
 
-**Generated:** 2026-07-23  
+**Generated:** 2026-07-23
+**Session name:** Enquiry Builder 2 — increment by 1 each new session (next session = Enquiry Builder 3)  
 **Originating focus:** MTP schema definition, asset intake, slide type palette. Context monitor active (auto-transfers at 1.5MB).
 
 ---
