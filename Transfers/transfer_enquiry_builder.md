@@ -1,6 +1,6 @@
-# Transfer: Enquiry Builder — Session 8 → 9
+# Transfer: Enquiry Builder — Session 5 → 6
 
-**The session that wrote this transfer doc was called "Enquiry Builder 8". This new session must therefore be named "Enquiry Builder 9".**
+**The session that wrote this transfer doc was called "Enquiry Builder 5". This new session must therefore be named "Enquiry Builder 6".**
 
 **Generated:** 2026-07-23
 
@@ -8,7 +8,7 @@
 
 ## ⚠️ ABSOLUTE RULES — read before doing anything else
 
-**1. Session name:** This transfer doc was written by **Enquiry Builder 8**. The new session must be named **Enquiry Builder 9** — rename it before doing anything else.
+**1. Session name:** This transfer doc was written by **Enquiry Builder 5**. The new session must be named **Enquiry Builder 6** — rename it before doing anything else.
 
 **2. Nothing exists unless Innes agreed it or it is listed in the Asset Inventory below.**
 
@@ -22,77 +22,76 @@
 
 ---
 
-## ⚠️ CRITICAL — SLIDE STATE UNKNOWN
+## Status (as of Session 5 — all signed off by Innes)
 
-Innes reported (Session 7) that actual progress is **2-3 sessions ahead** of what is in these docs. **Before doing any slide work, ask Innes:**
-
-> "Which slides are locked beyond subject_progression? Please list them so I can update the brain doc."
-
-Update the brain doc with his answer before proceeding to any slide work.
-
----
-
-## Status (as documented — actual may be further ahead)
-
-- `key_question` ✅ fully locked and signed off
-- `subject_concepts_skills` ✅ fully locked and signed off
+- `key_question` ✅ fully locked and signed off (commit 55aeea1)
+- `subject_concepts_skills` ✅ fully locked and signed off (commit 55aeea1)
 - `subject_progression` ✅ fully locked and signed off (commit 65b7a3c)
-- `enquiry_lesson_progression` — BUILT, awaiting sign-off (commit 0203df6)
-- All other slide types: UNKNOWN — ask Innes
+- `enquiry_lesson_progression` ✅ fully locked and signed off (commit 9bb1d4a / 55aeea1)
+- Combined deck builder `build_geography_deck.py` ✅ committed and tested (commit 55aeea1)
+- **Phase 1 gate: PASSED**
 
 Scripts committed to `imcl75/enquiry-builder`:
-- `scripts/geography/build_subject_progression.py` (commit 65b7a3c)
-- `scripts/geography/build_enquiry_lesson_progression.py` (commit 0203df6)
-- `scripts/geography/build_test_all_slides.py`
+- `scripts/geography/build_key_question.py`
+- `scripts/geography/build_subject_concepts_skills.py`
+- `scripts/geography/build_subject_progression.py`
+- `scripts/geography/build_enquiry_lesson_progression.py`
+- `scripts/geography/build_geography_deck.py`
 
 ---
 
-## What happened in Session 8
+## What happened in Session 5
 
-1. **5 jigsaw PNGs committed** (commit 63c2959): `assets/geography/jigsaw_geo_{skill}.png`, 3084×3080 RGBA. Staged from Mac `/Users/innes/Pictures/PPTX Slide assets/Geographer/Jigsaw Pieces/new/`.
+1. **enquiry_lesson_progression bugs fixed:**
+   - Text box positions extracted from Innes's manually edited PPTX (dx=1,026,720 / dy=1,196,707 / cx=1,326,980 / cy=760,992)
+   - Text box not animating fixed — pairs (pic_id, tb_id) collected and passed to animation function
 
-2. **`build_enquiry_lesson_progression.py` rewritten** (commit 0203df6):
-   - 3-row staggered grid: 6 bottom, 5 middle, 4 top (max 15 pieces)
-   - Piece size 3,424,464 × 3,424,464 EMU (extracted from Innes's reference PPTX)
-   - Pieces fill bottom row first (lesson 1 = bottom-left), then middle, then top
-   - P-namespace fix for pic ID collection
-   - Only current lesson's piece gets onClick Appear animation
-   - Text from `building_block_text` in lower 28% of piece at 16pt black
+2. **Animation behaviour changed (Innes's decision):**
+   - ALL pieces now animate on click (each piece + its text box on the same click), not just the current lesson
+   - `nodeType="clickEffect"` for piece, `nodeType="withEffect"` for simultaneous text box
+   - 7 cTn IDs per pair, base starting at 3
 
-3. Test outputs for all 5 concepts at L01 and L14 sent to Innes. **Awaiting sign-off.**
+3. **enquiry_lesson_progression signed off by Innes.**
+
+4. **build_key_question.py and build_subject_concepts_skills.py written** from locked brain doc specs (these slide types were signed off in earlier sessions but had no build scripts in the repo).
+
+5. **build_geography_deck.py written** — combined deck builder taking MTP JSON + optional concept override; outputs all 4 signed-off slide types in order.
+
+6. **Test deck built and sent:** `output/deck_england_and_brazil.pptx` (8 slides, human_geography colouring, from `mtp/reference/england_brazil_mtp.json`).
+
+7. **Brain doc updated** in Claude project with all locked constants and Phase 1 gate passed.
 
 ---
 
 ## Decisions locked
 
-### Colour rule — EVERY slide
-- Slide background fill = concept **light** colour
-- Frame border = concept **dark** colour (prstGeom prst="frame", adj1=1241, solidFill=dark hex, no line stroke)
+### enquiry_lesson_progression — text box position (relative to piece top-left)
 
-### enquiry_lesson_progression layout (commit 0203df6)
+| Constant | Value (EMU) |
+|---|---|
+| TXT_DX (x offset) | 1,026,720 |
+| TXT_DY (y offset) | 1,196,707 |
+| TXT_CX (width) | 1,326,980 |
+| TXT_CY (height) | 760,992 |
 
-- Layout name in Geographer.pptx: **Building Blocks** (confirmed by Innes)
-- Heading text: always "Connections" (not concept title)
-- Concept icon(s) + definition(s): same positions as subject_progression
-- Jigsaw grid: 3-row staggered (6+5+4, fills bottom-left first)
+### enquiry_lesson_progression — animation
+- ALL pieces animate, each on its own click
+- piece: `nodeType="clickEffect"`, text box: `nodeType="withEffect"` (same click, simultaneous)
+- `presetID="1"` — capital D always; lowercase d causes silent failure
+- 7 cTn IDs per pair: `base = 3 + i * 7`
 
+### Jigsaw grid
 | Row | y (EMU) | Slots | x values (EMU) |
 |---|---|---|---|
 | Bottom (fills first) | 3,764,939 | 6 | -301,716 / 1,529,421 / 3,360,558 / 5,191,695 / 7,022,832 / 8,853,969 |
 | Middle | 1,900,549 | 5 | 1,503,174 / 3,347,458 / 5,178,595 / 7,009,732 / 8,840,869 |
 | Top | 41,049 | 4 | 3,321,211 / 5,152,348 / 6,996,011 / 8,847,419 |
 
-- Piece size: 3,424,464 × 3,424,464 EMU
-- "Connections" heading: x=833,846 y=115,467 cx=7,218,007 cy=707,886 — 40pt, concept dark
+Piece size: 3,424,464 × 3,424,464 EMU
 
-### Skill → jigsaw PNG (all now in repo)
-| Skill | PNG |
-|---|---|
-| `map_skills` | `jigsaw_geo_map_skills.png` |
-| `field_work` | `jigsaw_geo_field_work.png` |
-| `observing` | `jigsaw_geo_observing.png` |
-| `questioning` | `jigsaw_geo_questioning.png` |
-| `concluding` | `jigsaw_geo_concluding.png` |
+### Colour rule — EVERY slide
+- Slide background fill = concept **light** colour
+- Frame border = concept **dark** colour (prstGeom prst="frame", adj1=1241, solidFill=dark hex, no line stroke)
 
 ### Geography colour maps
 | Concept | Light | Dark |
@@ -103,69 +102,14 @@ Scripts committed to `imcl75/enquiry-builder`:
 | `physical_geography` | `#D9F3D0` | `#4EA72E` |
 | `environmental_impact_and_sustainability` | `#CCCCFF` | `#7030A0` |
 
-| Skill | PNG | Colour |
-|---|---|---|
-| `map_skills` | `jigsaw_geo_map_skills.png` | `#CBFFA9` |
-| `field_work` | `jigsaw_geo_field_work.png` | `#FFAAFF` |
-| `observing` | `jigsaw_geo_observing.png` | `#FFFFAD` |
-| `questioning` | `jigsaw_geo_questioning.png` | `#FFCEA5` |
-| `concluding` | `jigsaw_geo_concluding.png` | `#97F4FF` |
-
-### Animation rules (capital D, always)
-`presetID="1"` not `presetId`. Lowercase d causes silent failure. Full XML in brain doc.
-
-### key_question layout — LOCKED
-
-| Asset | left | top | width | height |
-|---|---|---|---|---|
-| `kq_cloud.png` | 186617 | 237978 | 9882800 | 2763090 |
-| `slide_shared_kq_children.png` | 3048000 | 2693156 | 6096000 | 2590800 |
-| `slide_shared_kq_21c_skills.png` | 10357333 | 154065 | 1648051 | 1648051 |
-| `icon_geo_geographer.png` | 5634014 | 4876831 | 1223996 | 1223996 |
-
-| Content | left | top | width | height | Font | pt | Align | Colour | Wrap |
-|---|---|---|---|---|---|---|---|---|---|
-| KQ text | 2122582 | 676750 | 7021417 | 954107 | Twinkl Cursive Looped | 28 | left | #000000 | square |
-| Challenge text | 2487641 | 1726730 | 5638566 | 707886 | Twinkl Cursive Looped | 20 | left | #000000 | square |
-| "Being a Geographer" | 4365817 | 6100827 | 3760390 | 461665 | Twinkl Cursive Looped | 24 | centre | #000000 | none |
-| "21st Century Learning Skills" | 10344525 | 1771029 | 1686365 | 242374 | Twinkl Cursive Looped | 9.75 | centre | #000000 | none |
-
-### subject_concepts_skills layout — LOCKED
-
-| Asset | left | top | width | height |
-|---|---|---|---|---|
-| `icon_geo_geographer.png` | 139278 | 114801 | 752475 | 752475 |
-| `slide_geo_scs_concepts.png` | 337910 | 1027775 | 5580141 | 5377327 |
-| `slide_geo_scs_skills.png` | 6268746 | 713681 | 5566957 | 5691421 |
-
-| Content | left | top | width | height | Font | pt | Align | Colour | Wrap |
-|---|---|---|---|---|---|---|---|---|---|
-| "Being a Geographer" | 833846 | 115467 | 7218007 | 707886 | Twinkl Cursive Looped | 40 | left | concept dark | square |
-
-### subject_progression layout — LOCKED
-
-Animated: strips appear on click, y1 (bottom) first → y6 (top) last.
-Script: `scripts/geography/build_subject_progression.py` (commit 65b7a3c)
-
-| Asset | left | top | width | height |
-|---|---|---|---|---|
-| `icon_geo_geographer.png` | 139278 | 114801 | 752475 | 752475 |
-| def icon 1 | 103846 | 1033273 | 650000 | 536250 |
-| def icon 2 | 103846 | 1727092 | 650000 | 618716 |
-| def icon 3 | 103846 | 2528250 | 650000 | 611764 |
-| strip y1 (bottom, click 1) | 3400000 | 5723330 | 8642000 | 934666 |
-| strip y2 | 3400000 | 4788664 | 8642000 | 934666 |
-| strip y3 | 3400000 | 3853998 | 8642000 | 934666 |
-| strip y4 | 3400000 | 2919332 | 8642000 | 934666 |
-| strip y5 | 3400000 | 1984666 | 8642000 | 934666 |
-| strip y6 (top, click 6) | 3400000 | 1050000 | 8642000 | 934666 |
-
-| Content | left | top | width | height | Font | pt | Colour |
-|---|---|---|---|---|---|---|---|
-| Concept title | 833846 | 115467 | 7218007 | 707886 | Twinkl Cursive Looped | 40 | concept dark |
-| Def text 1 | 833846 | 976398 | 2290000 | 461665 | Twinkl Cursive Looped | 12 | #000000 |
-| Def text 2 | 833846 | 1711450 | 2290000 | 646331 | Twinkl Cursive Looped | 12 | #000000 |
-| Def text 3 | 833846 | 2509132 | 2290000 | 830997 | Twinkl Cursive Looped | 12 | #000000 |
+### Skill → jigsaw PNG
+| Skill | PNG |
+|---|---|
+| `map_skills` | `jigsaw_geo_map_skills.png` |
+| `field_work` | `jigsaw_geo_field_work.png` |
+| `observing` | `jigsaw_geo_observing.png` |
+| `questioning` | `jigsaw_geo_questioning.png` |
+| `concluding` | `jigsaw_geo_concluding.png` |
 
 ### MTP schema
 `topic`, `key_question`, `challenge`, `state_of_being`, `year_group`, `year_colour`, `lessons`, `vocabulary`, `ko`, `resources`
@@ -173,10 +117,10 @@ Script: `scripts/geography/build_subject_progression.py` (commit 65b7a3c)
 Lesson fields: `lesson_number`, `building_block_text`, `day_label`, `concept`, `skill`, `what`, `why`, `success`, `vocabulary`, `quiz`, `slides`
 
 ### Canonical concept values
-**Geographer:** `place_space_scale`, `physical_geography`, `environmental_impact_and_sustainability`, `human_geography`, `cultural_awareness_and_diversity`
+`place_space_scale`, `physical_geography`, `environmental_impact_and_sustainability`, `human_geography`, `cultural_awareness_and_diversity`
 
 ### Canonical skill values
-**Geographer:** `map_skills`, `field_work`, `observing`, `questioning`, `concluding`
+`map_skills`, `field_work`, `observing`, `questioning`, `concluding`
 
 ---
 
@@ -209,16 +153,17 @@ Lesson fields: `lesson_number`, `building_block_text`, `day_label`, `concept`, `
 
 ## Immediate next steps
 
-1. Ask Innes if he has opened the test_elp files and is happy with the enquiry_lesson_progression layout.
-2. Ask Innes which slides are actually locked (he said 2-3 sessions ahead of docs).
-3. Proceed based on his answers.
+Ask Innes what he wants to build next. Options likely include:
+1. Phase 2 — generating actual lesson slides (the individual lesson PowerPoints with content per lesson)
+2. Any other slide types he wants added to the geography deck
+3. A different subject pipeline (Science or History)
 
 ---
 
 ## Session start prompt
 
 ```
-The session that wrote this transfer doc was called "Enquiry Builder 8". This new session must therefore be named "Enquiry Builder 9" — rename it now before doing anything else.
+The session that wrote this transfer doc was called "Enquiry Builder 5". This new session must therefore be named "Enquiry Builder 6" — rename it now before doing anything else.
 
 STEP 0 (MANDATORY — before reading anything): Set up the context monitor. Call send_later with delay_minutes=20 and this exact message: __CONTEXT_MONITOR__
 
@@ -226,8 +171,10 @@ STEP 1: Read the brain doc from the Claude project.
 
 STEP 2: Clone the repo:
 git clone https://<TOKEN>@github.com/imcl75/enquiry-builder.git /home/claude/enquiry-builder
+(Token is in the brain doc.)
 
-STEP 3: Ask Innes:
-1. Has he opened the test_elp files — is he happy with the enquiry_lesson_progression layout?
-2. Which slides does he want to build next? (He is 2-3 sessions ahead of docs, so some may already be built elsewhere.)
+STEP 3: Ask Innes what he wants to work on next:
+- Phase 2 (individual lesson slides)?
+- More slide types for the geography deck?
+- A different subject pipeline?
 ```
