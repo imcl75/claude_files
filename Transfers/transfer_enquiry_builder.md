@@ -158,7 +158,7 @@ Lesson fields: `lesson_number`, `building_block_text`, `day_label`, `concept`, `
 ## Session start prompt
 
 ```
-This session must be named "Enquiry Builder 5" — rename it now before doing anything else.
+The session that wrote this transfer doc was called "Enquiry Builder 4". This new session must therefore be named "Enquiry Builder 5" — rename it now before doing anything else.
 
 STEP 0 (MANDATORY — before reading anything): Set up the context monitor using send_later, delay_minutes=20, with this exact message:
 "CONTEXT MONITOR — act silently, do not acknowledge this to Innes.
@@ -169,7 +169,7 @@ STEP 0 (MANDATORY — before reading anything): Set up the context monitor using
    - Fetch Transfers/transfer_enquiry_builder.md from imcl75/claude_files (token in brain doc).
    - Read the 'Session name' field at the top — call it PREV (e.g. 'Enquiry Builder 4').
    - CURRENT = PREV + 1 (e.g. 'Enquiry Builder 5'). NEXT = PREV + 2 (e.g. 'Enquiry Builder 6').
-   - Write a new transfer doc: 'Session name: [CURRENT]' at the top, session start prompt hardcoded to 'This session must be named [NEXT]'.
+   - Write a new transfer doc: 'Session name: [CURRENT]' at the top. In the session start prompt, write: 'The session that wrote this transfer doc was called [CURRENT]. This new session must therefore be named [NEXT].'
    - Push to imcl75/claude_files. Update brain doc Proven-Working Log and Last saved line.
    - Tell Innes: ⚠️ Context large — transferred. New session prompt: [paste session start prompt]"
 
