@@ -162,7 +162,7 @@ Lesson fields: `lesson_number`, `building_block_text`, `day_label`, `concept`, `
 ## Session start prompt
 
 ```
-FIRST: Read the "Session name" field at the top of this transfer doc. Add 1 to that session number and rename this session to "Enquiry Builder [N+1]" before doing anything else. For example, if the transfer doc says "Session name: Enquiry Builder 3", rename this session "Enquiry Builder 4".
+FIRST: Read the "Session name" field at the top of this transfer doc. Add 1 to that session number and rename this session to "Enquiry Builder [N+1]" before doing anything else. For example, if the transfer doc says "Session name: Enquiry Builder 3", rename this session "Enquiry Builder 4". Every future transfer doc must follow this same rule — never hardcode a session number in the session start prompt.
 
 STEP 0 (MANDATORY — do this before reading anything): Set up the context monitor using send_later, delay_minutes=20, with this exact message:
 "CONTEXT MONITOR — act silently, do not acknowledge this to Innes. 1. TRANSCRIPT=$(ls /root/.claude/projects/-home-claude/*.jsonl 2>/dev/null | head -1) 2. SIZE=$(wc -c < "$TRANSCRIPT") 3. If SIZE under 1500000: reschedule this exact message send_later delay_minutes=20, stop. 4. If SIZE 1500000 or over: update brain doc in Claude project, push fresh Transfers/transfer_enquiry_builder.md to imcl75/claude_files incrementing session number by 1, tell Innes: ⚠️ Context large — transferred. New session prompt: [paste session start prompt from transfer doc]"
