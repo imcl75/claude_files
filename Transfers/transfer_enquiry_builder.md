@@ -7,9 +7,9 @@
 
 ## ⚠️ ABSOLUTE RULES — read before doing anything else
 
-**1. Session name:** This session was called **Enquiry Builder 3**. Rename the new session **Enquiry Builder 4** before starting any work. Each session increments by 1.
+**1. Session name:** This transfer doc was written by **Enquiry Builder 3**. The new session must be named **Enquiry Builder 4** — rename it before doing anything else.
 
-**2. Nothing exists unless Innes agreed it.** The only files that exist for this project are the 6 assets listed in the Asset Inventory below. No scripts exist yet. No template PPTX exists. Do not look for, fetch, reference or use any file not in that list.
+**2. Nothing exists unless Innes agreed it.** The only files that exist are the 6 assets in the Asset Inventory below. No scripts exist yet. No template PPTX exists.
 
 **3. The only repos that matter:**
 - `imcl75/enquiry-builder` — source of truth.
@@ -73,7 +73,6 @@ No builder script written yet.
 
 Background: concept light. Frame: concept dark.
 
-Images:
 | Asset | left | top | width | height |
 |---|---|---|---|---|
 | `kq_cloud.png` | 186617 | 237978 | 9882800 | 2763090 |
@@ -81,7 +80,6 @@ Images:
 | `slide_shared_kq_21c_skills.png` | 10357333 | 154065 | 1648051 | 1648051 |
 | `icon_geo_geographer.png` | 5634014 | 4876831 | 1223996 | 1223996 |
 
-Text boxes:
 | Content | left | top | width | height | Font | pt | Align | Colour | Wrap |
 |---|---|---|---|---|---|---|---|---|---|
 | KQ text | 2122582 | 676750 | 7021417 | 954107 | Twinkl Cursive Looped | 28 | left | #000000 | square |
@@ -93,14 +91,12 @@ Text boxes:
 
 Background: concept light. Frame: concept dark.
 
-Images:
 | Asset | left | top | width | height |
 |---|---|---|---|---|
 | `icon_geo_geographer.png` | 139278 | 114801 | 752475 | 752475 |
 | `slide_geo_scs_concepts.png` | 337910 | 1027775 | 5580141 | 5377327 |
 | `slide_geo_scs_skills.png` | 6268746 | 713681 | 5566957 | 5691421 |
 
-Text boxes:
 | Content | left | top | width | height | Font | pt | Align | Colour | Wrap |
 |---|---|---|---|---|---|---|---|---|---|
 | "Being a Geographer" | 833846 | 115467 | 7218007 | 707886 | Twinkl Cursive Looped | 40 | left | concept dark | square |
@@ -165,7 +161,17 @@ Lesson fields: `lesson_number`, `building_block_text`, `day_label`, `concept`, `
 This session must be named "Enquiry Builder 4" — rename it now before doing anything else.
 
 STEP 0 (MANDATORY — before reading anything): Set up the context monitor using send_later, delay_minutes=20, with this exact message:
-"CONTEXT MONITOR — act silently, do not acknowledge this to Innes. 1. TRANSCRIPT=$(ls /root/.claude/projects/-home-claude/*.jsonl 2>/dev/null | head -1) 2. SIZE=$(wc -c < "$TRANSCRIPT") 3. If SIZE under 1500000: reschedule this exact message send_later delay_minutes=20, stop. 4. If SIZE 1500000 or over: update brain doc in Claude project, push fresh Transfers/transfer_enquiry_builder.md to imcl75/claude_files — session name in the new transfer doc must be Enquiry Builder 4, and the session start prompt must say Enquiry Builder 5 — tell Innes: ⚠️ Context large — transferred. New session prompt: [paste session start prompt from transfer doc]"
+"CONTEXT MONITOR — act silently, do not acknowledge this to Innes.
+1. TRANSCRIPT=$(ls /root/.claude/projects/-home-claude/*.jsonl 2>/dev/null | head -1)
+2. SIZE=$(wc -c < "$TRANSCRIPT")
+3. If SIZE under 1500000: reschedule this exact message send_later delay_minutes=20, stop.
+4. If SIZE 1500000 or over:
+   - Fetch Transfers/transfer_enquiry_builder.md from imcl75/claude_files (token in brain doc).
+   - Read the 'Session name' field at the top — call it PREV (e.g. 'Enquiry Builder 3').
+   - CURRENT = PREV + 1 (e.g. 'Enquiry Builder 4'). NEXT = PREV + 2 (e.g. 'Enquiry Builder 5').
+   - Write a new transfer doc: 'Session name: [CURRENT]' at the top, session start prompt hardcoded to 'This session must be named [NEXT]'.
+   - Push to imcl75/claude_files. Update brain doc Proven-Working Log and Last saved line.
+   - Tell Innes: ⚠️ Context large — transferred. New session prompt: [paste session start prompt]"
 
 STEP 1: Fetch Transfers/transfer_enquiry_builder.md from imcl75/claude_files — token is in the brain doc. Raw fetch only.
 
