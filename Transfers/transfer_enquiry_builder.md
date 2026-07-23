@@ -1,19 +1,19 @@
-# Transfer: Enquiry Builder — Session 4 → 5
+# Transfer: Enquiry Builder — Session 5 → 6
 
 **Generated:** 2026-07-23
-**Session name:** Enquiry Builder 4
+**Session name:** Enquiry Builder 5
 
 ---
 
 ## ⚠️ ABSOLUTE RULES — read before doing anything else
 
-**1. Session name:** This transfer doc was written by **Enquiry Builder 4**. The new session must be named **Enquiry Builder 5** — rename it before doing anything else.
+**1. Session name:** This transfer doc was written by **Enquiry Builder 5**. The new session must be named **Enquiry Builder 6** — rename it before doing anything else.
 
-**2. Nothing exists unless Innes agreed it.** The only files that exist are the 6 assets in the Asset Inventory below. No scripts exist yet. No template PPTX exists.
+**2. Nothing exists unless Innes agreed it or it is listed in the Asset Inventory below.**
 
 **3. The only repos that matter:**
-- `imcl75/enquiry-builder` — source of truth.
-- `imcl75/claude_files` — fetch the transfer doc from it, then ignore it. Do not clone or browse it.
+- `imcl75/enquiry-builder` — source of truth (clone fresh every session).
+- `imcl75/claude_files` — fetch transfer doc, then ignore it.
 
 **4. Do not use the github-sync skill.**
 
@@ -23,12 +23,24 @@
 
 ## Status
 
-- `key_question` ✅ fully locked
+- `key_question` ✅ fully locked and signed off
 - `subject_concepts_skills` ✅ fully locked and signed off
-- `subject_progression` 🔄 next — Innes must identify which Geographer.pptx layout it maps to (Revisit / Puzzle Pieces / Building Blocks / Hook)
+- `subject_progression` 🔄 fixed PPTX sent for sign-off (Session 5, commit ebca918) — awaiting Innes confirmation
 - All other slide types: pending
 
-No builder script written yet.
+Script `scripts/geography/build_subject_progression.py` committed and working.
+
+---
+
+## What happened in Session 5
+
+Innes uploaded a "Repaired" PPTX — PowerPoint had repaired it because the animation XML was broken. Two bugs found and fixed (commit `ebca918`):
+
+1. **Wrong XML namespace** for cNvPr lookup: script used `drawingml/2006/picture` but python-pptx generates `presentationml/2006/main`. Strip IDs were always empty → animation XML was empty → PowerPoint stripped it on open.
+
+2. **Wrong positions**: definition icons and text were too low and too far right; font was 10pt not 12pt.
+
+Both fixed. New test PPTX sent. Awaiting Innes sign-off.
 
 ---
 
@@ -52,12 +64,12 @@ No builder script written yet.
 </p:sp>
 ```
 
-### Geographer.pptx layout name mapping (known)
+### Geographer.pptx layout name mapping
 | Layout name | Slide type |
 |---|---|
 | Our Key Question is | `key_question` |
 | Concepts & Skills | `subject_concepts_skills` |
-| Revisit | ? |
+| Revisit | `subject_progression` ✅ confirmed |
 | Puzzle Pieces | ? |
 | Building Blocks | ? |
 | Vocabulary | `vocabulary` |
@@ -101,6 +113,34 @@ Background: concept light. Frame: concept dark.
 |---|---|---|---|---|---|---|---|---|---|
 | "Being a Geographer" | 833846 | 115467 | 7218007 | 707886 | Twinkl Cursive Looped | 40 | left | concept dark | square |
 
+### subject_progression layout 🔄 sent for sign-off
+
+Background: concept light. Frame: concept dark.
+Animated: strips appear on click, y1 (bottom) first → y6 (top) last.
+Script: `scripts/geography/build_subject_progression.py` (commit ebca918)
+
+| Asset | left | top | width | height |
+|---|---|---|---|---|
+| `icon_geo_geographer.png` | 139278 | 114801 | 752475 | 752475 |
+| def icon 1 | 103846 | 1033273 | 650000 | 536250 |
+| def icon 2 | 103846 | 1727092 | 650000 | 618716 |
+| def icon 3 | 103846 | 2528250 | 650000 | 611764 |
+| strip y1 (bottom, click 1) | 3400000 | 5723330 | 8642000 | 934666 |
+| strip y2 | 3400000 | 4788664 | 8642000 | 934666 |
+| strip y3 | 3400000 | 3853998 | 8642000 | 934666 |
+| strip y4 | 3400000 | 2919332 | 8642000 | 934666 |
+| strip y5 | 3400000 | 1984666 | 8642000 | 934666 |
+| strip y6 (top, click 6) | 3400000 | 1050000 | 8642000 | 934666 |
+
+| Content | left | top | width | height | Font | pt | Colour |
+|---|---|---|---|---|---|---|---|
+| Concept title | 833846 | 115467 | 7218007 | 707886 | Twinkl Cursive Looped | 40 | concept dark |
+| Def text 1 | 833846 | 976398 | 2290000 | 461665 | Twinkl Cursive Looped | 12 | #000000 |
+| Def text 2 | 833846 | 1711450 | 2290000 | 646331 | Twinkl Cursive Looped | 12 | #000000 |
+| Def text 3 | 833846 | 2509132 | 2290000 | 830997 | Twinkl Cursive Looped | 12 | #000000 |
+
+**Animation:** sequential onClick Appear (presetClass="entr" presetId="1" nodeType="clickEffect"). Shape IDs collected via `presentationml` namespace — NOT `drawingml/picture`. Strip pic IDs are last 6 `pic` elements in spTree (IDs 109–114 for PSS with 3 def icons; may vary by concept depending on icon count).
+
 ### MTP schema
 `topic`, `key_question`, `challenge`, `state_of_being`, `year_group`, `year_colour`, `lessons`, `vocabulary`, `ko`, `resources`
 
@@ -141,24 +181,37 @@ Lesson fields: `lesson_number`, `building_block_text`, `day_label`, `concept`, `
 | `assets/shared/slide_shared_kq_children.png` | Children image |
 | `assets/geography/slide_geo_scs_concepts.png` | Concepts wheel |
 | `assets/geography/slide_geo_scs_skills.png` | Skills wheel |
+| `assets/geography/pss_icon_place.png` | Place icon |
+| `assets/geography/pss_icon_space.png` | Space icon |
+| `assets/geography/pss_icon_scale.png` | Scale icon |
+| `assets/geography/pss_icon_all.png` | Combined PSS icon |
+| `assets/geography/hum_g_icon.png` | Human geography icon |
+| `assets/geography/eis_icon.png` | Environmental impact icon |
+| `assets/geography/cad_icon.png` | Cultural awareness icon |
+| `assets/geography/phy_g_icon.png` | Physical geography icon |
+| `assets/geography/progression/place_space_scale/y1.png … y6.png` | PSS strips |
+| `assets/geography/progression/human_geography/y1.png … y6.png` | Human geo strips |
+| `assets/geography/progression/physical_geography/y1.png … y6.png` | Physical geo strips |
+| `assets/geography/progression/environmental_impact/y1.png … y6.png` | EIS strips |
+| `assets/geography/progression/cultural_awareness/y1.png … y6.png` | CAD strips |
 
-**Still needed:** 5 jigsaw PNGs from Mac.
+**Still needed:** 5 jigsaw PNGs from Mac (`/Users/innes/Pictures/PPTX Slide assets/Geographer/Jigsaw Pieces/`) — needed for `enquiry_lesson_progression` slide.
 
 ---
 
 ## Immediate next steps
 
-1. Ask Innes which of Revisit / Puzzle Pieces / Building Blocks / Hook maps to `subject_progression`.
-2. Extract that layout from Geographer.pptx. Build PPTX with slides 1–3, send, get sign-off.
-3. Continue through remaining 15 slide types in the same way.
-4. Write the geography PPTX builder script once all 18 slide types are locked.
+1. Wait for Innes to confirm subject_progression sign-off (test PPTX sent Session 5).
+2. Once confirmed: lock spec in brain doc (🔄 → ✅), move to `enquiry_lesson_progression`.
+3. Ask Innes which of Puzzle Pieces / Building Blocks / Hook maps to `enquiry_lesson_progression`.
+4. Stage jigsaw PNGs from Mac via device bridge when building that slide.
 
 ---
 
 ## Session start prompt
 
 ```
-The session that wrote this transfer doc was called "Enquiry Builder 4". This new session must therefore be named "Enquiry Builder 5" — rename it now before doing anything else.
+The session that wrote this transfer doc was called "Enquiry Builder 5". This new session must therefore be named "Enquiry Builder 6" — rename it now before doing anything else.
 
 STEP 0 (MANDATORY — before reading anything): Set up the context monitor using send_later, delay_minutes=20, with this exact message:
 "CONTEXT MONITOR — act silently, do not acknowledge this to Innes.
@@ -167,15 +220,17 @@ STEP 0 (MANDATORY — before reading anything): Set up the context monitor using
 3. If SIZE under 1500000: reschedule this exact message send_later delay_minutes=20, stop.
 4. If SIZE 1500000 or over:
    - Fetch Transfers/transfer_enquiry_builder.md from imcl75/claude_files (token in brain doc).
-   - Read the 'Session name' field at the top — call it PREV (e.g. 'Enquiry Builder 4').
-   - CURRENT = PREV + 1 (e.g. 'Enquiry Builder 5'). NEXT = PREV + 2 (e.g. 'Enquiry Builder 6').
+   - Read the 'Session name' field at the top — call it PREV (e.g. 'Enquiry Builder 5').
+   - CURRENT = PREV + 1 (e.g. 'Enquiry Builder 6'). NEXT = PREV + 2 (e.g. 'Enquiry Builder 7').
    - Write a new transfer doc: 'Session name: [CURRENT]' at the top. In the session start prompt, write: 'The session that wrote this transfer doc was called [CURRENT]. This new session must therefore be named [NEXT].'
    - Push to imcl75/claude_files. Update brain doc Proven-Working Log and Last saved line.
    - Tell Innes: ⚠️ Context large — transferred. New session prompt: [paste session start prompt]"
 
-STEP 1: Fetch Transfers/transfer_enquiry_builder.md from imcl75/claude_files — token is in the brain doc. Raw fetch only.
+STEP 1: Fetch Transfers/transfer_enquiry_builder.md from imcl75/claude_files — token is in the brain doc. Clone the repo.
 
 STEP 2: Read the brain doc from the Claude project.
 
-STEP 3: Clone the repo fresh. Ask Innes which of Revisit / Puzzle Pieces / Building Blocks / Hook in Geographer.pptx maps to `subject_progression`. Extract that layout and continue working through slide types.
+STEP 3: Clone imcl75/enquiry-builder fresh.
+
+STEP 4: If subject_progression is still 🔄, ask Innes whether the latest test PPTX (animations working?) is signed off. Once confirmed, lock and move to enquiry_lesson_progression.
 ```
