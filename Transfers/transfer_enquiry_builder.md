@@ -1,8 +1,11 @@
 # Transfer: Enquiry Builder — Phase 1 (KQ Slide Layout Next)
 
 **Generated:** 2026-07-23
-**Session name:** Enquiry Builder 2 — increment by 1 each new session (next session = Enquiry Builder 3)  
+**Session name:** Enquiry Builder 2  
 **Originating focus:** MTP schema definition, asset intake, slide type palette. Context monitor active (auto-transfers at 1.5MB).
+
+> **SESSION NAMING RULE — follow this before doing anything else:**  
+> This session was called **Enquiry Builder 2**. The next session must be called **Enquiry Builder 3**. Each new session increments the number by 1. Name the Cowork session by clicking the session title at the top of the screen and typing the correct name *before* starting any work. If you cannot rename it, state the correct name in your first message so Innes can rename it.
 
 ---
 
@@ -111,5 +114,5 @@ Jigsaw pieces are geography-specific. Historian/scientist use a different (TBD) 
 ## Session start prompt
 
 ```
-Read `Transfers/transfer_enquiry_builder.md` from GitHub repo `imcl75/claude_files` (use the github-sync skill to fetch it), then follow the session start protocol in the brain doc. We are defining slide layouts before writing any builder script. First task: extract the key_question slide layout from Geographer.pptx on my Mac (connect /Users/innes/Pictures/PPTX Slide assets/Geographer/ via device bridge) and lock the asset positions. Then continue through remaining slide types. Do not ask for confirmation before starting.
+This session must be named "Enquiry Builder 3" — rename it now before starting anything else. Then: read `Transfers/transfer_enquiry_builder.md` from GitHub repo `imcl75/claude_files` (use the github-sync skill to fetch it), then follow the session start protocol in the brain doc. We are defining slide layouts before writing any builder script. First task: extract the key_question slide layout from Geographer.pptx on my Mac (connect /Users/innes/Pictures/PPTX Slide assets/Geographer/ via device bridge) and lock the asset positions. Then continue through remaining slide types. Do not ask for confirmation before starting.
 ```
