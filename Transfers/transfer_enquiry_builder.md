@@ -1,13 +1,13 @@
-# Transfer: Enquiry Builder — Session 3 → 4
+# Transfer: Enquiry Builder — Session 4 → 5
 
 **Generated:** 2026-07-23
-**Session name:** Enquiry Builder 3
+**Session name:** Enquiry Builder 4
 
 ---
 
 ## ⚠️ ABSOLUTE RULES — read before doing anything else
 
-**1. Session name:** This transfer doc was written by **Enquiry Builder 3**. The new session must be named **Enquiry Builder 4** — rename it before doing anything else.
+**1. Session name:** This transfer doc was written by **Enquiry Builder 4**. The new session must be named **Enquiry Builder 5** — rename it before doing anything else.
 
 **2. Nothing exists unless Innes agreed it.** The only files that exist are the 6 assets in the Asset Inventory below. No scripts exist yet. No template PPTX exists.
 
@@ -158,7 +158,7 @@ Lesson fields: `lesson_number`, `building_block_text`, `day_label`, `concept`, `
 ## Session start prompt
 
 ```
-This session must be named "Enquiry Builder 4" — rename it now before doing anything else.
+This session must be named "Enquiry Builder 5" — rename it now before doing anything else.
 
 STEP 0 (MANDATORY — before reading anything): Set up the context monitor using send_later, delay_minutes=20, with this exact message:
 "CONTEXT MONITOR — act silently, do not acknowledge this to Innes.
@@ -167,8 +167,8 @@ STEP 0 (MANDATORY — before reading anything): Set up the context monitor using
 3. If SIZE under 1500000: reschedule this exact message send_later delay_minutes=20, stop.
 4. If SIZE 1500000 or over:
    - Fetch Transfers/transfer_enquiry_builder.md from imcl75/claude_files (token in brain doc).
-   - Read the 'Session name' field at the top — call it PREV (e.g. 'Enquiry Builder 3').
-   - CURRENT = PREV + 1 (e.g. 'Enquiry Builder 4'). NEXT = PREV + 2 (e.g. 'Enquiry Builder 5').
+   - Read the 'Session name' field at the top — call it PREV (e.g. 'Enquiry Builder 4').
+   - CURRENT = PREV + 1 (e.g. 'Enquiry Builder 5'). NEXT = PREV + 2 (e.g. 'Enquiry Builder 6').
    - Write a new transfer doc: 'Session name: [CURRENT]' at the top, session start prompt hardcoded to 'This session must be named [NEXT]'.
    - Push to imcl75/claude_files. Update brain doc Proven-Working Log and Last saved line.
    - Tell Innes: ⚠️ Context large — transferred. New session prompt: [paste session start prompt]"
