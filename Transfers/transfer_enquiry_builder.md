@@ -1,4 +1,4 @@
-# Transfer: Enquiry Builder — Phase 1 (KQ Slide Layout Next)
+# Transfer: Enquiry Builder — Session 3 → 4
 
 **Generated:** 2026-07-23
 **Session name:** Enquiry Builder 3
@@ -9,7 +9,7 @@
 
 **1. Session name:** This session was called **Enquiry Builder 3**. Rename the new session **Enquiry Builder 4** before starting any work. Each session increments by 1.
 
-**2. Nothing exists unless Innes agreed it.** The only files that exist for this project are the 6 assets listed in the Asset Inventory below, in the `imcl75/enquiry-builder` repo. No scripts exist yet. No template PPTX exists. No other assets exist. Do not look for, fetch, reference or use any file that is not in that list — even if it appears in a repo, a skill's FILE_MAP, a previous session's output, or anywhere else.
+**2. Nothing exists unless Innes agreed it.** The only files that exist for this project are the 6 assets listed in the Asset Inventory below, in the `imcl75/enquiry-builder` repo. No scripts exist yet. No template PPTX exists. Do not look for, fetch, reference or use any file that is not in that list — even if it appears in a repo, a skill's FILE_MAP, a previous session's output, or anywhere else.
 
 **3. The only repos that matter:**
 - `imcl75/enquiry-builder` — the Enquiry Builder project (assets, scripts, MTP files). This is the source of truth.
@@ -23,13 +23,32 @@
 
 ## Status
 
-Phase 0 ✅. Schema locked ✅. Key question slide assets committed ✅. No builder script written yet.
+Phase 0 ✅. Schema locked ✅. key_question slide ✅ FULLY LOCKED. SCS assets committed ✅ (slide_geo_scs_concepts.png, slide_geo_scs_skills.png). SCS slide layout extracted from Geographer.pptx — PPTX sent to Innes for sign-off, awaiting confirmation.
 
-**Next session starts here:** Lock the `key_question` slide layout (asset positions from Geographer.pptx on Innes's Mac), then work through the remaining 17 slide types. Once all slide types are fully defined → write the builder script.
+**No builder script written yet.**
 
 ---
 
 ## Decisions locked ✅
+
+### Colour rule — applies to EVERY slide
+Every slide carries the lesson colour:
+- **Slide background fill** = concept **light** colour
+- **Frame border** = concept **dark** colour (prstGeom prst="frame", adj1=1241, full slide 0,0,12192000,6858000)
+
+### Frame border shape
+```xml
+<p:sp>
+  <p:nvSpPr><p:cNvPr id="100" name="Frame"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>
+  <p:spPr>
+    <a:xfrm><a:off x="0" y="0"/><a:ext cx="12192000" cy="6858000"/></a:xfrm>
+    <a:prstGeom prst="frame"><a:avLst><a:gd name="adj1" fmla="val 1241"/></a:avLst></a:prstGeom>
+    <a:solidFill><a:srgbClr val="CONCEPT_DARK_HEX"/></a:solidFill>
+    <a:ln><a:noFill/></a:ln>
+  </p:spPr>
+  <p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody>
+</p:sp>
+```
 
 ### MTP schema — top-level fields
 `topic`, `key_question`, `challenge`, `state_of_being` (`"geographer"/"historian"/"scientist"`), `year_group`, `year_colour` (hex, no #), `lessons` (array), `vocabulary` (object), `ko` (object), `resources` (array)
@@ -49,7 +68,7 @@ Lesson-level vocab: `[{"word": "", "definition": ""}]` — inside each lesson ob
 ```
 
 ### resources array
-Types so far: `sort_cards`, `word_cards`, `statement_sort`. More to be added (`image_sort`, `word_bank`, `writing_support`).
+Types so far: `sort_cards`, `word_cards`, `statement_sort`. More to be added.
 
 ### Lesson object fields (all locked)
 `lesson_number`, `building_block_text`, `day_label`, `concept`, `skill`, `what`, `why`, `success`, `vocabulary`, `quiz`, `slides`
@@ -62,7 +81,6 @@ Types so far: `sort_cards`, `word_cards`, `statement_sort`. More to be added (`i
 
 - `kwl` — lesson 1 only
 - `lesson_quiz` — lesson 2 onwards
-- Image variants — Claude decides which to use based on lesson content
 - Design rules (colours, jigsaw, progression images) operate at **lesson level**, not per-slide
 
 ### Canonical concept values
@@ -95,7 +113,47 @@ Types so far: `sort_cards`, `word_cards`, `statement_sort`. More to be added (`i
 | `questioning` | `jigsaw_geo_questioning.png` | `#FFCEA5` |
 | `concluding` | `jigsaw_geo_concluding.png` | `#97F4FF` |
 
-Jigsaw pieces are geography-specific. Historian/scientist use a different (TBD) concept-driven device.
+---
+
+## Slide layout specs
+
+### key_question ✅ FULLY LOCKED
+
+Background: concept light. Frame: concept dark (see frame XML above).
+
+Images:
+| Asset | left | top | width | height |
+|---|---|---|---|---|
+| `kq_cloud.png` | 186617 | 237978 | 9882800 | 2763090 |
+| `slide_shared_kq_children.png` | 3048000 | 2693156 | 6096000 | 2590800 |
+| `slide_shared_kq_21c_skills.png` | 10357333 | 154065 | 1648051 | 1648051 |
+| `icon_geo_geographer.png` | 5634014 | 4876831 | 1223996 | 1223996 |
+
+Text boxes:
+| Content | left | top | width | height | Font | pt | Align | Colour | Wrap |
+|---|---|---|---|---|---|---|---|---|---|
+| KQ text | 2122582 | 676750 | 7021417 | 954107 | Twinkl Cursive Looped | 28 | left | #000000 | square |
+| Challenge text | 2487641 | 1726730 | 5638566 | 707886 | Twinkl Cursive Looped | 20 | left | #000000 | square |
+| "Being a Geographer" | 4365817 | 6100827 | 3760390 | 461665 | Twinkl Cursive Looped | 24 | centre | #000000 | none |
+| "21st Century Learning Skills" | 10344525 | 1771029 | 1686365 | 242374 | Twinkl Cursive Looped | 9.75 | centre | #000000 | none |
+
+### subject_concepts_skills 🔄 PENDING INNES SIGN-OFF
+
+Layout extracted from Geographer.pptx Layout 1. PPTX sent to Innes — awaiting confirmation.
+
+Background: concept light. Frame: concept dark (see frame XML above).
+
+Images:
+| Asset | left | top | width | height |
+|---|---|---|---|---|
+| `icon_geo_geographer.png` | 139278 | 114801 | 752475 | 752475 |
+| `slide_geo_scs_concepts.png` | 337910 | 1027775 | 5580141 | 5377327 |
+| `slide_geo_scs_skills.png` | 6268746 | 713681 | 5566957 | 5691421 |
+
+Text boxes:
+| Content | left | top | width | height | Font | pt | Align | Colour | Wrap |
+|---|---|---|---|---|---|---|---|---|---|
+| "Being a Geographer" | 833846 | 115467 | 7218007 | 707886 | Twinkl Cursive Looped | 40 | left | concept dark | square |
 
 ---
 
@@ -105,24 +163,22 @@ Jigsaw pieces are geography-specific. Historian/scientist use a different (TBD) 
 
 | Path | Description | Dimensions |
 |---|---|---|
-| `assets/geography/icon_geo_geographer.png` | Geographer icon | 296×299 RGBA |
-| `assets/shared/kq_cloud.png` | Cloud banner — all KQ slides, all subjects | 3533×1008 RGBA |
-| `assets/shared/slide_shared_kq_21c_skills.png` | 21c skills icons — KQ slide | 600×595 RGBA |
-| `assets/shared/slide_shared_kq_children.png` | Children image — KQ slide | 2204×935 RGBA |
-| `assets/geography/template/.gitkeep` | Placeholder only — no template PPTX | — |
-| `assets/history/.gitkeep` | Placeholder only | — |
+| `assets/geography/icon_geo_geographer.png` | Geographer icon | 296×299 |
+| `assets/shared/kq_cloud.png` | Cloud banner — all KQ slides, all subjects | 3533×1008 |
+| `assets/shared/slide_shared_kq_21c_skills.png` | 21c skills icons — KQ slide | 600×595 |
+| `assets/shared/slide_shared_kq_children.png` | Children image — KQ slide | 2204×935 |
+| `assets/geography/slide_geo_scs_concepts.png` | Concepts wheel — SCS slide | (check repo) |
+| `assets/geography/slide_geo_scs_skills.png` | Skills wheel — SCS slide | (check repo) |
 
-**Still needed — stage from Mac, do not fetch from anywhere else:**
-5 jigsaw PNGs from `/Users/innes/Pictures/PPTX Slide assets/Geographer/` via device bridge.
+**Still needed:** 5 jigsaw PNGs from Mac — stage via device bridge when working on progression slides.
 
 ---
 
 ## Immediate next steps (in order)
 
-1. **Lock the `key_question` slide layout** — connect `/Users/innes/Pictures/PPTX Slide assets/Geographer/` via device bridge, extract positions of all 5 KQ assets from Geographer.pptx in EMU, lock the spec, save to brain doc.
-2. **Stage and commit the 5 jigsaw PNGs** from the same Mac folder.
-3. **Continue through remaining 17 slide types** — assets → naming → commit → layout spec → save brain doc after each.
-4. **Write the geography PPTX builder script** once all 18 slide types are fully defined.
+1. **Get Innes sign-off on SCS slide** — if he hasn't confirmed yet, check and ask. Once confirmed, mark as ✅ in brain doc.
+2. **Continue through remaining 16 slide types** — one at a time. After each: extract layout from Geographer.pptx (or ask Innes for assets/positions), build PPTX with all slides so far, send, wait for sign-off.
+3. **Write the geography PPTX builder script** once all 18 slide types are fully defined.
 
 ---
 
@@ -137,5 +193,5 @@ STEP 1: Fetch Transfers/transfer_enquiry_builder.md from imcl75/claude_files —
 
 STEP 2: Read the brain doc from the Claude project.
 
-STEP 3: Connect /Users/innes/Pictures/PPTX Slide assets/Geographer/ via device bridge. Extract key_question slide layout from Geographer.pptx. The only files that exist are the 6 assets in the Asset Inventory — nothing else.
+STEP 3: Clone the repo fresh. Check if Innes has confirmed the SCS slide. If yes, mark it locked in the brain doc and continue with the next slide type. If not, the PPTX was already sent — ask Innes to confirm.
 ```
