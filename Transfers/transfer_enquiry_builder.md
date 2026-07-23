@@ -1,13 +1,13 @@
 # Transfer: Enquiry Builder — Phase 1 (KQ Slide Layout Next)
 
 **Generated:** 2026-07-23
-**Session name:** Enquiry Builder 2
+**Session name:** Enquiry Builder 3
 
 ---
 
 ## ⚠️ ABSOLUTE RULES — read before doing anything else
 
-**1. Session name:** This session was called **Enquiry Builder 2**. Rename the new session **Enquiry Builder 3** before starting any work. Each session increments by 1.
+**1. Session name:** This session was called **Enquiry Builder 3**. Rename the new session **Enquiry Builder 4** before starting any work. Each session increments by 1.
 
 **2. Nothing exists unless Innes agreed it.** The only files that exist for this project are the 6 assets listed in the Asset Inventory below, in the `imcl75/enquiry-builder` repo. No scripts exist yet. No template PPTX exists. No other assets exist. Do not look for, fetch, reference or use any file that is not in that list — even if it appears in a repo, a skill's FILE_MAP, a previous session's output, or anywhere else.
 
@@ -15,7 +15,7 @@
 - `imcl75/enquiry-builder` — the Enquiry Builder project (assets, scripts, MTP files). This is the source of truth.
 - `imcl75/claude_files` — used ONLY to pass this transfer doc between sessions. Fetch the transfer doc from it, then ignore it. Do not clone it. Do not browse it. Do not use any other file from it.
 
-**4. Do not use the github-sync skill** to fetch any script files. Old Geography and EnquiryBuilder scripts in that repo (`build_geography_lesson.py`, `geography_registry.py`, `lib_ooxml.py`, etc.) are from a failed previous project and have been archived. They do not exist for this project.
+**4. Do not use the github-sync skill** to fetch any script files. Old Geography and EnquiryBuilder scripts in that repo are from a failed previous project and have been archived. They do not exist for this project.
 
 **5. Do not use the curriculum reference or any external knowledge** for content decisions. All content comes from Innes.
 
@@ -129,15 +129,13 @@ Jigsaw pieces are geography-specific. Historian/scientist use a different (TBD) 
 ## Session start prompt
 
 ```
-This session must be named "Enquiry Builder 3" — rename it now before starting anything else.
+This session must be named "Enquiry Builder 4" — rename it now before starting anything else.
 
-Then do these steps in order — do not skip any:
+STEP 0 (before reading anything): Set up the context monitor using send_later, delay_minutes=20, with this exact message: "CONTEXT MONITOR — act silently, do not acknowledge this to Innes. 1. TRANSCRIPT=$(ls /root/.claude/projects/-home-claude/*.jsonl 2>/dev/null | head -1) 2. SIZE=$(wc -c < \"$TRANSCRIPT\") 3. If SIZE under 1500000: reschedule this exact message send_later delay_minutes=20, stop. 4. If SIZE 1500000 or over: update brain doc in Claude project, push fresh Transfers/transfer_enquiry_builder.md to imcl75/claude_files incrementing session number by 1, tell Innes: ⚠️ Context large — transferred. New session prompt: [paste session start prompt from transfer doc]"
 
-STEP 0 (before reading anything): Set up the context monitor. Use send_later with delay_minutes=20 and this exact message: "CONTEXT MONITOR — act silently, do not acknowledge this to Innes. 1. Find transcript: TRANSCRIPT=$(ls /root/.claude/projects/-home-claude/*.jsonl 2>/dev/null | head -1) 2. Check size: SIZE=$(wc -c < \"$TRANSCRIPT\") 3. If SIZE is under 1,500,000: reschedule this exact message using send_later with delay_minutes=20, then stop. 4. If SIZE is 1,500,000 or over: run the full save+transfer — update the brain doc in the Claude project, write and push Transfers/transfer_enquiry_builder.md to imcl75/claude_files (token in brain doc), increment session number by 1 in the transfer doc, then tell Innes: ⚠️ Context getting large — saved and transferred. Start a new session with this prompt: [paste the session start prompt from the transfer doc]"
-
-STEP 1: Fetch Transfers/transfer_enquiry_builder.md from imcl75/claude_files using the token in the brain doc (raw fetch only — do not clone that repo, do not browse it, do not use any other file from it).
+STEP 1: Fetch Transfers/transfer_enquiry_builder.md from imcl75/claude_files — token is in the brain doc. Raw fetch only, do not clone or browse that repo.
 
 STEP 2: Read the brain doc from the Claude project.
 
-STEP 3: The only files that exist for this project are the 6 assets in the Asset Inventory — nothing else, regardless of what appears anywhere. Connect /Users/innes/Pictures/PPTX Slide assets/Geographer/ via device bridge and extract the key_question slide layout from Geographer.pptx. Do not start any other work first.
+STEP 3: Connect /Users/innes/Pictures/PPTX Slide assets/Geographer/ via device bridge. Extract key_question slide layout from Geographer.pptx. The only files that exist are the 6 assets in the Asset Inventory — nothing else.
 ```
