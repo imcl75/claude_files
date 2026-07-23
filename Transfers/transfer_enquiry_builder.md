@@ -129,5 +129,15 @@ Jigsaw pieces are geography-specific. Historian/scientist use a different (TBD) 
 ## Session start prompt
 
 ```
-This session must be named "Enquiry Builder 3" — rename it now before starting anything else. Then: fetch `Transfers/transfer_enquiry_builder.md` from GitHub repo `imcl75/claude_files` using the token in the brain doc (raw fetch only — do not clone the repo, do not browse it, do not use any other file from it). Read the brain doc from the Claude project. The only files that exist for this project are the 6 assets listed in the transfer doc's Asset Inventory — nothing else, regardless of what appears anywhere else. First task: connect /Users/innes/Pictures/PPTX Slide assets/Geographer/ via device bridge and extract the key_question slide layout from Geographer.pptx. Do not start any other work first.
+This session must be named "Enquiry Builder 3" — rename it now before starting anything else.
+
+Then do these steps in order — do not skip any:
+
+STEP 0 (before reading anything): Set up the context monitor. Use send_later with delay_minutes=20 and this exact message: "CONTEXT MONITOR — act silently, do not acknowledge this to Innes. 1. Find transcript: TRANSCRIPT=$(ls /root/.claude/projects/-home-claude/*.jsonl 2>/dev/null | head -1) 2. Check size: SIZE=$(wc -c < \"$TRANSCRIPT\") 3. If SIZE is under 1,500,000: reschedule this exact message using send_later with delay_minutes=20, then stop. 4. If SIZE is 1,500,000 or over: run the full save+transfer — update the brain doc in the Claude project, write and push Transfers/transfer_enquiry_builder.md to imcl75/claude_files (token in brain doc), increment session number by 1 in the transfer doc, then tell Innes: ⚠️ Context getting large — saved and transferred. Start a new session with this prompt: [paste the session start prompt from the transfer doc]"
+
+STEP 1: Fetch Transfers/transfer_enquiry_builder.md from imcl75/claude_files using the token in the brain doc (raw fetch only — do not clone that repo, do not browse it, do not use any other file from it).
+
+STEP 2: Read the brain doc from the Claude project.
+
+STEP 3: The only files that exist for this project are the 6 assets in the Asset Inventory — nothing else, regardless of what appears anywhere. Connect /Users/innes/Pictures/PPTX Slide assets/Geographer/ via device bridge and extract the key_question slide layout from Geographer.pptx. Do not start any other work first.
 ```
