@@ -1,65 +1,29 @@
 # Enquiry Builder — Transfer Doc
 
-The session that wrote this transfer doc was called "Session 7". This new session must therefore be named "Session 8" — rename it now before doing anything else.
+The session that wrote this transfer doc was called "Session 9". This new session must therefore be named "Session 10" — rename it now before doing anything else.
 
 ---
 
-## STEP 0 (MANDATORY — before reading anything)
+STEP 0 (MANDATORY — before reading anything): Set up the context monitor. Call send_later with delay_minutes=20 and this exact message: __CONTEXT_MONITOR__
 
-Set up the context monitor. Call `send_later` with `delay_minutes=20` and this exact message: `__CONTEXT_MONITOR__`
+STEP 1: Read the brain doc from the Claude project ("2) Enquiry Builder").
 
-Nothing else. No bash. No explanation. Just set it up.
+STEP 2: Clone the repo using the clone command in the brain doc.
+(Token is in the brain doc — do NOT put it in this transfer doc.)
 
----
+STEP 3: Ask Innes what he wants to work on. The natural next task is building the image variant scripts. Here is what Session 9 established:
 
-## STEP 1 — Read the brain doc
+WHAT IS READY:
+- All 9 image layout variants are fully analysed. Every EMU position, spid, font size and animation model is in the brain doc under "Image Variant Slide Layout Specs".
+- Animation rule 14 in the brain doc covers the image slide animation model (consecutive pRg indices, withEffect for simultaneous reveals, special cases for horiz_small_squares and horiz_small_squares_2row).
+- Innes confirmed: background and frame required on image slides; Geographer icon on every image slide (inject explicitly — not auto from layout); caption optional; all 4 teaching phase types need all 9 layouts (36 combinations); image sourcing via /image-generation skill; font sizes from the reference.
 
-Read `claude/enquiry-builder-brain.md` from the Claude project. The GitHub token and clone command are in the brain doc.
+WHAT HAS NOT BEEN DONE YET:
+- No image variant builder scripts exist. No code was written in Session 9.
+- MTP JSON schema needs updating to include image fields (paths, captions, aspect ratios) — discuss with Innes before touching the schema.
+- The reference PPTX used for analysis was image_layout_samples_v2IM.pptx. It is not in the repo.
 
----
+SUGGESTED STARTING POINT FOR SESSION 10:
+Ask Innes which teaching phase type to start with (i_do image variants is the logical first) and which image layout variant to tackle first. Build, test and get sign-off one variant at a time before moving to the next.
 
-## STEP 2 — Clone the repo
-
-Use the clone command from the brain doc (token is there).
-
----
-
-## STEP 3 — State of play
-
-Phase 1 (Geography PPTX builder) is in progress. 8 of 18 slide types signed off:
-
-- key_question (commit 55aeea1)
-- subject_concepts_skills (commit 55aeea1)
-- subject_progression (commit 65b7a3c)
-- enquiry_lesson_progression (commit 9bb1d4a)
-- we_are_learning (commit acfba2c)
-- kwl (commit d336b48)
-- lesson_quiz (commit b6a2c66)
-- vocabulary (commit a244c8d)
-
-Remaining for Phase 1: 10 slide types unknown.
-
----
-
-## STEP 4 — What Innes wants done in Session 8
-
-Build the non-image variants of four slide types. Innes said: "this should literally take 2 minutes."
-
-1. i_do (non-image)
-2. we_do (non-image)
-3. you_do_trio (non-image)
-4. you_do_independent (non-image)
-
-After those four are signed off: image variants of the same four types.
-
-Do not build anything else. Do not add anything to slides Innes has not explicitly specified. Wait to be told.
-
-Before building any of these: stage Geographer.pptx from his Mac at `/Users/innes/Desktop/Claude Assets/` or `/Users/innes/Pictures/PPTX Slide assets/` and read the slide XML before writing any code.
-
----
-
-## Notes
-
-- `build_geography_deck.py` not yet updated to include lesson_quiz or vocabulary. Do not touch until Innes asks.
-- `build_i_do.py` was committed at 548edc6 without being asked — Innes is ignoring it. Check whether it needs reworking from Geographer.pptx XML before using.
-- Session naming: this doc was written by Session 7. The next session is Session 8.
+CURRENT REPO COMMIT: 826e279 (no new commits in Session 9 — no code was written).
