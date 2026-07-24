@@ -1,4 +1,4 @@
-The session that wrote this transfer doc was called "Session 13 (continued)". This new session must therefore be named "Session 14" — rename it now before doing anything else.
+The session that wrote this transfer doc was called "Session 11". This new session must therefore be named "Session 12" — rename it now before doing anything else.
 
 STEP 0 (MANDATORY — before reading anything): Set up the context monitor. Call send_later with delay_minutes=20 and this exact message: `__CONTEXT_MONITOR__`
 
@@ -24,4 +24,4 @@ Four issues found in Session 13 (continued) screenshot review:
    - "Fieldwork is important because it lets us collect evidence we cannot get from a map alone." -> "Fieldwork gives us evidence maps cannot."
    - "Any information we collect during fieldwork is automatically accurate and trustworthy." -> "All fieldwork data is always accurate."
 
-State at end of Session 13 (continued): concept_cartoon SIGNED OFF (commit 77b7e30). Phase 1 COMPLETE — all 18 slide types signed off. Complete 17-slide Lesson 7 human_geography deck built (commit 4ac69a2). Four issues found via screenshot review (slides 6, 7, 8, 16). Brain doc updated. Transfer doc written. Next session is Session 14.
+State at end of Session 11: concept_cartoon SIGNED OFF (commit 77b7e30). Phase 1 COMPLETE — all 18 slide types signed off. Complete 17-slide Lesson 7 human_geography deck built (commit 4ac69a2). Four issues found via screenshot review (slides 6, 7, 8, 16). Brain doc updated. Transfer doc written. Next session is Session 12.
