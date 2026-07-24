@@ -1,6 +1,6 @@
 # Enquiry Builder Transfer Doc
 
-The session that wrote this transfer doc was called "Session 15". This new session must therefore be named "Session 16" — rename it now before doing anything else.
+The session that wrote this transfer doc was called "Session 16". This new session must therefore be named "Session 17" — rename it now before doing anything else.
 
 STEP 0 (MANDATORY — before reading anything): Set up the context monitor. Call send_later with delay_minutes=20 and this exact message: `__CONTEXT_MONITOR__`
 
@@ -13,9 +13,9 @@ git clone https://<TOKEN>@github.com/imcl75/enquiry-builder.git /home/claude/enq
 
 STEP 3: Ask Innes what he wants to work on:
 
-* Image generation — test the /image-generation skill with the lesson 7 demo deck (pick one image layout variant, generate an image at the correct aspect ratio for that layout's slot, place it in the PPTX, confirm it looks right)
 * History deck builder — equivalent of build_lesson7_deck.py for History subject
 * Science deck builder — equivalent for Science subject
+* Phase 2 — learning papers (three-level differentiated PDFs)
 * Something else
 
-State at end of Session 15: Session 15 was a startup-only session — mandatory steps completed (context monitor, repo clone, brain doc read), then the context monitor fired immediately before any substantive work began. Nothing was built or changed. All Phase 1 geography slide types remain fully signed off (latest commit 785b5bf). Brain doc is current as of Session 14. Next action is whatever Innes chooses from the options above.
+State at end of Session 16: Image generation testing COMPLETE and SIGNED OFF. Higgsfield (mcp__higgsfield__generate_image, model nano_banana_pro) confirmed working for all three layout aspect ratios: 16:9 (full_bleed hook slide), 4:3 (hero_left), 1:1 ×5 (horiz_small_squares). dall-e is billing-capped and unavailable — Higgsfield only. Photorealism rule confirmed and documented: scene/photo images must use "photorealistic" in the prompt; no illustration or cartoon language. Diagrams use explicit structural description. Full workflow confirmed: generate → poll job_display → curl rawUrl to container → pass path to build_image_teaching_slide(). Image generation rules added to brain doc (Image Generation section). Phase 1 remains COMPLETE — all 18 slide types signed off, latest code commit 4ac69a2. No new code committed this session. Brain doc updated with image generation rules and proven-working log entry.
