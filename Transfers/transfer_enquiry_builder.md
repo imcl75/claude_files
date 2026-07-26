@@ -1,4 +1,4 @@
-The session that wrote this transfer doc was called "Session 28". This new session must therefore be named "Session 29" — rename it now before doing anything else.
+The session that wrote this transfer doc was called "Session 16". This new session must therefore be named "Session 17" — rename it now before doing anything else.
 
 STEP 0 (MANDATORY — before reading anything): Set up the context monitor. Call send_later with delay_minutes=20 and this exact message: `__CONTEXT_MONITOR__`
 
