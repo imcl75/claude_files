@@ -29,7 +29,7 @@ LL_INNER_W = 269.3   # 5386 DXA
 LL_LEFT_W  = 219.3   # 4386 DXA
 LL_RIGHT_W = 50.0    # 1000 DXA
 
-ASSETS = '/home/claude/ll_assets'
+ASSETS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'll_assets')
 
 SUBJECT_ICONS = {
     'historian':'icon_historian.png','geographer':'icon_geographer.png',
