@@ -86,7 +86,7 @@ def enquiry_label(c, kq, date, lf, ican1, ican2, subject,
     icon_path = os.path.join(ASSETS, SUBJECT_ICONS.get(icon_key, 'icon_geographer.png'))
     subj_name = SUBJECT_NAMES.get(icon_key, icon_key.replace('_',' '))
 
-    ICON_SZ = 36
+    ICON_SZ = 18
     if os.path.exists(icon_path):
         ix = rr - ICON_SZ
         iy = ty - ICON_SZ
