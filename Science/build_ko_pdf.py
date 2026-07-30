@@ -177,13 +177,17 @@ def build(c, cfg, colour, col, col_light, col_mid, icon_comp, strip_crop, tmp_di
     cur_top = hdr_bot - GAP
 
     # ── 2. Key facts | Key skills ──────────────────────────────────────────────
+    # Single unified box with an internal dividing line — no gap between columns
     FACT_W = int(CW * 0.585)
-    SK_GAP = 8
-    SK_W   = CW - FACT_W - SK_GAP
+    SK_W   = CW - FACT_W
+    sx     = MARGIN + FACT_W
     two_bot = cur_top - TWO_H
 
-    # Facts
-    c.setFillColor(col_light); c.rect(MARGIN, two_bot, FACT_W, TWO_H, fill=1, stroke=0)
+    # Single background fill for the combined area
+    c.setFillColor(col_light)
+    c.rect(MARGIN, two_bot, CW, TWO_H, fill=1, stroke=0)
+
+    # Facts label bar + text
     label_bar(c, col, MARGIN, cur_top, FACT_W, 'Key facts')
     c.setFillColor(DRK)
     ty = cur_top - LBL_H - V_PAD - int(FONT_SZ * 0.72)
@@ -193,12 +197,8 @@ def build(c, cfg, colour, col, col_light, col_mid, icon_comp, strip_crop, tmp_di
             prefix = '•  ' if i == 0 else '    '
             c.drawString(MARGIN + 10, ty, prefix + line)
             ty -= LINE_H
-    c.setStrokeColor(col); c.setLineWidth(0.8)
-    c.rect(MARGIN, two_bot, FACT_W, TWO_H, fill=0, stroke=1)
 
-    # Skills
-    sx = MARGIN + FACT_W + SK_GAP
-    c.setFillColor(col_light); c.rect(sx, two_bot, SK_W, TWO_H, fill=1, stroke=0)
+    # Skills label bar + text
     label_bar(c, col, sx, cur_top, SK_W, 'Key skills')
     c.setFillColor(DRK)
     ty2 = cur_top - LBL_H - V_PAD - int(FONT_SZ * 0.72)
@@ -208,8 +208,11 @@ def build(c, cfg, colour, col, col_light, col_mid, icon_comp, strip_crop, tmp_di
             prefix = '•  ' if i == 0 else '    '
             c.drawString(sx + 10, ty2, prefix + line)
             ty2 -= LINE_H
+
+    # Outer border for the combined box, then internal dividing line
     c.setStrokeColor(col); c.setLineWidth(0.8)
-    c.rect(sx, two_bot, SK_W, TWO_H, fill=0, stroke=1)
+    c.rect(MARGIN, two_bot, CW, TWO_H, fill=0, stroke=1)
+    c.line(sx, two_bot, sx, cur_top)
 
     cur_top = two_bot - GAP
 
