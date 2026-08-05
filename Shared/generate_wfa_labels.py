@@ -63,7 +63,7 @@ CELL_M_TOP           = 141
 CELL_M_LR            = 115
 INNER_W              = 5233                 # inner nested table (= COL_CELL - 2*CELL_M_LR)
 INNER_RGT_COL        = 1000                # icon column
-INNER_LFT_COL        = INNER_W - INNER_RGT_COL  # 4386
+INNER_LFT_COL        = INNER_W - INNER_RGT_COL  # 4233
 
 # Font sizes in half-points (OOXML w:sz). Enquiry mode:
 EQ_DATE    = 16   # 8pt
@@ -338,6 +338,90 @@ def _image_para(rId, cx_emu, cy_emu, doc_pr_id):
     ppr = f'<w:pPr><w:jc w:val="right"/>{_spacing(720,"exact",0,20)}</w:pPr>'
     return f'<w:p>{ppr}<w:r>{drawing}</w:r></w:p>'
 
+
+# ─── Content length budget ──────────────────────────────────────────────────
+# The label's row height and font sizes are both fixed (school-standard
+# label sheet — shrinking the font to fit is not an option), so LF/I-can
+# text that runs long doesn't wrap onto more space, it gets clipped by Word
+# at the fixed row height. This computes the real, geometry-derived
+# character budget for the current build (it depends on how many lines the
+# Key Question itself wraps to, which varies per enquiry) and fails loudly
+# — naming every lesson/field over budget — rather than silently clipping.
+
+_LINE_PT = 280 / 20  # the 'auto'-rule line spacing every text para uses (14pt);
+                      # this dominates over the natural line height of an
+                      # 8-10pt font, so it's what actually governs how many
+                      # lines fit, not the font's own metrics.
+
+
+def _chars_per_line(sz_halfpt, col_width_dxa=INNER_LFT_COL):
+    font_pt = sz_halfpt / 2
+    return max(1, int((col_width_dxa / 20) / (font_pt * 0.5)))
+
+
+def _wrapped_lines(text, chars_per_line):
+    import math
+    return max(1, math.ceil(len(text) / chars_per_line)) if text else 0
+
+
+def label_length_budget(mode, question):
+    """Return (lf_max_chars, ican_max_chars, remaining_lines) for this build.
+
+    Raises ValueError if the fixed content alone (date + 'Key Question'
+    label + the question text) already leaves no room for LF/I-can at all —
+    that's a different problem (the question itself is too long) that no
+    LF/ican limit can fix.
+    """
+    date_sz  = MQ_DATE  if mode == 'mathematician' else EQ_DATE
+    kqlbl_sz = None     if mode == 'mathematician' else EQ_KQ_LBL
+    kqtxt_sz = MQ_TOPIC if mode == 'mathematician' else EQ_KQ_TEXT
+    lf_sz    = MQ_LF    if mode == 'mathematician' else EQ_LF
+    ican_sz  = MQ_ICAN  if mode == 'mathematician' else EQ_ICAN
+
+    avail_pt = ROW_H / 20 - CELL_M_TOP / 20
+    max_total_lines = int(avail_pt // _LINE_PT)
+
+    fixed_lines = 1  # date
+    if kqlbl_sz is not None:
+        fixed_lines += 1  # 'Key Question' label (enquiry mode only)
+    fixed_lines += _wrapped_lines(question, _chars_per_line(kqtxt_sz))
+
+    remaining = max_total_lines - fixed_lines
+    if remaining < 3:
+        raise ValueError(
+            f'label_length_budget: only {remaining} line(s) left for LF + '
+            f'I-can-1 + I-can-2 combined after fitting the date and Key '
+            f'Question ({fixed_lines} lines) into the {max_total_lines}-line '
+            f'label — the Key Question itself is too long for this label '
+            f'format, not something an LF/ican limit can fix.')
+
+    lines_per_field = max(1, remaining // 3)
+    lf_prefix_len   = len('LF: To ')
+    ican_prefix_len = len('I can ')
+    lf_max    = _chars_per_line(lf_sz)   * lines_per_field - lf_prefix_len
+    ican_max  = _chars_per_line(ican_sz) * lines_per_field - ican_prefix_len
+    return lf_max, ican_max, remaining
+
+
+def validate_label_length(mode, question, lf, ican1, ican2, label_name=''):
+    """Return a list of human-readable violation strings (empty if OK)."""
+    lf_max, ican_max, _ = label_length_budget(mode, question)
+    violations = []
+    prefix = f'{label_name}: ' if label_name else ''
+    if len(lf) > lf_max:
+        violations.append(
+            f'{prefix}lf is {len(lf)} chars, max {lf_max} for this label '
+            f'format — {lf!r}')
+    if len(ican1) > ican_max:
+        violations.append(
+            f'{prefix}ican1 is {len(ican1)} chars, max {ican_max} for this '
+            f'label format — {ican1!r}')
+    if len(ican2) > ican_max:
+        violations.append(
+            f'{prefix}ican2 is {len(ican2)} chars, max {ican_max} for this '
+            f'label format — {ican2!r}')
+    return violations
+
 def _build_left_col(mode, date, question, lf, ican1, ican2):
     """Build content paragraphs for the left (text) column."""
     lf_txt  = lf    if lf.startswith("LF: To ")  else f"LF: To {lf}"
@@ -464,6 +548,12 @@ def _label_cell(subject, mode, date, question, lf, ican1, ican2, rId, doc_pr_id)
 def build_enquiry_docx(subject, date, question, lf, ican1, ican2, out_path):
     """Build enquiry label DOCX from scratch XML (no template needed)."""
     mode = 'mathematician' if subject == 'mathematician' else 'enquiry'
+    violations = validate_label_length(mode, question, lf, ican1, ican2)
+    if violations:
+        raise ValueError(
+            'Label content too long for this fixed-size label format '
+            '(shrinking the font is not an option — it is a school '
+            'standard):\n  ' + '\n  '.join(violations))
     icon_bytes = get_icon_bytes(subject)
 
     # Build rels and decide rId assignments
