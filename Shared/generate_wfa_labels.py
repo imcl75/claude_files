@@ -48,6 +48,7 @@ You can also manually copy icons:
 """
 
 import argparse, base64, io, json, os, re, sys, zipfile, urllib.request
+from pathlib import Path
 
 # ─── LL Tool exact measurements (all DXA unless noted) ───────────────────────
 # Source: generateEnquiryDocx() in index.html
@@ -118,8 +119,17 @@ T_LF    = "LF: To identify which operation is required to solve a problem."
 T_IC1   = "I can identify the operation and clauclate using a suitable method"
 T_IC2   = "I can solve problems involving the four operations"
 
-TEMPLATE_PATH  = "/home/claude/WFA_Labels_template.docx"
-ICON_CACHE_DIR = "/home/claude/ll_icons"
+# Runtime deps live at /home/claude in the Cowork sandbox; locally (Claude
+# Code on Innes's Mac) they live at ~/.enquiry-builder-deps (or
+# $ENQUIRY_BUILDER_DEPS) — /home/claude does not exist there and isn't
+# writable (it's a synthetic macOS mount point), so this must only be used
+# when it actually exists, never unconditionally.
+_DEPS_DIR = Path('/home/claude') if Path('/home/claude').is_dir() else Path(
+    os.environ.get('ENQUIRY_BUILDER_DEPS', str(Path.home() / '.enquiry-builder-deps')))
+_DEPS_DIR.mkdir(parents=True, exist_ok=True)
+
+TEMPLATE_PATH  = str(_DEPS_DIR / "WFA_Labels_template.docx")
+ICON_CACHE_DIR = str(_DEPS_DIR / "ll_icons")
 LL_TOOL_URL    = "https://staff.wallscourt-farm-academy.co.uk/learning-labels/index.html"
 GITHUB_TEMPLATE_URL = (
     "https://raw.githubusercontent.com/imcl75/claude_files/main/"
@@ -617,7 +627,7 @@ def main():
             week   = lbl.get('week', '')
             day    = lbl.get('day', '')[:3]
             lesson = lbl.get('lesson', 0)
-            out    = f"/home/claude/{week}_L{lesson}_{day}_Labels.docx"
+            out    = str(_DEPS_DIR / f"{week}_L{lesson}_{day}_Labels.docx")
             # Strip prefixes if already present
             lf_raw    = lbl.get('lf', '')
             ic1_raw   = lbl.get('ican1', '')
