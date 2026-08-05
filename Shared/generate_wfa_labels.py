@@ -294,10 +294,17 @@ def _text_para(text, sz, bold=False, underline=False,
         ppr_parts.append(f'<w:jc w:val="{align}"/>')
     ppr_parts.append('</w:pPr>')
     ppr = ''.join(ppr_parts)
+    # CT_RPr child order is a strict xsd:sequence (ECMA-376 §17.3.2.28): b
+    # precedes sz/szCs, which precede u. Emitting u before sz/szCs is a
+    # schema-order violation invisible to generic XML well-formedness
+    # checks (and to python-docx) but rejected by Word's own parser as
+    # "unreadable content" — this run shape (bold+underline together) is
+    # used for the Key Question text on every single label.
     rpr = f'<w:rPr>{_fonts()}'
     if bold:      rpr += '<w:b/>'
+    rpr += f'<w:sz w:val="{sz}"/><w:szCs w:val="{sz}"/>'
     if underline: rpr += '<w:u w:val="single"/>'
-    rpr += f'<w:sz w:val="{sz}"/><w:szCs w:val="{sz}"/></w:rPr>'
+    rpr += '</w:rPr>'
     preserve = ' xml:space="preserve"' if text and (' ' in text or text[0] == ' ') else ''
     run = f'<w:r>{rpr}<w:t{preserve}>{_xmlesc(text)}</w:t></w:r>'
     return f'<w:p>{ppr}{run}</w:p>'
@@ -306,7 +313,7 @@ def _image_para(rId, cx_emu, cy_emu, doc_pr_id):
     """Build a right-aligned inline image paragraph."""
     pic_xml = (
         f'<pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">'
-        f'<pic:nvPicPr><pic:cNvPr id="0" name=""/><pic:cNvPicPr/></pic:nvPicPr>'
+        f'<pic:nvPicPr><pic:cNvPr id="{doc_pr_id}" name=""/><pic:cNvPicPr/></pic:nvPicPr>'
         f'<pic:blipFill><a:blip r:embed="{rId}"/>'
         f'<a:stretch><a:fillRect/></a:stretch></pic:blipFill>'
         f'<pic:spPr><a:xfrm><a:off x="0" y="0"/>'
@@ -432,6 +439,7 @@ def _inner_tbl(left_xml, right_xml):
         f'<w:tblW w:type="dxa" w:w="{INNER_W}"/>'
         f'{tbl_borders}'
         '<w:tblLayout w:type="fixed"/>'
+        '<w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1"/>'
         f'</w:tblPr>'
         f'{grid}'
         f'<w:tr>{left_tc}{right_tc}</w:tr>'
@@ -439,10 +447,18 @@ def _inner_tbl(left_xml, right_xml):
     )
 
 def _label_cell(subject, mode, date, question, lf, ican1, ican2, rId, doc_pr_id):
-    """Build a full outer label cell (including the inner nested table)."""
+    """Build a full outer label cell (including the inner nested table).
+
+    A w:tc containing a nested w:tbl needs a w:p both before and after it —
+    confirmed against a known-good python-docx-generated nested table (which
+    real Word opens without complaint): its cell content is w:p, w:tbl, w:p,
+    not just w:tbl, w:p. Every label cell here wraps a nested table with
+    nothing before it, which matches the kind of defect Word's "found
+    unreadable content" repair prompt flags.
+    """
     left_xml  = _build_left_col(mode, date, question, lf, ican1, ican2)
     right_xml = _build_right_col(subject, rId, doc_pr_id)
-    inner     = _inner_tbl(left_xml, right_xml)
+    inner     = '<w:p/>' + _inner_tbl(left_xml, right_xml) + '<w:p/>'
     return _tc(COL_CELL, inner, CELL_M_TOP, 0, CELL_M_LR, CELL_M_LR)
 
 def build_enquiry_docx(subject, date, question, lf, ican1, ican2, out_path):
@@ -529,6 +545,10 @@ def build_enquiry_docx(subject, date, question, lf, ican1, ican2, out_path):
         'xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" '
         'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" '
         'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" '
+        'xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture" '
+        'xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" '
+        'xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml" '
+        'xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" '
         'mc:Ignorable="w14 w15 wp14">'
         '<w:body>'
         '<w:tbl>'
@@ -536,6 +556,7 @@ def build_enquiry_docx(subject, date, question, lf, ican1, ican2, out_path):
         f'<w:tblW w:type="dxa" w:w="{TBL_W}"/>'
         f'{outer_tbl_borders}'
         '<w:tblLayout w:type="fixed"/>'
+        '<w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1"/>'
         '</w:tblPr>'
         f'{outer_grid}'
         f'{rows_xml}'
